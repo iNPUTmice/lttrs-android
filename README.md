@@ -50,5 +50,5 @@ JMAP servers are currently rare. As of February 2020 you need to compile
 
 
 **A note to Fastmail users:** During setup Ltt.rs will ask you for a connection
-URL. You need to enter `https://jmap.fastmail.com/.well-know/jmap`. Automatic
+URL. You need to enter `https://jmap.fastmail.com/.well-known/jmap`. Automatic
 discovery currently doesn’t work for Fastmail.
