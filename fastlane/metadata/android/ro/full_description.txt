@@ -1,0 +1,12 @@
+Ltt.rs (pronunțat Letters, adică Scrisori) este un client experimental de e-mail (JMAP) dezvoltat în mod curent. Utilizează foarte mult Android Jetpack pentru un cod sursă mai ușor de întreținut decât unii dintre clienții de e-mail Android preexistenți.
+
+Caracteristici și considerente de proiectare:
+
+* Folosește memoria tampon temporară, dar nu complet deconectat. Ltt.rs se folosește astfel de capacitățile JMAP. Cu toate acestea, acțiunile, cum ar fi marcarea unei conversații drept citită, au nevoie de o conectare la server pentru actualizarea consecințelor lor, precum modificarea numarului de necitite. Ltt.rs se va asigura că acțiunea în sine nu se va pierde chiar dacă este efectuată momentan când este deconectat.
+* Nu există setări în afară de configurarea contului. Setările creează mediul propice de a adăuga caracteristici doar de dragul lor și fac ca aplicația să fie greu de întreținut. Ltt.rs își propune să sprijine un flux de lucru specific. Utilizatorii care doresc un flux de lucru diferit pot găsi K-9 Mail sau FairEmail mai potrivite.
+* Dependențe externe minime. Bibliotecile terțe sunt adesea de slabă calitate și sfârșesc prin a fi abandonate. De aceea ne vom baza doar pe biblioteci bine cunoscute și bine testate de la furnizori de renume.
+* Autocriptare ca o caracteristică în prim plan¹. Cu reguli stricte de interfață, Autocrypt se potrivește bine în Ltt.rs.
+* Ltt.rs se bazează pe jmap-mua, un client de e-mail fără interfață, sau o bibliotecă care gestionează tot ceea ce ar face un client de e-mail pe lângă stocarea de date și interfața. Există, de asemenea, și lttrs-cli care folosește aceeași bibliotecă.
+* Când există îndoieli: Consultare Gmail pentru inspirație.
+
+¹: Caracteristică planificată
