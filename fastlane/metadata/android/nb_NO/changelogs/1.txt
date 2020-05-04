@@ -1,0 +1,3 @@
+* Veldig primitive e-postlesefunksjoner (klartekst, ingen vedlegg)
+* Arkivering, flagging, markering som lest og ulest
+* Kladding av e-poster (ingen sitering)

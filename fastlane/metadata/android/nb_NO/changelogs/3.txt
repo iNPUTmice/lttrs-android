@@ -1,0 +1,2 @@
+* Fargejustering
+* Fikset minnelekkasjer
