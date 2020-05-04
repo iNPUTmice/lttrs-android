@@ -1,0 +1,3 @@
+* Sehr rudimentäre E-Mail-Lesefähigkeiten (nur einfacher Text, keine Anhänge)
+* Archivieren, Kennzeichnen, Markieren als gelesen und ungelesen
+* E-Mails verfassen (kein Zitat)
