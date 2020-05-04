@@ -14,7 +14,7 @@
   -->
 
 <resources>
-    <string name="app_name">Ltt.rs</string>
+    <string name="app_name" translatable="false">Ltt.rs</string>
 
     <string name="archive">Archive</string>
     <string name="mark_unread">Mark unread</string>
