@@ -8,7 +8,7 @@ Makes heavy use of Android Jetpack to be more maintainable than some of the othe
 If the above screenshots don’t do enough to convince you, you can watch this
 [short video from invidio.us](https://www.invidio.us/watch?v=ArCuudFwJX4).
 
-### Feature and design considerations:
+### Features, and design considerations:
 
 * _Heavily cached_, but not fully offline capable. Ltt.rs makes use of JMAP’s great caching capabilities. However, marking a thread as read does round-trip to the server to be update things such as read count. The action itself won’t get lost even if performed offline.
 * Account _setup and done_. Settings invite feature creep and its friend unmaintainability. There is one specific work flow. K-9 Mail or FairEmail is more suitable for others.
