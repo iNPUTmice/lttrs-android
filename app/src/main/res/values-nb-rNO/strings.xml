@@ -1,2 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <plurals name="unable_to_safe_accounts">
+        <item quantity="one">Kunne ikke forsikre konto</item>
+        <item quantity="other">Kunne ikke forsikre kontoer</item>
+    </plurals>
+    <string name="compose_cc">Kopi</string>
+    <string name="compose_compose_email">Forfatt e-post</string>
+    <string name="compose">Forfatt</string>
+    <string name="unable_to_fetch_session">Kunne ikke hente økt: %s</string>
+    <string name="no_network_connection">Ingen nettverkstilkobling</string>
+    <string name="unknown_host">Kunne ikke fortolke %s</string>
+    <string name="unable_to_verify_service_identity">Kunne ikke bekrefte identitet</string>
+    <string name="unable_to_establish_secure_connection">Kunne ikke etablere sikret tilkobling</string>
+    <string name="timeout_reached">Tidsavbrudd under forsøk på å koble til e-posttjeneste</string>
+    <string name="unable_to_connect">Kunne ikke koble til e-posttjeneste</string>
+    <string name="invalid_session_resource">Ingen gyldig e-posttjeneste på denne adressen</string>
+    <string name="endpoint_not_found">Ingen e-posttjeneste på denne adressen</string>
+    <string name="enter_a_valid_url">Skriv inn en gyldig tilkoblingsnettadresse</string>
+    <string name="enter_a_secure_url">Skriv inn en sikker nettadresse</string>
+    <string name="enter_your_connection_url">Skriv inn din tilkoblingsnettadresse</string>
+    <string name="sign_in_instruction">med din e-postkonto.</string>
+    <plurals name="n_deleted">
+        <item quantity="one">%d slettet</item>
+        <item quantity="other">%d slettet</item>
+    </plurals>
+    <plurals name="n_archived">
+        <item quantity="one">%d arkivert</item>
+        <item quantity="other">%d arkivert</item>
+    </plurals>
+    <plurals name="n_removed_from_x">
+        <item quantity="one">%d fjernet fra %s</item>
+        <item quantity="other">%d fjernet fra %s</item>
+    </plurals>
+    <string name="search_hint">Søk i e-post</string>
+    <string name="remove_label_x">Fjern etiketten %s</string>
+    <string name="draft">Kladd</string>
+    <string name="select_sender">Velg avsender.</string>
+    <string name="the_address_x_is_invalid">Adressen &lt;%s&gt; er ugyldig</string>
+    <string name="add_at_least_one_recipient">Legg til minst én mottager.</string>
+    <string name="ok">OK</string>
+    <string name="compose_from">Fra</string>
+    <string name="compose_subject">Emne</string>
+    <string name="compose_to">Til</string>
+    <string name="schedule_send">Planlegg forsendelse</string>
+    <string name="discard">Forkast</string>
+    <string name="send">Send</string>
+    <string name="attach_file">Legg ved fil</string>
+    <string name="information_required">Info kreves</string>
+    <string name="wrong_password">Feil passord. Prøv igjen.</string>
+    <string name="enter_a_password">Skriv inn et passord</string>
+    <string name="enter_your_password">Skriv inn passordet ditt</string>
+    <string name="welcome">Velkommen</string>
+    <string name="enter_a_valid_email_address">Skriv inn en gyldig e-postadresse</string>
+    <string name="enter_an_email_address">Skriv inn en e-postadresse</string>
+    <string name="next">Neste</string>
+    <string name="email_address">E-postadresse</string>
+    <string name="sign_in">Logg inn</string>
+    <string name="deleted">Slettet</string>
+    <string name="undo">Angre</string>
+    <string name="mark_not_important">Merker som uviktig</string>
+    <string name="remove_label">Fjern etikett</string>
+    <plurals name="n_moved_to_inbox">
+        <item quantity="one">%d flyttet til innboks</item>
+        <item quantity="other">%d flyttet til innboks</item>
+    </plurals>
+    <string name="move_to_inbox">Flytt til innboks</string>
+    <string name="to_x">til %s</string>
+    <string name="search">Søk</string>
+    <string name="remove_flag">Fjern flagg</string>
+    <string name="add_flag">Legg til flagg</string>
+    <string name="mark_important">Marker som viktig</string>
+    <string name="delete">Slett</string>
+    <string name="mark_read">Marker som lest</string>
+    <string name="mark_unread">Marker som ulest</string>
+    <string name="archive">Arkiv</string>
+</resources>
