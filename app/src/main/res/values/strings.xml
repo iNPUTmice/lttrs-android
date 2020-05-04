@@ -17,10 +17,10 @@
     <string name="app_name" translatable="false">Ltt.rs</string>
 
     <string name="archive">Archive</string>
-    <string name="mark_unread">Mark unread</string>
-    <string name="mark_read">Mark read</string>
+    <string name="mark_unread">Mark as unread</string>
+    <string name="mark_read">Mark as read</string>
     <string name="delete">Delete</string>
-    <string name="mark_important">Mark important</string>
+    <string name="mark_important">Mark as important</string>
     <string name="add_flag">Add flag</string>
     <string name="remove_flag">Remove flag</string>
     <string name="search">Search</string>
@@ -32,8 +32,8 @@
     </plurals>
     <string name="remove_label_x">Remove label %s</string>
     <string name="remove_label">Remove label</string>
-    <string name="search_hint">Search email</string>
-    <string name="mark_not_important">Mark not important</string>
+    <string name="search_hint">Search in e-mail</string>
+    <string name="mark_not_important">Mark as unimportant</string>
     <plurals name="n_removed_from_x">
         <item quantity="one">%d removed from %s</item>
         <item quantity="other">%d removed from %s</item>
@@ -49,45 +49,45 @@
     </plurals>
     <string name="deleted">Deleted</string>
     <string name="sign_in">Sign in</string>
-    <string name="email_address">Email address</string>
-    <string name="sign_in_instruction">with your Email account.</string>
+    <string name="email_address">E-mail address</string>
+    <string name="sign_in_instruction">with your e-mail account.</string>
     <string name="next">Next</string>
-    <string name="enter_an_email_address">Enter an email address</string>
-    <string name="enter_a_valid_email_address">Enter a valid email address</string>
+    <string name="enter_an_email_address">Type in an e-mail address</string>
+    <string name="enter_a_valid_email_address">Type a valid e-mail address</string>
     <string name="welcome">Welcome</string>
-    <string name="enter_your_password">Enter your password</string>
-    <string name="enter_a_password">Enter a password</string>
+    <string name="enter_your_password">Type in your password</string>
+    <string name="enter_a_password">Type in a password</string>
     <string name="wrong_password">Wrong password. Try again.</string>
-    <string name="information_required">Information required</string>
-    <string name="enter_your_connection_url">Enter your connection URL</string>
-    <string name="enter_a_valid_url">Enter a valid connection URL</string>
-    <string name="enter_a_secure_url">Enter a secure URL</string>
-    <string name="endpoint_not_found">There is no Email service at this address</string>
-    <string name="invalid_session_resource">There is no valid Email service at this address</string>
-    <string name="unable_to_connect">Unable to connect to Email service</string>
-    <string name="timeout_reached">Timeout reached trying to connect to Email service</string>
-    <string name="unable_to_establish_secure_connection">Unable to establish a secure connection</string>
-    <string name="unable_to_verify_service_identity">Unable to verify identity</string>
-    <string name="unknown_host">Unable to resolve %s</string>
-    <string name="no_network_connection">No network connection</string>
-    <string name="unable_to_fetch_session">Unable to fetch session: %s</string>
+    <string name="information_required">Info required</string>
+    <string name="enter_your_connection_url">Type in your connection URL</string>
+    <string name="enter_a_valid_url">Type in a valid connection URL</string>
+    <string name="enter_a_secure_url">Type in a secure URL</string>
+    <string name="endpoint_not_found">No e-mail service at this address</string>
+    <string name="invalid_session_resource">There is no valid e-mail service at this address</string>
+    <string name="unable_to_connect">Could not connect to e-mail service</string>
+    <string name="timeout_reached">Trying to connect to e-mail service timed out</string>
+    <string name="unable_to_establish_secure_connection">Could not establish a secure connection</string>
+    <string name="unable_to_verify_service_identity">Could not verify identity</string>
+    <string name="unknown_host">Could not resolve %s</string>
+    <string name="no_network_connection">Connect to the Internet</string>
+    <string name="unable_to_fetch_session">Could not fetch session: %s</string>
     <string name="compose">Compose</string>
     <string name="attach_file">Attach file</string>
     <string name="send">Send</string>
     <string name="discard">Discard</string>
-    <string name="schedule_send">Schedule send</string>
+    <string name="schedule_send">Schedule sending</string>
     <string name="compose_to">To</string>
-    <string name="compose_compose_email">Compose email</string>
+    <string name="compose_compose_email">Compose e-mail</string>
     <string name="compose_subject">Subject</string>
     <string name="compose_from">From</string>
     <string name="ok">OK</string>
-    <string name="add_at_least_one_recipient">Add at least one recipient.</string>
-    <string name="the_address_x_is_invalid"><![CDATA[The address <%s> is invalid.]]></string>
+    <string name="add_at_least_one_recipient">Add a recipient.</string>
+    <string name="the_address_x_is_invalid"><![CDATA[Something is wrong with the address \"<%s>\".]]></string>
     <string name="select_sender">Select sender.</string>
     <string name="draft">Draft</string>
     <string name="compose_cc">Cc</string>
     <plurals name="unable_to_safe_accounts">
-        <item quantity="one">Unable to safe account</item>
-        <item quantity="many">Unable to safe accounts</item>
+        <item quantity="one">Could not save account</item>
+        <item quantity="many">Could not save accounts</item>
     </plurals>
 </resources>
