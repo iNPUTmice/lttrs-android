@@ -277,7 +277,7 @@ public class SetupViewModel extends AndroidViewModel {
 
     private void processAccounts(final Session session) {
         final Map<String, Account> accounts = session.getAccounts(MailAccountCapability.class);
-        LOGGER.info("found {} accounts with mail capability", accounts.size());
+        LOGGER.info("found {} accounts with e-mail capability", accounts.size());
         if (accounts.size() == 1) {
             final ListenableFuture<Void> insertFuture = mainRepository.insertAccountsRefreshMailboxes(
                     Strings.nullToEmpty(emailAddress.getValue()),
