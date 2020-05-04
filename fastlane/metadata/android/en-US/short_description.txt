@@ -1,1 +1,1 @@
-No-frills, easy to use, easy to maintain Email client for Android
+Simple and maintainable Android e-mail client
