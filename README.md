@@ -44,6 +44,10 @@ https://ltt.rs/fdroid/repo?fingerprint=9C2E57C85C279E5E1A427F6E87927FC1E2278F62D
 
 All three versions are signed with the same key so it is possible to switch between them.
 
+#### Translations
+Translations are managed on [Weblate](https://hosted.weblate.org/projects/ltt-rs/).
+If you want to become a translator please register on Weblate.
+
 JMAP servers are currently rare. As of February 2020 you need to compile 
 [Cyrus](https://github.com/cyrusimap/cyrus-imapd) from git. If you are looking for providers
 [Fastmail](https://www.fastmail.com/) is the only known option.
