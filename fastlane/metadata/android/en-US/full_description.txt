@@ -1,12 +1,12 @@
-Ltt.rs (pronounced Letters) is a proof of concept email (JMAP) client currently in development. It makes heavy use of Android Jetpack for a more maintainable code base than some of the preexisting Android email clients.
+Proof of concept e-mail (JMAP) client (pronounced \"Letters\"). Makes heavy use of Android Jetpack to be more maintainable than some of the other Android e-mail clients.
 
-Features & Design considerations:
+Feature and design considerations:
 
-* Heavily cached but not fully offline capable. Ltt.rs makes use of JMAP’s great caching capabilities. However actions, such as marking a thread as read, need a round-trip to the server until their consequences like unread count are updated. Ltt.rs will ensure that the action itself won’t get lost even if performed while momentarily offline.
-* No settings aside from account setup. Settings invite feature creep and make the app hard to maintain. Ltt.rs aims to support one specific work flow. Users who desire a different work flow may find K-9 Mail or FairEmail more suitable.
-* Minimal external dependencies. Third party libraries are often of poor quality and end up being unmaintained. Therfore we will only rely on well known, well tested libraries from reputable vendors.
-* Autocrypt as a first class feature¹. With its strict UX guidelines autocrypt fits right into Ltt.rs.
-* Ltt.rs is based on jmap-mua, a headless email client, or a library that handles everything an email client would aside from data storage and UI. There is also lttrs-cli which uses the same library.
-* When in doubt: Look at Gmail for inspiration.
+* Heavily cached but not fully offline capable. Ltt.rs makes use of JMAP’s great caching capabilities. Marking a thread as read however need to a round-trip to the server for things like unread count to be updated. The action itself won’t get lost even if performed offline.
+* Account setup and done. Settings invite feature creep and its friend unmaintainability. There is one specific work flow. K-9 Mail or FairEmail is more suitable for others.
+* Minimal dependencies. Third party libraries are often of poor quality, and end up unmaintained. Only widely known, highly tested libraries from reputable vendors.
+* First class Autocrypt¹. Ltt.rs fits right into its strict UX guidelines.
+* Based on jmap-mua, a headless e-mail client, or a library that handles everything an e-mail client would, aside from data storage and UI. There is also lttrs-cli, which uses the same library.
+* Looks to Gmail for inspiration in cases of uncertainty.
 
 ¹: Planned feature
