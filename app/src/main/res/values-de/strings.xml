@@ -42,10 +42,21 @@
     <string name="delete">Löschen</string>
     <string name="mark_read">Als gelesen markieren</string>
     <string name="mark_unread">Als ungelesen markieren</string>
-    <string name="archive">Archiv</string>
+    <string name="archive">Archivieren</string>
     <string name="could_not_store_account_credentials">Zugangsdaten konnten nicht gespeichert werden</string>
     <plurals name="n_archived">
         <item quantity="one">%d archiviert</item>
         <item quantity="other">%d archiviert</item>
     </plurals>
+    <plurals name="n_deleted">
+        <item quantity="one">%d gelöscht</item>
+        <item quantity="other">%d gelöscht</item>
+    </plurals>
+    <plurals name="n_removed_from_x">
+        <item quantity="one">%d aus %s entfernt</item>
+        <item quantity="other">%d aus %s entfernt</item>
+    </plurals>
+    <string name="remove_label">Entferne Label</string>
+    <string name="remove_label_x">Entferne Label %s</string>
+    <string name="to_x">An %s</string>
 </resources>
