@@ -43,4 +43,9 @@
     <string name="mark_read">Als gelesen markieren</string>
     <string name="mark_unread">Als ungelesen markieren</string>
     <string name="archive">Archiv</string>
+    <string name="could_not_store_account_credentials">Zugangsdaten konnten nicht gespeichert werden</string>
+    <plurals name="n_archived">
+        <item quantity="one">%d archiviert</item>
+        <item quantity="other">%d archiviert</item>
+    </plurals>
 </resources>
