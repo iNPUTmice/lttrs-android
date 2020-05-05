@@ -49,7 +49,7 @@
     <string name="delete">Șterge</string>
     <string name="mark_read">Marchează ca citit</string>
     <string name="mark_unread">Marchează ca necitit</string>
-    <string name="archive">Arhivă</string>
+    <string name="archive">Arhivează</string>
     <string name="compose_cc">Cc</string>
     <string name="draft">Ciornă</string>
     <string name="select_sender">Selectați expeditor.</string>
@@ -74,4 +74,5 @@
     <string name="unable_to_connect">Nu se poate face conectarea la serviciul de e-mail</string>
     <string name="invalid_session_resource">Nu există un serviciu de e-mail valid la această adresă</string>
     <string name="endpoint_not_found">Nu există un serviciu de e-mail la această adresă</string>
+    <string name="could_not_store_account_credentials">Nu s-au putut stoca datele de autentificare</string>
 </resources>
