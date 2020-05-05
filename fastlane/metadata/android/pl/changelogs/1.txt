@@ -1,0 +1,3 @@
+* Bardzo podstawowe funkcje czytania poczty (tylko czysty tekst, bez załączników)
+* Archiwizacja, oznaczanie gwiazdką, jako przeczytane i nieprzeczytane
+* Szkice e-maili (bez cytowania)

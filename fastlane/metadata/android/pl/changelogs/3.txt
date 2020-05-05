@@ -1,0 +1,2 @@
+* Dostosowanie kolorów
+* Poprawka wycieków pamięci

@@ -1,0 +1,11 @@
+Ltt.rs (wymawiane Letters) to prototypowy klient poczty e-mail (JMAP), który ciągle jest rozwijan. W porównaniu z innymi klientami Ltt.rs wykorzystuje intensywnie Android Jetpack aby baza kodu była prosta i elegancka.
+
+Funkcje i względy projektowe
+
+* Intensywnie cache'owany ale nie jest w pełni offline. Ltt.rs wykorzystuje możliwości cache'owania dostępne przez JMAP. Niektóre akcje jednakże, jak zaznaczenie wątku jako przeczytany, potrzebują kontaktu z serwerem zanim konsekwencje tych akcji będą zaktualizowane. Ltt.rs zapewnia że akcja nie zostanie zgubiona nawet jeśli została wykonana będąc offline.
+* Brak ustawień poza ustawieniem konta. Ustawienia powodują eksplozję funkcji i sprawiają, że aplikacja jest trudniejsza w zarządzaniu. Ltt.rs jest zoptymalizowany pod jeden specyficzny tryb pracy. Użytkownicy którzy potrzebują innych trybów mogą być bardziej zadowoleni z K-9 Mail lub FairEmail.
+* Autocrypt jako funkcja pierwszorzędna¹. Ze swoimi ścisłymi wymaganiami odnośnie UX autocrypt pasuje idealnie do Ltt.rs.
+* Ltt.rs jest operaty na jmap-mua, kliencie bez UI lub bibliotece która zarządza wszystkim w kliencie poczty oprócz składowania danych i UI. Istnieje także, lttrs-cli który używa tej samej biblioteki.
+* Kiedy natrafisz na wątpliwość: patrz na Gmail dla inspiracji.
+
+¹: Planowana funkcja
