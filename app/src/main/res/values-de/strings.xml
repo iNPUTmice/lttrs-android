@@ -59,4 +59,16 @@
     <string name="remove_label">Entferne Label</string>
     <string name="remove_label_x">Entferne Label %s</string>
     <string name="to_x">An %s</string>
+    <string name="enter_a_secure_url">Gib eine sichere URL ein</string>
+    <string name="enter_a_valid_url">Gib eine gültige Verbindungs-URL ein</string>
+    <string name="enter_your_connection_url">Gib deine Verbindungs-URL ein</string>
+    <string name="search_hint">E-Mail suchen</string>
+    <string name="select_sender">Absender auswählen.</string>
+    <string name="add_at_least_one_recipient">Füge mindestens einen Empfänger hinzu.</string>
+    <string name="schedule_send">Zeitplan für das Senden</string>
+    <string name="unable_to_fetch_session">Sitzung konnte nicht abgerufen werden: %s</string>
+    <string name="unknown_host">%s kann nicht aufgelöst werden</string>
+    <string name="unable_to_connect">Es konnte keine Verbindung zum E-Mail-Dienst hergestellt werden</string>
+    <string name="unable_to_establish_secure_connection">Es konnte keine sichere Verbindung hergestellt werden</string>
+    <string name="timeout_reached">Zeitüberschreitung erreicht beim Versuch, eine Verbindung zum E-Mail-Dienst herzustellen</string>
 </resources>
