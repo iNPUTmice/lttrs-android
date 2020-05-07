@@ -74,4 +74,5 @@
     <string name="mark_read">Marker som lest</string>
     <string name="mark_unread">Marker som ulest</string>
     <string name="archive">Arkiv</string>
+    <string name="could_not_store_account_credentials">Kunne ikke lagre identitetsdetaljer for konto</string>
 </resources>
