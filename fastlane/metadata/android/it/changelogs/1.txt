@@ -1,0 +1,3 @@
+* Capacità di lettura email molto rudimentale (solo testo semplice, no allegati)
+* Archiviazione, flag, segna come letti e non letti
+* Creazione bozze (no citazioni)
