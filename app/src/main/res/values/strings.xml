@@ -86,8 +86,5 @@
     <string name="select_sender">Select sender.</string>
     <string name="draft">Draft</string>
     <string name="compose_cc">Cc</string>
-    <plurals name="unable_to_safe_accounts">
-        <item quantity="one">Could not save account</item>
-        <item quantity="many">Could not save accounts</item>
-    </plurals>
+    <string name="could_not_store_account_credentials">Could not store account credentials</string>
 </resources>

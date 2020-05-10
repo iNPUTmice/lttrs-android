@@ -295,10 +295,9 @@ public class SetupViewModel extends AndroidViewModel {
                 @Override
                 public void onFailure(@NonNull Throwable cause) {
                     loading.postValue(false);
-                    final Resources r = getApplication().getResources();
-                    warningMessage.postValue(
-                            new Event<>(r.getQuantityString(R.plurals.unable_to_safe_accounts, 1))
-                    );
+                    warningMessage.postValue(new Event<>(
+                            getApplication().getString(R.string.could_not_store_account_credentials)
+                    ));
 
                 }
             }, MoreExecutors.directExecutor());
