@@ -1,2 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="could_not_store_account_credentials">Não foi possível armazenar credenciais da conta</string>
+    <string name="compose_cc">Cc</string>
+    <string name="draft">Rascunho</string>
+    <string name="select_sender">Selecione o remetente.</string>
+    <string name="the_address_x_is_invalid">Algo está errado com o endereço \"&lt;%s&gt;\".</string>
+    <string name="add_at_least_one_recipient">Adicione um destinatário.</string>
+    <string name="ok">OK</string>
+    <string name="compose_from">De</string>
+    <string name="compose_subject">Assunto</string>
+    <string name="compose_compose_email">Compor e-mail</string>
+    <string name="compose_to">Para</string>
+    <string name="schedule_send">Agendar envio</string>
+    <string name="discard">Descartar</string>
+    <string name="send">Enviar</string>
+    <string name="attach_file">Anexar arquivo</string>
+    <string name="compose">Compor</string>
+    <string name="unable_to_fetch_session">Não foi possível obter a sessão: %s</string>
+    <string name="no_network_connection">Conectar à Internet</string>
+    <string name="unknown_host">Não foi possível resolver %s</string>
+    <string name="unable_to_verify_service_identity">Não foi possível verificar a identidade</string>
+    <string name="unable_to_establish_secure_connection">Não foi possível estabelecer uma conexão segura</string>
+    <string name="timeout_reached">Tempo limite esgotado na tentativa de conectar a um serviço de e-mail</string>
+    <string name="unable_to_connect">Não foi possível conectar a um serviço de e-mail</string>
+    <string name="invalid_session_resource">Não há um serviço de e-mail válido neste endereço</string>
+    <string name="endpoint_not_found">Nenhum serviço de e-mail neste endereço</string>
+    <string name="enter_a_secure_url">Digite uma URL segura</string>
+    <string name="enter_a_valid_url">Digite uma URL de conexão válida</string>
+    <string name="enter_your_connection_url">Digite sua URL de conexão</string>
+    <string name="information_required">Informação necessária</string>
+    <string name="wrong_password">Senha incorreta. Tente novamente.</string>
+    <string name="enter_a_password">Digite uma senha</string>
+    <string name="enter_your_password">Digite sua senha</string>
+    <string name="welcome">Bem-vindo</string>
+    <string name="enter_a_valid_email_address">Digite um endereço de e-mail válido</string>
+    <string name="enter_an_email_address">Digite um endereço de e-mail</string>
+    <string name="next">Próximo</string>
+    <string name="sign_in_instruction">com sua conta de e-mail.</string>
+    <string name="email_address">Endereço de e-mail</string>
+    <string name="sign_in">Iniciar sessão</string>
+    <string name="deleted">Excluído</string>
+    <plurals name="n_deleted">
+        <item quantity="one">%s excluído</item>
+        <item quantity="other">%s excluídos</item>
+    </plurals>
+    <string name="undo">Desfazer</string>
+    <plurals name="n_archived">
+        <item quantity="one">%d arquivado</item>
+        <item quantity="other">%d arquivados</item>
+    </plurals>
+    <plurals name="n_removed_from_x">
+        <item quantity="one">%d removido de %s</item>
+        <item quantity="other">%d removidos de %s</item>
+    </plurals>
+    <string name="mark_not_important">Marcar como não importante</string>
+    <string name="search_hint">Pesquisar no e-mail</string>
+    <string name="remove_label">Remover etiqueta</string>
+    <string name="remove_label_x">Remover etiqueta %s</string>
+    <plurals name="n_moved_to_inbox">
+        <item quantity="one">%s movido para caixa de entrada</item>
+        <item quantity="other">%s movidos para caixa de entrada</item>
+    </plurals>
+    <string name="move_to_inbox">Mover para caixa de entrada</string>
+    <string name="to_x">a %s</string>
+    <string name="search">Pesquisar</string>
+    <string name="remove_flag">Remover marcação</string>
+    <string name="add_flag">Adicionar marcação</string>
+    <string name="mark_important">Marcar como importante</string>
+    <string name="delete">Excluir</string>
+    <string name="mark_read">Marcar como lido</string>
+    <string name="mark_unread">Marcar como não lido</string>
+    <string name="archive">Arquivar</string>
+</resources>
