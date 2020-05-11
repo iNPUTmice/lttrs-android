@@ -1,12 +1,11 @@
-Ltt.rs (uttalt «letters» er en konsepttest av en e-post(JMAP)-klient under utvikling. Den gjør bruk av Android Jetpack i stor grad for kodebase som er enklere å vedlikeholde enn noen av e-postklientene for Android som finnes allerede.
+Ltt.rs (uttalt «letters» er en konsepttest av en e-post(JMAP)-klient. Den gjør utstrakt bruk av Android Jetpack for å være mer vedlikeholdbar.
 
 Funksjoner og designhensyn:
 
 * Gjør tung bruk av mellomlagring, men kan ikke brukes fullstendig frakoblet. Ltt.rs gjør bruk av JMAP sin flotte mellomlagringsfunksjonalitet. Handlinger som markering av tråd som lest, trenger dog å gjøre en rundtur til tjeneren slik at ulest-antall blir oppdatert. Ltt.rs sørger for at selve handlingen ikke går tapt, selv om man er midlertidig frakoblet.
-* Ingen innstillinger annet enn kontooppsett. Instillinger inviterer funksjonsnedlessing, og gjør programmet vanskelig å vedlikeholde. Ltt.rs tar sikte på å støtte én arbeidsflyt. Brukere som trenger noe annet, vil finne K9 Mail og FairEmail med høvelig.
+*Kontooppsett og ikke mer knussel. Innstillinger inviterer funksjonsnedlessing, og gjør programmet vanskelig å vedlikeholde. Det er én tiltenkt arbeidsflyt. Brukere som trenger noe annet, vil finne K9 Mail og FairEmail med høvelig.
 * Minimum av eksterne avhengigheter. Tredjepartsbibliotek er ofte av dårlig kvalitet, og ender opp med å ikke bli vedlikeholdt. Derfor gjør man kun bruk av testede bibliotek fra tillitsverdige tilbydere.
-
-* Autokrypt som førsteklasses-funksjon¹. Med sine strenge grensesnittsveiledninger passer det rett inn i Ltt.rs.
+* Førsteklasses Autocrypt¹. Med sine strenge grensesnittsveiledninger passer det rett inn i Ltt.rs.
 * Ltt.rs er basert på jmap-mua, en hodeløs e-postklient, eller et bibliotek som håndterer alt en e-postklient ville, bortsett fra datalagring og grensesnitt. Lttrs-cli tilbys også, som bruker samme bibliotek.
 * I tvilstilfeller ser man til Gmail for inspirasjon.
 
