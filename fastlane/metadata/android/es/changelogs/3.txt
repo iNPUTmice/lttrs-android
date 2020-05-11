@@ -1,0 +1,2 @@
+* Cambios en los colores
+* Se corrigieron fugas de memoria

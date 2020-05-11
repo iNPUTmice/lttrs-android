@@ -1,0 +1,3 @@
+* Capacidades de lectura de correo muy rudimentarias (solo texto sin formato, incompatible con adjuntos)
+* Archivado, indicadores, marcas de leído/no leído
+* Borradores de mensajes (sin citas)

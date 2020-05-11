@@ -1,0 +1,1 @@
+Cliente de correo electrónico sencillo y de fácil mantenimiento
