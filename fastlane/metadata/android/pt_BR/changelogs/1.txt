@@ -1,0 +1,3 @@
+* Capacidades muito rudimentares de leitura de e-mail (apenas texto simples, sem anexos)
+* Arquivar, assinalar, marcar como lido e não lido
+* Criação de rascunho de e-mails (sem citação)
