@@ -2,9 +2,9 @@ Proof of concept e-mail (JMAP) client (pronounced \"Letters\"). Makes heavy use 
 
 Features, and design considerations:
 
-* Heavily cached, but not fully offline capable. Ltt.rs makes use of JMAP’s great caching capabilities. However, marking a thread as read does round-trip to the server to be update things such as read count. The action itself won’t get lost even if performed offline.
+* Heavily cached, but not fully offline capable. Ltt.rs makes use of JMAP’s great caching capabilities. However, marking a thread as read does a round-trip to the server to update things such as read count. The action itself won’t get lost even if performed offline.
 * Account setup and done. Settings invite feature creep and its friend unmaintainability. There is one specific work flow. K-9 Mail or FairEmail is more suitable for others.
-* Minimal dependencies. Third party libraries are often of poor quality, and end up unmaintained. Only widely known, highly tested libraries from reputable vendors.
+* Minimal dependencies. Only widely known, highly tested libraries from reputable vendors. Third-party libraries are often of poor quality, and end up unmaintained.
 * First class Autocrypt¹. Ltt.rs fits right into its strict UX guidelines.
 * Based on jmap-mua, a headless e-mail client, or a library that handles everything an e-mail client would, aside from data storage and UI. There is also lttrs-cli, which uses the same library.
 * Looks to Gmail for inspiration in cases of uncertainty.
