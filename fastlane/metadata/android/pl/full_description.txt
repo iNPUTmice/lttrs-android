@@ -1,11 +1,12 @@
-Ltt.rs (wymawiane Letters) to prototypowy klient poczty e-mail (JMAP), który ciągle jest rozwijan. W porównaniu z innymi klientami Ltt.rs wykorzystuje intensywnie Android Jetpack aby baza kodu była prosta i elegancka.
+PoC klienta e-maila (JMAP) (wymawiane jako \„Letters\”). Sprawia, że intensywne korzystanie z Android Jetpack jest łatwiejsze w utrzymaniu niż niektóre inne klienty e-mail dla Androida.
 
-Funkcje i względy projektowe
+Funkcje i uwagi dotyczące projektu:
 
-* Intensywnie cache'owany ale nie jest w pełni offline. Ltt.rs wykorzystuje możliwości cache'owania dostępne przez JMAP. Niektóre akcje jednakże, jak zaznaczenie wątku jako przeczytany, potrzebują kontaktu z serwerem zanim konsekwencje tych akcji będą zaktualizowane. Ltt.rs zapewnia że akcja nie zostanie zgubiona nawet jeśli została wykonana będąc offline.
-* Brak ustawień poza ustawieniem konta. Ustawienia powodują eksplozję funkcji i sprawiają, że aplikacja jest trudniejsza w zarządzaniu. Ltt.rs jest zoptymalizowany pod jeden specyficzny tryb pracy. Użytkownicy którzy potrzebują innych trybów mogą być bardziej zadowoleni z K-9 Mail lub FairEmail.
-* Autocrypt jako funkcja pierwszorzędna¹. Ze swoimi ścisłymi wymaganiami odnośnie UX autocrypt pasuje idealnie do Ltt.rs.
-* Ltt.rs jest operaty na jmap-mua, kliencie bez UI lub bibliotece która zarządza wszystkim w kliencie poczty oprócz składowania danych i UI. Istnieje także, lttrs-cli który używa tej samej biblioteki.
-* Kiedy natrafisz na wątpliwość: patrz na Gmail dla inspiracji.
+* Mocno buforowane, ale nie w pełni w trybie offline. Ltt.rs korzysta z doskonałych możliwości buforowania JMAP. Jednak oznaczenie wątku jako przeczytanego powoduje powrót do serwera w obie strony, aby zaktualizować takie rzeczy, jak liczba odczytów. Sama akcja nie zginie, nawet jeśli zostanie wykonana offline.
+* Konfiguracja konta i gotowe. Ustawienia zapraszają funkcję pełzania funkcji i niemożność jej utrzymania przez znajomego. Istnieje jeden określony przepływ pracy. K-9 Mail lub FairEmail jest bardziej odpowiedni dla innych.
+* Minimalne zależności. Tylko szeroko znane, sprawdzone biblioteki renomowanych dostawców. Biblioteki innych firm są często niskiej jakości i nie są utrzymywane.
+* Autocrypt pierwszej klasy¹. Ltt.rs jest zgodny z surowymi wytycznymi UX.
+* Na podstawie jmap-mua, bezgłowego klienta poczty e-mail lub biblioteki, która obsługuje wszystko, co klient poczty e-mail, oprócz przechowywania danych i interfejsu użytkownika. Istnieje również lttrs-cli, który korzysta z tej samej biblioteki.
+* Szuka inspiracji w Gmailu w przypadku niepewności.
 
 ¹: Planowana funkcja
