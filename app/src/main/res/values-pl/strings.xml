@@ -4,8 +4,8 @@
     <string name="compose_cc">DW</string>
     <string name="draft">Szkic</string>
     <string name="select_sender">Wybierz nadawcę.</string>
-    <string name="the_address_x_is_invalid">Adres &lt;%s&gt; jest niepoprawny.</string>
-    <string name="add_at_least_one_recipient">Dodaj przynajmniej jednego adresata.</string>
+    <string name="the_address_x_is_invalid">Coś jest nie tak z adresem „&lt;%s&gt;”.</string>
+    <string name="add_at_least_one_recipient">Dodaj adresata.</string>
     <string name="ok">OK</string>
     <string name="compose_from">Od</string>
     <string name="compose_subject">Temat</string>
@@ -17,7 +17,7 @@
     <string name="attach_file">Załącz plik</string>
     <string name="compose">Utwórz</string>
     <string name="unable_to_fetch_session">Nie można pobrać sesji: %s</string>
-    <string name="no_network_connection">Brak połączenia z siecią</string>
+    <string name="no_network_connection">Połącz z internetem</string>
     <string name="unknown_host">Nie można rozwiązać %s</string>
     <string name="unable_to_verify_service_identity">Nie można zweryfikować tożsamości</string>
     <string name="unable_to_establish_secure_connection">Nie można nawiązać bezpiecznego połączenia</string>
@@ -32,7 +32,7 @@
     <string name="wrong_password">Złe hasło. Spróbuj ponownie.</string>
     <string name="enter_a_password">Wpisz hasło</string>
     <string name="enter_your_password">Wpisz swoje hasło</string>
-    <string name="welcome">Witamy</string>
+    <string name="welcome">Witaj</string>
     <string name="enter_a_valid_email_address">Wpisz poprawny adres e-mail</string>
     <string name="enter_an_email_address">Wpisz adres e-mail</string>
     <string name="next">Dalej</string>
@@ -41,9 +41,10 @@
     <string name="sign_in">Zaloguj się</string>
     <string name="deleted">Usunięto</string>
     <plurals name="n_deleted">
-        <item quantity="one">Usunięto %10</item>
-        <item quantity="few">Usunięto %10</item>
-        <item quantity="many">Usunięto %10</item>
+        <item quantity="one">Usunięto %d</item>
+        <item quantity="few">Usunięto %d</item>
+        <item quantity="many">Usunięto %d</item>
+        <item quantity="other">Usunięto %d</item>
     </plurals>
     <string name="undo">Cofnij</string>
     <plurals name="n_archived">
@@ -57,11 +58,11 @@
         <item quantity="many">Usunięto %s z %s</item>
     </plurals>
     <string name="mark_not_important">Oznacz jako nieważne</string>
-    <string name="search_hint">Szukaj e-maili</string>
+    <string name="search_hint">Szukaj w mailu</string>
     <string name="remove_label">Usuń etykietę</string>
     <string name="remove_label_x">Usuń etykietę %s</string>
     <plurals name="n_moved_to_inbox">
-        <item quantity="one">przeniesiono jeden do skrzynki</item>
+        <item quantity="one">przeniesiono do skrzynki</item>
         <item quantity="few">przeniesiono %s do skrzynki</item>
         <item quantity="many">przeniesiono %s do skrzynki</item>
         <item quantity="other">przeniesiono %s do skrzynki</item>
