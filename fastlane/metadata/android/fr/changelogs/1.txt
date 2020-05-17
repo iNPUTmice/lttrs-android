@@ -1,0 +1,3 @@
+* Capacités de lecture de courriels très rudimentaires (texte simple uniquement, pas de pièces jointes)
+* Archivage, étiquetage, marquage lu / non lu
+* Création de brouillons (pas de citations)

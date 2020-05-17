@@ -1,0 +1,2 @@
+* Ajuster les couleurs
+* Fuites de mémoire corrigées
