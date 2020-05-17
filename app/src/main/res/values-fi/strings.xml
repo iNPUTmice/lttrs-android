@@ -1,2 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="could_not_store_account_credentials">Tilin tunnistetietoja ei voitu tallentaa</string>
+    <string name="compose_cc">Kopio</string>
+    <string name="draft">Luonnos</string>
+    <string name="select_sender">Valitse lähettäjä.</string>
+    <string name="the_address_x_is_invalid">Jokin on virheellinen osoitteessa &lt;% s&gt;.</string>
+    <string name="add_at_least_one_recipient">Lisää vastaanottaja.</string>
+    <string name="ok">OK</string>
+    <string name="compose_from">Lähettäjä</string>
+    <string name="compose_subject">Aihe</string>
+    <string name="compose_compose_email">Kirjoita sähköposti</string>
+    <string name="compose_to">Vastaanottaja</string>
+    <string name="schedule_send">Ajoita lähettäminen</string>
+    <string name="discard">Hylkää</string>
+    <string name="send">Lähetä</string>
+    <string name="attach_file">Liitä tiedosto</string>
+    <string name="compose">Luo viesti</string>
+    <string name="unable_to_fetch_session">Istuntoa ei voitu hakea: %s</string>
+    <string name="no_network_connection">Ei Internet-yhteyttä</string>
+    <string name="unknown_host">Kohdetta %s ei voitu ratkaista</string>
+    <string name="unable_to_verify_service_identity">Käyttäjätietoja ei voitu vahvistaa</string>
+    <string name="unable_to_establish_secure_connection">Suojattua yhteyttä ei voitu muodostaa</string>
+    <string name="timeout_reached">Sähköpostipalveluun yhteyden muodostamisen aika päättyi</string>
+    <string name="unable_to_connect">Yhteyden muodostaminen sähköpostipalveluun ei onnistu</string>
+    <string name="invalid_session_resource">Tähän osoitteeseen ei ole kelvollista sähköpostipalvelua</string>
+    <string name="endpoint_not_found">Ei sähköpostipalvelua tähän osoitteeseen</string>
+    <string name="enter_a_secure_url">Kirjoita suojattu URL-osoite</string>
+    <string name="enter_a_valid_url">Kirjoita kelvollinen yhteyden URL-osoite</string>
+    <string name="enter_your_connection_url">Kirjoita yhteyden URL-osoite</string>
+    <string name="information_required">Tiedot vaaditaan</string>
+    <string name="wrong_password">Väärä salasana. Yritä uudelleen.</string>
+    <string name="enter_a_password">Kirjoita salasana</string>
+    <string name="enter_your_password">Kirjoita salasanasi</string>
+    <string name="welcome">Tervetuloa</string>
+    <string name="enter_a_valid_email_address">Kirjoita kelvollinen sähköpostiosoite</string>
+    <string name="enter_an_email_address">Kirjoita sähköpostiosoite</string>
+    <string name="next">Seuraava</string>
+    <string name="sign_in_instruction">sähköpostitililläsi.</string>
+    <string name="email_address">Sähköpostiosoite</string>
+    <string name="sign_in">Kirjaudu sisään</string>
+    <string name="deleted">Poistettu</string>
+    <plurals name="n_deleted">
+        <item quantity="one">%d poistettu</item>
+        <item quantity="other">%d poistettu</item>
+    </plurals>
+    <string name="undo">Kumoa</string>
+    <plurals name="n_archived">
+        <item quantity="one">%d arkistoitu</item>
+        <item quantity="other">%d arkistoitu</item>
+    </plurals>
+    <plurals name="n_removed_from_x">
+        <item quantity="one">%d poistettu kohteesta %s</item>
+        <item quantity="other">%d poistettu kohteesta %s</item>
+    </plurals>
+    <string name="mark_not_important">Merkitse ei-tärkeäksi</string>
+    <string name="search_hint">Etsi sähköpostista</string>
+    <string name="remove_label">Poista etiketti</string>
+    <string name="remove_label_x">Poista etiketti %s</string>
+    <plurals name="n_moved_to_inbox">
+        <item quantity="one">%d siirretty Saapuneet-kansioon</item>
+        <item quantity="other">%d siirretty Saapuneet-kansioon</item>
+    </plurals>
+    <string name="move_to_inbox">Siirrä saapuneet-kansioon</string>
+    <string name="to_x">kohteeseen %s</string>
+    <string name="search">Etsi</string>
+    <string name="remove_flag">Poista lippu</string>
+    <string name="add_flag">Lisää lippu</string>
+    <string name="mark_important">Merkitse tärkeäksi</string>
+    <string name="delete">Poista</string>
+    <string name="mark_read">Merkitse luetuksi</string>
+    <string name="mark_unread">Merkitse lukemattomaksi</string>
+    <string name="archive">Arkistoi</string>
+</resources>
