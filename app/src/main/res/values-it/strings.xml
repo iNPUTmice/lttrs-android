@@ -2,8 +2,8 @@
 <resources>
     <string name="archive">Archivia</string>
     <string name="to_x">a %s</string>
-    <string name="remove_flag">Rimuovi flag</string>
-    <string name="add_flag">Aggiungi flag</string>
+    <string name="remove_flag">Rimuovi contrassegno</string>
+    <string name="add_flag">Aggiungi contrassegno</string>
     <string name="could_not_store_account_credentials">Impossibile salvare le credenziali dell\'account</string>
     <string name="compose_cc">Cc</string>
     <string name="draft">Bozza</string>
@@ -13,7 +13,7 @@
     <string name="ok">OK</string>
     <string name="compose_from">Da</string>
     <string name="compose_subject">Oggetto</string>
-    <string name="compose_compose_email">Componi email</string>
+    <string name="compose_compose_email">Componi e-mail</string>
     <string name="compose_to">A</string>
     <string name="schedule_send">Programma invio</string>
     <string name="discard">Scarta</string>
@@ -25,10 +25,10 @@
     <string name="unknown_host">Impossibile risolvere %s</string>
     <string name="unable_to_verify_service_identity">Impossibile verificare l\'identità</string>
     <string name="unable_to_establish_secure_connection">Impossibile stabilire una connessione sicura</string>
-    <string name="timeout_reached">Tempo scaduto tentando di connettersi al servizio email</string>
-    <string name="unable_to_connect">Impossibile connettersi al servizio email</string>
-    <string name="invalid_session_resource">Non c\'è un servizio email valido a questo indirizzo</string>
-    <string name="endpoint_not_found">Non c\'è alcun servizio email a questo indirizzo</string>
+    <string name="timeout_reached">Tempo scaduto tentando di connettersi al servizio e-mail</string>
+    <string name="unable_to_connect">Impossibile connettersi al servizio e-mail</string>
+    <string name="invalid_session_resource">Non c\'è un servizio e-mail valido a questo indirizzo</string>
+    <string name="endpoint_not_found">Non c\'è alcun servizio e-mail a questo indirizzo</string>
     <string name="enter_a_secure_url">Inserisci un URL sicuro</string>
     <string name="enter_a_valid_url">Inserisci un URL di connessione valido</string>
     <string name="enter_your_connection_url">Inserisci l\'URL di connessione</string>
@@ -37,11 +37,11 @@
     <string name="enter_a_password">Inserisci una password</string>
     <string name="enter_your_password">Inserisci la tua password</string>
     <string name="welcome">Benvenuto/a</string>
-    <string name="enter_a_valid_email_address">Inserisci un indirizzo email valido</string>
-    <string name="enter_an_email_address">Inserisci un indirizzo email</string>
+    <string name="enter_a_valid_email_address">Inserisci un indirizzo e-mail valido</string>
+    <string name="enter_an_email_address">Inserisci un indirizzo e-mail</string>
     <string name="next">Avanti</string>
-    <string name="sign_in_instruction">con il tuo account email.</string>
-    <string name="email_address">Indirizzo email</string>
+    <string name="sign_in_instruction">con il tuo account e-mail.</string>
+    <string name="email_address">Indirizzo e-mail</string>
     <string name="sign_in">Accedi</string>
     <string name="deleted">Eliminata</string>
     <plurals name="n_deleted">
@@ -58,7 +58,7 @@
         <item quantity="other">%d rimossi da %s</item>
     </plurals>
     <string name="mark_not_important">Segna come non importante</string>
-    <string name="search_hint">Cerca email</string>
+    <string name="search_hint">Cerca e-mail</string>
     <string name="remove_label">Rimuovi etichetta</string>
     <string name="remove_label_x">Rimuovi etichetta %s</string>
     <plurals name="n_moved_to_inbox">
