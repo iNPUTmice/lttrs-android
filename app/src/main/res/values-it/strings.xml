@@ -8,7 +8,7 @@
     <string name="compose_cc">Cc</string>
     <string name="draft">Bozza</string>
     <string name="select_sender">Seleziona mittente.</string>
-    <string name="the_address_x_is_invalid">L\'indirizzo &lt;%s&gt; non è valido.</string>
+    <string name="the_address_x_is_invalid">Qualcosa non va con l\'indirizzo &lt;%s&gt;</string>
     <string name="add_at_least_one_recipient">Aggiungi almeno un destinatario.</string>
     <string name="ok">OK</string>
     <string name="compose_from">Da</string>
