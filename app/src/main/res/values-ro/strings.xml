@@ -53,7 +53,7 @@
     <string name="compose_cc">Cc</string>
     <string name="draft">Ciornă</string>
     <string name="select_sender">Selectați expeditor.</string>
-    <string name="the_address_x_is_invalid">Adresa &lt;%s&gt; este invalidă.</string>
+    <string name="the_address_x_is_invalid">Ceva este în neregulă cu adresa &lt;%s&gt;</string>
     <string name="add_at_least_one_recipient">Adăugați cel puțin un destinatar.</string>
     <string name="ok">Bine</string>
     <string name="compose_from">De la</string>
