@@ -2,7 +2,7 @@
 <resources>
     <string name="compose_cc">CC</string>
     <string name="draft">Entwurf</string>
-    <string name="the_address_x_is_invalid">Die Adresse &lt;%s&gt; ist ungültig.</string>
+    <string name="the_address_x_is_invalid">Etwas stimmt nicht mit der Adresse &lt;%s&gt;</string>
     <string name="ok">OK</string>
     <string name="compose_from">Von</string>
     <string name="compose_subject">Betreff</string>
