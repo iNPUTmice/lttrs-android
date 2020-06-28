@@ -4,7 +4,7 @@
     <string name="compose_cc">DW</string>
     <string name="draft">Szkic</string>
     <string name="select_sender">Wybierz nadawcę.</string>
-    <string name="the_address_x_is_invalid">Coś jest nie tak z adresem „&lt;%s&gt;”.</string>
+    <string name="the_address_x_is_invalid">Coś jest nie tak z adresem &lt;%s&gt;</string>
     <string name="add_at_least_one_recipient">Dodaj adresata.</string>
     <string name="ok">OK</string>
     <string name="compose_from">Od</string>
