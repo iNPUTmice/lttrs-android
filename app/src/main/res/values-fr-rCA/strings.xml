@@ -23,7 +23,7 @@
     <string name="compose_cc">CC</string>
     <string name="draft">Brouillon</string>
     <string name="select_sender">Sélectionner un expéditeur.</string>
-    <string name="the_address_x_is_invalid">Quelque chose ne va pas avec l’adresse &lt;%s&gt;.</string>
+    <string name="the_address_x_is_invalid">Quelque chose ne va pas avec l’adresse &lt;%s&gt;</string>
     <string name="add_at_least_one_recipient">Ajoutez un destinataire.</string>
     <string name="ok">OK</string>
     <string name="compose_from">De</string>
