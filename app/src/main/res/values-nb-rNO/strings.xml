@@ -32,7 +32,7 @@
     <string name="remove_label_x">Fjern etiketten %s</string>
     <string name="draft">Kladd</string>
     <string name="select_sender">Velg avsender.</string>
-    <string name="the_address_x_is_invalid">Noe er galt med adressen «&lt;%s&gt;».</string>
+    <string name="the_address_x_is_invalid">Noe er galt med adressen &lt;%s&gt;</string>
     <string name="add_at_least_one_recipient">Legg til minst én mottager.</string>
     <string name="ok">OK</string>
     <string name="compose_from">Fra</string>
