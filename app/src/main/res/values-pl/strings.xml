@@ -58,7 +58,7 @@
         <item quantity="many">Usunięto %s z %s</item>
     </plurals>
     <string name="mark_not_important">Oznacz jako nieważne</string>
-    <string name="search_hint">Szukaj w mailu</string>
+    <string name="search_hint">Szukaj w e-mailu</string>
     <string name="remove_label">Usuń etykietę</string>
     <string name="remove_label_x">Usuń etykietę %s</string>
     <plurals name="n_moved_to_inbox">
