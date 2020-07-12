@@ -4,7 +4,7 @@
     <string name="compose_cc">Kopio</string>
     <string name="draft">Luonnos</string>
     <string name="select_sender">Valitse lähettäjä.</string>
-    <string name="the_address_x_is_invalid">Jokin on virheellinen osoitteessa &lt;%s&gt;.</string>
+    <string name="the_address_x_is_invalid">Jokin on virheellinen osoitteessa &lt;%s&gt;</string>
     <string name="add_at_least_one_recipient">Lisää vastaanottaja.</string>
     <string name="ok">OK</string>
     <string name="compose_from">Lähettäjä</string>
