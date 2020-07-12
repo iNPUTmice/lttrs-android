@@ -10,7 +10,7 @@
     <string name="compose_cc">Cc</string>
     <string name="draft">Borrador</string>
     <string name="select_sender">Seleccione el remitente.</string>
-    <string name="the_address_x_is_invalid">Algo está mal con la dirección «&lt;%s&gt;».</string>
+    <string name="the_address_x_is_invalid">Algo está mal con la dirección &lt;%s&gt;</string>
     <string name="add_at_least_one_recipient">Añada un destinatario.</string>
     <string name="ok">Aceptar</string>
     <string name="compose_from">De</string>
