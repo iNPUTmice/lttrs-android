@@ -6,7 +6,7 @@ Makes heavy use of Android Jetpack to be more maintainable than some of the othe
 ![Android screenshot](https://gultsch.de/files/lttrs-android.png)
 
 If the above screenshots don’t do enough to convince you, you can watch this
-[short video on YouTube](https://www.youtube.com/watch?v=ArCuudFwJX4).
+[short video on Invidious](https://invidious.site/watch?v=ArCuudFwJX4).
 
 ### Features, and design considerations:
 
