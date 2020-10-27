@@ -13,7 +13,7 @@ If the above screenshots don’t do enough to convince you, you can watch this
 * _Heavily cached_, but not fully offline capable. Ltt.rs makes use of JMAP’s great caching capabilities. However, marking a thread as read does round-trip to the server to update things such as read count. The action itself won’t get lost even if performed offline.
 * Account _setup and done_. Settings invite feature creep and its friend unmaintainability.
 * _Minimal dependencies_. Third party libraries are often of poor quality, and end up unmaintained. Only widely known, highly tested libraries from reputable vendors.
-* _Native Autocryp support_.¹
+* _Native Autocrypt support_.¹
 * _Based on [jmap-mua](https://github.com/iNPUTmice/jmap)_, a headless e-mail client, or a library that handles everything an e-mail client would, aside from data storage and UI. There is also [lttrs-cli](https://github.com/iNPUTmice/lttrs-cli), which uses the same library.
 * _Looks to Gmail for inspiration_ in cases of uncertainty.
 
