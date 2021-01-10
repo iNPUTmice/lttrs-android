@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="search_hint">Chercher dans les courriels</string>
-    <string name="could_not_store_account_credentials">Impossible de stocker les identifiants de compte</string>
+    <string name="could_not_store_account_credentials">Impossible de stocker les identifiants du compte</string>
     <string name="compose_cc">CC</string>
     <string name="draft">Brouillon</string>
     <string name="select_sender">Sélectionner un expéditeur.</string>
@@ -9,7 +9,7 @@
     <string name="add_at_least_one_recipient">Ajoutez un destinataire.</string>
     <string name="ok">OK</string>
     <string name="compose_from">De</string>
-    <string name="compose_subject">Objet</string>
+    <string name="compose_subject">Sujet</string>
     <string name="compose_compose_email">Rédiger un courriel</string>
     <string name="compose_to">À</string>
     <string name="schedule_send">Planifier l’envoi</string>
@@ -30,15 +30,15 @@
     <string name="enter_a_valid_url">Entrez une URL de connexion valide</string>
     <string name="enter_your_connection_url">Entrez votre URL de connexion</string>
     <string name="information_required">Infos requises</string>
-    <string name="wrong_password">Mot de passe erroné. Réessayez.</string>
+    <string name="wrong_password">Mot de passe erroné. Veuillez réessayer.</string>
     <string name="enter_a_password">Entrez un mot de passe</string>
     <string name="enter_your_password">Entrez votre mot de passe</string>
     <string name="welcome">Bienvenue</string>
-    <string name="enter_a_valid_email_address">Entrez une adresse électronique valide</string>
-    <string name="enter_an_email_address">Entrez une adresse électronique</string>
+    <string name="enter_a_valid_email_address">Entrez une adresse courriel valide</string>
+    <string name="enter_an_email_address">Entrez une adresse courriel</string>
     <string name="next">Suivant</string>
-    <string name="sign_in_instruction">avec votre compte de messagerie.</string>
-    <string name="email_address">Adresse électronique</string>
+    <string name="sign_in_instruction">avec votre adresse courriel.</string>
+    <string name="email_address">Adresse courriel</string>
     <string name="sign_in">Se connecter</string>
     <string name="deleted">Supprimé</string>
     <plurals name="n_deleted">
@@ -58,10 +58,10 @@
     <string name="remove_label">Enlever l’étiquette</string>
     <string name="remove_label_x">Enlever l’étiquette %s</string>
     <plurals name="n_moved_to_inbox">
-        <item quantity="one">%d déplacé vers boîte de réception</item>
-        <item quantity="other">%d déplacés vers boîte de réception</item>
+        <item quantity="one">%d déplacé vers la boîte de réception</item>
+        <item quantity="other">%d déplacés vers la boîte de réception</item>
     </plurals>
-    <string name="move_to_inbox">Déplacer vers boîte de réception</string>
+    <string name="move_to_inbox">Déplacer vers la boîte de réception</string>
     <string name="to_x">à %s</string>
     <string name="search">Chercher</string>
     <string name="add_flag">Marquer</string>
@@ -72,13 +72,13 @@
     <string name="mark_unread">Marquer comme non lu</string>
     <string name="archive">Archiver</string>
     <string name="apply_changes">Appliquer les changements</string>
-    <string name="label_as">Labelliser comme</string>
-    <string name="change_labels">Changer les labels</string>
+    <string name="label_as">Étiqueter comme</string>
+    <string name="change_labels">Changer les étiquettes</string>
     <string name="cancel">Annuler</string>
     <string name="confirm">Confirmer</string>
-    <string name="assign_role_detailed_explanation">Ltt.rs a besoin d\'un label (boîte aux lettres) avec le rôle de %1$s pour fonctionner correctement. Si vous ne souhaitez pas utiliser le label appelé %2$s à cette fin, vous pouvez appuyer sur Annuler et utiliser votre ordinateur ou votre client Web pour créer un libellé différent avec le rôle %1$s.</string>
-    <string name="assign_role_question">Vous avez déjà un label appelé %1$s. Souhaitez-vous lui attribuer le rôle de %2$s \?</string>
-    <string name="reassign_role_question">Vous avez déjà un label appelé %1$s avec le rôle de %2$s. Souhaitez-vous lui réaffecter le rôle de %3$s \?</string>
+    <string name="assign_role_detailed_explanation">Ltt.rs a besoin d’une étiquette (boîte aux lettres) avec le rôle de %1$s pour fonctionner correctement. Si vous ne souhaitez pas utiliser l’étiquette appelée %2$s à cette fin, vous pouvez appuyer sur Annuler et utiliser votre ordinateur ou votre client Web pour créer une étiquette différente avec le rôle %1$s.</string>
+    <string name="assign_role_question">Vous avez déjà une étiquette appelée %1$s. Souhaitez-vous lui assigner le rôle de %2$s \?</string>
+    <string name="reassign_role_question">Vous avez déjà une étiquette appelée %1$s avec le rôle de %2$s. Souhaitez-vous lui réassigner le rôle de %3$s \?</string>
     <string name="assign_role">Assigner le rôle</string>
     <string name="reassign_role">Réassigner le rôle</string>
 </resources>
