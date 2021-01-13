@@ -81,4 +81,9 @@
     <string name="label_as">Etichetta come</string>
     <string name="apply_changes">Applica modifiche</string>
     <string name="change_labels">Cambia etichette</string>
+    <string name="create">Crea</string>
+    <string name="new_label">Nuova etichetta</string>
+    <string name="reserved_mailbox_name">Nome riservato. Provane uno diverso.</string>
+    <string name="no_name_specified">Nessun nome specificato. Riprova.</string>
+    <string name="enter_a_label_name">Digita una nuova etichetta</string>
 </resources>
