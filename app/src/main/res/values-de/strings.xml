@@ -81,4 +81,8 @@
     <string name="reassign_role_question">Sie haben bereits ein Label namens %1$s mit der Rolle %2$s. Möchten Sie ihm die Rolle %3$s neu zuweisen\?</string>
     <string name="assign_role">Rolle zuweisen</string>
     <string name="reassign_role">Rolle neu zuweisen</string>
+    <string name="create">Erstellen</string>
+    <string name="new_label">Neues Label</string>
+    <string name="reserved_mailbox_name">Reservierter Name. Versuche es mit einem anderen Namen.</string>
+    <string name="no_name_specified">Kein Name angegeben. Versuche es nochmal.</string>
 </resources>
