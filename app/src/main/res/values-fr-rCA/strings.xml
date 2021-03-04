@@ -81,4 +81,9 @@
     <string name="reassign_role_question">Vous avez déjà un label appelé %1$s avec le rôle de %2$s. Souhaitez-vous lui réaffecter le rôle de %3$s\?</string>
     <string name="assign_role">Assigner le rôle</string>
     <string name="reassign_role">Réassigner le rôle</string>
+    <string name="create">Créer</string>
+    <string name="new_label">Nouvelle étiquette</string>
+    <string name="reserved_mailbox_name">Nom réservé. Essayez un autre nom.</string>
+    <string name="no_name_specified">Aucun nom spécifié. Réessayez.</string>
+    <string name="enter_a_label_name">Saisissez un nouveau nom d’étiquette</string>
 </resources>
