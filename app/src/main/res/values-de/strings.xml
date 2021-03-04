@@ -56,7 +56,7 @@
         <item quantity="one">%d aus %s entfernt</item>
         <item quantity="other">%d aus %s entfernt</item>
     </plurals>
-    <string name="remove_label">Entferne Label</string>
+    <string name="remove_label">Label entfernen</string>
     <string name="remove_label_x">Entferne Label %s</string>
     <string name="to_x">An %s</string>
     <string name="enter_a_secure_url">Gib eine sichere URL ein</string>
