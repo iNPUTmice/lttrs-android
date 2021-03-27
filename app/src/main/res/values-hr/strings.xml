@@ -19,7 +19,7 @@
     <string name="select_sender">Odaberi pošiljatelja.</string>
     <string name="delete">Izbriši</string>
     <string name="enter_a_password">Upiši lozinku</string>
-    <string name="sign_in_instruction">s tvojim e-mail raučunom.</string>
+    <string name="sign_in_instruction">sa svojim računom e-pošte.</string>
     <plurals name="n_deleted">
         <item quantity="one">izbrisano: %d</item>
         <item quantity="few">izbrisano: %d</item>
@@ -49,7 +49,7 @@
     <string name="mark_unread">Označi kao nepročitano</string>
     <string name="discard">Odbaci</string>
     <string name="archive">Arhiviraj</string>
-    <string name="email_address">E-mail adresa</string>
+    <string name="email_address">Adresa e-pošte</string>
     <string name="endpoint_not_found">Na ovoj adresi nema e-mail usluge</string>
     <plurals name="n_moved_to_inbox">
         <item quantity="one">premješteno u ulazni sandučić: %d</item>
