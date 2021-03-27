@@ -49,7 +49,7 @@
     <string name="enter_an_email_address">Введите адрес эл. почты</string>
     <string name="next">Далее</string>
     <string name="sign_in_instruction">С помощью аккаунта эл. почты.</string>
-    <string name="email_address">E-mail адрес</string>
+    <string name="email_address">Адрес эл. почты</string>
     <string name="sign_in">Войти</string>
     <string name="deleted">Удаленные</string>
     <string name="undo">Отменить</string>
