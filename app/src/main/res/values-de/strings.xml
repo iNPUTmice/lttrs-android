@@ -86,4 +86,6 @@
     <string name="reserved_mailbox_name">Reservierter Name. Versuche es mit einem anderen Namen.</string>
     <string name="no_name_specified">Kein Name angegeben. Versuche es nochmal.</string>
     <string name="enter_a_label_name">Gib einen Namen für ein neues Label ein</string>
+    <string name="add_another_account">Weiteres Konto hinzufügen</string>
+    <string name="manage_accounts">Konten verwalten</string>
 </resources>
