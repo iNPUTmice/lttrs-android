@@ -1,0 +1,1 @@
+* Behebt, dass Ltt.rs nach längerer Inaktivität nicht mehr aktualisiert wird
