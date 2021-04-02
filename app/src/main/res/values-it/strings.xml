@@ -86,4 +86,6 @@
     <string name="reserved_mailbox_name">Nome riservato. Provane uno diverso.</string>
     <string name="no_name_specified">Nessun nome specificato. Riprova.</string>
     <string name="enter_a_label_name">Digita una nuova etichetta</string>
+    <string name="add_another_account">Aggiungi un altro account</string>
+    <string name="manage_accounts">Gestisci gli account</string>
 </resources>
