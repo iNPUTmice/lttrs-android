@@ -1,0 +1,1 @@
+* Correction du fait que Ltt.rs ne se mettait pas à jour après de longues périodes d'inactivité
