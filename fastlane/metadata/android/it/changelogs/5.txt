@@ -1,0 +1,1 @@
+* Corretto un altro errore che impediva l'aggiornamento delle email
