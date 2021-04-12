@@ -19,6 +19,7 @@ import java.io.IOException;
 import okhttp3.mockwebserver.MockWebServer;
 import rs.ltt.android.ui.activity.LttrsActivity;
 import rs.ltt.android.ui.activity.SetupActivity;
+import rs.ltt.jmap.client.Services;
 import rs.ltt.jmap.client.api.HttpJmapApiClient;
 import rs.ltt.jmap.mock.server.JmapDispatcher;
 import rs.ltt.jmap.mock.server.MockMailServer;
@@ -48,7 +49,7 @@ public class SetupTest {
 
     private final MockWebServer mockWebServer = new MockWebServer();
     private final MockMailServer mockMailServer = new MockMailServer(128);
-    private final OkHttp3IdlingResource okHttp3IdlingResource = OkHttp3IdlingResource.create("OkHttp", HttpJmapApiClient.OK_HTTP_CLIENT);
+    private final OkHttp3IdlingResource okHttp3IdlingResource = OkHttp3IdlingResource.create("OkHttp", Services.OK_HTTP_CLIENT_LOGGING);
 
     @Before
     public void startServer() throws IOException {
