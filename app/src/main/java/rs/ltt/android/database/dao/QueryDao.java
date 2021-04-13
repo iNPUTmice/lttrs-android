@@ -68,6 +68,9 @@ public abstract class QueryDao extends AbstractEntityDao {
     @Query("select count(id) from query_item where queryId=:queryId")
     abstract int getItemCount(Long queryId);
 
+    @Query("select case when exists(select query_item.id from `query` join query_item on `query`.id = query_item.queryId where queryString=:queryString) then 0 else 1 end")
+    public abstract boolean empty(String queryString);
+
     @Query("delete from `query` where queryString=:queryString")
     abstract void deleteQuery(String queryString);
 

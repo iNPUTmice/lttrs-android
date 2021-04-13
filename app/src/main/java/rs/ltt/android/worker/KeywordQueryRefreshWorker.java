@@ -20,9 +20,10 @@ public class KeywordQueryRefreshWorker extends AbstractQueryRefreshWorker {
         this.keyword = data.getString(KEYWORD_KEY);
     }
 
-    public static Data data(final Long account, final String keyword) {
+    public static Data data(final Long account, final boolean skipOverEmpty, final String keyword) {
         return new Data.Builder()
                 .putLong(ACCOUNT_KEY, account)
+                .putBoolean(SKIP_OVER_EMPTY_KEY, skipOverEmpty)
                 .putString(KEYWORD_KEY, keyword)
                 .build();
     }

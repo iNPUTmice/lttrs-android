@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import rs.ltt.android.entity.MailboxOverviewItem;
+import rs.ltt.android.worker.InboxQueryRefreshWorker;
 import rs.ltt.android.worker.MailboxQueryRefreshWorker;
 import rs.ltt.jmap.common.entity.query.EmailQuery;
 import rs.ltt.jmap.mua.util.StandardQueries;
@@ -62,11 +63,17 @@ public class MailboxQueryViewModel extends AbstractQueryViewModel {
     }
 
     @Override
-    protected OneTimeWorkRequest getRefreshWorkRequest() {
+    protected OneTimeWorkRequest getRefreshWorkRequest(final boolean skipOverEmpty) {
         LOGGER.info("building OneTimeWorkRequest with mailboxId={}", mailboxId);
-        return new OneTimeWorkRequest.Builder(MailboxQueryRefreshWorker.class)
-                .setInputData(MailboxQueryRefreshWorker.data(queryRepository.getAccountId(), mailboxId))
-                .build();
+        if (mailboxId == null) {
+            return new OneTimeWorkRequest.Builder(InboxQueryRefreshWorker.class)
+                    .setInputData(InboxQueryRefreshWorker.data(queryRepository.getAccountId(), skipOverEmpty))
+                    .build();
+        } else {
+            return new OneTimeWorkRequest.Builder(MailboxQueryRefreshWorker.class)
+                    .setInputData(MailboxQueryRefreshWorker.data(queryRepository.getAccountId(), skipOverEmpty, mailboxId))
+                    .build();
+        }
     }
 
     @Override

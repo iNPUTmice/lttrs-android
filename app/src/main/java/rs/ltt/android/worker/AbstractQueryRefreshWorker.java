@@ -18,6 +18,7 @@ package rs.ltt.android.worker;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.work.Data;
 import androidx.work.WorkerParameters;
 
 import org.slf4j.Logger;
@@ -27,10 +28,15 @@ import rs.ltt.jmap.common.entity.query.EmailQuery;
 
 public abstract class AbstractQueryRefreshWorker extends AbstractMuaWorker {
 
+    protected static final String SKIP_OVER_EMPTY_KEY = "skipOverEmpty";
+    protected final boolean skipOverEmpty;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractQueryRefreshWorker.class);
 
     public AbstractQueryRefreshWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
+        final Data data = workerParams.getInputData();
+        this.skipOverEmpty = data.getBoolean(SKIP_OVER_EMPTY_KEY, false);
     }
 
     abstract EmailQuery getEmailQuery();
@@ -38,7 +44,11 @@ public abstract class AbstractQueryRefreshWorker extends AbstractMuaWorker {
     @NonNull
     @Override
     public Result doWork() {
-        LOGGER.info("doWork()");
+        final EmailQuery emailQuery = getEmailQuery();
+        if (skipOverEmpty && getDatabase().queryDao().empty(emailQuery.asHash())) {
+            LOGGER.warn("Do not refresh because query is empty (UI will automatically load this)");
+            return Result.failure();
+        }
         try {
             getMua().query(getEmailQuery()).get();
             return Result.success();

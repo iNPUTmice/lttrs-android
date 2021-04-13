@@ -223,10 +223,10 @@ public abstract class AbstractQueryFragment extends AbstractLttrsFragment implem
         }
     }
 
-    private void stateChange(Event<StateChange> stateChangeEvent) {
+    private void stateChange(final Event<StateChange> stateChangeEvent) {
         if (stateChangeEvent.isConsumable()) {
-            final StateChange stateChange = stateChangeEvent.consume();
-            getQueryViewModel().refreshInBackground();
+            stateChangeEvent.consume();
+            getQueryViewModel().refreshInBackground(false);
         }
     }
 

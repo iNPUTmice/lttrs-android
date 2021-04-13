@@ -23,6 +23,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.work.Data;
 import androidx.work.OneTimeWorkRequest;
 
 import rs.ltt.android.worker.KeywordQueryRefreshWorker;
@@ -50,9 +51,10 @@ public class KeywordQueryViewModel extends AbstractQueryViewModel {
     }
 
     @Override
-    protected OneTimeWorkRequest getRefreshWorkRequest() {
+    protected OneTimeWorkRequest getRefreshWorkRequest(final boolean skipOverEmpty) {
+        final Data data = KeywordQueryRefreshWorker.data(queryRepository.getAccountId(), skipOverEmpty, keyword);
         return new OneTimeWorkRequest.Builder(KeywordQueryRefreshWorker.class)
-                .setInputData(KeywordQueryRefreshWorker.data(queryRepository.getAccountId(), keyword))
+                .setInputData(data)
                 .build();
     }
 

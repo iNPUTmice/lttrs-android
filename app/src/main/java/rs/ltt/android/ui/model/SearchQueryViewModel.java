@@ -59,7 +59,7 @@ public class SearchQueryViewModel extends AbstractQueryViewModel {
 
 
     @Override
-    protected OneTimeWorkRequest getRefreshWorkRequest() {
+    protected OneTimeWorkRequest getRefreshWorkRequest(final boolean skipOverEmpty) {
         return new OneTimeWorkRequest.Builder(SearchQueryRefreshWorker.class)
                 .setInputData(SearchQueryRefreshWorker.data(queryRepository.getAccountId(), searchTerm))
                 .build();
