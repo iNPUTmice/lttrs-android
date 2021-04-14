@@ -90,4 +90,6 @@
     <string name="reserved_mailbox_name">Nume rezervat. Încearcați un alt nume.</string>
     <string name="no_name_specified">Nici un nume specificat. Încearcați din nou.</string>
     <string name="enter_a_label_name">Introduceți un nou nume de etichetă</string>
+    <string name="add_another_account">Adăugarea altui cont</string>
+    <string name="manage_accounts">Gestionare conturilor</string>
 </resources>
