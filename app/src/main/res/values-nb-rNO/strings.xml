@@ -71,4 +71,21 @@
     <string name="mark_unread">Marker som ulest</string>
     <string name="archive">Arkiv</string>
     <string name="could_not_store_account_credentials">Kunne ikke lagre identitetsdetaljer for konto</string>
+    <string name="reserved_mailbox_name">Reservert navn. Prøv noe annet.</string>
+    <string name="no_name_specified">Inget navn angitt. Prøv igjen.</string>
+    <string name="assign_role_detailed_explanation">Ltt.rs trenger en etikett (e-postboks) med rollen %1$s for å fungere riktig. Hvis du ikke ønsker å bruke etiketten ved navn %2$s til det formålet kan du klikke «Avbryt» og bruke din skrivebord- eller vevklient for å opprette en annen etikett med rollen %1$s.</string>
+    <string name="assign_role_question">Du har allerede en etikett ved navn %1$s. Ønsker du å tildele den rollen %2$s\?</string>
+    <string name="reassign_role_question">Du har allerede en etikett som heter %1$s med rollen %2$s. Ønsker du å omfordele den %3$s-rollen\?</string>
+    <string name="assign_role">Tildel rolle</string>
+    <string name="reassign_role">Omfordel rolle</string>
+    <string name="add_another_account">Legg til ny konto</string>
+    <string name="manage_accounts">Håndter kontoer</string>
+    <string name="create">Opprett</string>
+    <string name="new_label">Ny etikett</string>
+    <string name="enter_a_label_name">Skriv inn nytt etikettnavn</string>
+    <string name="apply_changes">Bruk</string>
+    <string name="label_as">Merk som</string>
+    <string name="change_labels">Endre etiketter</string>
+    <string name="cancel">Avbryt</string>
+    <string name="confirm">Bekreft</string>
 </resources>
