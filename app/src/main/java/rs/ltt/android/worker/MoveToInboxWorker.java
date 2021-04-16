@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import rs.ltt.android.entity.EmailWithMailboxes;
 
@@ -38,7 +39,7 @@ public class MoveToInboxWorker extends AbstractMailboxModificationWorker {
     }
 
     @Override
-    protected ListenableFuture<Boolean> modify(List<EmailWithMailboxes> emails) {
+    protected ListenableFuture<Boolean> modify(List<EmailWithMailboxes> emails) throws ExecutionException {
         LOGGER.info("Modifying {} emails in thread {}", emails.size(), threadId);
         return getMua().moveToInbox(emails);
     }

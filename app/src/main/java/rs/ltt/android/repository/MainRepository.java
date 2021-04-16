@@ -36,6 +36,7 @@ import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import okhttp3.HttpUrl;
+import rs.ltt.android.MuaPool;
 import rs.ltt.android.cache.DatabaseCache;
 import rs.ltt.android.database.AppDatabase;
 import rs.ltt.android.database.LttrsDatabase;
@@ -106,14 +107,8 @@ public class MainRepository {
     }
 
     private ListenableFuture<Status> retrieveMailboxes(final AccountWithCredentials account) {
-        final Mua mua = Mua.builder()
-                .accountId(account.accountId)
-                .username(account.username)
-                .password(account.password)
-                .sessionResource(account.sessionResource)
-                .cache(new DatabaseCache(LttrsDatabase.getInstance(this.application, account.id)))
-                .sessionCache(new FileSessionCache(application.getCacheDir()))
-                .build();
+
+        final Mua mua = MuaPool.getInstanceUnchecked(application, account);
         mua.refreshIdentities();
         return mua.refreshMailboxes();
     }

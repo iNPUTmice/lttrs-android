@@ -333,11 +333,13 @@ public class LttrsRepository extends AbstractMuaRepository {
         return false;
     }
 
-    public void stopEventMonitor() {
+    public void disableEventMonitor() {
         try {
-            this.eventMonitorFuture.get().stop();
+            final PushService pushService = this.eventMonitorFuture.get();
+            pushService.setOnStateChangeListener(null);
+            pushService.disable();
         } catch (final Exception e) {
-            LOGGER.warn("Unable to stop EventMonitor", e);
+            LOGGER.warn("Unable to disable EventMonitor", e);
         }
     }
 }

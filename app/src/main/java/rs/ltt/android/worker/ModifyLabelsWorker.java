@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import rs.ltt.android.entity.EmailWithMailboxes;
@@ -93,7 +94,7 @@ public class ModifyLabelsWorker extends AbstractMailboxModificationWorker {
     }
 
     @Override
-    protected ListenableFuture<Boolean> modify(final List<EmailWithMailboxes> emails) {
+    protected ListenableFuture<Boolean> modify(final List<EmailWithMailboxes> emails) throws ExecutionException {
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info(
                     "Add {} and remove {} from {} emails in thread {}",

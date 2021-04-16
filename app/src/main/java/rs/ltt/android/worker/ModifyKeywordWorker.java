@@ -64,7 +64,6 @@ public class ModifyKeywordWorker extends AbstractMuaWorker {
     @Override
     public Result doWork() {
         final LttrsDatabase database = getDatabase();
-        final Mua mua = getMua();
         List<EmailWithKeywords> emails = threadId == null ? Collections.emptyList() : database.threadAndEmailDao().getEmailsWithKeywords(threadId);
         if (target) {
             LOGGER.info("Setting keyword {} for {} emails in thread {}", keyword, emails.size(), threadId);
@@ -72,12 +71,14 @@ public class ModifyKeywordWorker extends AbstractMuaWorker {
             LOGGER.info("Removing keyword {} for {} emails in thread {}", keyword, emails.size(), threadId);
         }
         try {
+            final Mua mua = getMua();
             final boolean madeChanges;
             if (target) {
                 madeChanges = mua.setKeyword(emails, keyword).get();
             } else {
                 madeChanges = mua.removeKeyword(emails, keyword).get();
             }
+            LOGGER.info("keyword foo. changes?="+madeChanges);
             if (!madeChanges) {
                 LOGGER.info("No changes were made to thread {}", threadId);
                 database.overwriteDao().revertKeywordOverwrites(threadId);

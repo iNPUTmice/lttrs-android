@@ -15,6 +15,8 @@
 
 package rs.ltt.android.entity;
 
+import com.google.common.base.Objects;
+
 import okhttp3.HttpUrl;
 
 public class AccountWithCredentials {
@@ -39,5 +41,22 @@ public class AccountWithCredentials {
 
     public String getAccountId() {
         return this.accountId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AccountWithCredentials that = (AccountWithCredentials) o;
+        return Objects.equal(id, that.id) &&
+                Objects.equal(accountId, that.accountId) &&
+                Objects.equal(username, that.username) &&
+                Objects.equal(password, that.password) &&
+                Objects.equal(sessionResource, that.sessionResource);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id, accountId, username, password, sessionResource);
     }
 }

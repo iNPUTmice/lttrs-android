@@ -16,6 +16,7 @@
 package rs.ltt.android.database;
 
 import android.annotation.SuppressLint;
+import android.app.Application;
 import android.content.Context;
 
 import androidx.room.Database;
@@ -23,8 +24,11 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 
+import com.google.common.collect.MapMaker;
+
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentMap;
 
 import rs.ltt.android.database.dao.IdentityDao;
 import rs.ltt.android.database.dao.MailboxDao;
@@ -81,8 +85,9 @@ import rs.ltt.android.entity.ThreadItemEntity;
 public abstract class LttrsDatabase extends RoomDatabase {
 
     @SuppressLint("UseSparseArrays")
-    //TODO use Guava cache - for multi account environments we don’t need to keep old ones around for ever
-    private static final Map<Long, LttrsDatabase> INSTANCES = new HashMap<>();
+    private static final Map<Long, LttrsDatabase> INSTANCES = new MapMaker()
+            .weakValues()
+            .makeMap();
 
     public abstract ThreadAndEmailDao threadAndEmailDao();
 
@@ -102,13 +107,16 @@ public abstract class LttrsDatabase extends RoomDatabase {
             return instance;
         }
         synchronized (LttrsDatabase.class) {
-            LttrsDatabase inner = INSTANCES.get(account);
-            if (inner == null) {
-                final String filename = String.format("lttrs-%x", account);
-                inner = Room.databaseBuilder(context.getApplicationContext(), LttrsDatabase.class, filename).build();
-                INSTANCES.put(account, inner);
+            final LttrsDatabase existing = INSTANCES.get(account);
+            if (existing != null) {
+                return existing;
             }
-            return inner;
+            final Context application = context.getApplicationContext();
+            final String filename = String.format("lttrs-%x", account);
+            final LttrsDatabase lttrsDatabase = Room.databaseBuilder(application, LttrsDatabase.class, filename)
+                    .build();
+            INSTANCES.put(account, lttrsDatabase);
+            return lttrsDatabase;
         }
     }
 }

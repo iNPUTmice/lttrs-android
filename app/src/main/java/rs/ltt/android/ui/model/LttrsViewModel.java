@@ -105,7 +105,7 @@ public class LttrsViewModel extends AndroidViewModel {
 
     @Override
     public void onCleared() {
-        this.lttrsRepository.stopEventMonitor();
+        this.lttrsRepository.disableEventMonitor();
     }
 
     public long getAccountId() {

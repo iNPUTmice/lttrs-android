@@ -72,7 +72,7 @@ public abstract class AbstractMailboxModificationWorker extends AbstractMuaWorke
         }
     }
 
-    protected abstract ListenableFuture<Boolean> modify(List<EmailWithMailboxes> emails);
+    protected abstract ListenableFuture<Boolean> modify(List<EmailWithMailboxes> emails) throws ExecutionException;
 
     public static Data data(Long account, String threadId) {
         return new Data.Builder()

@@ -29,6 +29,7 @@ import java.util.concurrent.ExecutionException;
 
 import javax.net.ssl.SSLException;
 
+import rs.ltt.android.MuaPool;
 import rs.ltt.android.cache.DatabaseCache;
 import rs.ltt.android.database.AppDatabase;
 import rs.ltt.android.database.LttrsDatabase;
@@ -79,16 +80,9 @@ public abstract class AbstractMuaWorker extends Worker {
         return LttrsDatabase.getInstance(getApplicationContext(), this.account);
     }
 
-    protected Mua getMua() {
+    protected Mua getMua() throws ExecutionException {
         final AccountWithCredentials account = AppDatabase.getInstance(getApplicationContext()).accountDao().getAccount(this.account);
-        return Mua.builder()
-                .username(account.username)
-                .password(account.password)
-                .accountId(account.accountId)
-                .sessionResource(account.sessionResource)
-                .cache(new DatabaseCache(getDatabase()))
-                .sessionCache(new FileSessionCache(getApplicationContext().getCacheDir()))
-                .build();
+        return MuaPool.getInstance(getApplicationContext(), account);
     }
 
     public static String uniqueName(Long accountId) {

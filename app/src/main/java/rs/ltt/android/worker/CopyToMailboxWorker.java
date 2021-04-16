@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import rs.ltt.android.entity.EmailWithMailboxes;
 import rs.ltt.jmap.common.entity.IdentifiableMailboxWithRole;
@@ -53,7 +54,7 @@ public class CopyToMailboxWorker extends AbstractMailboxModificationWorker {
     }
 
     @Override
-    protected ListenableFuture<Boolean> modify(List<EmailWithMailboxes> emails) {
+    protected ListenableFuture<Boolean> modify(List<EmailWithMailboxes> emails) throws ExecutionException {
         final IdentifiableMailboxWithRole mailbox = Preconditions.checkNotNull(
                 getDatabase().mailboxDao().getMailbox(this.mailboxId),
                 String.format("Unable to find cached mailbox with id %s", this.mailboxId)

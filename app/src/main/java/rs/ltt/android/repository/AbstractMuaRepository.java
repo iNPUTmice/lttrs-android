@@ -33,6 +33,7 @@ import java.util.Collection;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import rs.ltt.android.MuaPool;
 import rs.ltt.android.cache.DatabaseCache;
 import rs.ltt.android.database.AppDatabase;
 import rs.ltt.android.database.LttrsDatabase;
@@ -65,15 +66,7 @@ public abstract class AbstractMuaRepository {
         this.accountId = accountId;
         LOGGER.debug("creating instance of {}", getClass().getSimpleName());
         this.database = LttrsDatabase.getInstance(application, accountId);
-        this.mua = Futures.transform(getAccount(), account -> Mua.builder()
-                .username(account.username)
-                .password(account.password)
-                .accountId(account.accountId)
-                .sessionResource(account.sessionResource)
-                .cache(new DatabaseCache(database))
-                .sessionCache(new FileSessionCache(application.getCacheDir()))
-                .queryPageSize(20L)
-                .build(), MoreExecutors.directExecutor());
+        this.mua = Futures.transform(getAccount(), account -> MuaPool.getInstanceUnchecked(application, account), MoreExecutors.directExecutor());
     }
 
     public long getAccountId() {

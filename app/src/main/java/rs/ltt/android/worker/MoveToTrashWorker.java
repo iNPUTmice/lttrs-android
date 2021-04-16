@@ -51,7 +51,7 @@ public class MoveToTrashWorker extends AbstractMuaWorker {
         this.threadIds = threadIds != null ? Sets.newHashSet(threadIds) : Collections.emptySet();
     }
 
-    protected ListenableFuture<Boolean> modify(List<EmailWithMailboxes> emails) {
+    protected ListenableFuture<Boolean> modify(List<EmailWithMailboxes> emails) throws ExecutionException {
         final Mua mua = getMua();
         LOGGER.info("Modifying {} emails in threads {}", emails.size(), threadIds);
         return mua.moveToTrash(emails);
