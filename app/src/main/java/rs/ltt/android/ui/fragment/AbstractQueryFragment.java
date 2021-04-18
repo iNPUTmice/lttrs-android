@@ -28,7 +28,10 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.view.ActionMode;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.OnLifecycleEvent;
 import androidx.paging.PagedList;
 import androidx.recyclerview.selection.SelectionPredicates;
 import androidx.recyclerview.selection.SelectionTracker;
@@ -53,6 +56,7 @@ import rs.ltt.android.R;
 import rs.ltt.android.databinding.FragmentThreadListBinding;
 import rs.ltt.android.entity.MailboxWithRoleAndName;
 import rs.ltt.android.entity.ThreadOverviewItem;
+import rs.ltt.android.service.EventMonitorService;
 import rs.ltt.android.ui.ActionModeMenuConfiguration;
 import rs.ltt.android.ui.ItemAnimators;
 import rs.ltt.android.ui.QueryItemTouchHelper;
@@ -66,7 +70,7 @@ import rs.ltt.jmap.mua.util.LabelWithCount;
 
 
 public abstract class AbstractQueryFragment extends AbstractLttrsFragment implements OnFlaggedToggled,
-        ThreadOverviewAdapter.OnThreadClicked, QueryItemTouchHelper.OnQueryItemSwipe, ActionMode.Callback {
+        ThreadOverviewAdapter.OnThreadClicked, QueryItemTouchHelper.OnQueryItemSwipe, ActionMode.Callback, LifecycleObserver {
 
     private static final String SELECTION_ID = "thread-items";
 
@@ -93,6 +97,8 @@ public abstract class AbstractQueryFragment extends AbstractLttrsFragment implem
         if (showComposeButton() && actionMode == null) {
             binding.compose.show();
         }
+
+        getViewLifecycleOwner().getLifecycle().addObserver(this);
 
         binding.swipeToRefresh.setColorSchemeResources(R.color.colorAccent);
         binding.swipeToRefresh.setProgressBackgroundColorSchemeColor(
@@ -229,6 +235,12 @@ public abstract class AbstractQueryFragment extends AbstractLttrsFragment implem
         getThreadModifier().toggleFlagged(threadId, target);
     }
 
+    @OnLifecycleEvent(Lifecycle.Event.ON_START)
+    public void startPushService() {
+        LOGGER.warn("startPushService({})", getClass().getSimpleName());
+        final Intent intent = new Intent(requireContext(), EventMonitorService.class);
+        requireActivity().startService(intent);
+    }
 
     protected void archive(ThreadOverviewItem item) {
         archive(ImmutableSet.of(item.threadId));

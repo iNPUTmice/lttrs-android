@@ -40,6 +40,9 @@ public abstract class AccountDao {
     @Query("select account.id as id, username,password,sessionResource,accountId from credentials join account on credentialsId = credentials.id where account.id=:id limit 1")
     public abstract ListenableFuture<AccountWithCredentials> getAccountFuture(Long id);
 
+    @Query("select account.id as id, username,password,sessionResource,accountId from credentials join account on credentialsId = credentials.id")
+    public abstract ListenableFuture<List<AccountWithCredentials>> getAccounts();
+
     @Query("select account.id as id, username,password,sessionResource,accountId from credentials join account on credentialsId = credentials.id where account.id=:id limit 1")
     public abstract AccountWithCredentials getAccount(Long id);
 

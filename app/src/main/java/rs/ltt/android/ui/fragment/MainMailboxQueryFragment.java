@@ -20,6 +20,7 @@ import java.util.Collection;
 import rs.ltt.android.entity.ThreadOverviewItem;
 
 public class MainMailboxQueryFragment extends AbstractMailboxQueryFragment {
+
     @Override
     protected String getMailboxId() {
         return null;
