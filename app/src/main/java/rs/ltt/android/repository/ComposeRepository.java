@@ -41,7 +41,7 @@ import rs.ltt.jmap.common.entity.IdentifiableIdentity;
 import rs.ltt.jmap.common.entity.Keyword;
 import rs.ltt.jmap.common.entity.Role;
 
-public class ComposeRepository extends AbstractMuaRepository {
+public class ComposeRepository extends AbstractRepository {
 
     public ComposeRepository(final Application application, final long accountId) {
         super(application, accountId);

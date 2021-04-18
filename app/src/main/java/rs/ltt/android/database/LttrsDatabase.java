@@ -26,6 +26,9 @@ import androidx.room.TypeConverters;
 
 import com.google.common.collect.MapMaker;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
@@ -84,10 +87,10 @@ import rs.ltt.android.entity.ThreadItemEntity;
 @TypeConverters(Converters.class)
 public abstract class LttrsDatabase extends RoomDatabase {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(LttrsDatabase.class);
+
     @SuppressLint("UseSparseArrays")
-    private static final Map<Long, LttrsDatabase> INSTANCES = new MapMaker()
-            .weakValues()
-            .makeMap();
+    private static final Map<Long, LttrsDatabase> INSTANCES = new HashMap<>();
 
     public abstract ThreadAndEmailDao threadAndEmailDao();
 
@@ -111,6 +114,7 @@ public abstract class LttrsDatabase extends RoomDatabase {
             if (existing != null) {
                 return existing;
             }
+            LOGGER.info("Building LttrsDatabase account id {}", account);
             final Context application = context.getApplicationContext();
             final String filename = String.format("lttrs-%x", account);
             final LttrsDatabase lttrsDatabase = Room.databaseBuilder(application, LttrsDatabase.class, filename)

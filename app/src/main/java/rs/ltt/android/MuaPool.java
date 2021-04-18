@@ -2,14 +2,13 @@ package rs.ltt.android;
 
 import android.content.Context;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
+import com.google.common.collect.MapMaker;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.Duration;
-import java.util.concurrent.ExecutionException;
+import java.util.HashMap;
+import java.util.Map;
 
 import rs.ltt.android.cache.DatabaseCache;
 import rs.ltt.android.database.LttrsDatabase;
@@ -21,21 +20,26 @@ public final class MuaPool {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MuaPool.class);
 
-    //TODO add expiry listener that calls close()
-    private static final Cache<AccountWithCredentials, Mua> CACHE = CacheBuilder.newBuilder()
-            .expireAfterAccess(Duration.ofMinutes(10))
-            .build();
+    private static final Map<AccountWithCredentials, Mua> INSTANCES = new HashMap<>();
 
     private MuaPool() {
 
     }
 
-    public static Mua getInstance(final Context context, final AccountWithCredentials account) throws ExecutionException {
-        return CACHE.get(account, () -> {
+    public static Mua getInstance(final Context context, final AccountWithCredentials account) {
+        final Mua instance = INSTANCES.get(account);
+        if (instance != null) {
+            return instance;
+        }
+        synchronized (MuaPool.class) {
+            final Mua existing = INSTANCES.get(account);
+            if (existing != null) {
+                return existing;
+            }
             LOGGER.info("Building Mua for account id {}", account.getId());
             final Context application = context.getApplicationContext();
             final LttrsDatabase database = LttrsDatabase.getInstance(context, account.getId());
-            return Mua.builder()
+            final Mua mua = Mua.builder()
                     .username(account.username)
                     .password(account.password)
                     .accountId(account.accountId)
@@ -45,19 +49,8 @@ public final class MuaPool {
                     .sessionCache(new FileSessionCache(application.getCacheDir()))
                     .queryPageSize(20L)
                     .build();
-        });
-    }
-
-    public static Mua getInstanceUnchecked(final Context context, final AccountWithCredentials account) {
-        try {
-            return getInstance(context, account);
-        } catch (final ExecutionException e) {
-            final Throwable cause = e.getCause();
-            if (cause != null) {
-                throw new RuntimeException(cause);
-            } else {
-                throw new RuntimeException();
-            }
+            INSTANCES.put(account, mua);
+            return mua;
         }
     }
 

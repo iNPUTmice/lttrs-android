@@ -63,15 +63,15 @@ public class MailboxQueryViewModel extends AbstractQueryViewModel {
     }
 
     @Override
-    protected OneTimeWorkRequest getRefreshWorkRequest(final boolean skipOverEmpty) {
+    protected OneTimeWorkRequest getRefreshWorkRequest() {
         LOGGER.info("building OneTimeWorkRequest with mailboxId={}", mailboxId);
         if (mailboxId == null) {
             return new OneTimeWorkRequest.Builder(InboxQueryRefreshWorker.class)
-                    .setInputData(InboxQueryRefreshWorker.data(queryRepository.getAccountId(), skipOverEmpty))
+                    .setInputData(InboxQueryRefreshWorker.data(queryRepository.getAccountId(), true))
                     .build();
         } else {
             return new OneTimeWorkRequest.Builder(MailboxQueryRefreshWorker.class)
-                    .setInputData(MailboxQueryRefreshWorker.data(queryRepository.getAccountId(), skipOverEmpty, mailboxId))
+                    .setInputData(MailboxQueryRefreshWorker.data(queryRepository.getAccountId(), true, mailboxId))
                     .build();
         }
     }

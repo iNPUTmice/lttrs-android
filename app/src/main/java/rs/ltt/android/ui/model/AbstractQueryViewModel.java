@@ -60,7 +60,7 @@ public abstract class AbstractQueryViewModel extends AndroidViewModel {
         this.threads = Transformations.switchMap(getQuery(), queryRepository::getThreadOverviewItems);
         this.refreshing = Transformations.switchMap(getQuery(), queryRepository::isRunningQueryFor);
         this.runningPagingRequest = Transformations.switchMap(getQuery(), queryRepository::isRunningPagingRequestFor);
-        refreshInBackground(true);
+        refreshInBackground();
     }
 
     public LiveData<Boolean> isRefreshing() {
@@ -98,19 +98,18 @@ public abstract class AbstractQueryViewModel extends AndroidViewModel {
         }
     }
 
-    public void refreshInBackground(final boolean skipOverEmpty) {
+    public void refreshInBackground() {
         final EmailQuery emailQuery = getQuery().getValue();
         if (emailQuery != null && queryRepository.isRefreshing(emailQuery)) {
             LOGGER.info("Skipping background refresh");
             return;
         }
-        LOGGER.info("refreshInBackground(skipOverEmpty={})", skipOverEmpty);
         final WorkManager workManager = WorkManager.getInstance(getApplication());
-        final OneTimeWorkRequest workRequest = getRefreshWorkRequest(skipOverEmpty);
+        final OneTimeWorkRequest workRequest = getRefreshWorkRequest();
         workManager.enqueueUniqueWork("query", ExistingWorkPolicy.REPLACE, workRequest);
     }
 
-    protected abstract OneTimeWorkRequest getRefreshWorkRequest(final boolean skipOverEmpty);
+    protected abstract OneTimeWorkRequest getRefreshWorkRequest();
 
     protected abstract LiveData<EmailQuery> getQuery();
 

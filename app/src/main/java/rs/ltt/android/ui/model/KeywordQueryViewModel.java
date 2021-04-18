@@ -51,8 +51,8 @@ public class KeywordQueryViewModel extends AbstractQueryViewModel {
     }
 
     @Override
-    protected OneTimeWorkRequest getRefreshWorkRequest(final boolean skipOverEmpty) {
-        final Data data = KeywordQueryRefreshWorker.data(queryRepository.getAccountId(), skipOverEmpty, keyword);
+    protected OneTimeWorkRequest getRefreshWorkRequest() {
+        final Data data = KeywordQueryRefreshWorker.data(queryRepository.getAccountId(), true, keyword);
         return new OneTimeWorkRequest.Builder(KeywordQueryRefreshWorker.class)
                 .setInputData(data)
                 .build();

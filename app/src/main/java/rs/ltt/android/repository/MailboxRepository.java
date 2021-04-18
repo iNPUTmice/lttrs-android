@@ -23,7 +23,7 @@ import rs.ltt.jmap.common.entity.IdentifiableMailboxWithRole;
 import rs.ltt.jmap.common.entity.IdentifiableMailboxWithRoleAndName;
 import rs.ltt.jmap.common.entity.Role;
 
-public class MailboxRepository extends AbstractMuaRepository {
+public class MailboxRepository extends AbstractRepository {
 
     public MailboxRepository(Application application, long accountId) {
         super(application, accountId);

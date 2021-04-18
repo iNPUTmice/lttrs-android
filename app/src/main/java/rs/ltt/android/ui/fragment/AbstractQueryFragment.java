@@ -62,8 +62,6 @@ import rs.ltt.android.ui.adapter.ThreadOverviewAdapter;
 import rs.ltt.android.ui.adapter.ThreadOverviewItemDetailsLookup;
 import rs.ltt.android.ui.adapter.ThreadOverviewItemKeyProvider;
 import rs.ltt.android.ui.model.AbstractQueryViewModel;
-import rs.ltt.android.util.Event;
-import rs.ltt.jmap.common.entity.StateChange;
 import rs.ltt.jmap.mua.util.LabelWithCount;
 
 
@@ -108,8 +106,6 @@ public abstract class AbstractQueryFragment extends AbstractLttrsFragment implem
 
         this.itemTouchHelper = new ItemTouchHelper(new QueryItemTouchHelper(this));
         this.itemTouchHelper.attachToRecyclerView(binding.threadList);
-
-        getLttrsViewModel().getStateChangeEvent().observe(getViewLifecycleOwner(), this::stateChange);
 
         return binding.getRoot();
     }
@@ -220,13 +216,6 @@ public abstract class AbstractQueryFragment extends AbstractLttrsFragment implem
             }
         } else if (actionMode != null) {
             requireLttrsActivity().endActionMode();
-        }
-    }
-
-    private void stateChange(final Event<StateChange> stateChangeEvent) {
-        if (stateChangeEvent.isConsumable()) {
-            stateChangeEvent.consume();
-            getQueryViewModel().refreshInBackground(false);
         }
     }
 

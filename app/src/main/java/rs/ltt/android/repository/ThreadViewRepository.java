@@ -35,7 +35,7 @@ import rs.ltt.android.entity.MailboxWithRoleAndName;
 import rs.ltt.android.entity.Seen;
 import rs.ltt.android.entity.ThreadHeader;
 
-public class ThreadViewRepository extends AbstractMuaRepository {
+public class ThreadViewRepository extends AbstractRepository {
 
     public ThreadViewRepository(final Application application, final long accountId) {
         super(application, accountId);

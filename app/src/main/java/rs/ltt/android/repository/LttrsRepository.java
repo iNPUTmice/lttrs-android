@@ -14,9 +14,7 @@ import androidx.work.WorkManager;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Collections2;
-import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.MoreExecutors;
 import com.google.common.util.concurrent.SettableFuture;
 
 import org.slf4j.Logger;
@@ -43,35 +41,20 @@ import rs.ltt.android.worker.ModifyKeywordWorker;
 import rs.ltt.android.worker.MoveToInboxWorker;
 import rs.ltt.android.worker.MoveToTrashWorker;
 import rs.ltt.android.worker.RemoveFromMailboxWorker;
-import rs.ltt.jmap.client.event.OnStateChangeListener;
-import rs.ltt.jmap.client.event.PushService;
 import rs.ltt.jmap.common.entity.IdentifiableMailboxWithRole;
 import rs.ltt.jmap.common.entity.Keyword;
 import rs.ltt.jmap.common.entity.Role;
 import rs.ltt.jmap.common.entity.StateChange;
 import rs.ltt.jmap.mua.util.KeywordUtil;
 
-public class LttrsRepository extends AbstractMuaRepository {
+public class LttrsRepository extends AbstractRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LttrsRepository.class);
 
     private final MediatorLiveData<Event<Failure>> failureEventMediator = new MediatorLiveData<>();
-    private final MutableLiveData<Event<StateChange>> stateChangeEvent = new MutableLiveData<>();
-    private final ListenableFuture<PushService> eventMonitorFuture;
-
-    private final OnStateChangeListener onStateChangeListener = stateChange -> {
-        LOGGER.info("onStateChange({})", stateChange);
-        stateChangeEvent.postValue(new Event<>(stateChange));
-        return false;
-    };
 
     public LttrsRepository(Application application, long accountId) {
         super(application, accountId);
-        this.eventMonitorFuture = Futures.transformAsync(
-                this.mua,
-                input -> input.getJmapClient().monitorEvents(onStateChangeListener),
-                MoreExecutors.directExecutor()
-        );
     }
 
     public LiveData<List<MailboxOverviewItem>> getMailboxes() {
@@ -80,10 +63,6 @@ public class LttrsRepository extends AbstractMuaRepository {
 
     public LiveData<Event<Failure>> getFailureEvent() {
         return this.failureEventMediator;
-    }
-
-    public LiveData<Event<StateChange>> getStateChangeEvent() {
-        return this.stateChangeEvent;
     }
 
     public void removeFromMailbox(final Collection<String> threadIds, final IdentifiableMailboxWithRole mailbox) {
@@ -332,14 +311,5 @@ public class LttrsRepository extends AbstractMuaRepository {
             }
         }));
         return workInfoLiveData;
-    }
-
-    public void disableEventMonitor() {
-        try {
-            final PushService pushService = this.eventMonitorFuture.get();
-            pushService.removeOnStateChangeListener(this.onStateChangeListener);
-        } catch (final Exception e) {
-            LOGGER.warn("Unable to disable EventMonitor", e);
-        }
     }
 }

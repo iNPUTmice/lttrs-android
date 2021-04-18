@@ -99,15 +99,6 @@ public class LttrsViewModel extends AndroidViewModel {
         return this.lttrsRepository.getFailureEvent();
     }
 
-    public LiveData<Event<StateChange>> getStateChangeEvent() {
-        return this.lttrsRepository.getStateChangeEvent();
-    }
-
-    @Override
-    public void onCleared() {
-        this.lttrsRepository.disableEventMonitor();
-    }
-
     public long getAccountId() {
         return this.accountId;
     }

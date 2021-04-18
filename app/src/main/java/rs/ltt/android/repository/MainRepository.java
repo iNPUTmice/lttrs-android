@@ -107,8 +107,7 @@ public class MainRepository {
     }
 
     private ListenableFuture<Status> retrieveMailboxes(final AccountWithCredentials account) {
-
-        final Mua mua = MuaPool.getInstanceUnchecked(application, account);
+        final Mua mua = MuaPool.getInstance(application, account);
         mua.refreshIdentities();
         return mua.refreshMailboxes();
     }

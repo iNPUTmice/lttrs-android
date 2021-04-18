@@ -22,9 +22,10 @@ public class SearchQueryRefreshWorker extends AbstractQueryRefreshWorker {
         this.searchTerm = data.getString(SEARCH_TERM_KEY);
     }
 
-    public static Data data(final Long account, final String searchTerm) {
+    public static Data data(final Long account, final boolean skipOverEmpty, final String searchTerm) {
         return new Data.Builder()
                 .putLong(ACCOUNT_KEY, account)
+                .putBoolean(SKIP_OVER_EMPTY_KEY, skipOverEmpty)
                 .putString(SEARCH_TERM_KEY, searchTerm)
                 .build();
     }
