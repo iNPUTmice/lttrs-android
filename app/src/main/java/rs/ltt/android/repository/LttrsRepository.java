@@ -43,6 +43,7 @@ import rs.ltt.android.worker.ModifyKeywordWorker;
 import rs.ltt.android.worker.MoveToInboxWorker;
 import rs.ltt.android.worker.MoveToTrashWorker;
 import rs.ltt.android.worker.RemoveFromMailboxWorker;
+import rs.ltt.jmap.client.event.OnStateChangeListener;
 import rs.ltt.jmap.client.event.PushService;
 import rs.ltt.jmap.common.entity.IdentifiableMailboxWithRole;
 import rs.ltt.jmap.common.entity.Keyword;
@@ -58,11 +59,17 @@ public class LttrsRepository extends AbstractMuaRepository {
     private final MutableLiveData<Event<StateChange>> stateChangeEvent = new MutableLiveData<>();
     private final ListenableFuture<PushService> eventMonitorFuture;
 
+    private final OnStateChangeListener onStateChangeListener = stateChange -> {
+        LOGGER.info("onStateChange({})", stateChange);
+        stateChangeEvent.postValue(new Event<>(stateChange));
+        return false;
+    };
+
     public LttrsRepository(Application application, long accountId) {
         super(application, accountId);
         this.eventMonitorFuture = Futures.transformAsync(
                 this.mua,
-                input -> input.getJmapClient().monitorEvents(this::onStateChange),
+                input -> input.getJmapClient().monitorEvents(onStateChangeListener),
                 MoreExecutors.directExecutor()
         );
     }
@@ -327,17 +334,10 @@ public class LttrsRepository extends AbstractMuaRepository {
         return workInfoLiveData;
     }
 
-    private boolean onStateChange(final StateChange stateChange) {
-        LOGGER.info("onStateChange({})", stateChange);
-        this.stateChangeEvent.postValue(new Event<>(stateChange));
-        return false;
-    }
-
     public void disableEventMonitor() {
         try {
             final PushService pushService = this.eventMonitorFuture.get();
-            pushService.setOnStateChangeListener(null);
-            pushService.disable();
+            pushService.removeOnStateChangeListener(this.onStateChangeListener);
         } catch (final Exception e) {
             LOGGER.warn("Unable to disable EventMonitor", e);
         }

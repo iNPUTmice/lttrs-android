@@ -5,7 +5,6 @@ import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.platform.app.InstrumentationRegistry;
 
 import org.junit.After;
 import org.junit.Before;
@@ -22,7 +21,7 @@ import okhttp3.mockwebserver.MockWebServer;
 import rs.ltt.android.ui.activity.ComposeActivity;
 import rs.ltt.android.ui.activity.LttrsActivity;
 import rs.ltt.android.ui.activity.SetupActivity;
-import rs.ltt.jmap.client.api.HttpJmapApiClient;
+import rs.ltt.jmap.client.Services;
 import rs.ltt.jmap.common.entity.Role;
 import rs.ltt.jmap.mock.server.JmapDispatcher;
 import rs.ltt.jmap.mock.server.MockMailServer;
@@ -35,15 +34,10 @@ import static androidx.test.espresso.action.ViewActions.pressImeActionButton;
 import static androidx.test.espresso.action.ViewActions.swipeDown;
 import static androidx.test.espresso.action.ViewActions.swipeRight;
 import static androidx.test.espresso.action.ViewActions.typeText;
-import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.contrib.RecyclerViewActions.scrollToPosition;
 import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
-import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
-import static rs.ltt.android.CustomMatchers.atPosition;
-import static rs.ltt.android.CustomMatchers.withError;
 
 @RunWith(AndroidJUnit4.class)
 public class PreexistingMailboxTest {
@@ -63,10 +57,11 @@ public class PreexistingMailboxTest {
             );
         }
     };
-    private final OkHttp3IdlingResource okHttp3IdlingResource = OkHttp3IdlingResource.create("OkHttp", HttpJmapApiClient.OK_HTTP_CLIENT);
+    private final OkHttp3IdlingResource okHttp3IdlingResource = OkHttp3IdlingResource.create("OkHttp", Services.OK_HTTP_CLIENT);
 
     @Before
     public void startServer() throws IOException {
+        mockMailServer.setAdvertiseWebSocket(false);
         mockWebServer.setDispatcher(mockMailServer);
         mockWebServer.start();
         Intents.init();

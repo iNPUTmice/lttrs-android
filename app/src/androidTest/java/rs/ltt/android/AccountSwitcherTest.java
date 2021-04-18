@@ -13,7 +13,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -21,13 +20,12 @@ import java.util.stream.Stream;
 import okhttp3.mockwebserver.MockWebServer;
 import rs.ltt.android.ui.activity.LttrsActivity;
 import rs.ltt.android.ui.activity.SetupActivity;
-import rs.ltt.jmap.client.api.HttpJmapApiClient;
+import rs.ltt.jmap.client.Services;
 import rs.ltt.jmap.mock.server.JmapDispatcher;
 import rs.ltt.jmap.mock.server.MockMailServer;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.action.ViewActions.swipeDown;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.contrib.RecyclerViewActions.scrollToPosition;
@@ -44,7 +42,7 @@ public class AccountSwitcherTest {
     @Rule
     public ActivityScenarioRule<SetupActivity> activityRule = new ActivityScenarioRule<>(SetupActivity.class);
 
-    private final OkHttp3IdlingResource okHttp3IdlingResource = OkHttp3IdlingResource.create("OkHttp", HttpJmapApiClient.OK_HTTP_CLIENT);
+    private final OkHttp3IdlingResource okHttp3IdlingResource = OkHttp3IdlingResource.create("OkHttp", Services.OK_HTTP_CLIENT);
 
     private final List<MockServer> MOCK_SERVERS = Stream.of(0, 1)
             .map(i -> MockServer.create(128, i))
@@ -174,6 +172,7 @@ public class AccountSwitcherTest {
         public static MockServer create(final int threads, final int index) {
             final MockWebServer mockWebServer = new MockWebServer();
             final MockMailServer mockMailServer = new MockMailServer(threads, index);
+            mockMailServer.setAdvertiseWebSocket(false);
             mockWebServer.setDispatcher(mockMailServer);
             return new MockServer(mockWebServer, mockMailServer);
         }

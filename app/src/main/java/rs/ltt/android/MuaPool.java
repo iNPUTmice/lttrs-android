@@ -40,6 +40,7 @@ public final class MuaPool {
                     .password(account.password)
                     .accountId(account.accountId)
                     .sessionResource(account.sessionResource)
+                    .useWebSocket(true)
                     .cache(new DatabaseCache(database))
                     .sessionCache(new FileSessionCache(application.getCacheDir()))
                     .queryPageSize(20L)

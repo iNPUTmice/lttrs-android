@@ -53,6 +53,7 @@ public class SetupTest {
 
     @Before
     public void startServer() throws IOException {
+        mockMailServer.setAdvertiseWebSocket(false);
         mockWebServer.setDispatcher(mockMailServer);
         mockWebServer.start();
         Intents.init();
@@ -127,7 +128,7 @@ public class SetupTest {
         onView(withText("Archive")).perform(click());
 
         Thread.sleep(3000);
-
+        
         onView(withId(R.id.thread_list))
                 .perform(scrollToPosition(0))
                 .check(matches(atPosition(0, hasDescendant(withText("Mary Smith")))));
