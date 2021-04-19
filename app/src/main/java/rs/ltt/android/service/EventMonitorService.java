@@ -1,26 +1,27 @@
 package rs.ltt.android.service;
 
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleService;
 import androidx.work.ExistingWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
-import androidx.work.Operation;
 import androidx.work.WorkManager;
 
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.MoreExecutors;
 
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
@@ -36,10 +37,13 @@ import rs.ltt.jmap.client.event.PushService;
 import rs.ltt.jmap.common.entity.StateChange;
 import rs.ltt.jmap.mua.Mua;
 
-public class EventMonitorService extends Service {
+public class EventMonitorService extends LifecycleService {
 
     private static final String ACTION_WATCH_QUERY = "rs.ltt.android.ACTION_WATCH_QUERY";
+    private static final String ACTION_START_MONITORING = "rs.ltt.android.ACTION_START_MONITORING";
+    private static final String ACTION_STOP_MONITORING = "rs.ltt.android.ACTION_STOP_MONITORING";
 
+    private static final String EXTRA_ACCOUNT_ID = "rs.ltt.android.EXTRA_ACCOUNT_ID";
     private static final String EXTRA_QUERY_INFO = "rs.ltt.android.EXTRA_QUERY_INFO";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EventMonitorService.class);
@@ -50,12 +54,14 @@ public class EventMonitorService extends Service {
 
     @Nullable
     @Override
-    public IBinder onBind(Intent intent) {
+    public IBinder onBind(@NotNull final Intent intent) {
+        super.onBind(intent);
         return null;
     }
 
     @Override
     public void onCreate() {
+        super.onCreate();
         final ListenableFuture<List<AccountWithCredentials>> accounts = AppDatabase.getInstance(this)
                 .accountDao()
                 .getAccounts();
@@ -74,36 +80,60 @@ public class EventMonitorService extends Service {
 
     @Override
     public void onDestroy() {
-        LOGGER.info("Destroying service. Removing listeners");
-        for (final EventMonitorRegistration registration : this.eventMonitorRegistrations.values()) {
-            final PushService pushService = registration.pushService;
-            pushService.removeOnStateChangeListener(registration.eventMonitor);
+        LOGGER.debug("Destroying service. Removing listeners");
+        synchronized (this.eventMonitorRegistrations) {
+            final Iterator<EventMonitorRegistration> iterator = this.eventMonitorRegistrations.values().iterator();
+            while (iterator.hasNext()) {
+                final EventMonitorRegistration registration = iterator.next();
+                registration.stopListening();
+                iterator.remove();
+            }
         }
+        super.onDestroy();
     }
 
     private void onAccountsLoaded(final List<AccountWithCredentials> accounts) {
-        LOGGER.info("{} accounts loaded", accounts.size());
-        accounts.stream().forEach(this::setupEventMonitor);
+        final Lifecycle.State state = getLifecycle().getCurrentState();
+        if (state.isAtLeast(Lifecycle.State.CREATED)) {
+            LOGGER.debug("{} accounts loaded while in state {}", accounts.size(), state);
+            accounts.stream().forEach(this::setupEventMonitor);
+        }
     }
 
     private void setupEventMonitor(final AccountWithCredentials account) {
-        final Mua mua = MuaPool.getInstance(this, account);
-        final EventMonitor eventMonitor = new EventMonitor(account);
-        ListenableFuture<PushService> pushServiceFuture = mua.getJmapClient().monitorEvents(eventMonitor);
+        final EventMonitor eventMonitor;
+        final ListenableFuture<PushService> pushServiceFuture;
+        synchronized (eventMonitorRegistrations) {
+            if (eventMonitorRegistrations.containsKey(account.id)) {
+                return;
+            }
+            final Mua mua = MuaPool.getInstance(this, account);
+            eventMonitor = new EventMonitor(account);
+            eventMonitorRegistrations.put(account.id, new EventMonitorRegistration(eventMonitor));
+            pushServiceFuture = mua.getJmapClient().monitorEvents();
+        }
         Futures.addCallback(pushServiceFuture, new FutureCallback<PushService>() {
 
             @Override
-            public void onSuccess(@Nullable PushService result) {
-                if (result == null) {
+            public void onSuccess(@Nullable PushService pushService) {
+                if (pushService == null) {
                     return;
                 }
-                final EventMonitorRegistration registration = new EventMonitorRegistration(result, eventMonitor);
-                eventMonitorRegistrations.put(account.id, registration);
+                final Lifecycle.State currentState = getLifecycle().getCurrentState();
+                if (currentState.isAtLeast(Lifecycle.State.CREATED)) {
+                    final EventMonitorRegistration registration = new EventMonitorRegistration(pushService, eventMonitor);
+                    pushService.addOnStateChangeListener(eventMonitor);
+                    synchronized (eventMonitorRegistrations) {
+                        eventMonitorRegistrations.put(account.id, registration);
+                    }
+                } else {
+                    LOGGER.debug("Not going to listen for StateChanges. Service is {}", currentState);
+                }
             }
 
             @Override
             public void onFailure(@NonNull final Throwable throwable) {
-                LOGGER.warn("Unable to instantiate push service for account", throwable);
+                LOGGER.warn("Unable to instantiate push service", throwable);
 
             }
         }, PUSH_SERVICE_BACKGROUND_EXECUTOR);
@@ -111,6 +141,7 @@ public class EventMonitorService extends Service {
 
     @Override
     public int onStartCommand(final Intent intent, final int flags, final int startId) {
+        super.onStartCommand(intent, flags, startId);
         final String action = intent == null ? null : intent.getAction();
         if (action == null) {
             return START_STICKY;
@@ -121,6 +152,9 @@ public class EventMonitorService extends Service {
                 final QueryInfo queryInfo = intent.getParcelableExtra(EXTRA_QUERY_INFO);
                 watchQuery(queryInfo);
                 break;
+            default:
+                LOGGER.warn("Unknown action {}", action);
+                break;
         }
 
 
@@ -130,7 +164,7 @@ public class EventMonitorService extends Service {
     }
 
     private void watchQuery(final QueryInfo queryInfo) {
-        LOGGER.info("watchQuery({})", queryInfo);
+        LOGGER.debug("watchQuery({})", queryInfo);
         final WorkManager workManager = WorkManager.getInstance(getApplication());
         final OneTimeWorkRequest workRequest = QueryRefreshWorker.of(queryInfo, true);
         workManager.enqueueUniqueWork(
@@ -138,6 +172,11 @@ public class EventMonitorService extends Service {
                 ExistingWorkPolicy.REPLACE,
                 workRequest
         );
+    }
+
+    private boolean onStateChange(final AccountWithCredentials account, final StateChange stateChange) {
+        LOGGER.debug("Account {} received {}", account.getId(), stateChange);
+        return true;
     }
 
     public static void watchQuery(final Context context, final QueryInfo queryInfo) {
@@ -151,9 +190,20 @@ public class EventMonitorService extends Service {
         private final PushService pushService;
         private final EventMonitor eventMonitor;
 
+        private EventMonitorRegistration(final EventMonitor eventMonitor) {
+            this.pushService = null;
+            this.eventMonitor = eventMonitor;
+        }
+
         private EventMonitorRegistration(PushService pushService, EventMonitor eventMonitor) {
             this.pushService = pushService;
             this.eventMonitor = eventMonitor;
+        }
+
+        public void stopListening() {
+            if (this.pushService != null) {
+                this.pushService.removeOnStateChangeListener(this.eventMonitor);
+            }
         }
     }
 
@@ -167,9 +217,7 @@ public class EventMonitorService extends Service {
 
         @Override
         public boolean onStateChange(final StateChange stateChange) {
-            LOGGER.info("Account {} received {}", account.getId(), stateChange);
-            //TODO check that this is actually a new state
-            return true;
+            return EventMonitorService.this.onStateChange(account, stateChange);
         }
     }
 }
