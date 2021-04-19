@@ -237,9 +237,9 @@ public abstract class AbstractQueryFragment extends AbstractLttrsFragment implem
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     public void startPushService() {
+        EventMonitorService.watchQuery(requireContext(), getQueryViewModel().getQueryInfo());
         LOGGER.warn("startPushService({})", getClass().getSimpleName());
-        final Intent intent = new Intent(requireContext(), EventMonitorService.class);
-        requireActivity().startService(intent);
+
     }
 
     protected void archive(ThreadOverviewItem item) {

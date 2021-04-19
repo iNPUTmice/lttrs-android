@@ -16,7 +16,6 @@
 package rs.ltt.android.database;
 
 import android.annotation.SuppressLint;
-import android.app.Application;
 import android.content.Context;
 
 import androidx.room.Database;
@@ -24,14 +23,11 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 
-import com.google.common.collect.MapMaker;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentMap;
 
 import rs.ltt.android.database.dao.IdentityDao;
 import rs.ltt.android.database.dao.MailboxDao;

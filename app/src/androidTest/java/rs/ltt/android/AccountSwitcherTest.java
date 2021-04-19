@@ -39,14 +39,12 @@ import static rs.ltt.android.CustomMatchers.atPosition;
 @RunWith(AndroidJUnit4.class)
 public class AccountSwitcherTest {
 
-    @Rule
-    public ActivityScenarioRule<SetupActivity> activityRule = new ActivityScenarioRule<>(SetupActivity.class);
-
     private final OkHttp3IdlingResource okHttp3IdlingResource = OkHttp3IdlingResource.create("OkHttp", Services.OK_HTTP_CLIENT);
-
     private final List<MockServer> MOCK_SERVERS = Stream.of(0, 1)
             .map(i -> MockServer.create(128, i))
             .collect(Collectors.toList());
+    @Rule
+    public ActivityScenarioRule<SetupActivity> activityRule = new ActivityScenarioRule<>(SetupActivity.class);
 
     @Before
     public void startServers() {
@@ -153,6 +151,14 @@ public class AccountSwitcherTest {
             this.mail = mail;
         }
 
+        public static MockServer create(final int threads, final int index) {
+            final MockWebServer mockWebServer = new MockWebServer();
+            final MockMailServer mockMailServer = new MockMailServer(threads, index);
+            mockMailServer.setAdvertiseWebSocket(false);
+            mockWebServer.setDispatcher(mockMailServer);
+            return new MockServer(mockWebServer, mockMailServer);
+        }
+
         public void start() {
             try {
                 web.start();
@@ -167,14 +173,6 @@ public class AccountSwitcherTest {
             } catch (final IOException e) {
                 throw new IllegalStateException(e);
             }
-        }
-
-        public static MockServer create(final int threads, final int index) {
-            final MockWebServer mockWebServer = new MockWebServer();
-            final MockMailServer mockMailServer = new MockMailServer(threads, index);
-            mockMailServer.setAdvertiseWebSocket(false);
-            mockWebServer.setDispatcher(mockMailServer);
-            return new MockServer(mockWebServer, mockMailServer);
         }
     }
 

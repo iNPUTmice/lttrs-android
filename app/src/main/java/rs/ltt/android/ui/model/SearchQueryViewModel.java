@@ -24,14 +24,13 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.work.OneTimeWorkRequest;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
 import rs.ltt.android.entity.MailboxOverwriteEntity;
 import rs.ltt.android.entity.MailboxWithRoleAndName;
+import rs.ltt.android.entity.QueryInfo;
 import rs.ltt.android.entity.ThreadOverviewItem;
-import rs.ltt.android.worker.SearchQueryRefreshWorker;
 import rs.ltt.jmap.common.entity.Role;
 import rs.ltt.jmap.common.entity.query.EmailQuery;
 import rs.ltt.jmap.mua.util.MailboxUtil;
@@ -57,17 +56,18 @@ public class SearchQueryViewModel extends AbstractQueryViewModel {
         return new MutableLiveData<>(searchTerm);
     }
 
-
-    @Override
-    protected OneTimeWorkRequest getRefreshWorkRequest() {
-        return new OneTimeWorkRequest.Builder(SearchQueryRefreshWorker.class)
-                .setInputData(SearchQueryRefreshWorker.data(queryRepository.getAccountId(), true, searchTerm))
-                .build();
-    }
-
     @Override
     protected LiveData<EmailQuery> getQuery() {
         return searchQueryLiveData;
+    }
+
+    @Override
+    public QueryInfo getQueryInfo() {
+        return new QueryInfo(
+                queryRepository.getAccountId(),
+                QueryInfo.Type.SEARCH,
+                this.searchTerm
+        );
     }
 
     public boolean isInInbox(ThreadOverviewItem item) {

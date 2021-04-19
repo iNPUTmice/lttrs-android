@@ -14,7 +14,7 @@ import rs.ltt.jmap.common.entity.Role;
 import rs.ltt.jmap.common.entity.query.EmailQuery;
 import rs.ltt.jmap.mua.util.StandardQueries;
 
-public class InboxQueryRefreshWorker extends AbstractQueryRefreshWorker {
+public class InboxQueryRefreshWorker extends QueryRefreshWorker {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InboxQueryRefreshWorker.class);
 
@@ -31,9 +31,10 @@ public class InboxQueryRefreshWorker extends AbstractQueryRefreshWorker {
             return Result.failure();
         }
         try {
+            LOGGER.info("Refreshing {}", emailQuery);
             getMua().query(emailQuery).get();
             return Result.success();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             LOGGER.info("Unable to refresh query", e);
             return Result.failure();
         }

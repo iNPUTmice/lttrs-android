@@ -37,13 +37,10 @@ import java.util.stream.Collectors;
 
 import okhttp3.HttpUrl;
 import rs.ltt.android.MuaPool;
-import rs.ltt.android.cache.DatabaseCache;
 import rs.ltt.android.database.AppDatabase;
-import rs.ltt.android.database.LttrsDatabase;
 import rs.ltt.android.entity.AccountName;
 import rs.ltt.android.entity.AccountWithCredentials;
 import rs.ltt.android.entity.SearchSuggestionEntity;
-import rs.ltt.jmap.client.session.FileSessionCache;
 import rs.ltt.jmap.common.entity.Account;
 import rs.ltt.jmap.mua.Mua;
 import rs.ltt.jmap.mua.Status;

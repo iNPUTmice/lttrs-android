@@ -10,7 +10,7 @@ import rs.ltt.jmap.common.entity.Role;
 import rs.ltt.jmap.common.entity.query.EmailQuery;
 import rs.ltt.jmap.mua.util.StandardQueries;
 
-public class KeywordQueryRefreshWorker extends AbstractQueryRefreshWorker {
+public class KeywordQueryRefreshWorker extends QueryRefreshWorker {
 
     private final String keyword;
 

@@ -23,10 +23,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.work.Data;
-import androidx.work.OneTimeWorkRequest;
 
-import rs.ltt.android.worker.KeywordQueryRefreshWorker;
+import rs.ltt.android.entity.QueryInfo;
 import rs.ltt.jmap.common.entity.query.EmailQuery;
 import rs.ltt.jmap.mua.util.StandardQueries;
 
@@ -51,16 +49,17 @@ public class KeywordQueryViewModel extends AbstractQueryViewModel {
     }
 
     @Override
-    protected OneTimeWorkRequest getRefreshWorkRequest() {
-        final Data data = KeywordQueryRefreshWorker.data(queryRepository.getAccountId(), true, keyword);
-        return new OneTimeWorkRequest.Builder(KeywordQueryRefreshWorker.class)
-                .setInputData(data)
-                .build();
+    protected LiveData<EmailQuery> getQuery() {
+        return emailQueryLiveData;
     }
 
     @Override
-    protected LiveData<EmailQuery> getQuery() {
-        return emailQueryLiveData;
+    public QueryInfo getQueryInfo() {
+        return new QueryInfo(
+                queryRepository.getAccountId(),
+                QueryInfo.Type.KEYWORD,
+                keyword
+        );
     }
 
     public static class Factory implements ViewModelProvider.Factory {

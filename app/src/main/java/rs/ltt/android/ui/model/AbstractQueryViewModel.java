@@ -22,27 +22,18 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Transformations;
 import androidx.paging.PagedList;
-import androidx.work.ExistingWorkPolicy;
-import androidx.work.OneTimeWorkRequest;
-import androidx.work.WorkManager;
 
 import com.google.common.util.concurrent.ListenableFuture;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.Future;
 
 import rs.ltt.android.entity.MailboxWithRoleAndName;
+import rs.ltt.android.entity.QueryInfo;
 import rs.ltt.android.entity.ThreadOverviewItem;
 import rs.ltt.android.repository.QueryRepository;
-import rs.ltt.android.util.WorkInfoUtil;
-import rs.ltt.android.worker.AbstractMuaWorker;
 import rs.ltt.jmap.common.entity.query.EmailQuery;
 
 public abstract class AbstractQueryViewModel extends AndroidViewModel {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractQueryViewModel.class);
 
     final QueryRepository queryRepository;
     private LiveData<PagedList<ThreadOverviewItem>> threads;
@@ -60,7 +51,6 @@ public abstract class AbstractQueryViewModel extends AndroidViewModel {
         this.threads = Transformations.switchMap(getQuery(), queryRepository::getThreadOverviewItems);
         this.refreshing = Transformations.switchMap(getQuery(), queryRepository::isRunningQueryFor);
         this.runningPagingRequest = Transformations.switchMap(getQuery(), queryRepository::isRunningPagingRequestFor);
-        refreshInBackground();
     }
 
     public LiveData<Boolean> isRefreshing() {
@@ -98,19 +88,7 @@ public abstract class AbstractQueryViewModel extends AndroidViewModel {
         }
     }
 
-    public void refreshInBackground() {
-        final EmailQuery emailQuery = getQuery().getValue();
-        if (emailQuery != null && queryRepository.isRefreshing(emailQuery)) {
-            LOGGER.info("Skipping background refresh");
-            return;
-        }
-        final WorkManager workManager = WorkManager.getInstance(getApplication());
-        final OneTimeWorkRequest workRequest = getRefreshWorkRequest();
-        workManager.enqueueUniqueWork("query", ExistingWorkPolicy.REPLACE, workRequest);
-    }
-
-    protected abstract OneTimeWorkRequest getRefreshWorkRequest();
-
     protected abstract LiveData<EmailQuery> getQuery();
 
+    public abstract QueryInfo getQueryInfo();
 }

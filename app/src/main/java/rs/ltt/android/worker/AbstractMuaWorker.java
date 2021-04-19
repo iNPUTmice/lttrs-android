@@ -30,12 +30,10 @@ import java.util.concurrent.ExecutionException;
 import javax.net.ssl.SSLException;
 
 import rs.ltt.android.MuaPool;
-import rs.ltt.android.cache.DatabaseCache;
 import rs.ltt.android.database.AppDatabase;
 import rs.ltt.android.database.LttrsDatabase;
 import rs.ltt.android.entity.AccountWithCredentials;
 import rs.ltt.jmap.client.api.MethodErrorResponseException;
-import rs.ltt.jmap.client.session.FileSessionCache;
 import rs.ltt.jmap.common.method.MethodErrorResponse;
 import rs.ltt.jmap.common.method.error.StateMismatchMethodErrorResponse;
 import rs.ltt.jmap.mua.Mua;

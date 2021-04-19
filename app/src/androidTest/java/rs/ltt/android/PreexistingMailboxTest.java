@@ -42,10 +42,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 @RunWith(AndroidJUnit4.class)
 public class PreexistingMailboxTest {
 
-    @Rule
-    public ActivityScenarioRule<SetupActivity> activityRule = new ActivityScenarioRule<>(SetupActivity.class);
-
-
     private final MockWebServer mockWebServer = new MockWebServer();
     private final MockMailServer mockMailServer = new MockMailServer(128) {
         @Override
@@ -58,6 +54,8 @@ public class PreexistingMailboxTest {
         }
     };
     private final OkHttp3IdlingResource okHttp3IdlingResource = OkHttp3IdlingResource.create("OkHttp", Services.OK_HTTP_CLIENT);
+    @Rule
+    public ActivityScenarioRule<SetupActivity> activityRule = new ActivityScenarioRule<>(SetupActivity.class);
 
     @Before
     public void startServer() throws IOException {

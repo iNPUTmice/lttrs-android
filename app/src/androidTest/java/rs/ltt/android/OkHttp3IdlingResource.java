@@ -25,17 +25,9 @@ import okhttp3.OkHttpClient;
 
 public final class OkHttp3IdlingResource implements IdlingResource {
 
-    @NonNull
-    public static OkHttp3IdlingResource create(@NonNull String name, @NonNull OkHttpClient client) {
-        Preconditions.checkNotNull(name);
-        Preconditions.checkNotNull(client);
-        return new OkHttp3IdlingResource(name, client.dispatcher());
-    }
-
     private final String name;
     private final Dispatcher dispatcher;
     volatile ResourceCallback callback;
-
     private OkHttp3IdlingResource(final String name, final Dispatcher dispatcher) {
         this.name = name;
         this.dispatcher = dispatcher;
@@ -45,6 +37,13 @@ public final class OkHttp3IdlingResource implements IdlingResource {
                 callback.onTransitionToIdle();
             }
         });
+    }
+
+    @NonNull
+    public static OkHttp3IdlingResource create(@NonNull String name, @NonNull OkHttpClient client) {
+        Preconditions.checkNotNull(name);
+        Preconditions.checkNotNull(client);
+        return new OkHttp3IdlingResource(name, client.dispatcher());
     }
 
     @Override

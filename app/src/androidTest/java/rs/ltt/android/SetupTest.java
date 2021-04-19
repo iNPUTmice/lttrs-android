@@ -20,7 +20,6 @@ import okhttp3.mockwebserver.MockWebServer;
 import rs.ltt.android.ui.activity.LttrsActivity;
 import rs.ltt.android.ui.activity.SetupActivity;
 import rs.ltt.jmap.client.Services;
-import rs.ltt.jmap.client.api.HttpJmapApiClient;
 import rs.ltt.jmap.mock.server.JmapDispatcher;
 import rs.ltt.jmap.mock.server.MockMailServer;
 
@@ -43,13 +42,11 @@ import static rs.ltt.android.CustomMatchers.withError;
 @RunWith(AndroidJUnit4.class)
 public class SetupTest {
 
-    @Rule
-    public ActivityScenarioRule<SetupActivity> activityRule = new ActivityScenarioRule<>(SetupActivity.class);
-
-
     private final MockWebServer mockWebServer = new MockWebServer();
     private final MockMailServer mockMailServer = new MockMailServer(128);
     private final OkHttp3IdlingResource okHttp3IdlingResource = OkHttp3IdlingResource.create("OkHttp", Services.OK_HTTP_CLIENT_LOGGING);
+    @Rule
+    public ActivityScenarioRule<SetupActivity> activityRule = new ActivityScenarioRule<>(SetupActivity.class);
 
     @Before
     public void startServer() throws IOException {
@@ -128,7 +125,7 @@ public class SetupTest {
         onView(withText("Archive")).perform(click());
 
         Thread.sleep(3000);
-        
+
         onView(withId(R.id.thread_list))
                 .perform(scrollToPosition(0))
                 .check(matches(atPosition(0, hasDescendant(withText("Mary Smith")))));

@@ -11,7 +11,7 @@ import com.google.common.base.Preconditions;
 import rs.ltt.jmap.common.entity.query.EmailQuery;
 import rs.ltt.jmap.mua.util.StandardQueries;
 
-public class MailboxQueryRefreshWorker extends AbstractQueryRefreshWorker {
+public class MailboxQueryRefreshWorker extends QueryRefreshWorker {
 
     private final String mailboxId;
 

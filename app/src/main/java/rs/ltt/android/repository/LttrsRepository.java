@@ -5,7 +5,6 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.work.Data;
 import androidx.work.ExistingWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
@@ -44,7 +43,6 @@ import rs.ltt.android.worker.RemoveFromMailboxWorker;
 import rs.ltt.jmap.common.entity.IdentifiableMailboxWithRole;
 import rs.ltt.jmap.common.entity.Keyword;
 import rs.ltt.jmap.common.entity.Role;
-import rs.ltt.jmap.common.entity.StateChange;
 import rs.ltt.jmap.mua.util.KeywordUtil;
 
 public class LttrsRepository extends AbstractRepository {

@@ -48,7 +48,6 @@ import rs.ltt.android.util.Event;
 import rs.ltt.android.worker.Failure;
 import rs.ltt.jmap.common.entity.IdentifiableMailboxWithRole;
 import rs.ltt.jmap.common.entity.Keyword;
-import rs.ltt.jmap.common.entity.StateChange;
 import rs.ltt.jmap.mua.util.LabelUtil;
 import rs.ltt.jmap.mua.util.LabelWithCount;
 import rs.ltt.jmap.mua.util.Navigable;
