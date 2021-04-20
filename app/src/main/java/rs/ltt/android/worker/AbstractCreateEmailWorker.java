@@ -130,6 +130,6 @@ public abstract class AbstractCreateEmailWorker extends AbstractMuaWorker {
     }
 
     IdentityWithNameAndEmail getIdentity() {
-        return getDatabase().identityDao().get(this.identity);
+        return getDatabase().identityDao().get(this.account, this.identity);
     }
 }

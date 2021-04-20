@@ -48,7 +48,7 @@ public class SubmitEmailWorker extends AbstractMuaWorker {
     @NonNull
     @Override
     public Result doWork() {
-        IdentityWithNameAndEmail identity = getDatabase().identityDao().get(this.identity);
+        IdentityWithNameAndEmail identity = getDatabase().identityDao().get(this.account, this.identity);
         try {
             final boolean madeChanges = getMua().submit(this.emailId, identity).get();
             if (madeChanges) {

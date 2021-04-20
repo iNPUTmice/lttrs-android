@@ -47,7 +47,7 @@ public abstract class AbstractMuaWorker extends Worker {
     protected static final String MAILBOX_ID_KEY = "mailboxId";
     protected static final String KEYWORD_KEY = "keyword";
 
-    private final Long account;
+    protected final Long account;
 
     AbstractMuaWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
