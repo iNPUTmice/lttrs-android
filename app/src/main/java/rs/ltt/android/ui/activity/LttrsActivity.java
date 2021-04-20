@@ -235,6 +235,8 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
                 mSearchItem.expandActionView();
                 mSearchView.setQuery(lttrsViewModel.getCurrentSearchTerm(), false);
                 mSearchView.clearFocus();
+            } else {
+                resetToolbar();
             }
             mSearchItem.setOnActionExpandListener(this);
         } else {
