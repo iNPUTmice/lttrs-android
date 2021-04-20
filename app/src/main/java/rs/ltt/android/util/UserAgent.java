@@ -37,7 +37,7 @@ public class UserAgent {
         final String packageName = context.getPackageName();
         try {
             return context.getPackageManager().getPackageInfo(packageName, 0).versionName;
-        } catch (PackageManager.NameNotFoundException | RuntimeException e) {
+        } catch (final PackageManager.NameNotFoundException | RuntimeException e) {
             return UNKNOWN;
         }
     }

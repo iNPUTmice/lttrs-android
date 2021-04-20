@@ -27,10 +27,12 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import rs.ltt.android.BuildConfig;
 import rs.ltt.android.MuaPool;
 import rs.ltt.android.database.AppDatabase;
 import rs.ltt.android.entity.AccountWithCredentials;
 import rs.ltt.android.entity.QueryInfo;
+import rs.ltt.android.ui.notification.ForegroundServiceNotification;
 import rs.ltt.android.worker.QueryRefreshWorker;
 import rs.ltt.jmap.client.event.OnStateChangeListener;
 import rs.ltt.jmap.client.event.PushService;
@@ -76,6 +78,13 @@ public class EventMonitorService extends LifecycleService {
                 LOGGER.warn("Unable to load accounts from database", throwable);
             }
         }, PUSH_SERVICE_BACKGROUND_EXECUTOR);
+
+        if (BuildConfig.USE_FOREGROUND_SERVICE) {
+            startForeground(
+                    ForegroundServiceNotification.ID,
+                    ForegroundServiceNotification.get(this)
+            );
+        }
     }
 
     @Override
@@ -94,7 +103,7 @@ public class EventMonitorService extends LifecycleService {
 
     private void onAccountsLoaded(final List<AccountWithCredentials> accounts) {
         final Lifecycle.State state = getLifecycle().getCurrentState();
-        if (state.isAtLeast(Lifecycle.State.CREATED)) {
+        if (state.isAtLeast(Lifecycle.State.INITIALIZED)) {
             LOGGER.debug("{} accounts loaded while in state {}", accounts.size(), state);
             accounts.stream().forEach(this::setupEventMonitor);
         }
@@ -121,7 +130,10 @@ public class EventMonitorService extends LifecycleService {
                 }
                 final Lifecycle.State currentState = getLifecycle().getCurrentState();
                 if (currentState.isAtLeast(Lifecycle.State.CREATED)) {
-                    final EventMonitorRegistration registration = new EventMonitorRegistration(pushService, eventMonitor);
+                    final EventMonitorRegistration registration = new EventMonitorRegistration(
+                            pushService,
+                            eventMonitor
+                    );
                     pushService.addOnStateChangeListener(eventMonitor);
                     synchronized (eventMonitorRegistrations) {
                         eventMonitorRegistrations.put(account.id, registration);

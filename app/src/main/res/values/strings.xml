@@ -104,4 +104,6 @@
     <string name="create">Create</string>
     <string name="manage_accounts">Manage accounts</string>
     <string name="add_another_account">Add another account</string>
+    <string name="foreground_service_notification_text">Ltt.rs keeps running to notify about incoming e-mail</string>
+    <string name="foreground_service">Foreground service</string>
 </resources>

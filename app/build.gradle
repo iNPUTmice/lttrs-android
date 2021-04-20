@@ -22,6 +22,9 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArguments clearPackageData: 'true'
+
+
+        buildConfigField "boolean", "USE_FOREGROUND_SERVICE", "true"
     }
 
     testOptions {
