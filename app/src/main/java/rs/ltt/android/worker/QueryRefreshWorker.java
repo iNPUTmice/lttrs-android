@@ -63,24 +63,32 @@ public abstract class QueryRefreshWorker extends AbstractMuaWorker {
         }
     }
 
+    public static OneTimeWorkRequest main(long accountId) {
+        return new OneTimeWorkRequest.Builder(MainMailboxQueryRefreshWorker.class)
+                .setInputData(MainMailboxQueryRefreshWorker.data(
+                        accountId,
+                        false
+                ))
+                .build();
+    }
 
     public static OneTimeWorkRequest of(final QueryInfo queryInfo, final boolean skipOverEmpty) {
         switch (queryInfo.type) {
             case MAIN:
-                return new OneTimeWorkRequest.Builder(InboxQueryRefreshWorker.class)
-                        .setInputData(InboxQueryRefreshWorker.data(
+                return new OneTimeWorkRequest.Builder(MainMailboxQueryRefreshWorker.class)
+                        .setInputData(MainMailboxQueryRefreshWorker.data(
                                 queryInfo.accountId,
                                 skipOverEmpty
                         ))
                         .build();
             case MAILBOX:
                 return new OneTimeWorkRequest.Builder(MailboxQueryRefreshWorker.class)
-                    .setInputData(MailboxQueryRefreshWorker.data(
-                            queryInfo.accountId,
-                            skipOverEmpty,
-                            queryInfo.value
-                    ))
-                    .build();
+                        .setInputData(MailboxQueryRefreshWorker.data(
+                                queryInfo.accountId,
+                                skipOverEmpty,
+                                queryInfo.value
+                        ))
+                        .build();
             case KEYWORD:
                 return new OneTimeWorkRequest.Builder(KeywordQueryRefreshWorker.class)
                         .setInputData(KeywordQueryRefreshWorker.data(

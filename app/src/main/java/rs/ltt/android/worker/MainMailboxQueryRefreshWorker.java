@@ -14,11 +14,11 @@ import rs.ltt.jmap.common.entity.Role;
 import rs.ltt.jmap.common.entity.query.EmailQuery;
 import rs.ltt.jmap.mua.util.StandardQueries;
 
-public class InboxQueryRefreshWorker extends QueryRefreshWorker {
+public class MainMailboxQueryRefreshWorker extends QueryRefreshWorker {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(InboxQueryRefreshWorker.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MainMailboxQueryRefreshWorker.class);
 
-    public InboxQueryRefreshWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
+    public MainMailboxQueryRefreshWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
     }
 

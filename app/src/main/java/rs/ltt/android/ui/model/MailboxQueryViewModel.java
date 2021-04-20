@@ -34,14 +34,12 @@ import rs.ltt.jmap.mua.util.StandardQueries;
 
 public class MailboxQueryViewModel extends AbstractQueryViewModel {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MailboxQueryViewModel.class);
-
-
     private final LiveData<MailboxOverviewItem> mailbox;
     private final String mailboxId;
 
     private final LiveData<EmailQuery> emailQueryLiveData;
 
+    //TODO refactor out MainMailboxQueryViewModel to not have to deal with mailboxId==null special treatment
     MailboxQueryViewModel(final Application application, final long accountId, final String mailboxId) {
         super(application, accountId);
         this.mailboxId = mailboxId;

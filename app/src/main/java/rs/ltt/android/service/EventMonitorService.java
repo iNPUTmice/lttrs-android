@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleService;
+import androidx.lifecycle.ProcessLifecycleOwner;
 import androidx.work.ExistingWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
@@ -53,6 +54,7 @@ public class EventMonitorService extends LifecycleService {
     static final Executor PUSH_SERVICE_BACKGROUND_EXECUTOR = Executors.newSingleThreadExecutor();
 
     private final Map<Long, EventMonitorRegistration> eventMonitorRegistrations = new HashMap<>();
+    private QueryInfo currentlyWatchedQuery = null;
 
     @Nullable
     @Override
@@ -129,7 +131,7 @@ public class EventMonitorService extends LifecycleService {
                     return;
                 }
                 final Lifecycle.State currentState = getLifecycle().getCurrentState();
-                if (currentState.isAtLeast(Lifecycle.State.CREATED)) {
+                if (currentState.isAtLeast(Lifecycle.State.INITIALIZED)) {
                     final EventMonitorRegistration registration = new EventMonitorRegistration(
                             pushService,
                             eventMonitor
@@ -177,6 +179,7 @@ public class EventMonitorService extends LifecycleService {
 
     private void watchQuery(final QueryInfo queryInfo) {
         LOGGER.debug("watchQuery({})", queryInfo);
+        this.currentlyWatchedQuery = queryInfo;
         final WorkManager workManager = WorkManager.getInstance(getApplication());
         final OneTimeWorkRequest workRequest = QueryRefreshWorker.of(queryInfo, true);
         workManager.enqueueUniqueWork(
@@ -187,7 +190,23 @@ public class EventMonitorService extends LifecycleService {
     }
 
     private boolean onStateChange(final AccountWithCredentials account, final StateChange stateChange) {
+        final boolean activityStarted = ProcessLifecycleOwner.get().getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED);
         LOGGER.debug("Account {} received {}", account.getId(), stateChange);
+        final QueryInfo queryInfo = this.currentlyWatchedQuery;
+        final OneTimeWorkRequest workRequest;
+        if (activityStarted && queryInfo != null && queryInfo.accountId == account.id) {
+            LOGGER.debug("Refreshing {} ", queryInfo);
+            workRequest = QueryRefreshWorker.of(queryInfo, false);
+        } else {
+            LOGGER.debug("Refreshing MainMailbox");
+            workRequest = QueryRefreshWorker.main(account.id);
+        }
+        final WorkManager workManager = WorkManager.getInstance(getApplication());
+        workManager.enqueueUniqueWork(
+                QueryRefreshWorker.uniqueName(queryInfo.accountId),
+                ExistingWorkPolicy.REPLACE,
+                workRequest
+        );
         return true;
     }
 
