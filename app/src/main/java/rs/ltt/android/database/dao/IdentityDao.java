@@ -28,7 +28,6 @@ import java.util.Collection;
 import java.util.List;
 
 import rs.ltt.android.entity.EntityStateEntity;
-import rs.ltt.android.entity.EntityType;
 import rs.ltt.android.entity.IdentityEmailAddressEntity;
 import rs.ltt.android.entity.IdentityEntity;
 import rs.ltt.android.entity.IdentityWithNameAndEmail;
@@ -67,7 +66,7 @@ public abstract class IdentityDao extends AbstractEntityDao {
 
     @Transaction
     public void set(Identity[] identities, String state) {
-        if (state != null && state.equals(getState(EntityType.IDENTITY))) {
+        if (state != null && state.equals(getState(Identity.class))) {
             LOGGER.debug("nothing to do. identities with this state have already been set");
             return;
         }
@@ -75,12 +74,12 @@ public abstract class IdentityDao extends AbstractEntityDao {
         if (identities.length > 0) {
             insert(identities);
         }
-        insert(new EntityStateEntity(EntityType.IDENTITY, state));
+        insert(new EntityStateEntity(Identity.class, state));
     }
 
     public void update(final Update<Identity> update) {
         final String newState = update.getNewTypedState().getState();
-        if (newState != null && newState.equals(getState(EntityType.IDENTITY))) {
+        if (newState != null && newState.equals(getState(Identity.class))) {
             LOGGER.debug("nothing to do. identities already at newest state");
             return;
         }
@@ -89,6 +88,6 @@ public abstract class IdentityDao extends AbstractEntityDao {
         for (final String id : update.getDestroyed()) {
             delete(id);
         }
-        throwOnUpdateConflict(EntityType.IDENTITY, update.getOldTypedState(), update.getNewTypedState());
+        throwOnUpdateConflict(Identity.class, update.getOldTypedState(), update.getNewTypedState());
     }
 }

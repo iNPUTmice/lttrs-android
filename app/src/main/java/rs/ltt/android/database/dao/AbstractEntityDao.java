@@ -20,7 +20,7 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
 import rs.ltt.android.entity.EntityStateEntity;
-import rs.ltt.android.entity.EntityType;
+import rs.ltt.jmap.common.entity.AbstractIdentifiableEntity;
 import rs.ltt.jmap.common.entity.TypedState;
 import rs.ltt.jmap.mua.cache.exception.CacheConflictException;
 
@@ -30,12 +30,12 @@ public abstract class AbstractEntityDao {
     protected abstract void insert(EntityStateEntity entityStateEntity);
 
     @Query("select state from entity_state where type=:type")
-    public abstract String getState(EntityType type);
+    public abstract String getState(Class<? extends AbstractIdentifiableEntity> type);
 
     @Query("update entity_state set state=:newState where type=:type and state=:oldState")
-    protected abstract int updateState(EntityType type, String oldState, String newState);
+    protected abstract int updateState(Class<? extends AbstractIdentifiableEntity> type, String oldState, String newState);
 
-    void throwOnCacheConflict(EntityType type, TypedState<?> expectedTypedState) {
+    void throwOnCacheConflict(final Class<? extends AbstractIdentifiableEntity> type, TypedState<?> expectedTypedState) {
         final String expectedState = expectedTypedState.getState();
         final String currentState = getState(type);
         if (expectedState == null || !expectedState.equals(currentState)) {
@@ -43,7 +43,7 @@ public abstract class AbstractEntityDao {
         }
     }
 
-    void throwOnUpdateConflict(final EntityType type, final TypedState<?> oldTypedState, final TypedState<?> newTypedState) {
+    void throwOnUpdateConflict(final Class<? extends AbstractIdentifiableEntity> type, final TypedState<?> oldTypedState, final TypedState<?> newTypedState) {
         final String oldState = oldTypedState.getState();
         final String newState = newTypedState.getState();
         if (updateState(type, oldState, newState) != 1) {

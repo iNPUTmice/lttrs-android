@@ -19,11 +19,16 @@ import androidx.room.Dao;
 import androidx.room.Query;
 import androidx.room.Transaction;
 
+import com.google.common.collect.ImmutableList;
+
 import java.util.Arrays;
 import java.util.List;
 
 import rs.ltt.android.entity.EntityState;
-import rs.ltt.android.entity.EntityType;
+import rs.ltt.jmap.common.entity.AbstractIdentifiableEntity;
+import rs.ltt.jmap.common.entity.Email;
+import rs.ltt.jmap.common.entity.Mailbox;
+import rs.ltt.jmap.common.entity.Thread;
 import rs.ltt.jmap.mua.cache.ObjectsState;
 import rs.ltt.jmap.mua.cache.QueryStateWrapper;
 
@@ -31,31 +36,25 @@ import rs.ltt.jmap.mua.cache.QueryStateWrapper;
 public abstract class StateDao {
 
     @Query("select state,type from entity_state where type in (:types)")
-    public abstract List<EntityState> getEntityStates(List<EntityType> types);
+    public abstract List<EntityState> getEntityStates(List<Class<? extends AbstractIdentifiableEntity>> types);
 
     public ObjectsState getObjectsState() {
         final List<EntityState> entityStates = getEntityStates(
-                Arrays.asList(EntityType.EMAIL, EntityType.MAILBOX, EntityType.THREAD)
+                Arrays.asList(Email.class, Mailbox.class, Thread.class)
         );
-        String mailboxState = null;
-        String threadState = null;
-        String emailState = null;
+        final ObjectsState.Builder builder = ObjectsState.builder();
         for (final EntityState entityState : entityStates) {
-            switch (entityState.type) {
-                case MAILBOX:
-                    mailboxState = entityState.state;
-                    break;
-                case THREAD:
-                    threadState = entityState.state;
-                    break;
-                case EMAIL:
-                    emailState = entityState.state;
-                    break;
-                default:
-                    throw new IllegalStateException("Database returned state that we can not process");
+            if (entityState.type == Mailbox.class) {
+                builder.setMailboxState(entityState.state);
+            } else if (entityState.type == Thread.class) {
+                builder.setThreadState(entityState.state);
+            } else if (entityState.type == Email.class) {
+                builder.setEmailState(entityState.state);
+            } else {
+                throw new IllegalStateException("Database returned state that we can not process");
             }
         }
-        return new ObjectsState(mailboxState, threadState, emailState);
+        return builder.build();
     }
 
     @Query("select state,canCalculateChanges from `query` where queryString=:queryString and valid=1")
@@ -71,14 +70,14 @@ public abstract class StateDao {
     abstract void invalidateQueryStates();
 
     @Query("delete from entity_state where type=:entityType")
-    public abstract void deleteState(EntityType entityType);
+    public abstract void deleteState(Class<? extends AbstractIdentifiableEntity> entityType);
 
     @Query("delete from entity_state where type in(:entityTypes)")
-    abstract void deleteStates(EntityType... entityTypes);
+    abstract void deleteStates(List<Class<? extends AbstractIdentifiableEntity>> entityTypes);
 
     @Transaction
     public void invalidateEmailThreadAndQueryStates() {
-        deleteStates(EntityType.EMAIL, EntityType.THREAD);
+        deleteStates(ImmutableList.of(Email.class, Thread.class));
         invalidateQueryStates();
     }
 

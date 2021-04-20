@@ -24,9 +24,10 @@ import java.time.format.DateTimeFormatter;
 import okhttp3.HttpUrl;
 import rs.ltt.android.entity.EmailAddressType;
 import rs.ltt.android.entity.EmailBodyPartType;
-import rs.ltt.android.entity.EntityType;
 import rs.ltt.android.entity.QueryItemOverwriteEntity;
+import rs.ltt.jmap.common.entity.AbstractIdentifiableEntity;
 import rs.ltt.jmap.common.entity.Role;
+import rs.ltt.jmap.common.util.Mapper;
 
 public class Converters {
 
@@ -43,13 +44,21 @@ public class Converters {
 
 
     @TypeConverter
-    public static String toString(EntityType entityType) {
-        return entityType.toString();
+    public static String toString(final Class<? extends AbstractIdentifiableEntity> clazz) {
+        final String type = Mapper.ENTITIES.inverse().get(clazz);
+        if (type == null) {
+            throw new IllegalArgumentException(String.format("%s is not a known entity class", clazz.getName()));
+        }
+        return type;
     }
 
     @TypeConverter
-    public static EntityType toEntityType(String entityType) {
-        return EntityType.valueOf(entityType);
+    public static Class<? extends AbstractIdentifiableEntity> toEntityType(final String entityType) {
+        final Class<? extends AbstractIdentifiableEntity> clazz = Mapper.ENTITIES.get(entityType);
+        if (clazz == null) {
+            throw new IllegalArgumentException(String.format("%s is not a known entity type", entityType));
+        }
+        return clazz;
     }
 
 

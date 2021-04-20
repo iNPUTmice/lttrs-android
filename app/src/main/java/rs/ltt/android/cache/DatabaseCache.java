@@ -26,7 +26,6 @@ import java.util.Collection;
 import java.util.List;
 
 import rs.ltt.android.database.LttrsDatabase;
-import rs.ltt.android.entity.EntityType;
 import rs.ltt.android.entity.MailboxEntity;
 import rs.ltt.jmap.common.entity.Email;
 import rs.ltt.jmap.common.entity.IdentifiableMailboxWithRole;
@@ -61,12 +60,12 @@ public class DatabaseCache implements Cache {
 
     @Override
     public String getIdentityState() {
-        return database.identityDao().getState(EntityType.IDENTITY);
+        return database.identityDao().getState(Identity.class);
     }
 
     @Override
     public String getMailboxState() {
-        return database.mailboxDao().getState(EntityType.MAILBOX);
+        return database.mailboxDao().getState(Identity.class);
     }
 
     @NonNull
@@ -158,7 +157,7 @@ public class DatabaseCache implements Cache {
     
     @Override
     public void invalidateMailboxes() {
-        database.stateDao().deleteState(EntityType.MAILBOX);
+        database.stateDao().deleteState(Mailbox.class);
     }
 
     @Override
@@ -175,7 +174,7 @@ public class DatabaseCache implements Cache {
 
     @Override
     public void invalidateIdentities() {
-        database.stateDao().deleteState(EntityType.IDENTITY);
+        database.stateDao().deleteState(Identity.class);
     }
 
     @Override

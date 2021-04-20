@@ -44,7 +44,6 @@ import rs.ltt.android.entity.EmailMessageIdEntity;
 import rs.ltt.android.entity.EmailWithKeywords;
 import rs.ltt.android.entity.EmailWithMailboxes;
 import rs.ltt.android.entity.EntityStateEntity;
-import rs.ltt.android.entity.EntityType;
 import rs.ltt.android.entity.ExpandedPosition;
 import rs.ltt.android.entity.FullEmail;
 import rs.ltt.android.entity.ThreadEntity;
@@ -81,14 +80,14 @@ public abstract class ThreadAndEmailDao extends AbstractEntityDao {
         if (threads.length > 0) {
             insertThreads(threads);
         }
-        insert(new EntityStateEntity(EntityType.THREAD, state));
+        insert(new EntityStateEntity(Thread.class, state));
     }
 
     private void add(final TypedState<Thread> expectedState, Thread[] threads) {
         if (threads.length > 0) {
             insertThreads(threads);
         }
-        throwOnCacheConflict(EntityType.THREAD, expectedState);
+        throwOnCacheConflict(Thread.class, expectedState);
     }
 
     private void insertThreads(Thread[] threads) {
@@ -104,7 +103,7 @@ public abstract class ThreadAndEmailDao extends AbstractEntityDao {
     @Transaction
     public void update(Update<Thread> update) {
         final String newState = update.getNewTypedState().getState();
-        if (newState != null && newState.equals(getState(EntityType.THREAD))) {
+        if (newState != null && newState.equals(getState(Thread.class))) {
             LOGGER.debug("nothing to do. threads already at newest state");
             return;
         }
@@ -123,7 +122,7 @@ public abstract class ThreadAndEmailDao extends AbstractEntityDao {
         for (final String id : update.getDestroyed()) {
             delete(ThreadEntity.of(id));
         }
-        throwOnUpdateConflict(EntityType.THREAD, update.getOldTypedState(), update.getNewTypedState());
+        throwOnUpdateConflict(Thread.class, update.getOldTypedState(), update.getNewTypedState());
     }
 
     @Query(" select threadId from `query` join query_item on `query`.id = queryId where threadId not in(select thread.threadId from thread) and queryString=:queryString")
@@ -132,8 +131,8 @@ public abstract class ThreadAndEmailDao extends AbstractEntityDao {
     @Transaction
     public Missing getMissing(String queryString) {
         final List<String> ids = getMissingThreadIds(queryString);
-        final String threadState = getState(EntityType.THREAD);
-        final String emailState = getState(EntityType.EMAIL);
+        final String threadState = getState(Thread.class);
+        final String emailState = getState(Email.class);
         return new Missing(threadState, emailState, ids);
     }
 
@@ -219,7 +218,7 @@ public abstract class ThreadAndEmailDao extends AbstractEntityDao {
         if (emails.length > 0) {
             insertEmails(emails);
         }
-        insert(new EntityStateEntity(EntityType.EMAIL, state));
+        insert(new EntityStateEntity(Email.class, state));
     }
 
     @Query("delete from keyword_overwrite where threadId=(select threadId from email where id=:emailId)")
@@ -247,7 +246,7 @@ public abstract class ThreadAndEmailDao extends AbstractEntityDao {
         if (email.length > 0) {
             insertEmails(email);
         }
-        throwOnCacheConflict(EntityType.EMAIL, expectedState);
+        throwOnCacheConflict(Email.class, expectedState);
     }
 
     @Query("SELECT EXISTS(SELECT 1 FROM email WHERE id=:emailId)")
@@ -269,7 +268,7 @@ public abstract class ThreadAndEmailDao extends AbstractEntityDao {
     @Transaction
     public void updateEmails(final Update<Email> update, final String[] updatedProperties) {
         final String newState = update.getNewTypedState().getState();
-        if (newState != null && newState.equals(getState(EntityType.EMAIL))) {
+        if (newState != null && newState.equals(getState(Email.class))) {
             LOGGER.debug("nothing to do. emails already at newest state");
             return;
         }
@@ -303,7 +302,7 @@ public abstract class ThreadAndEmailDao extends AbstractEntityDao {
         for (final String id : update.getDestroyed()) {
             deleteEmail(id);
         }
-        throwOnUpdateConflict(EntityType.EMAIL, update.getOldTypedState(), update.getNewTypedState());
+        throwOnUpdateConflict(Email.class, update.getOldTypedState(), update.getNewTypedState());
     }
 
     private void deleteOverwrites(final String emailId) {

@@ -31,7 +31,6 @@ import java.util.Collection;
 import java.util.List;
 
 import rs.ltt.android.entity.EntityStateEntity;
-import rs.ltt.android.entity.EntityType;
 import rs.ltt.android.entity.MailboxEntity;
 import rs.ltt.android.entity.MailboxOverviewItem;
 import rs.ltt.android.entity.MailboxWithRoleAndName;
@@ -134,7 +133,7 @@ public abstract class MailboxDao extends AbstractEntityDao {
 
     @Transaction
     public void set(List<MailboxEntity> mailboxEntities, String state) {
-        if (state != null && state.equals(getState(EntityType.MAILBOX))) {
+        if (state != null && state.equals(getState(Mailbox.class))) {
             LOGGER.debug("nothing to do. mailboxes with this state have already been set");
             return;
         }
@@ -142,13 +141,13 @@ public abstract class MailboxDao extends AbstractEntityDao {
         if (mailboxEntities.size() > 0) {
             insert(mailboxEntities);
         }
-        insert(new EntityStateEntity(EntityType.MAILBOX, state));
+        insert(new EntityStateEntity(Mailbox.class, state));
     }
 
     @Transaction
     public void update(final Update<Mailbox> update, final String[] updatedProperties) {
         final String newState = update.getNewTypedState().getState();
-        if (newState != null && newState.equals(getState(EntityType.MAILBOX))) {
+        if (newState != null && newState.equals(getState(Mailbox.class))) {
             LOGGER.debug("nothing to do. mailboxes already at newest state");
             return;
         }
@@ -186,6 +185,6 @@ public abstract class MailboxDao extends AbstractEntityDao {
         for(String id : update.getDestroyed()) {
             delete(id);
         }
-        throwOnUpdateConflict(EntityType.MAILBOX, update.getOldTypedState(), update.getNewTypedState());
+        throwOnUpdateConflict(Mailbox.class, update.getOldTypedState(), update.getNewTypedState());
     }
 }

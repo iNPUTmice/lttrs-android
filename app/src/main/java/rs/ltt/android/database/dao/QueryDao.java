@@ -26,7 +26,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-import rs.ltt.android.entity.EntityType;
 import rs.ltt.android.entity.QueryEntity;
 import rs.ltt.android.entity.QueryItem;
 import rs.ltt.android.entity.QueryItemEntity;
@@ -83,7 +82,7 @@ public abstract class QueryDao extends AbstractEntityDao {
     @Transaction
     public void set(String queryString, QueryResult queryResult) {
         TypedState<Email> emailState = queryResult.objectState;
-        throwOnCacheConflict(EntityType.EMAIL, emailState);
+        throwOnCacheConflict(Email.class, emailState);
 
         if (queryResult.items.length == 0) {
             deleteQuery(queryString);
@@ -111,7 +110,7 @@ public abstract class QueryDao extends AbstractEntityDao {
         }
 
         TypedState<Email> emailState = queryResult.objectState;
-        throwOnCacheConflict(EntityType.EMAIL, emailState);
+        throwOnCacheConflict(Email.class, emailState);
 
         final QueryItem lastQueryItem = getLastQueryItem(queryEntity.id);
 
@@ -155,7 +154,7 @@ public abstract class QueryDao extends AbstractEntityDao {
             LOGGER.debug("nothing to do. query already at newest state");
             return;
         }
-        throwOnCacheConflict(EntityType.EMAIL, emailState);
+        throwOnCacheConflict(Email.class, emailState);
         final QueryEntity queryEntity = getQueryEntity(queryString);
 
         final int count = deleteAllExecuted(queryEntity.id);

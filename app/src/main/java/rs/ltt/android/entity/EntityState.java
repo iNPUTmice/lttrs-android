@@ -15,9 +15,11 @@
 
 package rs.ltt.android.entity;
 
+import rs.ltt.jmap.common.entity.AbstractIdentifiableEntity;
+
 public class EntityState {
 
     public String state;
-    public EntityType type;
+    public Class<? extends AbstractIdentifiableEntity> type;
 
 }
