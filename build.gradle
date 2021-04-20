@@ -3,9 +3,9 @@ buildscript {
     ext {
         appcompatVersion = "1.2.0"
         lifecycleVersion = "2.2.0"
-        navVersion = "2.3.4"
+        navVersion = "2.3.5"
         pagingVersion = "2.1.2"
-        recyclerViewVersion = "1.1.0"
+        recyclerViewVersion = "1.2.0"
         recyclerViewSelectionVersion = "1.1.0"
         swipeRefreshLayoutVersion = "1.1.0"
         roomVersion = "2.2.6"
