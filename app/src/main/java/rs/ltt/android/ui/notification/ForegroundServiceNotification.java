@@ -3,12 +3,15 @@ package rs.ltt.android.ui.notification;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 
 import androidx.core.app.NotificationCompat;
 
 import rs.ltt.android.R;
+import rs.ltt.android.ui.activity.MainActivity;
 
 public class ForegroundServiceNotification {
 
@@ -39,6 +42,14 @@ public class ForegroundServiceNotification {
         notificationBuilder.setContentTitle(context.getString(R.string.foreground_service));
         notificationBuilder.setContentText(context.getString(R.string.foreground_service_notification_text));
         notificationBuilder.setSmallIcon(R.drawable.ic_baseline_sync_24);
+        notificationBuilder.setShowWhen(false);
+        notificationBuilder.setColor(context.getColor(R.color.colorPrimary));
+        notificationBuilder.setContentIntent(launchLttrs(context));
         return notificationBuilder.build();
+    }
+
+    private static PendingIntent launchLttrs(final Context context) {
+        final Intent main = new Intent(context, MainActivity.class);
+        return PendingIntent.getActivity(context, 0, main, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 }
