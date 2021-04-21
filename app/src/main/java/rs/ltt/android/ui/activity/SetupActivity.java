@@ -91,7 +91,7 @@ public class SetupActivity extends AppCompatActivity {
         if (mailToUri != null) {
             ComposeActivity.launch(this, Uri.parse(uri));
         } else {
-            LttrsActivity.launch(this, accountId);
+            LttrsActivity.launch(this, accountId, true);
         }
         finish();
     }

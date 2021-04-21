@@ -104,6 +104,10 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
     private WeakReference<Snackbar> mostRecentSnackbar;
 
     public static void launch(final AppCompatActivity activity, final long accountId) {
+        launch(activity, accountId, false);
+    }
+
+    public static void launch(final AppCompatActivity activity, final long accountId, final boolean animate) {
         final Intent intent = new Intent(activity, LttrsActivity.class);
         intent.putExtra(LttrsActivity.EXTRA_ACCOUNT_ID, accountId);
         //the default launch mode of the this activity is set to 'singleTask'
@@ -112,6 +116,9 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
         //of an activity
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         activity.startActivity(intent);
+        if (!animate) {
+            activity.overridePendingTransition(0, 0);
+        }
     }
 
     @Override
@@ -305,13 +312,15 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
 
     }
 
-    public void onNewIntent(Intent intent) {
+    public void onNewIntent(final Intent intent) {
         super.onNewIntent(intent);
-        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+        final String action = intent == null ? null : intent.getAction();
+        if (Intent.ACTION_SEARCH.equals(action)) {
             final String query = Strings.nullToEmpty(intent.getStringExtra(SearchManager.QUERY));
             if (mSearchView != null) {
                 mSearchView.setQuery(query, false);
-                mSearchView.clearFocus(); //this does not work on all phones / android versions; therefor we have this followed by a requestFocus() on the list
+                //this does not work on all phones / android versions; therefor we have this followed by a requestFocus() on the list
+                mSearchView.clearFocus();
             }
             binding.navigation.requestFocus();
 
