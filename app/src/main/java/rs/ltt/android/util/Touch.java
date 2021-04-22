@@ -18,10 +18,20 @@ package rs.ltt.android.util;
 import android.graphics.Rect;
 import android.view.TouchDelegate;
 import android.view.View;
+import android.view.ViewParent;
 
 public class Touch {
 
-    public static void expandTouchArea(final View parent, final View view, final int dp) {
+    public static void expandTouchArea(final View view, final int dp) {
+        final ViewParent viewParent = view.getParent();
+        if (viewParent instanceof View) {
+            expandTouchArea((View) viewParent, view, dp);
+        } else {
+            throw new IllegalArgumentException(String.format("%s is not a view", viewParent.getClass()));
+        }
+    }
+
+    private static void expandTouchArea(final View parent, final View view, final int dp) {
         float scale = parent.getContext().getResources().getDisplayMetrics().density;
         int padding = (int) (scale * dp);
         parent.post(() -> {

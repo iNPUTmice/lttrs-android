@@ -112,7 +112,7 @@ public class ThreadOverviewAdapter extends PagedListAdapter<ThreadOverviewItem, 
                 onFlaggedToggled.onFlaggedToggled(item.threadId, target);
             }
         });
-        Touch.expandTouchArea(threadOverviewHolder.binding.getRoot(), threadOverviewHolder.binding.starToggle, 16);
+        Touch.expandTouchArea(threadOverviewHolder.binding.starToggle, 16);
         threadOverviewHolder.binding.foreground.setOnClickListener(v -> {
             if (selectionTracker != null && selectionTracker.hasSelection()) {
                 LOGGER.debug("Do not process click on thread because thread was selected");

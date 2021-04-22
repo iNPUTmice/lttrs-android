@@ -102,7 +102,7 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.AbstractTh
                     onFlaggedToggled.onFlaggedToggled(subjectWithImportance.threadId, target);
                 }
             });
-            Touch.expandTouchArea(headerViewHolder.binding.getRoot(), headerViewHolder.binding.starToggle, 16);
+            Touch.expandTouchArea(headerViewHolder.binding.starToggle, 16);
         } else if (holder instanceof ThreadItemViewHolder) {
             final ThreadItemViewHolder itemViewHolder = (ThreadItemViewHolder) holder;
             final FullEmail email = mDiffer.getItem(position - 1);
@@ -112,7 +112,7 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.AbstractTh
             itemViewHolder.binding.setEmail(email);
             itemViewHolder.binding.divider.setVisibility(lastEmail ? View.GONE : View.VISIBLE);
             if (expanded) {
-                Touch.expandTouchArea(itemViewHolder.binding.header, itemViewHolder.binding.moreOptions, 8);
+                Touch.expandTouchArea(itemViewHolder.binding.moreOptions, 8);
             } else {
                 itemViewHolder.binding.header.setTouchDelegate(null);
             }
