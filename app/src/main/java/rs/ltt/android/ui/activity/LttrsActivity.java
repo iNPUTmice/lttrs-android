@@ -65,6 +65,7 @@ import rs.ltt.android.entity.MailboxWithRoleAndName;
 import rs.ltt.android.ui.ItemAnimators;
 import rs.ltt.android.ui.Theme;
 import rs.ltt.android.ui.ThreadModifier;
+import rs.ltt.android.ui.Translations;
 import rs.ltt.android.ui.WeakActionModeCallback;
 import rs.ltt.android.ui.adapter.NavigationAdapter;
 import rs.ltt.android.ui.model.LttrsViewModel;
@@ -73,6 +74,7 @@ import rs.ltt.android.util.MainThreadExecutor;
 import rs.ltt.android.worker.Failure;
 import rs.ltt.jmap.common.entity.Role;
 import rs.ltt.jmap.mua.util.KeywordLabel;
+import rs.ltt.jmap.mua.util.Label;
 
 public class LttrsActivity extends AppCompatActivity implements ThreadModifier, NavController.OnDestinationChangedListener, MenuItem.OnActionExpandListener, DrawerLayout.DrawerListener {
 
@@ -457,13 +459,14 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
     @Override
     public void removeFromKeyword(Collection<String> threadIds, final String keyword) {
         final int count = threadIds.size();
+        final Label label = KeywordLabel.of(keyword);
         final Snackbar snackbar = Snackbar.make(
                 binding.getRoot(),
                 getResources().getQuantityString(
                         R.plurals.n_removed_from_x,
                         count,
                         count,
-                        KeywordLabel.of(keyword).getName()
+                        Translations.asHumanReadableName(this, label)
                 ),
                 Snackbar.LENGTH_LONG
         );

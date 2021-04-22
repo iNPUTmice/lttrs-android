@@ -60,12 +60,14 @@ import rs.ltt.android.service.EventMonitorService;
 import rs.ltt.android.ui.ActionModeMenuConfiguration;
 import rs.ltt.android.ui.ItemAnimators;
 import rs.ltt.android.ui.QueryItemTouchHelper;
+import rs.ltt.android.ui.Translations;
 import rs.ltt.android.ui.activity.ComposeActivity;
 import rs.ltt.android.ui.adapter.OnFlaggedToggled;
 import rs.ltt.android.ui.adapter.ThreadOverviewAdapter;
 import rs.ltt.android.ui.adapter.ThreadOverviewItemDetailsLookup;
 import rs.ltt.android.ui.adapter.ThreadOverviewItemKeyProvider;
 import rs.ltt.android.ui.model.AbstractQueryViewModel;
+import rs.ltt.jmap.common.entity.Role;
 import rs.ltt.jmap.mua.util.LabelWithCount;
 
 
@@ -227,7 +229,7 @@ public abstract class AbstractQueryFragment extends AbstractLttrsFragment implem
 
     void onLabelOpened(final LabelWithCount label) {
         getLttrsViewModel().setSelectedLabel(label);
-        getLttrsViewModel().setActivityTitle(label.getName());
+        getLttrsViewModel().setActivityTitle(Translations.asHumanReadableName(requireContext(), label));
     }
 
     @Override

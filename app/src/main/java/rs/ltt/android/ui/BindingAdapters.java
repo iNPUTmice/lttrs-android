@@ -59,6 +59,8 @@ import rs.ltt.android.entity.ThreadOverviewItem;
 import rs.ltt.jmap.common.entity.Role;
 import rs.ltt.jmap.mua.util.EmailAddressUtil;
 import rs.ltt.jmap.mua.util.EmailBodyUtil;
+import rs.ltt.jmap.mua.util.Label;
+import rs.ltt.jmap.mua.util.LabelWithCount;
 
 public class BindingAdapters {
 
@@ -252,6 +254,16 @@ public class BindingAdapters {
         } else {
             textView.setVisibility(View.VISIBLE);
             textView.setText(String.valueOf(integer));
+        }
+    }
+
+    @BindingAdapter("name")
+    public static void setName(final TextView textView, final Label label) {
+        final Role role = label.getRole();
+        if (role != null) {
+            textView.setText(Translations.translate(role));
+        } else {
+            textView.setText(label.getName());
         }
     }
 

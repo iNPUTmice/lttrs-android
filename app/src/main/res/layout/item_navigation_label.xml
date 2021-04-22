@@ -48,7 +48,7 @@
             android:layout_toEndOf="@+id/icon"
             android:layout_toStartOf="@+id/count"
             android:maxLines="1"
-            android:text="@{label.getName()}"
+            app:name="@{label}"
             android:textAppearance="?textAppearanceSubtitle1"
             tools:text="Archive" />
 
