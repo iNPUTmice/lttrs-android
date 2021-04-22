@@ -25,6 +25,8 @@ import androidx.paging.PagedList;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.Future;
 
 import rs.ltt.android.entity.MailboxWithRoleAndName;
@@ -40,6 +42,8 @@ public abstract class AbstractQueryViewModel extends AndroidViewModel {
     private LiveData<Boolean> refreshing;
     private LiveData<Boolean> runningPagingRequest;
     private final ListenableFuture<MailboxWithRoleAndName> important;
+
+    private final HashSet<String> selectedThreads = new HashSet<>();
 
     AbstractQueryViewModel(@NonNull Application application, final long accountId) {
         super(application);
@@ -80,6 +84,11 @@ public abstract class AbstractQueryViewModel extends AndroidViewModel {
         }
         return liveData;
     }
+
+    public Set<String> getSelectedThreads() {
+        return this.selectedThreads;
+    }
+
 
     public void onRefresh() {
         final EmailQuery emailQuery = getQuery().getValue();

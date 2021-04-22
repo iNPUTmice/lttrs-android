@@ -22,19 +22,19 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.paging.PagedList;
 import androidx.paging.PagedListAdapter;
-import androidx.recyclerview.selection.ItemDetailsLookup;
-import androidx.recyclerview.selection.SelectionTracker;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Future;
 
 import rs.ltt.android.R;
@@ -58,7 +58,8 @@ public class ThreadOverviewAdapter extends PagedListAdapter<ThreadOverviewItem, 
 
     private OnFlaggedToggled onFlaggedToggled;
     private OnThreadClicked onThreadClicked;
-    private SelectionTracker<String> selectionTracker;
+    private OnSelectionToggled onSelectionToggled;
+    private Set<String> selectedThreads = Collections.emptySet();
     private Future<MailboxWithRoleAndName> importantMailbox; //TODO this needs to be a LiveData and needs to trigger a refresh when changed
 
 
@@ -101,10 +102,10 @@ public class ThreadOverviewAdapter extends PagedListAdapter<ThreadOverviewItem, 
         if (item == null) {
             return;
         }
-        final boolean selected = selectionTracker != null && selectionTracker.isSelected(item.threadId);
+        final boolean selected = this.selectedThreads.contains(item.threadId);
         final Context context = threadOverviewHolder.binding.getRoot().getContext();
         threadOverviewHolder.binding.getRoot().setActivated(selected);
-        threadOverviewHolder.setThread(item, position);
+        threadOverviewHolder.setThread(item);
         threadOverviewHolder.binding.starToggle.setOnClickListener(v -> {
             if (onFlaggedToggled != null) {
                 final boolean target = !item.showAsFlagged();
@@ -114,17 +115,24 @@ public class ThreadOverviewAdapter extends PagedListAdapter<ThreadOverviewItem, 
         });
         Touch.expandTouchArea(threadOverviewHolder.binding.starToggle, 16);
         threadOverviewHolder.binding.foreground.setOnClickListener(v -> {
-            if (selectionTracker != null && selectionTracker.hasSelection()) {
-                LOGGER.debug("Do not process click on thread because thread was selected");
+            if (onSelectionToggled != null && selectedThreads.size() > 0) {
+                onSelectionToggled.onSelectionToggled(item.threadId, !selected);
                 return;
             }
             if (onThreadClicked != null) {
                 onThreadClicked.onThreadClicked(item, isImportant(item));
             }
         });
+        threadOverviewHolder.binding.foreground.setOnLongClickListener(v -> {
+            if (onSelectionToggled != null && selectedThreads.size() == 0) {
+                onSelectionToggled.onSelectionToggled(item.threadId, !selected);
+                return true;
+            }
+            return false;
+        });
         threadOverviewHolder.binding.avatar.setOnClickListener(v -> {
-            if (selectionTracker != null) {
-                selectionTracker.select(item.threadId);
+            if (onSelectionToggled != null) {
+                onSelectionToggled.onSelectionToggled(item.threadId, !selected);
             }
         });
         if (selected) {
@@ -134,6 +142,30 @@ public class ThreadOverviewAdapter extends PagedListAdapter<ThreadOverviewItem, 
             context.getTheme().resolveAttribute(android.R.attr.selectableItemBackground, outValue, true);
             threadOverviewHolder.binding.threadLayout.setBackgroundResource(outValue.resourceId);
         }
+    }
+
+    public void notifyItemChanged(final String threadId) {
+        final int position = getPosition(threadId);
+        if (position != RecyclerView.NO_POSITION) {
+            notifyItemChanged(position);
+        }
+    }
+
+    public int getPosition(final String threadId) {
+        final PagedList<ThreadOverviewItem> currentList = getCurrentList();
+        if (currentList == null) {
+            return RecyclerView.NO_POSITION;
+        }
+        final int offset = currentList.getPositionOffset();
+        final List<ThreadOverviewItem> snapshot = currentList.snapshot();
+        int i = 0;
+        for (final ThreadOverviewItem item : snapshot) {
+            if (item != null && threadId.equals(item.threadId)) {
+                return offset + i;
+            }
+            ++i;
+        }
+        return RecyclerView.NO_POSITION;
     }
 
     private void onBindViewHolder(final ThreadOverviewLoadingViewHolder threadOverviewLoadingViewHolder) {
@@ -192,8 +224,8 @@ public class ThreadOverviewAdapter extends PagedListAdapter<ThreadOverviewItem, 
         this.importantMailbox = importantMailbox;
     }
 
-    public void setTracker(SelectionTracker<String> selectionTracker) {
-        this.selectionTracker = selectionTracker;
+    public void setSelectedThreads(final Set<String> selectedThreads) {
+        this.selectedThreads = selectedThreads;
     }
 
     @Override
@@ -212,6 +244,10 @@ public class ThreadOverviewAdapter extends PagedListAdapter<ThreadOverviewItem, 
 
     public void setOnThreadClickedListener(OnThreadClicked listener) {
         this.onThreadClicked = listener;
+    }
+
+    public void setOnSelectionToggled(final OnSelectionToggled listener) {
+        this.onSelectionToggled = listener;
     }
 
     @Override
@@ -233,41 +269,15 @@ public class ThreadOverviewAdapter extends PagedListAdapter<ThreadOverviewItem, 
     public class ThreadOverviewViewHolder extends AbstractThreadOverviewViewHolder {
 
         final public ItemThreadOverviewBinding binding;
-        private int position;
-        private boolean inProgressSwipe = false;
 
         ThreadOverviewViewHolder(@NonNull ItemThreadOverviewBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
         }
 
-        public void setThread(final ThreadOverviewItem thread, int position) {
+        public void setThread(final ThreadOverviewItem thread) {
             this.binding.setThread(thread);
-            this.position = position;
             this.binding.setIsImportant(isImportant(thread));
-        }
-
-        public ItemDetailsLookup.ItemDetails<String> getItemDetails() {
-            return new ItemDetailsLookup.ItemDetails<String>() {
-                @Override
-                public int getPosition() {
-                    return position;
-                }
-
-                @Nullable
-                @Override
-                public String getSelectionKey() {
-                    return binding.getThread().threadId;
-                }
-            };
-        }
-
-        public void setInProgressSwipe(final boolean inProgressSwipe) {
-            this.inProgressSwipe = inProgressSwipe;
-        }
-
-        public boolean isInProgressSwipe() {
-            return this.inProgressSwipe;
         }
     }
 

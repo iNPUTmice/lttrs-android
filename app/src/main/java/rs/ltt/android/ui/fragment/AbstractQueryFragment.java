@@ -33,9 +33,6 @@ import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.OnLifecycleEvent;
 import androidx.paging.PagedList;
-import androidx.recyclerview.selection.SelectionPredicates;
-import androidx.recyclerview.selection.SelectionTracker;
-import androidx.recyclerview.selection.StorageStrategy;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -47,6 +44,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -60,28 +58,25 @@ import rs.ltt.android.service.EventMonitorService;
 import rs.ltt.android.ui.ActionModeMenuConfiguration;
 import rs.ltt.android.ui.ItemAnimators;
 import rs.ltt.android.ui.QueryItemTouchHelper;
+import rs.ltt.android.ui.SelectionTracker;
 import rs.ltt.android.ui.Translations;
 import rs.ltt.android.ui.activity.ComposeActivity;
 import rs.ltt.android.ui.adapter.OnFlaggedToggled;
+import rs.ltt.android.ui.adapter.OnSelectionToggled;
 import rs.ltt.android.ui.adapter.ThreadOverviewAdapter;
-import rs.ltt.android.ui.adapter.ThreadOverviewItemDetailsLookup;
-import rs.ltt.android.ui.adapter.ThreadOverviewItemKeyProvider;
 import rs.ltt.android.ui.model.AbstractQueryViewModel;
-import rs.ltt.jmap.common.entity.Role;
 import rs.ltt.jmap.mua.util.LabelWithCount;
 
 
 public abstract class AbstractQueryFragment extends AbstractLttrsFragment implements OnFlaggedToggled,
-        ThreadOverviewAdapter.OnThreadClicked, QueryItemTouchHelper.OnQueryItemSwipe, ActionMode.Callback, LifecycleObserver {
-
-    private static final String SELECTION_ID = "thread-items";
+        ThreadOverviewAdapter.OnThreadClicked, QueryItemTouchHelper.OnQueryItemSwipe, ActionMode.Callback, LifecycleObserver, OnSelectionToggled {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractQueryFragment.class);
     protected FragmentThreadListBinding binding;
     private ThreadOverviewAdapter threadOverviewAdapter;
     private ItemTouchHelper itemTouchHelper;
     private ActionMode actionMode;
-    private SelectionTracker<String> tracker;
+    private SelectionTracker tracker;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -90,7 +85,7 @@ public abstract class AbstractQueryFragment extends AbstractLttrsFragment implem
         this.binding = DataBindingUtil.inflate(inflater, R.layout.fragment_thread_list, container, false);
 
         setupAdapter(viewModel.getImportant());
-        setupSelectionTracker(savedInstanceState);
+        setupSelectionTracker(getQueryViewModel().getSelectedThreads());
         observeThreadOverviewItems(viewModel.getThreadOverviewItems());
 
         binding.setViewModel(viewModel);
@@ -135,30 +130,21 @@ public abstract class AbstractQueryFragment extends AbstractLttrsFragment implem
         this.binding.threadList.setAdapter(threadOverviewAdapter);
         this.threadOverviewAdapter.setOnFlaggedToggledListener(this);
         this.threadOverviewAdapter.setOnThreadClickedListener(this);
+        this.threadOverviewAdapter.setOnSelectionToggled(this);
         this.threadOverviewAdapter.setImportantMailbox(importantMailbox);
     }
 
-    private void setupSelectionTracker(final Bundle savedInstanceState) {
-        tracker = new SelectionTracker.Builder<>(
-                SELECTION_ID,
-                binding.threadList,
-                new ThreadOverviewItemKeyProvider(threadOverviewAdapter),
-                new ThreadOverviewItemDetailsLookup(binding.threadList),
-                StorageStrategy.createStringStorage()
-        ).withSelectionPredicate(SelectionPredicates.createSelectAnything()).build();
-        threadOverviewAdapter.setTracker(tracker);
-        tracker.addObserver(new SelectionTracker.SelectionObserver<String>() {
-            @Override
-            public void onSelectionChanged() {
-                toggleActionMode();
-            }
-
-            public void onSelectionRestored() {
-                toggleActionMode();
-            }
-        });
-        tracker.onRestoreInstanceState(savedInstanceState);
+    private void setupSelectionTracker(final Set<String> dataSource) {
+        this.tracker = new SelectionTracker(
+                dataSource,
+                threadOverviewAdapter,
+                this::toggleActionMode
+        );
+        if (this.tracker.hasSelection()) {
+            toggleActionMode();
+        }
     }
+
 
     private void observeThreadOverviewItems(final LiveData<PagedList<ThreadOverviewItem>> liveData) {
         final AtomicBoolean actionModeRefreshed = new AtomicBoolean(false);
@@ -208,7 +194,6 @@ public abstract class AbstractQueryFragment extends AbstractLttrsFragment implem
         this.binding.threadList.setAdapter(null);
         this.itemTouchHelper.attachToRecyclerView(null);
         this.itemTouchHelper = null;
-        this.threadOverviewAdapter.setTracker(null);
         this.threadOverviewAdapter = null;
         this.tracker = null;
         this.binding = null;
@@ -237,6 +222,15 @@ public abstract class AbstractQueryFragment extends AbstractLttrsFragment implem
         getThreadModifier().toggleFlagged(threadId, target);
     }
 
+    @Override
+    public void onSelectionToggled(final String threadId, final boolean selected) {
+        if (selected) {
+            this.tracker.select(threadId);
+        } else {
+            this.tracker.deselect(threadId);
+        }
+    }
+
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     public void startPushService() {
         EventMonitorService.watchQuery(requireContext(), getQueryViewModel().getQueryInfo());
@@ -253,14 +247,6 @@ public abstract class AbstractQueryFragment extends AbstractLttrsFragment implem
     }
 
     protected abstract AbstractQueryViewModel getQueryViewModel();
-
-    @Override
-    public void onSaveInstanceState(@NonNull final Bundle outState) {
-        if (tracker != null) {
-            tracker.onSaveInstanceState(outState);
-        }
-        super.onSaveInstanceState(outState);
-    }
 
     @Override
     public void onThreadClicked(ThreadOverviewItem threadOverviewItem, boolean important) {

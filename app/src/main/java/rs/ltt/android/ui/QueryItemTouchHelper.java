@@ -81,7 +81,6 @@ public class QueryItemTouchHelper extends ItemTouchHelper.SimpleCallback {
     public void onChildDraw(@NonNull Canvas c, @Nullable RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
         if (viewHolder instanceof ThreadOverviewAdapter.ThreadOverviewViewHolder) {
             final ThreadOverviewAdapter.ThreadOverviewViewHolder threadOverviewViewHolder = (ThreadOverviewAdapter.ThreadOverviewViewHolder) viewHolder;
-            threadOverviewViewHolder.setInProgressSwipe(isCurrentlyActive);
             getDefaultUIUtil().onDraw(c, recyclerView, threadOverviewViewHolder.binding.foreground, dX, dY, actionState, isCurrentlyActive);
         }
     }
@@ -90,7 +89,6 @@ public class QueryItemTouchHelper extends ItemTouchHelper.SimpleCallback {
     public void clearView(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
         if (viewHolder instanceof ThreadOverviewAdapter.ThreadOverviewViewHolder) {
             ThreadOverviewAdapter.ThreadOverviewViewHolder threadOverviewViewHolder = (ThreadOverviewAdapter.ThreadOverviewViewHolder) viewHolder;
-            threadOverviewViewHolder.setInProgressSwipe(false);
             getDefaultUIUtil().clearView(threadOverviewViewHolder.binding.foreground);
         }
     }

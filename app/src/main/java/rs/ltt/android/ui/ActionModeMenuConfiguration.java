@@ -16,9 +16,9 @@
 package rs.ltt.android.ui;
 
 import androidx.paging.PagedList;
-import androidx.recyclerview.selection.Selection;
 
 import java.util.List;
+import java.util.Set;
 
 import rs.ltt.android.entity.ThreadOverviewItem;
 import rs.ltt.android.ui.adapter.ThreadOverviewAdapter;
@@ -41,7 +41,7 @@ public class ActionModeMenuConfiguration {
             this.flagged = flagged;
         }
 
-        public static SelectionInfo vote(final Selection<String> selection,
+        public static SelectionInfo vote(final Set<String> selection,
                                          final ThreadOverviewAdapter threadOverviewAdapter) {
             final PagedList<ThreadOverviewItem> currentList = threadOverviewAdapter.getCurrentList();
             if (currentList == null) {

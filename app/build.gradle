@@ -87,7 +87,6 @@ dependencies {
     annotationProcessor "androidx.room:room-compiler:$rootProject.ext.roomVersion"
 
     implementation "androidx.recyclerview:recyclerview:$rootProject.ext.recyclerViewVersion"
-    implementation "androidx.recyclerview:recyclerview-selection:$rootProject.ext.recyclerViewSelectionVersion"
 
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:$rootProject.ext.swipeRefreshLayoutVersion"
 
