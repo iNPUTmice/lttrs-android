@@ -23,7 +23,14 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.selection.ItemDetailsLookup;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import rs.ltt.android.entity.ThreadOverviewItem;
+
 public class ThreadOverviewItemDetailsLookup extends ItemDetailsLookup<String> {
+
+    private Logger LOGGER = LoggerFactory.getLogger(ThreadOverviewItem.class);
 
     private final RecyclerView recyclerView;
 
@@ -37,7 +44,12 @@ public class ThreadOverviewItemDetailsLookup extends ItemDetailsLookup<String> {
         final View view = recyclerView.findChildViewUnder(e.getX(), e.getY());
         final RecyclerView.ViewHolder viewHolder = view == null ? null : recyclerView.getChildViewHolder(view);
         if (viewHolder instanceof ThreadOverviewAdapter.ThreadOverviewViewHolder) {
-            return ((ThreadOverviewAdapter.ThreadOverviewViewHolder) viewHolder).getItemDetails();
+            final ThreadOverviewAdapter.ThreadOverviewViewHolder threadOverviewViewHolder = (ThreadOverviewAdapter.ThreadOverviewViewHolder) viewHolder;
+            if (threadOverviewViewHolder.isInProgressSwipe()) {
+                LOGGER.debug("Disable swipe for ThreadOverview item because in progress swipe");
+                return null;
+            }
+            return threadOverviewViewHolder.getItemDetails();
         }
         return null;
     }

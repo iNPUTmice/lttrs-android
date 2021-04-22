@@ -234,6 +234,7 @@ public class ThreadOverviewAdapter extends PagedListAdapter<ThreadOverviewItem, 
 
         final public ItemThreadOverviewBinding binding;
         private int position;
+        private boolean inProgressSwipe = false;
 
         ThreadOverviewViewHolder(@NonNull ItemThreadOverviewBinding binding) {
             super(binding.getRoot());
@@ -259,6 +260,14 @@ public class ThreadOverviewAdapter extends PagedListAdapter<ThreadOverviewItem, 
                     return binding.getThread().threadId;
                 }
             };
+        }
+
+        public void setInProgressSwipe(final boolean inProgressSwipe) {
+            this.inProgressSwipe = inProgressSwipe;
+        }
+
+        public boolean isInProgressSwipe() {
+            return this.inProgressSwipe;
         }
     }
 
