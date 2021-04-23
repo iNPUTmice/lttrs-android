@@ -76,9 +76,9 @@
     <string name="apply_changes">Änderungen anwenden</string>
     <string name="cancel">Abbrechen</string>
     <string name="confirm">Bestätigen</string>
-    <string name="assign_role_detailed_explanation">Ltt.rs benötigt ein Label (Postfach) mit der Rolle %1$s, um korrekt zu funktionieren. Wenn Sie das Label %2$s nicht für diesen Zweck verwenden möchten, können Sie auf Abbrechen tippen und mit Ihrem Desktop- oder Webclient ein anderes Label mit der Rolle %1$s erstellen.</string>
-    <string name="assign_role_question">Sie haben bereits ein Label namens %1$s. Möchten Sie ihm die Rolle von %2$s zuweisen\?</string>
-    <string name="reassign_role_question">Sie haben bereits ein Label namens %1$s mit der Rolle %2$s. Möchten Sie ihm die Rolle %3$s neu zuweisen\?</string>
+    <string name="assign_role_detailed_explanation">Ltt.rs benötigt ein Label (Postfach) mit der Rolle %1$s, um korrekt zu funktionieren. Wenn du das Label %2$s nicht für diesen Zweck verwenden möchtest, kannst du auf Abbrechen tippen und mit deinem Desktop- oder Webclient ein anderes Label mit der Rolle %1$s erstellen.</string>
+    <string name="assign_role_question">Du hast bereits ein Label namens %1$s. Möchtest du ihm die Rolle von %2$s zuweisen\?</string>
+    <string name="reassign_role_question">Du hast bereits ein Label namens %1$s mit der Rolle %2$s. Möchtest du ihm die Rolle %3$s neu zuweisen\?</string>
     <string name="assign_role">Rolle zuweisen</string>
     <string name="reassign_role">Rolle neu zuweisen</string>
     <string name="create">Erstellen</string>
