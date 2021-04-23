@@ -45,6 +45,17 @@
                 android:paddingEnd="24dp"
                 android:paddingBottom="16dp">
 
+                <ImageButton
+                    android:id="@+id/request_help"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:padding="4dp"
+                    android:src="@drawable/ic_baseline_help_24"
+                    android:visibility="@{setupViewModel.isLoading() ? View.GONE : View.VISIBLE}" />
+
                 <LinearLayout
                     android:id="@+id/instruction_wrapper"
                     android:layout_width="match_parent"
@@ -58,7 +69,7 @@
                     <ImageView
                         android:layout_width="16sp"
                         android:layout_height="16sp"
-                        android:layout_marginTop="2sp"
+                        android:layout_marginTop="1sp"
                         android:layout_marginEnd="2sp"
                         android:src="@drawable/ic_account_circle_24dp" />
 
