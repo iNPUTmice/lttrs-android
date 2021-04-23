@@ -97,12 +97,12 @@
     <string name="role_name_subscribed">Abonnements</string>
     <string name="role_name_junk">Spam</string>
     <string name="role_name_trash">Papierkorb</string>
-    <string name="role_name_flagged">Favoriten</string>
+    <string name="role_name_flagged">Markiert</string>
     <string name="foreground_service">Vordergrunddienst</string>
     <string name="role_name_important">Wichtig</string>
     <string name="role_name_drafts">Entwürfe</string>
     <string name="role_name_archive">Archiv</string>
-    <string name="role_name_all">Alle E-Mail</string>
+    <string name="role_name_all">Alle E-Mails</string>
     <string name="role_name_sent">Gesendet</string>
     <string name="role_name_inbox">Posteingang</string>
     <string name="foreground_service_notification_text">Ltt.rs läuft weiter um über eingehende E-Mail zu benachrichtigen</string>
