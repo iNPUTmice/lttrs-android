@@ -71,11 +71,14 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.AbstractTh
     }
 
     //we need this rather inconvenient setup instead of simply using PagedListAdapter to allow for
-    //a header view. If we were to use the PagedListAdapter the item update callbacks wouldn’t work.
+    //a header view. If we were to use the PagedListAdapter the item update callbacks wouldn't work.
     //The problem and the solution is described in this github issue: https://github.com/googlesamples/android-architecture-components/issues/375
     //additional documentation on how to implement a AsyncPagedListDiffer can be found here:
     //https://developer.android.com/reference/android/arch/paging/AsyncPagedListDiffer
-    private final AsyncPagedListDiffer<FullEmail> mDiffer = new AsyncPagedListDiffer<>(new OffsetListUpdateCallback<>(this,1), new AsyncDifferConfig.Builder<>(ITEM_CALLBACK).build());
+    private final AsyncPagedListDiffer<FullEmail> mDiffer = new AsyncPagedListDiffer<>(
+            new OffsetListUpdateCallback<>(this,1),
+            new AsyncDifferConfig.Builder<>(ITEM_CALLBACK).build()
+    );
 
     @NonNull
     @Override

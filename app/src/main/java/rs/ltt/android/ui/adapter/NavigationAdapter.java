@@ -83,7 +83,10 @@ public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.Ab
         }
     };
 
-    private final AsyncListDiffer<Navigable> mDiffer = new AsyncListDiffer<>(new OffsetListUpdateCallback<>(this, 1), new AsyncDifferConfig.Builder<>(ITEM_CALLBACK).build());
+    private final AsyncListDiffer<Navigable> mDiffer = new AsyncListDiffer<>(
+            new OffsetListUpdateCallback<>(this, 1),
+            new AsyncDifferConfig.Builder<>(ITEM_CALLBACK).build()
+    );
 
     //current state
     private LabelWithCount selectedLabel = null;
