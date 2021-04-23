@@ -107,6 +107,10 @@ public class ThreadOverviewAdapter extends PagedListAdapter<ThreadOverviewItem, 
         threadOverviewHolder.binding.getRoot().setActivated(selected);
         threadOverviewHolder.setThread(item);
         threadOverviewHolder.binding.starToggle.setOnClickListener(v -> {
+            if (onSelectionToggled != null && selectedThreads.size() > 0) {
+                onSelectionToggled.onSelectionToggled(item.threadId, !selected);
+                return;
+            }
             if (onFlaggedToggled != null) {
                 final boolean target = !item.showAsFlagged();
                 BindingAdapters.setIsFlagged(threadOverviewHolder.binding.starToggle, target);

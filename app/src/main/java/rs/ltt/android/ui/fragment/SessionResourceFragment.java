@@ -47,8 +47,8 @@ public class SessionResourceFragment extends AbstractSetupFragment {
         return binding.getRoot();
     }
 
-    private void requestHelp(View view) {
-        new MaterialAlertDialogBuilder(requireContext())
+    private void requestHelp(final View view) {
+        new MaterialAlertDialogBuilder(view.getContext())
                 .setTitle(R.string.session_resource_help_dialog_title)
                 .setMessage(R.string.session_resource_help_dialog_message)
                 .setPositiveButton(R.string.ok, null)
