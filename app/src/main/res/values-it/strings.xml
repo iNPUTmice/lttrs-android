@@ -88,4 +88,22 @@
     <string name="enter_a_label_name">Digita una nuova etichetta</string>
     <string name="add_another_account">Aggiungi un altro account</string>
     <string name="manage_accounts">Gestisci gli account</string>
+    <string name="session_resource_help_dialog_message">Ltt.rs usa un protocollo relativamente nuovo chiamato JMAP per sincronizzare la posta elettronica. C\'è la possibilità che il tuo fornitore di posta elettronica non supporti ancora questo protocollo.
+\n
+\nDovresti contattare il tuo provider e chiedere informazioni su JMAP e sull\'URL di connessione JMAP.
+\n
+\nSu un server correttamente configurato, Ltt.rs sarà in grado di scoprire automaticamente l\'URL di connessione.</string>
+    <string name="session_resource_help_dialog_title">Che cos\'è un URL di connessione\?</string>
+    <string name="role_name_subscribed">Abbonamenti</string>
+    <string name="role_name_junk">Posta indesiderata</string>
+    <string name="role_name_trash">Cestino</string>
+    <string name="role_name_important">Importante</string>
+    <string name="role_name_flagged">Preferiti</string>
+    <string name="role_name_drafts">Bozze</string>
+    <string name="role_name_archive">Archivio</string>
+    <string name="role_name_all">Tutta la posta</string>
+    <string name="role_name_sent">Inviati</string>
+    <string name="role_name_inbox">Posta in arrivo</string>
+    <string name="foreground_service">Servizio in primo piano</string>
+    <string name="foreground_service_notification_text">Ltt.rs continua a funzionare per notificare i messaggi in arrivo</string>
 </resources>
