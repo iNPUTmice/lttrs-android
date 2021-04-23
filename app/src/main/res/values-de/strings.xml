@@ -88,9 +88,9 @@
     <string name="enter_a_label_name">Gib einen Namen für ein neues Label ein</string>
     <string name="add_another_account">Weiteres Konto hinzufügen</string>
     <string name="manage_accounts">Konten verwalten</string>
-    <string name="session_resource_help_dialog_message">Ltt.rs verwendet ein relativ neues Protokoll namens JMAP, um E-Mails zu synchronisieren. Es besteht die Möglichkeit, dass Ihr E-Mail-Anbieter dieses Protokoll noch nicht unterstützt.
+    <string name="session_resource_help_dialog_message">Ltt.rs verwendet ein relativ neues Protokoll namens JMAP, um E-Mails zu synchronisieren. Es besteht die Möglichkeit, dass dein E-Mail-Anbieter dieses Protokoll noch nicht unterstützt.
 \n
-\nSie sollten Ihren Anbieter kontaktieren und nach JMAP und der JMAP-Verbindungs-URL fragen.
+\nDu solltest deinen Anbieter kontaktieren und nach JMAP und der JMAP-Verbindungs-URL fragen.
 \n
 \nAuf einem richtig konfigurierten Server kann Ltt.rs die Verbindungs-URL automatisch ermitteln.</string>
     <string name="session_resource_help_dialog_title">Was ist eine Verbindungs-URL\?</string>
@@ -105,5 +105,5 @@
     <string name="role_name_all">Alle E-Mails</string>
     <string name="role_name_sent">Gesendet</string>
     <string name="role_name_inbox">Posteingang</string>
-    <string name="foreground_service_notification_text">Ltt.rs läuft weiter um über eingehende E-Mail zu benachrichtigen</string>
+    <string name="foreground_service_notification_text">Ltt.rs läuft weiter, um über eingehende E-Mail zu benachrichtigen</string>
 </resources>
