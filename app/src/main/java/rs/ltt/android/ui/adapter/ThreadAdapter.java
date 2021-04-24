@@ -162,10 +162,6 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.AbstractTh
         this.onComposeActionTriggered = listener;
     }
 
-    public void submitList(PagedList<FullEmail> pagedList) {
-        mDiffer.submitList(pagedList);
-    }
-
     public void submitList(PagedList<FullEmail> pagedList, Runnable runnable) {
         mDiffer.submitList(pagedList, runnable);
     }
@@ -174,6 +170,12 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.AbstractTh
         for(ExpandedPosition expandedPosition : positions) {
             this.expandedItems.add(expandedPosition.emailId);
         }
+    }
+
+    public boolean isInitialLoad() {
+        final PagedList<FullEmail> currentList = mDiffer.getCurrentList();
+        return currentList == null || currentList.isEmpty();
+
     }
 
     static class AbstractThreadItemViewHolder extends RecyclerView.ViewHolder {

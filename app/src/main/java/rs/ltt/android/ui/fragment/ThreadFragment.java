@@ -29,8 +29,6 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.paging.PagedList;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
@@ -52,6 +50,7 @@ import rs.ltt.android.entity.ExpandedPosition;
 import rs.ltt.android.entity.FullEmail;
 import rs.ltt.android.entity.Seen;
 import rs.ltt.android.entity.SubjectWithImportance;
+import rs.ltt.android.ui.ItemAnimators;
 import rs.ltt.android.ui.activity.ComposeActivity;
 import rs.ltt.android.ui.adapter.OnComposeActionTriggered;
 import rs.ltt.android.ui.adapter.OnFlaggedToggled;
@@ -107,10 +106,7 @@ public class ThreadFragment extends AbstractLttrsFragment implements OnFlaggedTo
 
         //the default change animation causes UI glitches when expanding or collapsing item
         //for now it's better to just disable it. In the future we may write our own animator
-        RecyclerView.ItemAnimator itemAnimator = binding.list.getItemAnimator();
-        if (itemAnimator instanceof SimpleItemAnimator) {
-            ((SimpleItemAnimator) itemAnimator).setSupportsChangeAnimations(false);
-        }
+        ItemAnimators.disableChangeAnimation(binding.list.getItemAnimator());
 
         binding.list.setAdapter(threadAdapter);
         threadViewModel.getEmails().observe(getViewLifecycleOwner(), this::onEmailsChanged);
@@ -170,7 +166,7 @@ public class ThreadFragment extends AbstractLttrsFragment implements OnFlaggedTo
                         @Override
                         public void onSuccess(final List<ExpandedPosition> expandedPositions) {
                             threadAdapter.expand(expandedPositions);
-                            threadAdapter.submitList(fullEmails, () -> {
+                            submitList(fullEmails, () -> {
                                 final int pos = expandedPositions.get(0).position;
                                 binding.list.scrollToPosition(pos == 0 ? 0 : pos + 1);
                             });
@@ -179,14 +175,30 @@ public class ThreadFragment extends AbstractLttrsFragment implements OnFlaggedTo
                         @Override
                         public void onFailure(@NotNull Throwable t) {
                             LOGGER.error("Unable to calculate expanded positions", t);
-                            threadAdapter.submitList(fullEmails);
+                            submitList(fullEmails);
                         }
                     },
                     MoreExecutors.directExecutor()
             );
         } else {
-            threadAdapter.submitList(fullEmails);
+            submitList(fullEmails);
         }
+    }
+
+    public void submitList(final PagedList<FullEmail> pagedList) {
+        submitList(pagedList, null);
+    }
+
+    public void submitList(final PagedList<FullEmail> pagedList, final Runnable runnable) {
+        configureItemAnimator();
+        threadAdapter.submitList(pagedList, runnable);
+    }
+
+    private void configureItemAnimator() {
+        ItemAnimators.configureItemAnimator(
+                this.binding.list,
+                this.threadAdapter.isInitialLoad()
+        );
     }
 
     @Override

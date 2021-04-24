@@ -174,14 +174,10 @@ public abstract class AbstractQueryFragment extends AbstractLttrsFragment implem
      * items (Threads). Therefor we disable the animator during the first submission and re-add it later
      */
     private void configureItemAnimator() {
-        final RecyclerView.ItemAnimator itemAnimator = this.binding.threadList.getItemAnimator();
-        if (this.threadOverviewAdapter.isInitialLoad()) {
-            LOGGER.info("Disable item animator");
-            this.binding.threadList.setItemAnimator(null);
-        } else if (itemAnimator == null) {
-            LOGGER.info("Enable default item animator");
-            this.binding.threadList.setItemAnimator(ItemAnimators.createDefault());
-        }
+        ItemAnimators.configureItemAnimator(
+                this.binding.threadList,
+                this.threadOverviewAdapter.isInitialLoad()
+        );
     }
 
     @Override
