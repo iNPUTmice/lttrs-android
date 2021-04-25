@@ -92,4 +92,22 @@
     <string name="enter_a_label_name">Introduceți un nou nume de etichetă</string>
     <string name="add_another_account">Adăugarea altui cont</string>
     <string name="manage_accounts">Gestionare conturilor</string>
+    <string name="session_resource_help_dialog_message">Ltt.rs utilizează un protocol relativ nou numit JMAP pentru a sincroniza e-mailurile. Există posibilitatea ca furnizorul dvs. de e-mail să nu suporte încă acest protocol.
+\n
+\nAr trebui să contactați furnizorul dumneavoastră și să întrebați despre JMAP și despre adresa de conexiune JMAP.
+\n
+\nPe un server configurat corespunzător, Ltt.rs va putea să descopere automat adresa de conexiune.</string>
+    <string name="session_resource_help_dialog_title">Ce este o adresă de conexiune\?</string>
+    <string name="role_name_subscribed">Abonat</string>
+    <string name="role_name_junk">Spam</string>
+    <string name="role_name_trash">Gunoi</string>
+    <string name="role_name_important">Important</string>
+    <string name="role_name_flagged">Cu stea</string>
+    <string name="role_name_drafts">Ciorne</string>
+    <string name="role_name_archive">Arhivă</string>
+    <string name="role_name_all">Toate emailurile</string>
+    <string name="role_name_sent">Trimise</string>
+    <string name="role_name_inbox">Primite</string>
+    <string name="foreground_service">Serviciul în prim-plan</string>
+    <string name="foreground_service_notification_text">Ltt.rs continuă să ruleze pentru a vă notifica despre e-mailurile primite</string>
 </resources>
