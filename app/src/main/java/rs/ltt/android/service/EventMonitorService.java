@@ -21,12 +21,14 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 import rs.ltt.android.BuildConfig;
 import rs.ltt.android.MuaPool;
@@ -35,8 +37,10 @@ import rs.ltt.android.entity.AccountWithCredentials;
 import rs.ltt.android.entity.QueryInfo;
 import rs.ltt.android.ui.notification.ForegroundServiceNotification;
 import rs.ltt.android.worker.QueryRefreshWorker;
+import rs.ltt.jmap.client.event.OnConnectionStateChangeListener;
 import rs.ltt.jmap.client.event.OnStateChangeListener;
 import rs.ltt.jmap.client.event.PushService;
+import rs.ltt.jmap.client.event.State;
 import rs.ltt.jmap.common.entity.StateChange;
 import rs.ltt.jmap.mua.Mua;
 
@@ -137,9 +141,11 @@ public class EventMonitorService extends LifecycleService {
                             eventMonitor
                     );
                     pushService.addOnStateChangeListener(eventMonitor);
+                    pushService.addOnConnectionStateListener(eventMonitor);
                     synchronized (eventMonitorRegistrations) {
                         eventMonitorRegistrations.put(account.id, registration);
                     }
+                    onConnectionStateChange();
                 } else {
                     LOGGER.debug("Not going to listen for StateChanges. Service is {}", currentState);
                 }
@@ -210,6 +216,26 @@ public class EventMonitorService extends LifecycleService {
         return true;
     }
 
+    private void onConnectionStateChange() {
+        if (BuildConfig.USE_FOREGROUND_SERVICE) {
+            updateNotification();
+        }
+    }
+
+    private void updateNotification() {
+        ForegroundServiceNotification.updateConnectionState(this, getCombinedState());
+    }
+
+    private State getCombinedState() {
+        synchronized (eventMonitorRegistrations) {
+            final Collection<EventMonitorRegistration> eventMonitors = eventMonitorRegistrations.values();
+            return State.reduce(eventMonitors.stream()
+                    .map(EventMonitorRegistration::getConnectionState)
+                    .collect(Collectors.toList())
+            );
+        }
+    }
+
     public static void watchQuery(final Context context, final QueryInfo queryInfo) {
         final Intent intent = new Intent(context, EventMonitorService.class);
         intent.setAction(ACTION_WATCH_QUERY);
@@ -234,11 +260,16 @@ public class EventMonitorService extends LifecycleService {
         public void stopListening() {
             if (this.pushService != null) {
                 this.pushService.removeOnStateChangeListener(this.eventMonitor);
+                this.pushService.removeOnConnectionStateListener(this.eventMonitor);
             }
+        }
+
+        public State getConnectionState() {
+            return pushService == null ? State.CLOSED : pushService.getConnectionState();
         }
     }
 
-    private class EventMonitor implements OnStateChangeListener {
+    private class EventMonitor implements OnStateChangeListener, OnConnectionStateChangeListener {
 
         private final AccountWithCredentials account;
 
@@ -250,5 +281,11 @@ public class EventMonitorService extends LifecycleService {
         public boolean onStateChange(final StateChange stateChange) {
             return EventMonitorService.this.onStateChange(account, stateChange);
         }
+
+        @Override
+        public void onConnectionStateChange(final State state) {
+            EventMonitorService.this.onConnectionStateChange();
+        }
     }
+
 }

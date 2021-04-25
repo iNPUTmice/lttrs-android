@@ -9,7 +9,7 @@ buildscript {
         swipeRefreshLayoutVersion = "1.1.0"
         roomVersion = "2.2.6"
         workVersion = "2.5.0"
-        muaVersion = "0.6.2"
+        muaVersion = "0.6.3"
         espressoVersion = "3.3.0"
         material = "1.3.0"
     }
