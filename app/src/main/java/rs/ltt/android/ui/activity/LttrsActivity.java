@@ -37,11 +37,13 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
-import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.work.WorkInfo;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -149,7 +151,7 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
         lttrsViewModel = viewModelProvider.get(LttrsViewModel.class);
         setSupportActionBar(binding.toolbar);
 
-        final NavController navController = getNavController();
+
 
         binding.drawerLayout.addDrawerListener(this);
 
@@ -158,6 +160,7 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
             if (currentlySelected && MAIN_DESTINATIONS.contains(getCurrentDestinationId())) {
                 return;
             }
+            final NavController navController = getNavController();
             final boolean navigateToInbox = label.getRole() == Role.INBOX;
             if (navigateToInbox) {
                 navController.navigate(LttrsNavigationDirections.actionToInbox());
@@ -258,7 +261,12 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
     }
 
     public NavController getNavController() {
-        return Navigation.findNavController(this, R.id.nav_host_fragment);
+        final FragmentManager fragmentManager = getSupportFragmentManager();
+        final Fragment fragment = fragmentManager.findFragmentById(R.id.nav_host_fragment);
+        if (fragment instanceof NavHostFragment) {
+            return ((NavHostFragment) fragment).getNavController();
+        }
+        throw new IllegalStateException("Fragment was not of type NavHostFragment");
     }
 
     private int getCurrentDestinationId() {
