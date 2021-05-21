@@ -102,7 +102,7 @@ dependencies {
 
     implementation 'com.github.tony19:logback-android:2.0.0'
 
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.6'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
 
 
     //Own libraries (libraries we wrote and can commit to)
