@@ -26,6 +26,51 @@ public class MailboxWithRoleAndName implements IdentifiableMailboxWithRoleAndNam
     public Role role;
     public String name;
 
+    public static boolean isAnyOfRole(Collection<MailboxWithRoleAndName> mailboxes, Role role) {
+        for (MailboxWithRoleAndName mailbox : mailboxes) {
+            if (mailbox.role == role) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean isAnyNotOfRole(Collection<MailboxWithRoleAndName> mailboxes, Role role) {
+        for (MailboxWithRoleAndName mailbox : mailboxes) {
+            if (mailbox.role != role) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean isAnyOfLabel(Collection<MailboxWithRoleAndName> mailboxes, String label) {
+        for (MailboxWithRoleAndName mailbox : mailboxes) {
+            if (mailbox.role == null && mailbox.name != null && mailbox.name.equals(label)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean isNoneOfRole(Collection<MailboxWithRoleAndName> mailboxes, Role role) {
+        for (MailboxWithRoleAndName mailbox : mailboxes) {
+            if (mailbox.role == role) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static MailboxWithRoleAndName findByLabel(Collection<MailboxWithRoleAndName> mailboxes, String label) {
+        for (MailboxWithRoleAndName mailbox : mailboxes) {
+            if (mailbox.role == null && mailbox.name != null && mailbox.name.equals(label)) {
+                return mailbox;
+            }
+        }
+        return null;
+    }
+
     @Override
     public Role getRole() {
         return role;
@@ -39,51 +84,5 @@ public class MailboxWithRoleAndName implements IdentifiableMailboxWithRoleAndNam
     @Override
     public String getName() {
         return name;
-    }
-
-    public static boolean isAnyOfRole(Collection<MailboxWithRoleAndName> mailboxes, Role role) {
-        for(MailboxWithRoleAndName mailbox : mailboxes) {
-            if (mailbox.role == role) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static boolean isAnyNotOfRole(Collection<MailboxWithRoleAndName> mailboxes, Role role) {
-        for(MailboxWithRoleAndName mailbox : mailboxes) {
-            if (mailbox.role != role) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static boolean isAnyOfLabel(Collection<MailboxWithRoleAndName> mailboxes, String label) {
-        for(MailboxWithRoleAndName mailbox : mailboxes) {
-            if (mailbox.role == null && mailbox.name != null && mailbox.name.equals(label)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static boolean isNoneOfRole(Collection<MailboxWithRoleAndName> mailboxes, Role role) {
-        for(MailboxWithRoleAndName mailbox : mailboxes) {
-            if (mailbox.role == role) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-
-    public static MailboxWithRoleAndName findByLabel(Collection<MailboxWithRoleAndName> mailboxes, String label) {
-        for(MailboxWithRoleAndName mailbox : mailboxes) {
-            if (mailbox.role == null && mailbox.name != null && mailbox.name.equals(label)) {
-                return mailbox;
-            }
-        }
-        return null;
     }
 }

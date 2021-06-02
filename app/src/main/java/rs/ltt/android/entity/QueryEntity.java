@@ -20,7 +20,7 @@ import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "query",
-indices = {@Index(value = {"queryString"}, unique = true)})
+        indices = {@Index(value = {"queryString"}, unique = true)})
 public class QueryEntity {
 
     @PrimaryKey(autoGenerate = true)
@@ -40,6 +40,6 @@ public class QueryEntity {
 
 
     public static QueryEntity of(String queryString, String state, Boolean canCalculateChanges) {
-        return new QueryEntity(queryString, state, canCalculateChanges,true);
+        return new QueryEntity(queryString, state, canCalculateChanges, true);
     }
 }

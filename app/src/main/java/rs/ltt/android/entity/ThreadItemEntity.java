@@ -27,7 +27,7 @@ import rs.ltt.jmap.common.entity.Thread;
 import static androidx.room.ForeignKey.CASCADE;
 
 @Entity(tableName = "thread_item",
-        primaryKeys = {"threadId","emailId"},
+        primaryKeys = {"threadId", "emailId"},
         foreignKeys = @ForeignKey(entity = ThreadEntity.class,
                 parentColumns = {"threadId"},
                 childColumns = {"threadId"},
@@ -48,17 +48,16 @@ public class ThreadItemEntity {
         this.position = position;
     }
 
-
-    public int getPosition() {
-        return this.position;
-    }
-
     public static List<ThreadItemEntity> of(final Thread thread) {
         final List<ThreadItemEntity> entities = new ArrayList<>();
         List<String> emailIds = thread.getEmailIds();
-        for(int i = 0; i < emailIds.size(); ++i) {
+        for (int i = 0; i < emailIds.size(); ++i) {
             entities.add(new ThreadItemEntity(thread.getId(), emailIds.get(i), i));
         }
         return entities;
+    }
+
+    public int getPosition() {
+        return this.position;
     }
 }

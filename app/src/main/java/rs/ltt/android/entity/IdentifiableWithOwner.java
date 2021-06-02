@@ -4,10 +4,6 @@ import java.util.Objects;
 
 public interface IdentifiableWithOwner {
 
-    String getId();
-
-    Long getAccountId();
-
     static void checkSameOwner(IdentifiableWithOwner a, IdentifiableWithOwner b) {
         if (Objects.equals(a.getAccountId(), b.getAccountId())) {
             return;
@@ -20,6 +16,10 @@ public interface IdentifiableWithOwner {
                 )
         );
     }
+
+    String getId();
+
+    Long getAccountId();
 
     class OwnerMismatchException extends RuntimeException {
         private OwnerMismatchException(String message) {

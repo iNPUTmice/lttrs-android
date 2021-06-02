@@ -20,29 +20,19 @@ import androidx.room.Relation;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import rs.ltt.jmap.common.entity.Keyword;
 
-public class FullEmail {
+public class EmailComplete extends EmailPreview {
 
-    public String id;
+    //TODO remove preview. use body values
     public String preview;
-    public String threadId;
-    public Instant receivedAt;
-
-    @Relation(entity = EmailKeywordEntity.class, parentColumn = "id", entityColumn = "emailId", projection = {"keyword"})
-    public Set<String> keywords;
-
-    @Relation(entity = EmailEmailAddressEntity.class, parentColumn = "id", entityColumn = "emailId", projection = {"email", "name", "type"})
-    public List<EmailAddress> emailAddresses;
 
     @Relation(parentColumn = "id", entityColumn = "emailId")
     public List<EmailBodyPartEntity> bodyPartEntities;
@@ -53,7 +43,6 @@ public class FullEmail {
     public boolean isDraft() {
         return keywords.contains(Keyword.DRAFT);
     }
-
 
     public String getPreview() {
         return preview;
@@ -71,6 +60,7 @@ public class FullEmail {
         return null;
     }
 
+    //TODO rename to getTextBodies and return List<String>
     public String getText() {
         final ArrayList<EmailBodyPartEntity> textBody = new ArrayList<>();
         for (EmailBodyPartEntity entity : bodyPartEntities) {
@@ -95,7 +85,7 @@ public class FullEmail {
         return toMap.values();
     }
 
-
+    //TODO externalize and merge with ThreadOverviewItem$From
     public interface From {
 
     }

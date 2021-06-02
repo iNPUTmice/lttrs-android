@@ -53,8 +53,8 @@ public class EmailKeywordEntity {
             return Collections.emptyList();
         }
         final ImmutableList.Builder<EmailKeywordEntity> builder = new ImmutableList.Builder<>();
-        for(String keyword : keywords.keySet()) {
-            builder.add(new EmailKeywordEntity(email.getId(),keyword));
+        for (String keyword : keywords.keySet()) {
+            builder.add(new EmailKeywordEntity(email.getId(), keyword));
         }
         return builder.build();
     }

@@ -48,8 +48,8 @@ public class EmailMailboxEntity {
 
     public static List<EmailMailboxEntity> of(Email email) {
         ImmutableList.Builder<EmailMailboxEntity> builder = new ImmutableList.Builder<>();
-        for(String mailboxId : email.getMailboxIds().keySet()) {
-            builder.add(new EmailMailboxEntity(email.getId(),mailboxId));
+        for (String mailboxId : email.getMailboxIds().keySet()) {
+            builder.add(new EmailMailboxEntity(email.getId(), mailboxId));
         }
         return builder.build();
     }

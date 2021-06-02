@@ -34,22 +34,22 @@ import rs.ltt.android.R;
 import rs.ltt.android.databinding.ItemEmailBinding;
 import rs.ltt.android.databinding.ItemEmailHeaderBinding;
 import rs.ltt.android.entity.ExpandedPosition;
-import rs.ltt.android.entity.FullEmail;
+import rs.ltt.android.entity.EmailComplete;
 import rs.ltt.android.entity.SubjectWithImportance;
 import rs.ltt.android.ui.BindingAdapters;
 import rs.ltt.android.util.Touch;
 
 public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.AbstractThreadItemViewHolder> {
 
-    private static final DiffUtil.ItemCallback<FullEmail> ITEM_CALLBACK = new DiffUtil.ItemCallback<FullEmail>() {
+    private static final DiffUtil.ItemCallback<EmailComplete> ITEM_CALLBACK = new DiffUtil.ItemCallback<EmailComplete>() {
 
         @Override
-        public boolean areItemsTheSame(@NonNull FullEmail oldItem, @NonNull FullEmail newItem) {
+        public boolean areItemsTheSame(@NonNull EmailComplete oldItem, @NonNull EmailComplete newItem) {
             return oldItem.id.equals(newItem.id);
         }
 
         @Override
-        public boolean areContentsTheSame(@NonNull FullEmail oldItem, @NonNull FullEmail newItem) {
+        public boolean areContentsTheSame(@NonNull EmailComplete oldItem, @NonNull EmailComplete newItem) {
             return false;
         }
     };
@@ -75,7 +75,7 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.AbstractTh
     //The problem and the solution is described in this github issue: https://github.com/googlesamples/android-architecture-components/issues/375
     //additional documentation on how to implement a AsyncPagedListDiffer can be found here:
     //https://developer.android.com/reference/android/arch/paging/AsyncPagedListDiffer
-    private final AsyncPagedListDiffer<FullEmail> mDiffer = new AsyncPagedListDiffer<>(
+    private final AsyncPagedListDiffer<EmailComplete> mDiffer = new AsyncPagedListDiffer<>(
             new OffsetListUpdateCallback<>(this,1),
             new AsyncDifferConfig.Builder<>(ITEM_CALLBACK).build()
     );
@@ -108,7 +108,7 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.AbstractTh
             Touch.expandTouchArea(headerViewHolder.binding.starToggle, 16);
         } else if (holder instanceof ThreadItemViewHolder) {
             final ThreadItemViewHolder itemViewHolder = (ThreadItemViewHolder) holder;
-            final FullEmail email = mDiffer.getItem(position - 1);
+            final EmailComplete email = mDiffer.getItem(position - 1);
             final boolean lastEmail = mDiffer.getItemCount() == position;
             final boolean expanded = email != null && expandedItems.contains(email.id);
             itemViewHolder.binding.setExpanded(expanded);
@@ -162,7 +162,7 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.AbstractTh
         this.onComposeActionTriggered = listener;
     }
 
-    public void submitList(PagedList<FullEmail> pagedList, Runnable runnable) {
+    public void submitList(PagedList<EmailComplete> pagedList, Runnable runnable) {
         mDiffer.submitList(pagedList, runnable);
     }
 
@@ -173,7 +173,7 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.AbstractTh
     }
 
     public boolean isInitialLoad() {
-        final PagedList<FullEmail> currentList = mDiffer.getCurrentList();
+        final PagedList<EmailComplete> currentList = mDiffer.getCurrentList();
         return currentList == null || currentList.isEmpty();
 
     }

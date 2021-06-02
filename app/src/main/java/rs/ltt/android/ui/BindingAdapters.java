@@ -52,7 +52,7 @@ import java.util.List;
 import java.util.Map;
 
 import rs.ltt.android.R;
-import rs.ltt.android.entity.FullEmail;
+import rs.ltt.android.entity.EmailComplete;
 import rs.ltt.android.entity.IdentityWithNameAndEmail;
 import rs.ltt.android.entity.SubjectWithImportance;
 import rs.ltt.android.entity.ThreadOverviewItem;
@@ -60,7 +60,6 @@ import rs.ltt.jmap.common.entity.Role;
 import rs.ltt.jmap.mua.util.EmailAddressUtil;
 import rs.ltt.jmap.mua.util.EmailBodyUtil;
 import rs.ltt.jmap.mua.util.Label;
-import rs.ltt.jmap.mua.util.LabelWithCount;
 
 public class BindingAdapters {
 
@@ -129,9 +128,9 @@ public class BindingAdapters {
     }
 
     @BindingAdapter("from")
-    public static void setFrom(final ImageView imageView, final FullEmail.From from) {
-        if (from instanceof FullEmail.NamedFrom) {
-            final FullEmail.NamedFrom named = (FullEmail.NamedFrom) from;
+    public static void setFrom(final ImageView imageView, final EmailComplete.From from) {
+        if (from instanceof EmailComplete.NamedFrom) {
+            final EmailComplete.NamedFrom named = (EmailComplete.NamedFrom) from;
             imageView.setImageDrawable(new AvatarDrawable(named.getName(), named.getEmail()));
         } else {
             imageView.setImageDrawable(new AvatarDrawable(null, null));
@@ -139,11 +138,11 @@ public class BindingAdapters {
     }
 
     @BindingAdapter("android:text")
-    public static void setText(final TextView textView, final FullEmail.From from) {
-        if (from instanceof FullEmail.NamedFrom) {
-            final FullEmail.NamedFrom named = (FullEmail.NamedFrom) from;
+    public static void setText(final TextView textView, final EmailComplete.From from) {
+        if (from instanceof EmailComplete.NamedFrom) {
+            final EmailComplete.NamedFrom named = (EmailComplete.NamedFrom) from;
             textView.setText(named.getName());
-        } else if (from instanceof FullEmail.DraftFrom) {
+        } else if (from instanceof EmailComplete.DraftFrom) {
             final Context context = textView.getContext();
             final SpannableString spannable = new SpannableString(context.getString(R.string.draft));
             spannable.setSpan(

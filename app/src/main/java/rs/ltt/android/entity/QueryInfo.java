@@ -6,6 +6,17 @@ import android.os.Parcelable;
 import com.google.common.base.MoreObjects;
 
 public class QueryInfo implements Parcelable {
+    public static final Creator<QueryInfo> CREATOR = new Creator<QueryInfo>() {
+        @Override
+        public QueryInfo createFromParcel(Parcel in) {
+            return new QueryInfo(in);
+        }
+
+        @Override
+        public QueryInfo[] newArray(int size) {
+            return new QueryInfo[size];
+        }
+    };
     public final long accountId;
     public final Type type;
     public final String value;
@@ -33,18 +44,6 @@ public class QueryInfo implements Parcelable {
     public int describeContents() {
         return 0;
     }
-
-    public static final Creator<QueryInfo> CREATOR = new Creator<QueryInfo>() {
-        @Override
-        public QueryInfo createFromParcel(Parcel in) {
-            return new QueryInfo(in);
-        }
-
-        @Override
-        public QueryInfo[] newArray(int size) {
-            return new QueryInfo[size];
-        }
-    };
 
     @Override
     public String toString() {

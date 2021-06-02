@@ -46,8 +46,8 @@ import java.util.UUID;
 import rs.ltt.android.LttrsNavigationDirections;
 import rs.ltt.android.R;
 import rs.ltt.android.databinding.FragmentThreadBinding;
+import rs.ltt.android.entity.EmailComplete;
 import rs.ltt.android.entity.ExpandedPosition;
-import rs.ltt.android.entity.FullEmail;
 import rs.ltt.android.entity.Seen;
 import rs.ltt.android.entity.SubjectWithImportance;
 import rs.ltt.android.ui.ItemAnimators;
@@ -158,7 +158,7 @@ public class ThreadFragment extends AbstractLttrsFragment implements OnFlaggedTo
         }
     }
 
-    private void onEmailsChanged(final PagedList<FullEmail> fullEmails) {
+    private void onEmailsChanged(final PagedList<EmailComplete> fullEmails) {
         if (threadViewModel.jumpedToFirstUnread.compareAndSet(false, true)) {
             Futures.addCallback(
                     threadViewModel.expandedPositions,
@@ -185,11 +185,11 @@ public class ThreadFragment extends AbstractLttrsFragment implements OnFlaggedTo
         }
     }
 
-    public void submitList(final PagedList<FullEmail> pagedList) {
+    public void submitList(final PagedList<EmailComplete> pagedList) {
         submitList(pagedList, null);
     }
 
-    public void submitList(final PagedList<FullEmail> pagedList, final Runnable runnable) {
+    public void submitList(final PagedList<EmailComplete> pagedList, final Runnable runnable) {
         configureItemAnimator();
         threadAdapter.submitList(pagedList, runnable);
     }

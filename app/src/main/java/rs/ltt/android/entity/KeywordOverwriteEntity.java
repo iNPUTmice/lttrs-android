@@ -24,7 +24,7 @@ import java.util.Collection;
 import static androidx.room.ForeignKey.CASCADE;
 
 @Entity(tableName = "keyword_overwrite",
-        primaryKeys = {"threadId","keyword"},
+        primaryKeys = {"threadId", "keyword"},
         foreignKeys = @ForeignKey(entity = ThreadEntity.class,
                 parentColumns = {"threadId"},
                 childColumns = {"threadId"},
@@ -33,8 +33,10 @@ import static androidx.room.ForeignKey.CASCADE;
 )
 public class KeywordOverwriteEntity {
 
-    @NonNull public String threadId;
-    @NonNull public String keyword;
+    @NonNull
+    public String threadId;
+    @NonNull
+    public String keyword;
     public boolean value;
 
     public KeywordOverwriteEntity(@NonNull String threadId, @NonNull String keyword, boolean value) {
@@ -45,7 +47,7 @@ public class KeywordOverwriteEntity {
 
 
     public static KeywordOverwriteEntity getKeywordOverwrite(Collection<KeywordOverwriteEntity> keywordOverwriteEntities, String keyword) {
-        for(KeywordOverwriteEntity keywordOverwriteEntity : keywordOverwriteEntities) {
+        for (KeywordOverwriteEntity keywordOverwriteEntity : keywordOverwriteEntities) {
             if (keyword.equals(keywordOverwriteEntity.keyword)) {
                 return keywordOverwriteEntity;
             }

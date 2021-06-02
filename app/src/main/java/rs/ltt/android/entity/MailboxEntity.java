@@ -52,18 +52,6 @@ public class MailboxEntity implements IdentifiableMailboxWithRoleAndName {
 
     public Boolean isSubscribed;
 
-
-    @Override
-    @NonNull
-    public String getId() {
-        return this.id;
-    }
-
-    @Override
-    public Role getRole() {
-        return role;
-    }
-
     public static MailboxEntity of(final Mailbox mailbox) {
         final MailboxEntity entity = new MailboxEntity();
         entity.id = mailbox.getId();
@@ -78,6 +66,17 @@ public class MailboxEntity implements IdentifiableMailboxWithRoleAndName {
         entity.myRights = MailboxRightsEmbed.of(mailbox.getMyRights());
         entity.isSubscribed = mailbox.getIsSubscribed();
         return entity;
+    }
+
+    @Override
+    @NonNull
+    public String getId() {
+        return this.id;
+    }
+
+    @Override
+    public Role getRole() {
+        return role;
     }
 
     @Override

@@ -22,7 +22,7 @@
 
         <variable
             name="email"
-            type="rs.ltt.android.entity.FullEmail" />
+            type="rs.ltt.android.entity.EmailComplete" />
 
         <variable
             name="expanded"
