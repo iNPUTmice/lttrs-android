@@ -79,6 +79,9 @@ public abstract class QueryDao extends AbstractEntityDao {
     @Query("select query_item.threadId,query_item.emailId from `query` join query_item on `query`.id = query_item.queryId inner join thread on query_item.threadId=thread.threadId where queryString=:queryString  and  query_item.threadId not in (select threadId from query_item_overwrite where queryId=`query`.id) order by position asc")
     public abstract DataSource.Factory<Integer, ThreadOverviewItem> getThreadOverviewItems(String queryString);
 
+    @Query("select query_item.emailId from `query` join query_item on `query`.id = query_item.queryId where queryString=:queryString order by position asc")
+    public abstract List<String> getEmailIds(final String queryString);
+
     @Transaction
     public void set(String queryString, QueryResult queryResult) {
         TypedState<Email> emailState = queryResult.objectState;

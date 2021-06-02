@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 
 import rs.ltt.android.entity.QueryInfo;
 import rs.ltt.jmap.common.entity.query.EmailQuery;
@@ -33,7 +34,7 @@ import rs.ltt.jmap.common.entity.query.EmailQuery;
 public abstract class QueryRefreshWorker extends AbstractMuaWorker {
 
     protected static final String SKIP_OVER_EMPTY_KEY = "skipOverEmpty";
-    protected final boolean skipOverEmpty;
+    private final boolean skipOverEmpty;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(QueryRefreshWorker.class);
 
@@ -48,18 +49,25 @@ public abstract class QueryRefreshWorker extends AbstractMuaWorker {
     @NonNull
     @Override
     public Result doWork() {
-        final EmailQuery emailQuery = getEmailQuery();
-        if (skipOverEmpty && getDatabase().queryDao().empty(emailQuery.asHash())) {
-            LOGGER.warn("Do not refresh because query is empty (UI will automatically load this)");
-            return Result.failure();
-        }
         try {
+            final EmailQuery emailQuery = getEmailQuery();
             LOGGER.info("Refreshing {}", emailQuery);
-            getMua().query(emailQuery).get();
-            return Result.success();
+            return refresh(emailQuery);
         } catch (final Exception e) {
             LOGGER.info("Unable to refresh query", e);
             return Result.failure();
+        }
+    }
+
+    protected Result refresh(final EmailQuery emailQuery) throws ExecutionException, InterruptedException {
+        throwOnEmpty(emailQuery);
+        getMua().query(emailQuery).get();
+        return Result.success();
+    }
+
+    protected void throwOnEmpty(final EmailQuery emailQuery) {
+        if (skipOverEmpty && getDatabase().queryDao().empty(emailQuery.asHash())) {
+            throw new IllegalStateException("Do not refresh because query is empty (UI will automatically load this)");
         }
     }
 
