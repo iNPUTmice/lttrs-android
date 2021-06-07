@@ -44,6 +44,7 @@ public class MainMailboxQueryRefreshWorker extends QueryRefreshWorker {
                 database.queryDao().getEmailIds(emailQuery.asHash())
         );
         LOGGER.debug("freshly added email ids: {}", freshlyAddedEmailIds);
+        //TODO get active notifications and email ids from them
         //TODO cross reference freshly added with $seen keywords
         //TODO get FullEmails and create notifications
         return Result.success();

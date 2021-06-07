@@ -30,6 +30,7 @@ import java.util.Map;
 import rs.ltt.jmap.common.entity.IdentifiableEmailWithAddresses;
 import rs.ltt.jmap.common.entity.IdentifiableEmailWithSubject;
 
+//TODO extend EmailComplete; rename to EmailEditable
 public class EditableEmail implements IdentifiableEmailWithAddresses, IdentifiableEmailWithSubject, IdentifiableWithOwner {
 
     public Long accountId;
@@ -58,7 +59,7 @@ public class EditableEmail implements IdentifiableEmailWithAddresses, Identifiab
     @Relation(entity = ThreadItemEntity.class, parentColumn = "threadId", entityColumn = "threadId", projection = {"emailId"})
     public List<String> emailsInThread;
 
-
+    //TODO inheriting from EmailComplete will make this obsolete
     public String getText() {
         final ArrayList<EmailBodyPartEntity> textBody = new ArrayList<>();
         for (EmailBodyPartEntity entity : bodyPartEntities) {
