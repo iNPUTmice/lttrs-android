@@ -24,7 +24,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.Arrays;
 import java.util.List;
 
-import rs.ltt.android.entity.EntityState;
+import rs.ltt.android.entity.EntityStateEntity;
 import rs.ltt.jmap.common.entity.AbstractIdentifiableEntity;
 import rs.ltt.jmap.common.entity.Email;
 import rs.ltt.jmap.common.entity.Mailbox;
@@ -36,14 +36,14 @@ import rs.ltt.jmap.mua.cache.QueryStateWrapper;
 public abstract class StateDao {
 
     @Query("select state,type from entity_state where type in (:types)")
-    public abstract List<EntityState> getEntityStates(List<Class<? extends AbstractIdentifiableEntity>> types);
+    public abstract List<EntityStateEntity> getEntityStates(List<Class<? extends AbstractIdentifiableEntity>> types);
 
     public ObjectsState getObjectsState() {
-        final List<EntityState> entityStates = getEntityStates(
+        final List<EntityStateEntity> entityStates = getEntityStates(
                 Arrays.asList(Email.class, Mailbox.class, Thread.class)
         );
         final ObjectsState.Builder builder = ObjectsState.builder();
-        for (final EntityState entityState : entityStates) {
+        for (final EntityStateEntity entityState : entityStates) {
             if (entityState.type == Mailbox.class) {
                 builder.setMailboxState(entityState.state);
             } else if (entityState.type == Thread.class) {
