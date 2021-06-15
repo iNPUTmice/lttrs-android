@@ -91,8 +91,8 @@ public class ThreadOverviewItem {
         return count <= 1 ? null : count;
     }
 
-    public Map.Entry<String, From> getFrom() {
-        return Iterables.getFirst(getFromMap().entrySet(), null);
+    public From getFrom() {
+        return Iterables.getFirst(getFromMap().values(), null);
     }
 
     private Map<String, From> getFromMap() {
@@ -113,21 +113,20 @@ public class ThreadOverviewItem {
         KeywordOverwriteEntity seenOverwrite = KeywordOverwriteEntity.getKeywordOverwrite(keywordOverwriteEntities, Keyword.SEEN);
         LinkedHashMap<String, From> fromMap = new LinkedHashMap<>();
         final List<EmailPreviewWithMailboxes> emails = getOrderedEmails();
-        for (EmailPreviewWithMailboxes email : emails) {
+        for (final EmailPreviewWithMailboxes email : emails) {
             if (email.keywords.contains(Keyword.DRAFT)) {
-                fromMap.put("", new DraftFrom());
+                fromMap.put("", From.draft());
                 continue;
             }
             final boolean seen = seenOverwrite != null ? seenOverwrite.value : email.keywords.contains(Keyword.SEEN);
-            for (EmailAddress emailAddress : email.emailAddresses) {
+            for (final EmailAddress emailAddress : email.emailAddresses) {
                 if (emailAddress.type == EmailAddressType.FROM) {
-                    From from = fromMap.get(emailAddress.getEmail());
+                    final From from = fromMap.get(emailAddress.getEmail());
                     if (from == null) {
-                        from = new NamedFrom(emailAddress.getName(), seen);
-                        fromMap.put(emailAddress.getEmail(), from);
-                    } else if (from instanceof NamedFrom) {
-                        final NamedFrom namedFrom = (NamedFrom) from;
-                        namedFrom.seen &= seen;
+                        fromMap.put(emailAddress.getEmail(), From.named(emailAddress, seen));
+                    } else if (from instanceof From.Named) {
+                        final From.Named named = (From.Named) from;
+                        fromMap.put(emailAddress.getEmail(), From.named(emailAddress, seen && named.isSeen()));
                     }
                 }
             }
@@ -215,37 +214,5 @@ public class ThreadOverviewItem {
     @Override
     public int hashCode() {
         return Objects.hashCode(emailId, threadId, getOrderedEmails(), threadItemEntities);
-    }
-
-    public interface From {
-
-    }
-
-    public static class DraftFrom implements From {
-
-    }
-
-    public static class NamedFrom implements From {
-        public final String name;
-        public boolean seen;
-
-        NamedFrom(String name, boolean seen) {
-            this.name = name;
-            this.seen = seen;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            NamedFrom from = (NamedFrom) o;
-            return seen == from.seen &&
-                    Objects.equal(name, from.name);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hashCode(name, seen);
-        }
     }
 }

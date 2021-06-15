@@ -35,17 +35,18 @@ import java.util.List;
 import rs.ltt.android.entity.EditableEmail;
 import rs.ltt.android.entity.EmailBodyPartEntity;
 import rs.ltt.android.entity.EmailBodyValueEntity;
+import rs.ltt.android.entity.EmailComplete;
 import rs.ltt.android.entity.EmailEmailAddressEntity;
 import rs.ltt.android.entity.EmailEntity;
 import rs.ltt.android.entity.EmailInReplyToEntity;
 import rs.ltt.android.entity.EmailKeywordEntity;
 import rs.ltt.android.entity.EmailMailboxEntity;
 import rs.ltt.android.entity.EmailMessageIdEntity;
+import rs.ltt.android.entity.EmailNotificationPreview;
 import rs.ltt.android.entity.EmailWithKeywords;
 import rs.ltt.android.entity.EmailWithMailboxes;
 import rs.ltt.android.entity.EntityStateEntity;
 import rs.ltt.android.entity.ExpandedPosition;
-import rs.ltt.android.entity.EmailComplete;
 import rs.ltt.android.entity.ThreadEntity;
 import rs.ltt.android.entity.ThreadHeader;
 import rs.ltt.android.entity.ThreadItemEntity;
@@ -191,6 +192,10 @@ public abstract class ThreadAndEmailDao extends AbstractEntityDao {
     @Transaction
     @Query("select id,receivedAt,preview,email.threadId from thread_item join email on thread_item.emailId=email.id where thread_item.threadId=:threadId order by position")
     public abstract DataSource.Factory<Integer, EmailComplete> getEmails(String threadId);
+
+    @Transaction
+    @Query("select id,receivedAt,preview,threadId,subject from email where id in (:emailIds)")
+    public abstract List<EmailNotificationPreview> getEmails(Collection<String> emailIds);
 
     @Transaction
     @Query("select :accountId as accountId,id,threadId,subject from email where id=:id")

@@ -33,6 +33,7 @@ public class ForegroundServiceNotification {
                 NotificationManager.IMPORTANCE_MIN
         );
         notificationChannel.setSound(null, null);
+        notificationChannel.setShowBadge(false);
         notificationManager.createNotificationChannel(notificationChannel);
 
     }

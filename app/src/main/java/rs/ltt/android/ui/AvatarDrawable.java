@@ -15,12 +15,15 @@
 
 package rs.ltt.android.ui;
 
+import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.util.Log;
 
 import com.google.common.base.Strings;
 
@@ -28,6 +31,8 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import rs.ltt.android.R;
+import rs.ltt.android.entity.From;
 import rs.ltt.android.util.ConsistentColorGeneration;
 
 public class AvatarDrawable extends ColorDrawable {
@@ -38,22 +43,49 @@ public class AvatarDrawable extends ColorDrawable {
     private final Paint paint;
     private final Paint textPaint;
     private final String letter;
+    private final int intrinsicHeight;
+    private final int intrinsicWidth;
 
-    AvatarDrawable(String name, String key) {
-        paint = new Paint();
+    public AvatarDrawable(final Context context, final From from) {
+        final String name;
+        final String key;
+        if (from instanceof From.Named) {
+            name = ((From.Named) from).getName();
+            key = ((From.Named) from).getEmail();
+        } else {
+            name = null;
+            key = null;
+        }
+        Log.d("lttrs", "avtarDrawable name=" + name + ", key=" + key);
+        this.paint = getPaint(key);
+        this.textPaint = getTextPaint();
+        final Matcher matcher = LETTER_PATTERN.matcher(Strings.nullToEmpty(name));
+        this.letter = matcher.find() ? matcher.group().toUpperCase(Locale.ROOT) : null;
+        Log.d("lttrs", "letter=" + letter);
+        final int avatarDrawableSize = context.getResources().getDimensionPixelSize(R.dimen.avatar_drawable_size);
+        this.intrinsicHeight = avatarDrawableSize;
+        this.intrinsicWidth = avatarDrawableSize;
+    }
+
+
+    private Paint getPaint(final String key) {
+        final Paint paint = new Paint();
         paint.setColor(key == null ? 0xff757575 : ConsistentColorGeneration.rgbFromKey(key));
         paint.setAntiAlias(true);
-        textPaint = new Paint();
+        return paint;
+    }
+
+    private Paint getTextPaint() {
+        final Paint textPaint = new Paint();
         textPaint.setColor(Color.WHITE);
         textPaint.setTextAlign(Paint.Align.CENTER);
         textPaint.setAntiAlias(true);
         textPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
-        final Matcher matcher = LETTER_PATTERN.matcher(Strings.nullToEmpty(name));
-        this.letter = matcher.find() ? matcher.group().toUpperCase(Locale.ROOT) : null;
+        return textPaint;
     }
 
     @Override
-    public void draw(Canvas canvas) {
+    public void draw(final Canvas canvas) {
         final float midX = getBounds().width() / 2.0f;
         final float midY = getBounds().height() / 2.0f;
         final float radius = Math.min(getBounds().width(), getBounds().height()) / 2.0f;
@@ -71,5 +103,25 @@ public class AvatarDrawable extends ColorDrawable {
         float x = cWidth / 2f - r.width() / 2f - r.left;
         float y = cHeight / 2f + r.height() / 2f - r.bottom;
         canvas.drawText(letter, x, y, textPaint);
+    }
+
+    @Override
+    public int getIntrinsicHeight() {
+        return intrinsicHeight;
+    }
+
+    @Override
+    public int getIntrinsicWidth() {
+        return intrinsicWidth;
+    }
+
+    public Bitmap toBitmap() {
+        final Bitmap bitmap = Bitmap.createBitmap(
+                getIntrinsicWidth(), getIntrinsicHeight(), Bitmap.Config.ARGB_8888
+        );
+        final Canvas canvas = new Canvas(bitmap);
+        this.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        this.draw(canvas);
+        return bitmap;
     }
 }

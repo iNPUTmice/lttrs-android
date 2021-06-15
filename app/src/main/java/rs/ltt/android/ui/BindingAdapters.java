@@ -52,7 +52,7 @@ import java.util.List;
 import java.util.Map;
 
 import rs.ltt.android.R;
-import rs.ltt.android.entity.EmailComplete;
+import rs.ltt.android.entity.From;
 import rs.ltt.android.entity.IdentityWithNameAndEmail;
 import rs.ltt.android.entity.SubjectWithImportance;
 import rs.ltt.android.entity.ThreadOverviewItem;
@@ -128,21 +128,16 @@ public class BindingAdapters {
     }
 
     @BindingAdapter("from")
-    public static void setFrom(final ImageView imageView, final EmailComplete.From from) {
-        if (from instanceof EmailComplete.NamedFrom) {
-            final EmailComplete.NamedFrom named = (EmailComplete.NamedFrom) from;
-            imageView.setImageDrawable(new AvatarDrawable(named.getName(), named.getEmail()));
-        } else {
-            imageView.setImageDrawable(new AvatarDrawable(null, null));
-        }
+    public static void setFrom(final ImageView imageView, final From from) {
+        imageView.setImageDrawable(new AvatarDrawable(imageView.getContext(), from));
     }
 
     @BindingAdapter("android:text")
-    public static void setText(final TextView textView, final EmailComplete.From from) {
-        if (from instanceof EmailComplete.NamedFrom) {
-            final EmailComplete.NamedFrom named = (EmailComplete.NamedFrom) from;
+    public static void setText(final TextView textView, final From from) {
+        if (from instanceof From.Named) {
+            final From.Named named = (From.Named) from;
             textView.setText(named.getName());
-        } else if (from instanceof EmailComplete.DraftFrom) {
+        } else if (from instanceof From.Draft) {
             final Context context = textView.getContext();
             final SpannableString spannable = new SpannableString(context.getString(R.string.draft));
             spannable.setSpan(
@@ -156,17 +151,17 @@ public class BindingAdapters {
     }
 
     @BindingAdapter("from")
-    public static void setFrom(final TextView textView, final ThreadOverviewItem.From[] from) {
+    public static void setFrom(final TextView textView, final From[] from) {
         final SpannableStringBuilder builder = new SpannableStringBuilder();
         if (from != null) {
             final boolean shorten = from.length > 1;
             for (int i = 0; i < from.length; ++i) {
-                final ThreadOverviewItem.From individual = from[i];
+                final From individual = from[i];
                 if (builder.length() != 0) {
                     builder.append(", ");
                 }
                 final int start = builder.length();
-                if (individual instanceof ThreadOverviewItem.DraftFrom) {
+                if (individual instanceof From.Draft) {
                     final Context context = textView.getContext();
                     builder.append(context.getString(R.string.draft));
                     builder.setSpan(
@@ -175,10 +170,10 @@ public class BindingAdapters {
                             builder.length(),
                             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                     );
-                } else if (individual instanceof ThreadOverviewItem.NamedFrom) {
-                    final ThreadOverviewItem.NamedFrom named = (ThreadOverviewItem.NamedFrom) individual;
-                    builder.append(shorten ? EmailAddressUtil.shorten(named.name) : named.name);
-                    if (!named.seen) {
+                } else if (individual instanceof From.Named) {
+                    final From.Named named = (From.Named) individual;
+                    builder.append(shorten ? EmailAddressUtil.shorten(named.getName()) : named.getName());
+                    if (!named.isSeen()) {
                         builder.setSpan(
                                 new StyleSpan(Typeface.BOLD),
                                 start,
@@ -229,21 +224,12 @@ public class BindingAdapters {
     }
 
     @BindingAdapter("from")
-    public static void setThreadOverviewFrom(final ImageView imageView, final Map.Entry<String, ThreadOverviewItem.From> from) {
+    public static void setThreadOverviewFrom(final ImageView imageView, final From from) {
         if (imageView.isActivated()) {
             imageView.setImageResource(R.drawable.ic_selected_24dp);
             return;
         }
-        if (from == null) {
-            imageView.setImageDrawable(new AvatarDrawable(null, null));
-        } else {
-            final ThreadOverviewItem.From value = from.getValue();
-            if (value instanceof ThreadOverviewItem.NamedFrom) {
-                imageView.setImageDrawable(new AvatarDrawable(((ThreadOverviewItem.NamedFrom) value).name, from.getKey()));
-            } else {
-                imageView.setImageDrawable(new AvatarDrawable(null, null)); //TODO do something nice to indicate draft
-            }
-        }
+        imageView.setImageDrawable(new AvatarDrawable(imageView.getContext(), from));
     }
 
     @BindingAdapter("count")

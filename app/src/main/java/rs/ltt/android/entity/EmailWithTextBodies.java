@@ -50,11 +50,11 @@ public abstract class EmailWithTextBodies extends EmailPreview {
 
     public From getFrom() {
         if (isDraft()) {
-            return new DraftFrom();
+            return From.draft();
         }
-        for (EmailAddress emailAddress : emailAddresses) {
+        for (final EmailAddress emailAddress : emailAddresses) {
             if (emailAddress.type == EmailAddressType.FROM) {
-                return new NamedFrom(emailAddress);
+                return From.named(emailAddress);
             }
         }
         return null;
@@ -84,31 +84,4 @@ public abstract class EmailWithTextBodies extends EmailPreview {
         }
         return toMap.values();
     }
-
-    //TODO externalize and merge with ThreadOverviewItem$From
-    public interface From {
-
-    }
-
-    public static class DraftFrom implements From {
-
-    }
-
-    public static class NamedFrom implements From {
-        private final EmailAddress emailAddress;
-
-        private NamedFrom(EmailAddress emailAddress) {
-            this.emailAddress = emailAddress;
-        }
-
-        public String getName() {
-            return this.emailAddress.getName();
-        }
-
-        public String getEmail() {
-            return this.emailAddress.getEmail();
-        }
-    }
-
-
 }

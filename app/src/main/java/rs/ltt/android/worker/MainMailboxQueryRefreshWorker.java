@@ -17,6 +17,8 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import rs.ltt.android.database.LttrsDatabase;
+import rs.ltt.android.entity.EmailNotificationPreview;
+import rs.ltt.android.ui.notification.EmailNotification;
 import rs.ltt.jmap.common.entity.IdentifiableMailboxWithRole;
 import rs.ltt.jmap.common.entity.Role;
 import rs.ltt.jmap.common.entity.query.EmailQuery;
@@ -47,6 +49,10 @@ public class MainMailboxQueryRefreshWorker extends QueryRefreshWorker {
         //TODO get active notifications and email ids from them
         //TODO cross reference freshly added with $seen keywords
         //TODO get FullEmails and create notifications
+        final List<EmailNotificationPreview> emails = database.threadAndEmailDao().getEmails(
+                freshlyAddedEmailIds
+        );
+        EmailNotification.notify(getApplicationContext(), emails);
         return Result.success();
     }
 
