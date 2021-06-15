@@ -13,6 +13,10 @@ public class AccountName implements Navigable {
         return this.name;
     }
 
+    public Long getId() {
+        return this.id;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

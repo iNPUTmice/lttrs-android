@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import rs.ltt.android.database.AppDatabase;
+import rs.ltt.android.ui.notification.EmailNotification;
 import rs.ltt.android.ui.notification.ForegroundServiceNotification;
 
 public class LttrsApplication extends Application {
@@ -36,6 +37,7 @@ public class LttrsApplication extends Application {
     public void onCreate() {
         super.onCreate();
         ForegroundServiceNotification.createChannel(getApplicationContext());
+        EmailNotification.createChannel(getApplicationContext());
     }
 
     public boolean noAccountsConfigured() {

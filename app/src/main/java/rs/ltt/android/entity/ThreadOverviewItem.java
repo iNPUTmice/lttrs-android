@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
+import rs.ltt.android.util.CharSequences;
 import rs.ltt.jmap.common.entity.Keyword;
 import rs.ltt.jmap.mua.util.KeywordUtil;
 
@@ -115,7 +116,7 @@ public class ThreadOverviewItem {
         final List<EmailPreviewWithMailboxes> emails = getOrderedEmails();
         for (final EmailPreviewWithMailboxes email : emails) {
             if (email.keywords.contains(Keyword.DRAFT)) {
-                fromMap.put("", From.draft());
+                fromMap.put(CharSequences.EMPTY_STRING, From.draft());
                 continue;
             }
             final boolean seen = seenOverwrite != null ? seenOverwrite.value : email.keywords.contains(Keyword.SEEN);

@@ -47,7 +47,10 @@ public abstract class AccountDao {
     public abstract AccountWithCredentials getAccount(Long id);
 
     @Query("select id,name from account where id=:id limit 1")
-    public abstract LiveData<AccountName> getAccountName(Long id);
+    public abstract LiveData<AccountName> getAccountNameLiveData(Long id);
+
+    @Query("select id,name from account where id=:id limit 1")
+    public abstract AccountName getAccountName(Long id);
 
     @Query("select id,name from account order by name")
     public abstract LiveData<List<AccountName>> getAccountNames();

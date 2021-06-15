@@ -111,7 +111,7 @@ public class MainRepository {
 
 
     public LiveData<AccountName> getAccountName(final Long id) {
-        return this.appDatabase.accountDao().getAccountName(id);
+        return this.appDatabase.accountDao().getAccountNameLiveData(id);
     }
 
     public LiveData<List<AccountName>> getAccountNames() {

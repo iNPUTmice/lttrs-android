@@ -23,7 +23,6 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
-import android.util.Log;
 
 import com.google.common.base.Strings;
 
@@ -56,12 +55,10 @@ public class AvatarDrawable extends ColorDrawable {
             name = null;
             key = null;
         }
-        Log.d("lttrs", "avtarDrawable name=" + name + ", key=" + key);
         this.paint = getPaint(key);
         this.textPaint = getTextPaint();
         final Matcher matcher = LETTER_PATTERN.matcher(Strings.nullToEmpty(name));
         this.letter = matcher.find() ? matcher.group().toUpperCase(Locale.ROOT) : null;
-        Log.d("lttrs", "letter=" + letter);
         final int avatarDrawableSize = context.getResources().getDimensionPixelSize(R.dimen.avatar_drawable_size);
         this.intrinsicHeight = avatarDrawableSize;
         this.intrinsicWidth = avatarDrawableSize;

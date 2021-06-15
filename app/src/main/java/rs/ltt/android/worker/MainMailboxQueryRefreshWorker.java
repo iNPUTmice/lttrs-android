@@ -16,7 +16,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
+import rs.ltt.android.database.AppDatabase;
 import rs.ltt.android.database.LttrsDatabase;
+import rs.ltt.android.entity.AccountName;
 import rs.ltt.android.entity.EmailNotificationPreview;
 import rs.ltt.android.ui.notification.EmailNotification;
 import rs.ltt.jmap.common.entity.IdentifiableMailboxWithRole;
@@ -52,7 +54,9 @@ public class MainMailboxQueryRefreshWorker extends QueryRefreshWorker {
         final List<EmailNotificationPreview> emails = database.threadAndEmailDao().getEmails(
                 freshlyAddedEmailIds
         );
-        EmailNotification.notify(getApplicationContext(), emails);
+        final AccountName account = AppDatabase.getInstance(getApplicationContext()).accountDao()
+                .getAccountName(this.account);
+        EmailNotification.notify(getApplicationContext(), account, emails);
         return Result.success();
     }
 
