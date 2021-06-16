@@ -48,16 +48,27 @@ public class MainMailboxQueryRefreshWorker extends QueryRefreshWorker {
                 database.queryDao().getEmailIds(emailQuery.asHash())
         );
         LOGGER.debug("freshly added email ids: {}", freshlyAddedEmailIds);
-        //TODO get active notifications and email ids from them
+
+        final List<String> activeEmailNotifications = EmailNotification.getActiveEmailIds(
+                getApplicationContext(),
+                account
+        );
+        LOGGER.debug("active notifications {}", activeEmailNotifications);
+        final List<EmailNotificationPreview> emails = database.threadAndEmailDao().getEmails(
+                combine(freshlyAddedEmailIds, activeEmailNotifications)
+        );
         //TODO cross reference freshly added with $seen keywords
         //TODO get FullEmails and create notifications
-        final List<EmailNotificationPreview> emails = database.threadAndEmailDao().getEmails(
-                freshlyAddedEmailIds
-        );
+        //TODO figure out which active notifications can be dismissed (isSeen && inActive)
         final AccountName account = AppDatabase.getInstance(getApplicationContext()).accountDao()
                 .getAccountName(this.account);
         EmailNotification.notify(getApplicationContext(), account, emails);
         return Result.success();
+    }
+
+
+    private static List<String> combine(final List<String> a, final List<String> b) {
+        return new ImmutableList.Builder<String>().addAll(a).addAll(b).build();
     }
 
     private static List<String> freshlyAddedEmailIds(final Set<String> preexistingEmailIds,

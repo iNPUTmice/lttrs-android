@@ -118,4 +118,8 @@
     <string name="role_name_subscribed">Subscribed</string>
     <string name="session_resource_help_dialog_title">What is a connection URL?</string>
     <string name="session_resource_help_dialog_message">Ltt.rs uses a relatively new protocol called JMAP to synchronize e-mail. There is a chance that your e-mail provider does not yet support this protocol.\n\nYou should contact your provider and ask about JMAP and the JMAP connection URL.\n\nOn a properly configured server Ltt.rs will be able to discover the connection URL automatically.</string>
+    <plurals name="x_new_emails">
+        <item quantity="one">%d new e-mail</item>
+        <item quantity="other">%d new e-mails</item>
+    </plurals>
 </resources>
