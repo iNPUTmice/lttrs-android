@@ -71,4 +71,33 @@
     <string name="mark_read">Marcar como leído</string>
     <string name="mark_unread">Marcar como no leído</string>
     <string name="archive">Archivar</string>
+    <string name="session_resource_help_dialog_title">¿Qué es una URL de conexión\?</string>
+    <string name="role_name_subscribed">Suscrito</string>
+    <string name="role_name_junk">No deseado</string>
+    <string name="role_name_trash">Papelera</string>
+    <string name="role_name_important">Importante</string>
+    <string name="role_name_flagged">Destacados</string>
+    <string name="role_name_drafts">Borradores</string>
+    <string name="role_name_archive">Archivo</string>
+    <string name="role_name_all">Todo el correo</string>
+    <string name="role_name_sent">Enviados</string>
+    <string name="role_name_inbox">Bandeja de entrada</string>
+    <string name="foreground_service">Servicio de primer plano</string>
+    <string name="foreground_service_notification_text">Ltt.rs sigue funcionando para notificar sobre el correo electrónico entrante</string>
+    <string name="add_another_account">Añadir una otra cuenta</string>
+    <string name="manage_accounts">Gestionar las cuentas</string>
+    <string name="create">Crear</string>
+    <string name="new_label">Nueva etiqueta</string>
+    <string name="reserved_mailbox_name">Nombre reservado. Prueba con otro nombre.</string>
+    <string name="no_name_specified">No se ha especificado el nombre. Inténtelo de nuevo.</string>
+    <string name="enter_a_label_name">Escriba un nuevo nombre de etiqueta</string>
+    <string name="apply_changes">Aplicar los cambios</string>
+    <string name="label_as">Etiqueta como</string>
+    <string name="change_labels">Cambiar las etiquetas</string>
+    <string name="cancel">Cancelar</string>
+    <string name="confirm">Confirmar</string>
+    <plurals name="x_new_emails">
+        <item quantity="one">%d nuevo correo</item>
+        <item quantity="other">%d nuevos correos</item>
+    </plurals>
 </resources>
