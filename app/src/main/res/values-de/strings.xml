@@ -106,4 +106,8 @@
     <string name="role_name_sent">Gesendet</string>
     <string name="role_name_inbox">Posteingang</string>
     <string name="foreground_service_notification_text">Ltt.rs läuft weiter, um über eingehende E-Mail zu benachrichtigen</string>
+    <plurals name="x_new_emails">
+        <item quantity="one">%d neue E-Mail</item>
+        <item quantity="other">%d neue E-Mails</item>
+    </plurals>
 </resources>
