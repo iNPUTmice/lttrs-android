@@ -78,4 +78,29 @@
     <string name="reassign_role_question">Você já tem uma etiqueta chamada %1$s com a função de %2$s. Você gostaria de reatribuí-la com a função de %3$s\?</string>
     <string name="assign_role">Atribuir função</string>
     <string name="reassign_role">Reatribuir função</string>
+    <plurals name="x_new_emails">
+        <item quantity="one">%d nova mensagem</item>
+        <item quantity="other">%d novas mensagens</item>
+    </plurals>
+    <string name="session_resource_help_dialog_title">O que é um URL de conexão\?</string>
+    <string name="role_name_junk">Spam</string>
+    <string name="role_name_trash">Lixeira</string>
+    <string name="role_name_important">Importante</string>
+    <string name="role_name_flagged">Estrelado</string>
+    <string name="role_name_drafts">Rascunhos</string>
+    <string name="role_name_archive">Arquivo</string>
+    <string name="role_name_all">Todo o correio</string>
+    <string name="role_name_sent">Enviados</string>
+    <string name="role_name_inbox">Caixa de entrada</string>
+    <string name="foreground_service">Serviço de primeiro plano</string>
+    <string name="foreground_service_notification_text">Ltt.rs continua em execução para notificar sobre correios eletrônicos recebidos</string>
+    <string name="add_another_account">Adicionar outra conta</string>
+    <string name="manage_accounts">Gerenciar contas</string>
+    <string name="create">Criar</string>
+    <string name="new_label">Nova etiqueta</string>
+    <string name="reserved_mailbox_name">Nome reservado. Tente um nome diferente.</string>
+    <string name="no_name_specified">Nenhum nome especificado. Tente novamente.</string>
+    <string name="enter_a_label_name">Digite um novo nome de etiqueta</string>
+    <string name="apply_changes">Aplicar alterações</string>
+    <string name="change_labels">Mudar etiquetas</string>
 </resources>
