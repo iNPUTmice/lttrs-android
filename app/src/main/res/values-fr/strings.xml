@@ -106,4 +106,8 @@
     <string name="role_name_inbox">Boîte de réception</string>
     <string name="foreground_service">Service de premier plan</string>
     <string name="foreground_service_notification_text">Ltt.rs continue de fonctionner pour notifier l\'arrivée d\'un courriel</string>
+    <plurals name="x_new_emails">
+        <item quantity="one">%d nouveau courriel</item>
+        <item quantity="other">%d nouveaux courriels</item>
+    </plurals>
 </resources>
