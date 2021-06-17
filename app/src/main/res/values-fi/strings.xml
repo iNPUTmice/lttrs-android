@@ -71,4 +71,34 @@
     <string name="mark_read">Merkitse luetuksi</string>
     <string name="mark_unread">Merkitse lukemattomaksi</string>
     <string name="archive">Arkistoi</string>
+    <string name="assign_role">Määritä rooli</string>
+    <string name="reassign_role">Määritä rooli uudelleen</string>
+    <string name="no_name_specified">Nimeä ei ole määritelty. Yritä uudelleen.</string>
+    <string name="reserved_mailbox_name">Varattu nimi. Kokeile toista nimeä.</string>
+    <string name="label_as">Merkitse nimellä</string>
+    <string name="apply_changes">Ota muutokset käyttöön</string>
+    <string name="cancel">Peruuta</string>
+    <string name="confirm">Vahvista</string>
+    <string name="enter_a_label_name">Kirjoita uusi etiketin nimi</string>
+    <string name="create">Luo</string>
+    <string name="new_label">Uusi etiketti</string>
+    <string name="role_name_inbox">Saapuneet</string>
+    <string name="foreground_service">Tulosaineiston palvelu</string>
+    <string name="foreground_service_notification_text">Ltt.rs ilmoittaa jatkuvasti saapuvasta sähköpostista</string>
+    <string name="add_another_account">Lisää toinen tili</string>
+    <string name="manage_accounts">Hallitse tilejä</string>
+    <string name="role_name_flagged">Tähdellä merkitty</string>
+    <string name="role_name_drafts">Luonnokset</string>
+    <string name="role_name_archive">Arkisto</string>
+    <string name="role_name_all">Kaikki s-posti</string>
+    <string name="role_name_sent">Lähetetty</string>
+    <string name="session_resource_help_dialog_title">Mikä on yhteys-URL\?</string>
+    <string name="role_name_subscribed">Tilattu</string>
+    <string name="role_name_junk">Roskaposti</string>
+    <string name="role_name_trash">Roskakori</string>
+    <string name="role_name_important">Tärkeä</string>
+    <plurals name="x_new_emails">
+        <item quantity="one">%d uusi sähköposti</item>
+        <item quantity="other">%d uutta sähköpostia</item>
+    </plurals>
 </resources>
