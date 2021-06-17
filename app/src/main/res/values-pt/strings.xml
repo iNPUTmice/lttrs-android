@@ -71,4 +71,8 @@
     <string name="remove_flag">Remover marcação</string>
     <string name="compose_from">De</string>
     <string name="enter_an_email_address">Digite um endereço de e-mail</string>
+    <plurals name="x_new_emails">
+        <item quantity="one">%d nova mensagem</item>
+        <item quantity="other">%d novas mensagens</item>
+    </plurals>
 </resources>
