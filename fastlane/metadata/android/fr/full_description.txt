@@ -1,4 +1,4 @@
-Ltt.rs (se prononce \"Letters\") est une preuve de concept de client e-mail (JMAP). Il fait appel à une utilisation intensive d'Android Jetpack, afin d'être plus facile à maintenir que d'autres clients e-mail Android.
+Ltt.rs (se prononce « Letters ») est une preuve de concept de client de messagerie (JMAP). Il fait appel à une utilisation intensive d'Android Jetpack, afin d'être plus facile à maintenir que d'autres clients de messagerie Android.
 
 Caractéristiques et considérations de conception :
 
