@@ -21,9 +21,11 @@ import rs.ltt.android.database.LttrsDatabase;
 import rs.ltt.android.entity.AccountName;
 import rs.ltt.android.entity.EmailNotificationPreview;
 import rs.ltt.android.ui.notification.EmailNotification;
+import rs.ltt.jmap.common.entity.IdentifiableEmailWithKeywords;
 import rs.ltt.jmap.common.entity.IdentifiableMailboxWithRole;
 import rs.ltt.jmap.common.entity.Role;
 import rs.ltt.jmap.common.entity.query.EmailQuery;
+import rs.ltt.jmap.mua.util.KeywordUtil;
 import rs.ltt.jmap.mua.util.StandardQueries;
 
 public class MainMailboxQueryRefreshWorker extends QueryRefreshWorker {
@@ -57,16 +59,24 @@ public class MainMailboxQueryRefreshWorker extends QueryRefreshWorker {
         final List<EmailNotificationPreview> emails = database.threadAndEmailDao().getEmails(
                 combine(freshlyAddedEmailIds, activeEmailNotifications)
         );
-        //TODO cross reference freshly added with $seen keywords
-        //TODO get FullEmails and create notifications
-        //TODO figure out which active notifications can be dismissed (isSeen && inActive)
+
+        final ImmutableList.Builder<EmailNotificationPreview> notificationBuilder = ImmutableList.builder();
+        for(final EmailNotificationPreview email : emails) {
+            //TODO Take keyword overwrite into account
+            if (KeywordUtil.seen(email)) {
+                if (activeEmailNotifications.contains(email.getId())) {
+                    EmailNotification.dismiss(getApplicationContext(), account, email.getId());
+                }
+            } else {
+                notificationBuilder.add(email);
+            }
+        }
         final AccountName account = AppDatabase.getInstance(getApplicationContext()).accountDao()
                 .getAccountName(this.account);
-        EmailNotification.notify(getApplicationContext(), account, emails);
+        EmailNotification.notify(getApplicationContext(), account, notificationBuilder.build());
         return Result.success();
     }
-
-
+    
     private static List<String> combine(final List<String> a, final List<String> b) {
         return new ImmutableList.Builder<String>().addAll(a).addAll(b).build();
     }

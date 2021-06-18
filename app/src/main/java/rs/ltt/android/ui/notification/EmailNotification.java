@@ -51,7 +51,10 @@ public class EmailNotification {
                               final AccountName account,
                               final List<EmailNotificationPreview> emails) {
         final NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
-        //TODO if emails.size() == 0 clear all notifications
+        if (emails.isEmpty()) {
+            notificationManager.cancel(SUMMARY_ID);
+            return;
+        }
         for (EmailNotificationPreview email : emails) {
             final Tag tag = new Tag(account.id, email.getId());
             final Notification notification = get(context, account, email);
@@ -134,6 +137,12 @@ public class EmailNotification {
 
     private static String getGroupKey(final AccountName account) {
         return String.format(Locale.US, "emails-%d", account.id);
+    }
+
+    public static void dismiss(final Context context, final Long account, final String id) {
+        final Tag tag = new Tag(account, id);
+        final NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+        notificationManager.cancel(tag.toString(), ID);
     }
 
     public static class Tag {

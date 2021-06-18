@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import rs.ltt.jmap.common.entity.Keyword;
+import rs.ltt.jmap.mua.util.KeywordUtil;
 
 public abstract class EmailWithTextBodies extends EmailPreview {
 
@@ -41,7 +42,7 @@ public abstract class EmailWithTextBodies extends EmailPreview {
     public List<EmailBodyValueEntity> bodyValueEntities;
 
     public boolean isDraft() {
-        return keywords.contains(Keyword.DRAFT);
+        return KeywordUtil.draft(this);
     }
 
     public String getPreview() {
@@ -49,7 +50,7 @@ public abstract class EmailWithTextBodies extends EmailPreview {
     }
 
     public From getFrom() {
-        if (isDraft()) {
+        if (KeywordUtil.draft(this)) {
             return From.draft();
         }
         for (final EmailAddress emailAddress : emailAddresses) {
