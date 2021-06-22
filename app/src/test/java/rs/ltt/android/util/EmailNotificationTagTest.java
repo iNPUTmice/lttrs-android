@@ -39,5 +39,4 @@ public class EmailNotificationTagTest {
         final EmailNotification.Tag tag = new EmailNotification.Tag(0L, "test");
         Assert.assertEquals("0-test", tag.toString());
     }
-
 }

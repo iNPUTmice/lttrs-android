@@ -337,6 +337,8 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
             lttrsViewModel.insertSearchSuggestion(query);
             getNavController().navigate(LttrsNavigationDirections.actionSearch(query));
         }
+        //take inspiration from:
+        getNavController().handleDeepLink(intent);
 
     }
 

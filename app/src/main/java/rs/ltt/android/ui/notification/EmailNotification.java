@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.net.Uri;
 import android.os.Build;
 import android.service.notification.StatusBarNotification;
 
@@ -63,7 +64,6 @@ public class EmailNotification {
         final Notification summaryNotification = getSummary(context, account, emails);
         notificationManager.notify(SUMMARY_ID, summaryNotification);
     }
-
 
     private static Notification get(final Context context,
                                     final AccountName account,
@@ -147,6 +147,8 @@ public class EmailNotification {
 
     public static class Tag {
 
+        private static final String SCHEME = "lttrs";
+
         private final Long accountId;
         private final String emailId;
 
@@ -157,18 +159,30 @@ public class EmailNotification {
             this.emailId = emailId;
         }
 
+        public static Tag parse(final Uri uri) {
+            if (SCHEME.equals(uri.getScheme())) {
+                return parse(uri.getAuthority(), uri.getPath());
+            }
+            throw new IllegalArgumentException("Unknown scheme");
+        }
+
         public static Tag parse(final String tag) {
             final int separatorIndex = tag.indexOf('-');
             if (separatorIndex < 0 || separatorIndex + 1 >= tag.length()) {
                 throw new IllegalArgumentException("Not a valid tag");
             }
+            final String account = tag.substring(0, separatorIndex);
+            final String emailId = tag.substring(separatorIndex + 1);
+            return parse(account, emailId);
+        }
+
+        private static Tag parse(final String account, final String emailId) {
             final long accountId;
             try {
-                accountId = Long.parseLong(tag.substring(0, separatorIndex));
-            } catch (NumberFormatException e) {
+                accountId = Long.parseLong(account);
+            } catch (final NumberFormatException e) {
                 throw new IllegalArgumentException("Not a valid account id");
             }
-            final String emailId = tag.substring(separatorIndex + 1);
             return new Tag(accountId, emailId);
         }
 
@@ -184,6 +198,14 @@ public class EmailNotification {
 
         public String getEmailId() {
             return emailId;
+        }
+
+        public Uri toUri() {
+            return new Uri.Builder()
+                    .scheme(SCHEME)
+                    .authority(String.valueOf(accountId))
+                    .path(emailId)
+                    .build();
         }
     }
 
