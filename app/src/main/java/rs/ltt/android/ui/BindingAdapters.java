@@ -129,6 +129,10 @@ public class BindingAdapters {
 
     @BindingAdapter("from")
     public static void setFrom(final ImageView imageView, final From from) {
+        if (imageView.isActivated()) {
+            imageView.setImageResource(R.drawable.ic_selected_24dp);
+            return;
+        }
         imageView.setImageDrawable(new AvatarDrawable(imageView.getContext(), from));
     }
 
@@ -221,15 +225,6 @@ public class BindingAdapters {
             imageView.setImageResource(R.drawable.ic_star_border_no_padding_black_24dp);
             ImageViewCompat.setImageTintList(imageView, ColorStateList.valueOf(ContextCompat.getColor(imageView.getContext(), R.color.colorSecondaryOnSurface)));
         }
-    }
-
-    @BindingAdapter("from")
-    public static void setThreadOverviewFrom(final ImageView imageView, final From from) {
-        if (imageView.isActivated()) {
-            imageView.setImageResource(R.drawable.ic_selected_24dp);
-            return;
-        }
-        imageView.setImageDrawable(new AvatarDrawable(imageView.getContext(), from));
     }
 
     @BindingAdapter("count")
