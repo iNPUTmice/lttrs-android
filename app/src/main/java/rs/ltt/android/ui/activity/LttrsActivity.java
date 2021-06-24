@@ -18,6 +18,7 @@ package rs.ltt.android.ui.activity;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -57,6 +58,7 @@ import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 import rs.ltt.android.LttrsApplication;
 import rs.ltt.android.LttrsNavigationDirections;
@@ -71,6 +73,7 @@ import rs.ltt.android.ui.Translations;
 import rs.ltt.android.ui.WeakActionModeCallback;
 import rs.ltt.android.ui.adapter.NavigationAdapter;
 import rs.ltt.android.ui.model.LttrsViewModel;
+import rs.ltt.android.ui.notification.EmailNotification;
 import rs.ltt.android.util.Event;
 import rs.ltt.android.util.MainThreadExecutor;
 import rs.ltt.android.worker.Failure;
@@ -83,6 +86,7 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
     private static final Logger LOGGER = LoggerFactory.getLogger(LttrsActivity.class);
 
     public static final String EXTRA_ACCOUNT_ID = "account";
+    public static final String EXTRA_THREAD_ID = "thread";
 
     private static final int NUM_TOOLBAR_ICON = 1;
     private static final List<Integer> MAIN_DESTINATIONS = Arrays.asList(
@@ -125,6 +129,25 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
         }
     }
 
+    public static void view(final AppCompatActivity activity, final EmailNotification.Tag tag, final String threadId) {
+        final Intent intent = viewIntent(activity, tag, threadId);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        activity.startActivity(intent);
+        activity.overridePendingTransition(0, 0);
+    }
+
+
+    public static Intent viewIntent(final Context context,
+                                    final EmailNotification.Tag tag,
+                                    final String threadId) {
+        final Intent intent = new Intent(context, LttrsActivity.class);
+        intent.setAction(Intent.ACTION_VIEW);
+        intent.setData(tag.toUri());
+        intent.putExtra(LttrsActivity.EXTRA_ACCOUNT_ID, tag.getAccountId());
+        intent.putExtra(LttrsActivity.EXTRA_THREAD_ID, threadId);
+        return intent;
+    }
+
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -150,7 +173,6 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
         );
         lttrsViewModel = viewModelProvider.get(LttrsViewModel.class);
         setSupportActionBar(binding.toolbar);
-
 
 
         binding.drawerLayout.addDrawerListener(this);
@@ -302,7 +324,9 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
             upIndicator = R.drawable.ic_arrow_back_white_24dp;
         }
         actionbar.setHomeAsUpIndicator(upIndicator);
+        LOGGER.debug("configureActionBarForDestination(destination={},thread={},asBool={})", destinationId, R.id.thread, destinationId != R.id.thread);
         actionbar.setDisplayShowTitleEnabled(destinationId != R.id.thread);
+        LOGGER.debug("clazz="+actionbar.getClass().getName());
         invalidateOptionsMenu();
     }
 
@@ -324,22 +348,48 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
 
     public void onNewIntent(final Intent intent) {
         super.onNewIntent(intent);
-        final String action = intent == null ? null : intent.getAction();
-        if (Intent.ACTION_SEARCH.equals(action)) {
-            final String query = Strings.nullToEmpty(intent.getStringExtra(SearchManager.QUERY));
-            if (mSearchView != null) {
-                mSearchView.setQuery(query, false);
-                //this does not work on all phones / android versions; therefor we have this followed by a requestFocus() on the list
-                mSearchView.clearFocus();
-            }
-            binding.navigation.requestFocus();
-
-            lttrsViewModel.insertSearchSuggestion(query);
-            getNavController().navigate(LttrsNavigationDirections.actionSearch(query));
+        final String action = Strings.nullToEmpty(intent == null ? null : intent.getAction());
+        switch (action) {
+            case Intent.ACTION_SEARCH:
+                handleSearchIntent(Objects.requireNonNull(intent));
+                break;
+            case Intent.ACTION_VIEW:
+                handleViewIntent(Objects.requireNonNull(intent));
+                break;
         }
-        //take inspiration from:
-        getNavController().handleDeepLink(intent);
+    }
 
+    private void handleViewIntent(final Intent intent) {
+        final EmailNotification.Tag tag = EmailNotification.Tag.parse(intent.getData());
+        final long accountId = intent.getLongExtra(EXTRA_ACCOUNT_ID, -1L);
+        final String threadId = intent.getStringExtra(EXTRA_THREAD_ID);
+        if (accountId != this.lttrsViewModel.getAccountId()) {
+            LOGGER.info("restarting activity to switch to account {}", accountId);
+            view(this, tag, threadId);
+            return;
+        }
+        final NavController navController = getNavController();
+        if (navController.popBackStack(R.id.inbox, false)) {
+            LOGGER.debug("Popped back stack to get back to inbox");
+        }
+        navController.navigate(LttrsNavigationDirections.actionToThread(
+                threadId,
+                null,
+                null,
+                false
+        ));
+    }
+
+    private void handleSearchIntent(final Intent intent) {
+        final String query = Strings.nullToEmpty(intent.getStringExtra(SearchManager.QUERY));
+        if (mSearchView != null) {
+            mSearchView.setQuery(query, false);
+            //this does not work on all phones / android versions; therefor we have this followed by a requestFocus() on the list
+            mSearchView.clearFocus();
+        }
+        binding.navigation.requestFocus();
+        lttrsViewModel.insertSearchSuggestion(query);
+        getNavController().navigate(LttrsNavigationDirections.actionSearch(query));
     }
 
     private void showSnackbar(final Snackbar snackbar) {

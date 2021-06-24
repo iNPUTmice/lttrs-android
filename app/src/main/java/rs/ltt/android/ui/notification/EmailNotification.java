@@ -3,7 +3,9 @@ package rs.ltt.android.ui.notification;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.service.notification.StatusBarNotification;
@@ -23,6 +25,7 @@ import rs.ltt.android.entity.AccountName;
 import rs.ltt.android.entity.EmailNotificationPreview;
 import rs.ltt.android.entity.From;
 import rs.ltt.android.ui.AvatarDrawable;
+import rs.ltt.android.ui.activity.LttrsActivity;
 
 public class EmailNotification {
 
@@ -82,7 +85,16 @@ public class EmailNotification {
                 .setStyle(bigTextStyle)
                 .setColor(context.getColor(R.color.colorPrimary))
                 .setGroup(getGroupKey(account))
+                .setContentIntent(getPendingIntent(context, account, email))
                 .build();
+    }
+
+    private static PendingIntent getPendingIntent(final Context context,
+                                           final AccountName account,
+                                           final EmailNotificationPreview email) {
+        final Tag tag = new Tag(account.getId(), email.getId());
+        final Intent intent = LttrsActivity.viewIntent(context, tag, email.threadId);
+        return PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
     }
 
     private static Notification getSummary(final Context context,
