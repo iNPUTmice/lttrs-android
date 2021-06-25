@@ -89,6 +89,7 @@ public class ThreadFragment extends AbstractLttrsFragment implements OnFlaggedTo
                         label
                 )
         );
+        getLttrsViewModel().clearActivityTitle();
         threadViewModel = viewModelProvider.get(ThreadViewModel.class);
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_thread, container, false);
 

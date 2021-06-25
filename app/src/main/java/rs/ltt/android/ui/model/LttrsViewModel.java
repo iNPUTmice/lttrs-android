@@ -122,6 +122,10 @@ public class LttrsViewModel extends AndroidViewModel {
         this.activityTitle.postValue(getApplication().getString(res));
     }
 
+    public void clearActivityTitle() {
+        this.activityTitle.postValue(null);
+    }
+
     public LiveData<String> getActivityTitle() {
         return this.activityTitle;
     }

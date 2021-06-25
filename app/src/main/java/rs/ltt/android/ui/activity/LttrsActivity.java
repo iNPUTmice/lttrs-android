@@ -324,9 +324,6 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
             upIndicator = R.drawable.ic_arrow_back_white_24dp;
         }
         actionbar.setHomeAsUpIndicator(upIndicator);
-        LOGGER.debug("configureActionBarForDestination(destination={},thread={},asBool={})", destinationId, R.id.thread, destinationId != R.id.thread);
-        actionbar.setDisplayShowTitleEnabled(destinationId != R.id.thread);
-        LOGGER.debug("clazz="+actionbar.getClass().getName());
         invalidateOptionsMenu();
     }
 

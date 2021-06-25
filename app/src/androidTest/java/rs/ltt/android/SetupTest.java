@@ -1,5 +1,7 @@
 package rs.ltt.android;
 
+import android.widget.TextView;
+
 import androidx.test.espresso.IdlingRegistry;
 import androidx.test.espresso.contrib.DrawerActions;
 import androidx.test.espresso.contrib.RecyclerViewActions;
@@ -29,13 +31,18 @@ import static androidx.test.espresso.action.ViewActions.pressImeActionButton;
 import static androidx.test.espresso.action.ViewActions.swipeDown;
 import static androidx.test.espresso.action.ViewActions.swipeRight;
 import static androidx.test.espresso.action.ViewActions.typeText;
+import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition;
 import static androidx.test.espresso.contrib.RecyclerViewActions.scrollToPosition;
 import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withParent;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.instanceOf;
 import static rs.ltt.android.CustomMatchers.atPosition;
 import static rs.ltt.android.CustomMatchers.withError;
 
@@ -129,6 +136,36 @@ public class SetupTest {
         onView(withId(R.id.thread_list))
                 .perform(scrollToPosition(0))
                 .check(matches(atPosition(0, hasDescendant(withText("Mary Smith")))));
+    }
+
+    @Test
+    public void toolbarShowsCorrectTitle() throws InterruptedException {
+        //enter username
+        onView(withId(R.id.email_address)).perform(typeText(mockMailServer.getUsername()));
+        onView(withId(R.id.email_address)).perform(pressImeActionButton());
+        Thread.sleep(1000);
+
+        //enter connection url
+        onView(withId(R.id.url)).perform(typeText(mockWebServer.url(JmapDispatcher.WELL_KNOWN_PATH).toString()));
+        onView(withId(R.id.url)).perform(pressImeActionButton());
+        Thread.sleep(1000);
+
+        //enter password
+        onView(withId(R.id.password)).perform(typeText(JmapDispatcher.PASSWORD));
+        onView(withId(R.id.password)).perform(pressImeActionButton());
+
+        Thread.sleep(3000);
+
+        intended(hasComponent(LttrsActivity.class.getName()));
+
+        onView(allOf(instanceOf(TextView.class), withParent(withId(R.id.toolbar)))).check(matches(withText("Inbox")));
+
+        //click on first email
+        onView(withId(R.id.thread_list)).perform(actionOnItemAtPosition(0, click()));
+
+        Thread.sleep(2000);
+
+        onView(allOf(instanceOf(TextView.class), withParent(withId(R.id.toolbar)))).check(doesNotExist());
     }
 
     @Test
