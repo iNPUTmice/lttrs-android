@@ -16,23 +16,49 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
 import rs.ltt.android.R;
+import rs.ltt.android.database.LttrsDatabase;
 import rs.ltt.android.entity.AccountName;
 import rs.ltt.android.entity.EmailNotificationPreview;
 import rs.ltt.android.entity.From;
 import rs.ltt.android.ui.AvatarDrawable;
 import rs.ltt.android.ui.activity.LttrsActivity;
+import rs.ltt.jmap.mua.util.KeywordUtil;
 
 public class EmailNotification {
 
-    public static final int ID = 2;
+    private static final Logger LOGGER = LoggerFactory.getLogger(EmailNotification.class);
+
+    private static final int ID = 2;
     private static final int SUMMARY_ID = 3;
 
     private static final String NOTIFICATION_CHANNEL_ID = "email";
+    final NotificationManager notificationManager;
+    private final Context context;
+    private final AccountName account;
+    private final List<EmailNotificationPreview> addedEmails;
+    private final List<String> dismissedEmails;
+    private final List<EmailNotificationPreview> allEmails;
+
+    private EmailNotification(final Context context,
+                              final AccountName account,
+                              final List<EmailNotificationPreview> addedEmails,
+                              final List<String> dismissedEmails,
+                              final List<EmailNotificationPreview> allEmails) {
+        this.context = context;
+        this.notificationManager = context.getSystemService(NotificationManager.class);
+        this.account = account;
+        this.addedEmails = addedEmails;
+        this.dismissedEmails = dismissedEmails;
+        this.allEmails = allEmails;
+    }
 
     //TODO create notification channel for each account
     public static void createChannel(final Context context) {
@@ -50,75 +76,8 @@ public class EmailNotification {
 
     }
 
-
-    public static void notify(final Context context,
-                              final AccountName account,
-                              final List<EmailNotificationPreview> emails) {
-        final NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
-        if (emails.isEmpty()) {
-            notificationManager.cancel(SUMMARY_ID);
-            return;
-        }
-        for (EmailNotificationPreview email : emails) {
-            final Tag tag = new Tag(account.id, email.getId());
-            final Notification notification = get(context, account, email);
-            notificationManager.notify(tag.toString(), ID, notification);
-        }
-        final Notification summaryNotification = getSummary(context, account, emails);
-        notificationManager.notify(SUMMARY_ID, summaryNotification);
-    }
-
-    private static Notification get(final Context context,
-                                    final AccountName account,
-                                    final EmailNotificationPreview email) {
-        final From from = email.getFrom();
-        final AvatarDrawable avatar = new AvatarDrawable(context, from);
-        final NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle()
-                .bigText(String.format("%s\n%s", email.subject, email.getText()));
-        return new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_email_outline_24dp)
-                .setContentTitle(getFromAsString(context, from))
-                .setContentText(email.subject)
-                .setSubText(account.getName())
-                .setLargeIcon(avatar.toBitmap())
-                .setWhen(email.receivedAt.toEpochMilli())
-                .setStyle(bigTextStyle)
-                .setColor(context.getColor(R.color.colorPrimary))
-                .setGroup(getGroupKey(account))
-                .setContentIntent(getPendingIntent(context, account, email))
-                .build();
-    }
-
-    private static PendingIntent getPendingIntent(final Context context,
-                                           final AccountName account,
-                                           final EmailNotificationPreview email) {
-        final Tag tag = new Tag(account.getId(), email.getId());
-        final Intent intent = LttrsActivity.viewIntent(context, tag, email.threadId);
-        return PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
-    }
-
-    private static Notification getSummary(final Context context,
-                                           final AccountName account,
-                                           final List<EmailNotificationPreview> emails) {
-        final NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
-        for (final EmailNotificationPreview email : emails) {
-            inboxStyle.addLine(String.format(
-                    "<b>%s</b> %s",
-                    getFromAsString(context, email.getFrom()),
-                    email.subject
-            ));
-        }
-        return new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_email_outline_24dp)
-                .setSubText(account.getName())
-                .setContentTitle(
-                        context.getResources().getQuantityString(R.plurals.x_new_emails, emails.size(), emails.size())
-                )
-                .setStyle(inboxStyle)
-                .setColor(context.getColor(R.color.colorPrimary))
-                .setGroup(getGroupKey(account))
-                .setGroupSummary(true)
-                .build();
+    private static List<String> combine(final List<String> a, final List<String> b) {
+        return new ImmutableList.Builder<String>().addAll(a).addAll(b).build();
     }
 
     private static String getFromAsString(final Context context, final From from) {
@@ -129,7 +88,7 @@ public class EmailNotification {
         }
     }
 
-    public static List<String> getActiveEmailIds(final Context context, final Long accountId) {
+    private static List<String> getActiveEmailIds(final Context context, final Long accountId) {
         final NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
         final StatusBarNotification[] activeNotifications = notificationManager.getActiveNotifications();
         final ImmutableList.Builder<String> emailIdsBuilder = new ImmutableList.Builder<>();
@@ -151,10 +110,138 @@ public class EmailNotification {
         return String.format(Locale.US, "emails-%d", account.id);
     }
 
-    public static void dismiss(final Context context, final Long account, final String id) {
-        final Tag tag = new Tag(account, id);
+    public static EmailNotification.Builder builder() {
+        return new EmailNotification.Builder();
+    }
+
+    public void refresh() {
+        LOGGER.debug("added {}, dismissed {}, total {}", addedEmails.size(), dismissedEmails.size(), allEmails.size());
+        for (final String id : dismissedEmails) {
+            dismiss(id);
+        }
+        if (allEmails.isEmpty()) {
+            notificationManager.cancel(SUMMARY_ID);
+            return;
+        }
+        for (final EmailNotificationPreview email : addedEmails) {
+            final Tag tag = new Tag(account.id, email.getId());
+            final Notification notification = get(email);
+            notificationManager.notify(tag.toString(), ID, notification);
+        }
+        if (addedEmails.size() > 0 || dismissedEmails.size() > 0) {
+            final Notification summaryNotification = getSummary(allEmails);
+            notificationManager.notify(SUMMARY_ID, summaryNotification);
+        }
+    }
+
+    private Notification get(final EmailNotificationPreview email) {
+        final From from = email.getFrom();
+        final AvatarDrawable avatar = new AvatarDrawable(context, from);
+        final NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle()
+                .bigText(String.format("%s\n%s", email.subject, email.getText()));
+        return new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_email_outline_24dp)
+                .setContentTitle(getFromAsString(context, from))
+                .setContentText(email.subject)
+                .setSubText(account.getName())
+                .setLargeIcon(avatar.toBitmap())
+                .setWhen(email.receivedAt.toEpochMilli())
+                .setStyle(bigTextStyle)
+                .setColor(context.getColor(R.color.colorPrimary))
+                .setGroup(getGroupKey(account))
+                .setContentIntent(getPendingIntent(email))
+                .build();
+    }
+
+    private PendingIntent getPendingIntent(final EmailNotificationPreview email) {
+        final Tag tag = new Tag(account.getId(), email.getId());
+        final Intent intent = LttrsActivity.viewIntent(context, tag, email.threadId);
+        return PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+    }
+
+    private Notification getSummary(final List<EmailNotificationPreview> emails) {
+        final NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
+        for (final EmailNotificationPreview email : emails) {
+            inboxStyle.addLine(String.format(
+                    "<b>%s</b> %s",
+                    getFromAsString(context, email.getFrom()),
+                    email.subject
+            ));
+        }
+        return new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_email_outline_24dp)
+                .setSubText(account.getName())
+                .setContentTitle(
+                        context.getResources().getQuantityString(R.plurals.x_new_emails, emails.size(), emails.size())
+                )
+                .setStyle(inboxStyle)
+                .setColor(context.getColor(R.color.colorPrimary))
+                .setGroup(getGroupKey(account))
+                .setGroupSummary(true)
+                .build();
+    }
+
+    private void dismiss(final String id) {
+        final Tag tag = new Tag(account.getId(), id);
         final NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
         notificationManager.cancel(tag.toString(), ID);
+    }
+
+    public static class Builder {
+        private Context context;
+        private AccountName account;
+        private List<String> freshlyAddedEmailIds = Collections.emptyList();
+
+        public Builder setAccount(final AccountName account) {
+            this.account = account;
+            return this;
+        }
+
+        public Builder setContext(final Context context) {
+            this.context = context;
+            return this;
+        }
+
+        public Builder setFreshlyAddedEmailIds(List<String> freshlyAddedEmailIds) {
+            this.freshlyAddedEmailIds = freshlyAddedEmailIds;
+            return this;
+        }
+
+        public EmailNotification build() {
+            Preconditions.checkNotNull(context, "Supplied context must not be null");
+            Preconditions.checkNotNull(account, "Supplied account must not be null");
+            final List<String> activeEmailNotifications = getActiveEmailIds(
+                    context,
+                    account.getId()
+            );
+            final LttrsDatabase database = LttrsDatabase.getInstance(context, account.getId());
+            final List<EmailNotificationPreview> emails = database.threadAndEmailDao().getEmails(
+                    combine(freshlyAddedEmailIds, activeEmailNotifications)
+            );
+
+            final ImmutableList.Builder<EmailNotificationPreview> allNotificationBuilder = ImmutableList.builder();
+            final ImmutableList.Builder<EmailNotificationPreview> addedNotificationBuilder = ImmutableList.builder();
+            final ImmutableList.Builder<String> dismissedNotificationBuilder = ImmutableList.builder();
+            for (final EmailNotificationPreview email : emails) {
+                //TODO Take keyword overwrite into account
+                if (KeywordUtil.seen(email)) {
+                    if (activeEmailNotifications.contains(email.getId())) {
+                        dismissedNotificationBuilder.add(email.getId());
+                    }
+                } else {
+                    allNotificationBuilder.add(email);
+                    if (!activeEmailNotifications.contains(email.getId())) {
+                        addedNotificationBuilder.add(email);
+                    }
+                }
+            }
+            return new EmailNotification(context,
+                    account,
+                    addedNotificationBuilder.build(),
+                    dismissedNotificationBuilder.build(),
+                    allNotificationBuilder.build()
+            );
+        }
     }
 
     public static class Tag {
