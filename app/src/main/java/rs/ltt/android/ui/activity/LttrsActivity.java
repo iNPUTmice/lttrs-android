@@ -112,21 +112,27 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
     private WeakReference<Snackbar> mostRecentSnackbar;
 
     public static void launch(final AppCompatActivity activity, final long accountId) {
-        launch(activity, accountId, false);
+        launch(activity, accountId, true);
     }
 
-    public static void launch(final AppCompatActivity activity, final long accountId, final boolean animate) {
+    public static void launch(final AppCompatActivity activity, final long accountId, final boolean skipAnimation) {
+        final Intent intent = getLaunchIntent(activity, accountId);
+        activity.startActivity(intent);
+        if (skipAnimation) {
+            activity.overridePendingTransition(0, 0);
+        }
+    }
+
+    private static Intent getLaunchIntent(final AppCompatActivity activity, final long accountId) {
         final Intent intent = new Intent(activity, LttrsActivity.class);
+        intent.setAction(Intent.ACTION_MAIN);
         intent.putExtra(LttrsActivity.EXTRA_ACCOUNT_ID, accountId);
         //the default launch mode of the this activity is set to 'singleTask'
         //to view a new account we want to force recreate the activity
         //the accountId is essentially a final variable and should not be changed during a lifetime
         //of an activity
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        activity.startActivity(intent);
-        if (!animate) {
-            activity.overridePendingTransition(0, 0);
-        }
+        return intent;
     }
 
     public static void view(final AppCompatActivity activity, final EmailNotification.Tag tag, final String threadId) {
@@ -298,8 +304,12 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
 
     @Override
     public void onStart() {
-        getNavController().addOnDestinationChangedListener(this);
         super.onStart();
+        getNavController().addOnDestinationChangedListener(this);
+        final Intent intent = getIntent();
+        if (handleIntent(intent)) {
+            setIntent(getLaunchIntent(this, lttrsViewModel.getAccountId()));
+        }
     }
 
     @Override
@@ -345,25 +355,30 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
 
     public void onNewIntent(final Intent intent) {
         super.onNewIntent(intent);
+        handleIntent(intent);
+    }
+
+    private boolean handleIntent(final Intent intent) {
         final String action = Strings.nullToEmpty(intent == null ? null : intent.getAction());
         switch (action) {
             case Intent.ACTION_SEARCH:
                 handleSearchIntent(Objects.requireNonNull(intent));
-                break;
+                return true;
             case Intent.ACTION_VIEW:
-                handleViewIntent(Objects.requireNonNull(intent));
-                break;
+                return handleViewIntent(Objects.requireNonNull(intent));
+            default:
+                return false;
         }
     }
 
-    private void handleViewIntent(final Intent intent) {
+    private boolean handleViewIntent(final Intent intent) {
         final EmailNotification.Tag tag = EmailNotification.Tag.parse(intent.getData());
         final long accountId = intent.getLongExtra(EXTRA_ACCOUNT_ID, -1L);
         final String threadId = intent.getStringExtra(EXTRA_THREAD_ID);
         if (accountId != this.lttrsViewModel.getAccountId()) {
             LOGGER.info("restarting activity to switch to account {}", accountId);
             view(this, tag, threadId);
-            return;
+            return false;
         }
         final NavController navController = getNavController();
         if (navController.popBackStack(R.id.inbox, false)) {
@@ -375,6 +390,7 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
                 null,
                 false
         ));
+        return true;
     }
 
     private void handleSearchIntent(final Intent intent) {

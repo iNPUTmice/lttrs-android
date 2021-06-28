@@ -115,7 +115,7 @@ public class EmailNotification {
     }
 
     public void refresh() {
-        LOGGER.debug("added {}, dismissed {}, total {}", addedEmails.size(), dismissedEmails.size(), allEmails.size());
+        LOGGER.info("added {}, dismissed {}, total {}", addedEmails.size(), dismissedEmails.size(), allEmails.size());
         for (final String id : dismissedEmails) {
             dismiss(id);
         }
