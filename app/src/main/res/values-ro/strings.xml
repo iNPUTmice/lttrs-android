@@ -110,4 +110,9 @@
     <string name="role_name_inbox">Primite</string>
     <string name="foreground_service">Serviciul în prim-plan</string>
     <string name="foreground_service_notification_text">Ltt.rs continuă să ruleze pentru a vă notifica despre e-mailurile primite</string>
+    <plurals name="x_new_emails">
+        <item quantity="one">%d e-mail nou</item>
+        <item quantity="few">%d e-mailuri noi</item>
+        <item quantity="other">%d de e-mailuri noi</item>
+    </plurals>
 </resources>
