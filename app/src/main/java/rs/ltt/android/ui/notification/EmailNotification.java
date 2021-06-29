@@ -40,7 +40,7 @@ public class EmailNotification {
     private static final int SUMMARY_ID = 3;
 
     private static final String NOTIFICATION_CHANNEL_ID = "email";
-    final NotificationManager notificationManager;
+    private final NotificationManager notificationManager;
     private final Context context;
     private final AccountName account;
     private final List<EmailNotificationPreview> addedEmails;

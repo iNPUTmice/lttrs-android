@@ -43,7 +43,13 @@ public class MainMailboxQueryRefreshWorker extends QueryRefreshWorker {
         );
         final AccountName account = AppDatabase.getInstance(getApplicationContext()).accountDao()
                 .getAccountName(this.account);
-
+        //We deliberately decide to show notifications even for email that arrive while the app is
+        //in foreground. Just because the user saw the email coming in doesn't mean they don’t want
+        //to add it to their 'notification queue' and deal with it later.
+        //However we may or may not want to suppress the sound when the app is in foreground.
+        //If we decide to do so checking with `ProcessLifecycleOwner.get().getLifecycle()
+        // .getCurrentState().isAtLeast(Lifecycle.State.STARTED);` in EmailNotification.Builder is
+        //a good way for telling.
         EmailNotification.builder()
                 .setAccount(account)
                 .setContext(getApplicationContext())
