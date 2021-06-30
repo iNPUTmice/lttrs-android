@@ -104,9 +104,11 @@ public class ThreadViewModel extends AndroidViewModel {
             }
         }, MoreExecutors.directExecutor());
 
-        LiveData<List<MailboxOverwriteEntity>> overwriteEntityLiveData = this.threadViewRepository.getMailboxOverwrites(threadId);
+        final LiveData<List<MailboxOverwriteEntity>> overwriteEntityLiveData = this.threadViewRepository.getMailboxOverwrites(threadId);
 
-        CombinedListsLiveData<MailboxOverwriteEntity, MailboxWithRoleAndName> combined = new CombinedListsLiveData<>(overwriteEntityLiveData, mailboxes);
+        final CombinedListsLiveData<MailboxOverwriteEntity, MailboxWithRoleAndName> combined = new CombinedListsLiveData<>(overwriteEntityLiveData, mailboxes);
+
+        //TODO transform `combined` into List<String> or something for all labels
 
         this.menuConfiguration = Transformations.map(combined, pair -> {
             List<MailboxOverwriteEntity> overwrites = pair.first;

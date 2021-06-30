@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
@@ -208,14 +209,19 @@ public class EventMonitorService extends LifecycleService {
         final String action = Strings.nullToEmpty(intent == null ? null : intent.getAction());
         switch (action) {
             case ACTION_WATCH_QUERY:
-                final QueryInfo queryInfo = intent.getParcelableExtra(EXTRA_QUERY_INFO);
+                final QueryInfo queryInfo = Objects.requireNonNull(intent)
+                        .getParcelableExtra(EXTRA_QUERY_INFO);
                 watchQuery(queryInfo);
                 break;
             case ACTION_START_MONITORING:
-                startMonitoring(intent.getLongExtra(EXTRA_ACCOUNT_ID, -1));
+                startMonitoring(
+                        Objects.requireNonNull(intent).getLongExtra(EXTRA_ACCOUNT_ID, -1)
+                );
                 break;
             case ACTION_STOP_MONITORING:
-                stopMonitoring(intent.getLongExtra(EXTRA_ACCOUNT_ID, -1));
+                stopMonitoring(
+                        Objects.requireNonNull(intent).getLongExtra(EXTRA_ACCOUNT_ID, -1)
+                );
                 break;
             default:
                 LOGGER.warn("Unknown action {}", action);

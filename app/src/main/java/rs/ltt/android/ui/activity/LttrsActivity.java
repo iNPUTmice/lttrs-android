@@ -44,6 +44,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
+import androidx.navigation.NavOptions;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.work.WorkInfo;
 
@@ -381,15 +382,18 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
             return false;
         }
         final NavController navController = getNavController();
-        if (navController.popBackStack(R.id.inbox, false)) {
-            LOGGER.debug("Popped back stack to get back to inbox");
-        }
-        navController.navigate(LttrsNavigationDirections.actionToThread(
+        final NavOptions navOptions = new NavOptions.Builder()
+                .setPopUpTo(R.id.inbox, false)
+                .setEnterAnim(0)
+                .setExitAnim(0)
+                .build();
+        final LttrsNavigationDirections.ActionToThread action = LttrsNavigationDirections.actionToThread(
                 threadId,
                 null,
                 null,
                 false
-        ));
+        );
+        navController.navigate(action, navOptions);
         return true;
     }
 
