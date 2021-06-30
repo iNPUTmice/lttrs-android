@@ -139,6 +139,7 @@ public class ThreadFragment extends AbstractLttrsFragment implements OnFlaggedTo
         if (seenEvent.isConsumable()) {
             final Seen seen = seenEvent.consume();
             if (seen.isUnread()) {
+                //TODO dismiss notification w/o waiting for round-trip
                 getThreadModifier().markRead(
                         ImmutableList.of(threadViewModel.getThreadId())
                 );

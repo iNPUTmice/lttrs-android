@@ -37,7 +37,6 @@ public class LttrsApplication extends Application {
     public void onCreate() {
         super.onCreate();
         ForegroundServiceNotification.createChannel(getApplicationContext());
-        EmailNotification.createChannel(getApplicationContext());
     }
 
     public boolean noAccountsConfigured() {

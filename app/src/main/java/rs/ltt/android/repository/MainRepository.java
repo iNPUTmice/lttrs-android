@@ -41,6 +41,7 @@ import rs.ltt.android.database.AppDatabase;
 import rs.ltt.android.entity.AccountName;
 import rs.ltt.android.entity.AccountWithCredentials;
 import rs.ltt.android.entity.SearchSuggestionEntity;
+import rs.ltt.android.service.EventMonitorService;
 import rs.ltt.jmap.common.entity.Account;
 import rs.ltt.jmap.mua.Mua;
 import rs.ltt.jmap.mua.Status;
@@ -63,7 +64,6 @@ public class MainRepository {
         IO_EXECUTOR.execute(() -> appDatabase.searchSuggestionDao().insert(SearchSuggestionEntity.of(term)));
     }
 
-    //TODO modify to return only the account id of the account we want to redirect to
     public ListenableFuture<Long> insertAccountsRefreshMailboxes(final String username,
                                                                  final String password,
                                                                  final HttpUrl sessionResource,
@@ -84,6 +84,9 @@ public class MainRepository {
                                 AccountWithCredentials::getAccountId,
                                 AccountWithCredentials::getId
                         ));
+
+                EventMonitorService.startMonitoring(application, accountIdMap.values());
+
                 final Long internalIdForPrimary = accountIdMap.getOrDefault(
                         primaryAccountId,
                         accountIdMap.values().stream().findAny().get()

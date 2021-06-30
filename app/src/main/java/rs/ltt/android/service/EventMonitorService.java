@@ -13,6 +13,7 @@ import androidx.work.ExistingWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 
+import com.google.common.base.Strings;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -35,6 +36,7 @@ import rs.ltt.android.MuaPool;
 import rs.ltt.android.database.AppDatabase;
 import rs.ltt.android.entity.AccountWithCredentials;
 import rs.ltt.android.entity.QueryInfo;
+import rs.ltt.android.ui.notification.EmailNotification;
 import rs.ltt.android.ui.notification.ForegroundServiceNotification;
 import rs.ltt.android.worker.QueryRefreshWorker;
 import rs.ltt.jmap.client.event.OnConnectionStateChangeListener;
@@ -111,8 +113,49 @@ public class EventMonitorService extends LifecycleService {
         final Lifecycle.State state = getLifecycle().getCurrentState();
         if (state.isAtLeast(Lifecycle.State.INITIALIZED)) {
             LOGGER.debug("{} accounts loaded while in state {}", accounts.size(), state);
-            accounts.stream().forEach(this::setupEventMonitor);
+            accounts.stream().forEach(this::setup);
         }
+    }
+
+    private void onAccountLoaded(final AccountWithCredentials account) {
+        final Lifecycle.State state = getLifecycle().getCurrentState();
+        if (state.isAtLeast(Lifecycle.State.INITIALIZED)) {
+            setup(account);
+        }
+    }
+
+    private void startMonitoring(final long accountId) {
+        final ListenableFuture<AccountWithCredentials> accountFuture = AppDatabase.getInstance(this)
+                .accountDao()
+                .getAccountFuture(accountId);
+        Futures.addCallback(accountFuture, new FutureCallback<AccountWithCredentials>() {
+            @Override
+            public void onSuccess(final AccountWithCredentials account) {
+                if (account == null) {
+                    return;
+                }
+                onAccountLoaded(account);
+            }
+
+            @Override
+            public void onFailure(@NotNull final Throwable throwable) {
+                LOGGER.warn("Unable to load account from database", throwable);
+            }
+        }, PUSH_SERVICE_BACKGROUND_EXECUTOR);
+    }
+
+    private void stopMonitoring(final long accountId) {
+        synchronized (this.eventMonitorRegistrations) {
+            final EventMonitorRegistration registration = this.eventMonitorRegistrations.remove(accountId);
+            if (registration != null) {
+                registration.stopListening();
+            }
+        }
+    }
+
+    private void setup(final AccountWithCredentials account) {
+        EmailNotification.createChannel(getApplicationContext(), account);
+        setupEventMonitor(account);
     }
 
     private void setupEventMonitor(final AccountWithCredentials account) {
@@ -162,24 +205,22 @@ public class EventMonitorService extends LifecycleService {
     @Override
     public int onStartCommand(final Intent intent, final int flags, final int startId) {
         super.onStartCommand(intent, flags, startId);
-        final String action = intent == null ? null : intent.getAction();
-        if (action == null) {
-            return START_STICKY;
-        }
-
+        final String action = Strings.nullToEmpty(intent == null ? null : intent.getAction());
         switch (action) {
             case ACTION_WATCH_QUERY:
                 final QueryInfo queryInfo = intent.getParcelableExtra(EXTRA_QUERY_INFO);
                 watchQuery(queryInfo);
                 break;
+            case ACTION_START_MONITORING:
+                startMonitoring(intent.getLongExtra(EXTRA_ACCOUNT_ID, -1));
+                break;
+            case ACTION_STOP_MONITORING:
+                stopMonitoring(intent.getLongExtra(EXTRA_ACCOUNT_ID, -1));
+                break;
             default:
                 LOGGER.warn("Unknown action {}", action);
                 break;
         }
-
-
-        //TODO: Add commands to start listening / stop listening to account. Used during setup
-        //TODO: Add command for 'currently viewed query'
         return START_STICKY;
     }
 
@@ -240,6 +281,19 @@ public class EventMonitorService extends LifecycleService {
         final Intent intent = new Intent(context, EventMonitorService.class);
         intent.setAction(ACTION_WATCH_QUERY);
         intent.putExtra(EXTRA_QUERY_INFO, queryInfo);
+        context.startService(intent);
+    }
+
+    public static void startMonitoring(final Context context, final Collection<Long> accountIds) {
+        for(final long accountId : accountIds) {
+            startMonitoring(context, accountId);
+        }
+    }
+
+    public static void startMonitoring(final Context context, final long accountId) {
+        final Intent intent = new Intent(context, EventMonitorService.class);
+        intent.setAction(ACTION_START_MONITORING);
+        intent.putExtra(EXTRA_ACCOUNT_ID, accountId);
         context.startService(intent);
     }
 

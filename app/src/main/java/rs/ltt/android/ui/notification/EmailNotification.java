@@ -2,6 +2,7 @@ package rs.ltt.android.ui.notification;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
+import android.app.NotificationChannelGroup;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -26,6 +27,7 @@ import java.util.Locale;
 import rs.ltt.android.R;
 import rs.ltt.android.database.LttrsDatabase;
 import rs.ltt.android.entity.AccountName;
+import rs.ltt.android.entity.AccountWithCredentials;
 import rs.ltt.android.entity.EmailNotificationPreview;
 import rs.ltt.android.entity.From;
 import rs.ltt.android.ui.AvatarDrawable;
@@ -39,7 +41,8 @@ public class EmailNotification {
     private static final int ID = 2;
     private static final int SUMMARY_ID = 3;
 
-    private static final String NOTIFICATION_CHANNEL_ID = "email";
+    private static final String NOTIFICATION_CHANNEL_ID = "email-channel-%d";
+    private static final String NOTIFICATION_CHANNEL_GROUP = "group-%d";
     private final NotificationManager notificationManager;
     private final Context context;
     private final AccountName account;
@@ -61,19 +64,39 @@ public class EmailNotification {
     }
 
     //TODO create notification channel for each account
-    public static void createChannel(final Context context) {
+    public static void createChannel(final Context context, final AccountWithCredentials account) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             return;
         }
         final NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+
+        final NotificationChannelGroup notificationChannelGroup = new NotificationChannelGroup(
+                notificationChannelGroup(account),
+                account.username
+        );
+        notificationManager.createNotificationChannelGroup(notificationChannelGroup);
+
         final NotificationChannel notificationChannel = new NotificationChannel(
-                NOTIFICATION_CHANNEL_ID,
-                context.getString(R.string.foreground_service),
+                notificationChannelId(account),
+                context.getString(R.string.notification_channel_name_email),
                 NotificationManager.IMPORTANCE_DEFAULT
         );
+        notificationChannel.setGroup(notificationChannelGroup(account));
         notificationChannel.setShowBadge(true);
         notificationManager.createNotificationChannel(notificationChannel);
 
+    }
+
+    private static String notificationChannelGroup(final AccountWithCredentials account) {
+        return String.format(Locale.US, NOTIFICATION_CHANNEL_GROUP, account.getId());
+    }
+
+    private static String notificationChannelId(final AccountWithCredentials account) {
+        return notificationChannelId(account.getId());
+    }
+
+    private static String notificationChannelId(final Long accountId) {
+        return String.format(Locale.US, NOTIFICATION_CHANNEL_ID, accountId);
     }
 
     private static List<String> combine(final List<String> a, final List<String> b) {
@@ -139,7 +162,7 @@ public class EmailNotification {
         final AvatarDrawable avatar = new AvatarDrawable(context, from);
         final NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle()
                 .bigText(String.format("%s\n%s", email.subject, email.getText()));
-        return new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
+        return new NotificationCompat.Builder(context, notificationChannelId(account.getId()))
                 .setSmallIcon(R.drawable.ic_email_outline_24dp)
                 .setContentTitle(getFromAsString(context, from))
                 .setContentText(email.subject)
@@ -149,6 +172,7 @@ public class EmailNotification {
                 .setStyle(bigTextStyle)
                 .setColor(context.getColor(R.color.colorPrimary))
                 .setGroup(getGroupKey(account))
+                .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_CHILDREN)
                 .setContentIntent(getPendingIntent(email))
                 .build();
     }
@@ -168,7 +192,7 @@ public class EmailNotification {
                     email.subject
             ));
         }
-        return new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
+        return new NotificationCompat.Builder(context, notificationChannelId(account.getId()))
                 .setSmallIcon(R.drawable.ic_email_outline_24dp)
                 .setSubText(account.getName())
                 .setContentTitle(
@@ -178,6 +202,7 @@ public class EmailNotification {
                 .setColor(context.getColor(R.color.colorPrimary))
                 .setGroup(getGroupKey(account))
                 .setGroupSummary(true)
+                .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_CHILDREN)
                 .build();
     }
 
