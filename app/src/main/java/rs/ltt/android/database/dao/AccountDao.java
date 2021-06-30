@@ -37,13 +37,13 @@ import rs.ltt.jmap.common.entity.Account;
 @Dao
 public abstract class AccountDao {
 
-    @Query("select account.id as id, username,password,sessionResource,accountId from credentials join account on credentialsId = credentials.id where account.id=:id limit 1")
+    @Query("select account.id as id, username,password,sessionResource,accountId,name from credentials join account on credentialsId = credentials.id where account.id=:id limit 1")
     public abstract ListenableFuture<AccountWithCredentials> getAccountFuture(Long id);
 
-    @Query("select account.id as id, username,password,sessionResource,accountId from credentials join account on credentialsId = credentials.id")
+    @Query("select account.id as id, username,password,sessionResource,accountId,name from credentials join account on credentialsId = credentials.id")
     public abstract ListenableFuture<List<AccountWithCredentials>> getAccounts();
 
-    @Query("select account.id as id, username,password,sessionResource,accountId from credentials join account on credentialsId = credentials.id where account.id=:id limit 1")
+    @Query("select account.id as id, username,password,sessionResource,accountId,name from credentials join account on credentialsId = credentials.id where account.id=:id limit 1")
     public abstract AccountWithCredentials getAccount(Long id);
 
     @Query("select id,name from account where id=:id limit 1")
@@ -92,6 +92,7 @@ public abstract class AccountDao {
             builder.add(new AccountWithCredentials(
                     id,
                     accountId,
+                    name,
                     username,
                     password,
                     sessionResource

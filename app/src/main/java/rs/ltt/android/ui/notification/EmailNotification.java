@@ -63,7 +63,6 @@ public class EmailNotification {
         this.allEmails = allEmails;
     }
 
-    //TODO create notification channel for each account
     public static void createChannel(final Context context, final AccountWithCredentials account) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             return;
@@ -72,7 +71,7 @@ public class EmailNotification {
 
         final NotificationChannelGroup notificationChannelGroup = new NotificationChannelGroup(
                 notificationChannelGroup(account),
-                account.username
+                account.getName()
         );
         notificationManager.createNotificationChannelGroup(notificationChannelGroup);
 

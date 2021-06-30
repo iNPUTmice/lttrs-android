@@ -38,10 +38,10 @@ public final class MuaPool {
             final Context application = context.getApplicationContext();
             final LttrsDatabase database = LttrsDatabase.getInstance(context, account.getId());
             final Mua mua = Mua.builder()
-                    .username(account.username)
-                    .password(account.password)
-                    .accountId(account.accountId)
-                    .sessionResource(account.sessionResource)
+                    .username(account.getUsername())
+                    .password(account.getPassword())
+                    .accountId(account.getAccountId())
+                    .sessionResource(account.getSessionResource())
                     .useWebSocket(true)
                     .cache(new DatabaseCache(database))
                     .sessionCache(new FileSessionCache(application.getCacheDir()))

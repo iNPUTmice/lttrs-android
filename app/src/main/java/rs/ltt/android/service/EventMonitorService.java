@@ -162,12 +162,12 @@ public class EventMonitorService extends LifecycleService {
         final EventMonitor eventMonitor;
         final ListenableFuture<PushService> pushServiceFuture;
         synchronized (eventMonitorRegistrations) {
-            if (eventMonitorRegistrations.containsKey(account.id)) {
+            if (eventMonitorRegistrations.containsKey(account.getId())) {
                 return;
             }
             final Mua mua = MuaPool.getInstance(this, account);
             eventMonitor = new EventMonitor(account);
-            eventMonitorRegistrations.put(account.id, new EventMonitorRegistration(eventMonitor));
+            eventMonitorRegistrations.put(account.getId(), new EventMonitorRegistration(eventMonitor));
             pushServiceFuture = mua.getJmapClient().monitorEvents();
         }
         Futures.addCallback(pushServiceFuture, new FutureCallback<PushService>() {
@@ -186,7 +186,7 @@ public class EventMonitorService extends LifecycleService {
                     pushService.addOnStateChangeListener(eventMonitor);
                     pushService.addOnConnectionStateListener(eventMonitor);
                     synchronized (eventMonitorRegistrations) {
-                        eventMonitorRegistrations.put(account.id, registration);
+                        eventMonitorRegistrations.put(account.getId(), registration);
                     }
                     onConnectionStateChange();
                 } else {
@@ -241,12 +241,12 @@ public class EventMonitorService extends LifecycleService {
         LOGGER.debug("Account {} received {}", account.getId(), stateChange);
         final QueryInfo queryInfo = this.currentlyWatchedQuery;
         final OneTimeWorkRequest workRequest;
-        if (activityStarted && queryInfo != null && queryInfo.accountId == account.id) {
+        if (activityStarted && queryInfo != null && queryInfo.accountId == account.getId()) {
             LOGGER.debug("Refreshing {} ", queryInfo);
             workRequest = QueryRefreshWorker.of(queryInfo, false);
         } else {
             LOGGER.debug("Refreshing MainMailbox");
-            workRequest = QueryRefreshWorker.main(account.id);
+            workRequest = QueryRefreshWorker.main(account.getId());
         }
         final WorkManager workManager = WorkManager.getInstance(getApplication());
         workManager.enqueueUniqueWork(

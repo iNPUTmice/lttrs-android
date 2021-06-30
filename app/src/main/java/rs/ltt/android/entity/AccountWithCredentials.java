@@ -21,26 +21,68 @@ import okhttp3.HttpUrl;
 
 public class AccountWithCredentials {
 
-    public Long id;
-    public String accountId;
-    public String username;
-    public String password;
-    public HttpUrl sessionResource;
+    private final Long id;
+    private final String accountId;
+    private final String name;
+    private final String username;
+    private final String password;
+    private final HttpUrl sessionResource;
 
-    public AccountWithCredentials(Long id, String accountId, String username, String password, HttpUrl sessionResource) {
+    public AccountWithCredentials(Long id, String accountId, final String name, String username, String password, HttpUrl sessionResource) {
         this.id = id;
         this.accountId = accountId;
+        this.name = name;
         this.username = username;
         this.password = password;
         this.sessionResource = sessionResource;
     }
 
+    /**
+     *
+     * @return The internal database ID
+     */
     public Long getId() {
-        return this.id;
+        return id;
     }
 
+    /**
+     *
+     * @return The JMAP account ID as found in the session resource
+     */
     public String getAccountId() {
-        return this.accountId;
+        return accountId;
+    }
+
+    /**
+     *
+     * @return The display name ('user-friendly string') of the account as found in the account object in the session resource
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     *
+     * @return The login username (credentials) used to authenticate
+     */
+    public String getUsername() {
+        return username;
+    }
+
+    /**
+     *
+     * @return The login password (credentials) used to authenticate
+     */
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     *
+     * @return The URL of the session resource when different from the .well-known/jmap or null otherwise
+     */
+    public HttpUrl getSessionResource() {
+        return sessionResource;
     }
 
     @Override
@@ -50,6 +92,7 @@ public class AccountWithCredentials {
         AccountWithCredentials that = (AccountWithCredentials) o;
         return Objects.equal(id, that.id) &&
                 Objects.equal(accountId, that.accountId) &&
+                Objects.equal(name, that.name) &&
                 Objects.equal(username, that.username) &&
                 Objects.equal(password, that.password) &&
                 Objects.equal(sessionResource, that.sessionResource);
@@ -57,6 +100,6 @@ public class AccountWithCredentials {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id, accountId, username, password, sessionResource);
+        return Objects.hashCode(id, accountId, name, username, password, sessionResource);
     }
 }
