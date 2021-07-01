@@ -101,4 +101,5 @@
         <item quantity="one">%d uusi sähköposti</item>
         <item quantity="other">%d uutta sähköpostia</item>
     </plurals>
+    <string name="notification_channel_name_email">Sähköposti</string>
 </resources>
