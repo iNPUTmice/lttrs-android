@@ -77,6 +77,7 @@ import rs.ltt.android.ui.model.LttrsViewModel;
 import rs.ltt.android.ui.notification.EmailNotification;
 import rs.ltt.android.util.Event;
 import rs.ltt.android.util.MainThreadExecutor;
+import rs.ltt.android.util.NavControllers;
 import rs.ltt.android.worker.Failure;
 import rs.ltt.jmap.common.entity.Role;
 import rs.ltt.jmap.mua.util.KeywordLabel;
@@ -290,12 +291,7 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
     }
 
     public NavController getNavController() {
-        final FragmentManager fragmentManager = getSupportFragmentManager();
-        final Fragment fragment = fragmentManager.findFragmentById(R.id.nav_host_fragment);
-        if (fragment instanceof NavHostFragment) {
-            return ((NavHostFragment) fragment).getNavController();
-        }
-        throw new IllegalStateException("Fragment was not of type NavHostFragment");
+        return NavControllers.findNavController(this, R.id.nav_host_fragment);
     }
 
     private int getCurrentDestinationId() {
