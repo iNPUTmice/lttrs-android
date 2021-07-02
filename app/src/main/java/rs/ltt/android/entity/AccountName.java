@@ -2,6 +2,7 @@ package rs.ltt.android.entity;
 
 import com.google.common.base.Objects;
 
+import rs.ltt.jmap.mua.util.AccountUtil;
 import rs.ltt.jmap.mua.util.Navigable;
 
 public class AccountName implements Navigable {
@@ -11,6 +12,10 @@ public class AccountName implements Navigable {
 
     public String getName() {
         return this.name;
+    }
+
+    public String getPrintableName() {
+        return AccountUtil.printableName(name);
     }
 
     public Long getId() {

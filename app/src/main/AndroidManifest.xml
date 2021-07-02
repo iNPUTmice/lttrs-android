@@ -67,6 +67,11 @@
             android:theme="@style/SetupTheme" />
 
         <activity
+            android:name=".ui.activity.AccountManagerActivity"
+            android:launchMode="singleTask"
+            android:parentActivityName=".ui.activity.LttrsActivity" />
+
+        <activity
             android:name=".ui.activity.ComposeActivity"
             android:label="@string/compose"
             android:parentActivityName=".ui.activity.LttrsActivity">

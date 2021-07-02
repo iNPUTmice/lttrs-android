@@ -56,6 +56,7 @@ import rs.ltt.android.entity.From;
 import rs.ltt.android.entity.IdentityWithNameAndEmail;
 import rs.ltt.android.entity.SubjectWithImportance;
 import rs.ltt.android.entity.ThreadOverviewItem;
+import rs.ltt.android.util.ConsistentColorGeneration;
 import rs.ltt.jmap.common.entity.Role;
 import rs.ltt.jmap.mua.util.EmailAddressUtil;
 import rs.ltt.jmap.mua.util.EmailBodyUtil;
@@ -117,7 +118,7 @@ public class BindingAdapters {
     public static void setTo(final TextView textView, final Collection<String> names) {
         final boolean shorten = names.size() > 1;
         final StringBuilder builder = new StringBuilder();
-        for (String name : names) {
+        for (final String name : names) {
             if (builder.length() != 0) {
                 builder.append(", ");
             }
@@ -125,6 +126,13 @@ public class BindingAdapters {
         }
         final Context context = textView.getContext();
         textView.setText(context.getString(R.string.to_x, builder.toString()));
+    }
+
+    @BindingAdapter("app:tint")
+    public static void setTint(final ImageView imageView, final String key) {
+        imageView.setImageTintList(
+                ColorStateList.valueOf(ConsistentColorGeneration.rgbFromKey(key))
+        );
     }
 
     @BindingAdapter("from")

@@ -123,4 +123,5 @@
         <item quantity="other">%d new e-mails</item>
     </plurals>
     <string name="notification_channel_name_email">E-mail</string>
+    <string name="accounts">Accounts</string>
 </resources>

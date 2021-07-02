@@ -38,14 +38,11 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
 import androidx.navigation.NavOptions;
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.work.WorkInfo;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -213,6 +210,7 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
             lttrsViewModel.toggleAccountSelectionVisibility();
         });
         navigationAdapter.setOnAccountSelected((id -> {
+            //TODO put in closeDrawer() method to be reused when clicking on 'Manage Account'
             binding.drawerLayout.closeDrawer(GravityCompat.START);
             lttrsViewModel.setAccountSelectionVisibility(false);
             if (id != lttrsViewModel.getAccountId()) {
@@ -222,10 +220,12 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
         }));
         navigationAdapter.setOnAdditionalNavigationItemSelected((type -> {
             switch (type) {
-                case ADD_ACCOUNT: {
+                case ADD_ACCOUNT:
                     SetupActivity.launch(this);
-                }
-                break;
+                    break;
+                case MANAGE_ACCOUNT:
+                    AccountManagerActivity.launch(this);
+                    break;
                 default:
                     throw new IllegalStateException(String.format("Not set up to handle %s", type));
             }

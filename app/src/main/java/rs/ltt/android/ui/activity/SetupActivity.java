@@ -19,13 +19,11 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.activity.ComponentActivity;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
-import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.material.snackbar.Snackbar;
 
@@ -40,7 +38,7 @@ public class SetupActivity extends AppCompatActivity {
 
     public static String EXTRA_NEXT_ACTION = "rs.ltt.android.extras.next-action";
 
-    public static void launch(AppCompatActivity activity) {
+    public static void launch(final ComponentActivity activity) {
         final Intent intent = new Intent(activity, SetupActivity.class);
         activity.startActivity(intent);
     }
