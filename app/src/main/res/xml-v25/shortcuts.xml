@@ -19,7 +19,7 @@
         android:shortcutId="compose"
         android:shortcutShortLabel="@string/compose">
         <intent
-            android:action="android.intent.action.VIEW"
+            android:action="android.intent.action.MAIN"
             android:targetClass="rs.ltt.android.ui.activity.LttrsActivity"
             android:targetPackage="rs.ltt.android" />
         <intent
