@@ -210,9 +210,7 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
             lttrsViewModel.toggleAccountSelectionVisibility();
         });
         navigationAdapter.setOnAccountSelected((id -> {
-            //TODO put in closeDrawer() method to be reused when clicking on 'Manage Account'
-            binding.drawerLayout.closeDrawer(GravityCompat.START);
-            lttrsViewModel.setAccountSelectionVisibility(false);
+            closeDrawer();
             if (id != lttrsViewModel.getAccountId()) {
                 lttrsViewModel.setSelectedAccount(id);
                 launch(this, id);
@@ -221,9 +219,11 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
         navigationAdapter.setOnAdditionalNavigationItemSelected((type -> {
             switch (type) {
                 case ADD_ACCOUNT:
+                    closeDrawer();
                     SetupActivity.launch(this);
                     break;
                 case MANAGE_ACCOUNT:
+                    closeDrawer();
                     AccountManagerActivity.launch(this);
                     break;
                 default:
@@ -238,6 +238,11 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
         lttrsViewModel.isAccountSelectionVisible().observe(this, navigationAdapter::setAccountSelectionVisible);
         lttrsViewModel.getAccountName().observe(this, navigationAdapter::setAccountInformation);
         lttrsViewModel.getActivityTitle().observe(this, this::setTitle);
+    }
+
+    private void closeDrawer() {
+        binding.drawerLayout.closeDrawer(GravityCompat.START);
+        lttrsViewModel.setAccountSelectionVisibility(false);
     }
 
     private void onFailureEvent(Event<Failure> failureEvent) {
