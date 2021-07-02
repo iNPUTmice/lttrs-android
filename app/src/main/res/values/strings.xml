@@ -124,4 +124,6 @@
     </plurals>
     <string name="notification_channel_name_email">E-mail</string>
     <string name="accounts">Accounts</string>
+    <string name="account">Account</string>
+    <string name="delete_account">Delete account</string>
 </resources>

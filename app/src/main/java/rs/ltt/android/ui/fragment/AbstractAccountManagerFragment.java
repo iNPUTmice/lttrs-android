@@ -3,6 +3,7 @@ package rs.ltt.android.ui.fragment;
 import android.app.Activity;
 
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
 
 import rs.ltt.android.ui.activity.AccountManagerActivity;
 
@@ -15,5 +16,9 @@ public class AbstractAccountManagerFragment extends Fragment {
             return (AccountManagerActivity) activity;
         }
         throw new IllegalStateException("Fragment is not attached to AccountManagerActivity");
+    }
+
+    NavController getNavController() {
+        return requireAccountManagerActivity().getNavController();
     }
 }

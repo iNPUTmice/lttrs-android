@@ -39,6 +39,7 @@ import androidx.lifecycle.LiveData;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 import java.time.Duration;
@@ -131,7 +132,7 @@ public class BindingAdapters {
     @BindingAdapter("app:tint")
     public static void setTint(final ImageView imageView, final String key) {
         imageView.setImageTintList(
-                ColorStateList.valueOf(ConsistentColorGeneration.rgbFromKey(key))
+                ColorStateList.valueOf(ConsistentColorGeneration.rgbFromKey(Strings.nullToEmpty(key)))
         );
     }
 

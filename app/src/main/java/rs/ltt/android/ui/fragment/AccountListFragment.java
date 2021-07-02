@@ -23,7 +23,6 @@ public class AccountListFragment extends AbstractAccountManagerFragment {
 
     private FragmentAccountListBinding binding;
     private AccountAdapter accountAdapter;
-    private AccountListViewModel accountListViewModel;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -34,17 +33,19 @@ public class AccountListFragment extends AbstractAccountManagerFragment {
                 getViewModelStore(),
                 getDefaultViewModelProviderFactory()
         );
-        this.accountListViewModel = viewModelProvider.get(AccountListViewModel.class);
+        final AccountListViewModel accountListViewModel = viewModelProvider.get(AccountListViewModel.class);
 
         this.accountAdapter = new AccountAdapter();
         this.binding.accountList.setAdapter(this.accountAdapter);
         this.accountAdapter.setOnAccountSelected(id -> {
-
+            getNavController().navigate(
+                    AccountListFragmentDirections.actionAccountListToAccount(id)
+            );
         });
 
-        this.accountListViewModel.getAccounts().observe(getViewLifecycleOwner(), this::onAccountsUpdated);
+        accountListViewModel.getAccounts().observe(getViewLifecycleOwner(), this::onAccountsUpdated);
 
-        this.binding.addNewAccount.setOnClickListener(v-> SetupActivity.launch(requireActivity()));
+        this.binding.addNewAccount.setOnClickListener(v -> SetupActivity.launch(requireActivity()));
 
         return this.binding.getRoot();
     }

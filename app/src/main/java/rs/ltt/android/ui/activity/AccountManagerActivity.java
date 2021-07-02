@@ -2,6 +2,7 @@ package rs.ltt.android.ui.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,11 +26,11 @@ public class AccountManagerActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.binding = DataBindingUtil.setContentView(this, R.layout.activity_account_manager);
 
-        final NavController navController = NavControllers.findNavController(this, R.id.nav_host_fragment);
+        final NavController navController = getNavController();
         navController.addOnDestinationChangedListener(this::onDestinationChanged);
 
         configureActionBar();
@@ -39,6 +40,19 @@ public class AccountManagerActivity extends AppCompatActivity {
         setTitle(navDestination.getLabel());
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                final NavController navController = getNavController();
+                if (navController.popBackStack()) {
+                    return true;
+                }
+        }
+        return super.onOptionsItemSelected(item);
+
+    }
+
     private void configureActionBar() {
         this.setSupportActionBar(this.binding.toolbar);
         final ActionBar actionBar = Objects.requireNonNull(getSupportActionBar());
@@ -46,4 +60,7 @@ public class AccountManagerActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
+    public NavController getNavController() {
+        return NavControllers.findNavController(this, R.id.nav_host_fragment);
+    }
 }

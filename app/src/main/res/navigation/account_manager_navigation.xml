@@ -7,6 +7,19 @@
     <fragment
         android:id="@+id/account_list"
         android:name="rs.ltt.android.ui.fragment.AccountListFragment"
-        android:label="@string/accounts" />
+        android:label="@string/accounts">
+        <action
+            android:id="@+id/action_account_list_to_account"
+            app:destination="@+id/account" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/account"
+        android:name="rs.ltt.android.ui.fragment.AccountFragment"
+        android:label="@string/account">
+        <argument
+            android:name="id"
+            app:argType="long" />
+    </fragment>
 
 </navigation>
