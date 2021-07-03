@@ -125,5 +125,11 @@
     <string name="notification_channel_name_email">E-mail</string>
     <string name="accounts">Accounts</string>
     <string name="account">Account</string>
-    <string name="delete_account">Delete account</string>
+    <string name="remove_account">Remove account</string>
+    <string name="identities">Identities</string>
+    <string name="manage_labels">Manage labels</string>
+    <string name="vacation_response">Vacation response</string>
+    <string name="end_to_end_encryption">End-to-end encryption</string>
+    <string name="remove_account_dialog_title">Remove account?</string>
+    <string name="remove_account_dialog_message">Removing this account will delete all of its messages and other data from the phone.</string>
 </resources>

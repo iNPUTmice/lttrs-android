@@ -43,8 +43,120 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/name"
-                android:layout_marginTop="64dp"
+                android:layout_marginTop="48dp"
                 android:orientation="vertical">
+
+                <RelativeLayout
+                    android:id="@+id/identities"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:background="?selectableItemBackground">
+
+                    <ImageView
+                        android:id="@+id/identities_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="32dp"
+                        android:src="@drawable/ic_baseline_group_24"
+                        app:tint="?colorControlNormal" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toEndOf="@+id/identities_icon"
+                        android:maxLines="1"
+                        android:text="@string/identities"
+                        android:textAppearance="?textAppearanceSubtitle1" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/labels"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:background="?selectableItemBackground">
+
+                    <ImageView
+                        android:id="@+id/labels_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="32dp"
+                        android:src="@drawable/ic_label_black_24dp"
+                        app:tint="?colorControlNormal" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toEndOf="@+id/labels_icon"
+                        android:maxLines="1"
+                        android:text="@string/manage_labels"
+                        android:textAppearance="?textAppearanceSubtitle1" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/vacation_response"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:background="?selectableItemBackground">
+
+                    <ImageView
+                        android:id="@+id/vacation_response_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="32dp"
+                        android:src="@drawable/ic_baseline_event_24"
+                        app:tint="?colorControlNormal" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toEndOf="@+id/vacation_response_icon"
+                        android:maxLines="1"
+                        android:text="@string/vacation_response"
+                        android:textAppearance="?textAppearanceSubtitle1" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/e2ee"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:background="?selectableItemBackground">
+
+                    <ImageView
+                        android:id="@+id/e2ee_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="32dp"
+                        android:src="@drawable/ic_baseline_security_24"
+                        app:tint="?colorControlNormal" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toEndOf="@+id/e2ee_icon"
+                        android:maxLines="1"
+                        android:text="@string/end_to_end_encryption"
+                        android:textAppearance="?textAppearanceSubtitle1" />
+
+                </RelativeLayout>
 
                 <!-- TODO this will have a list of settings/actions like 'Manage labels',
                  'Manage Identities', 'Vacation Responses' -->
@@ -59,13 +171,13 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:orientation="horizontal"
-                    android:padding="8dp">
+                    android:padding="16dp">
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/delete"
+                        android:id="@+id/remove"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/delete_account" />
+                        android:text="@string/remove_account" />
                 </LinearLayout>
             </LinearLayout>
 
