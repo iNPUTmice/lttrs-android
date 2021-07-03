@@ -50,6 +50,17 @@ public class AccountListFragment extends AbstractAccountManagerFragment {
         return this.binding.getRoot();
     }
 
+    @Override
+    public void onDestroyView() {
+        nullReferences();
+        super.onDestroyView();
+    }
+
+    private void nullReferences() {
+        this.binding.accountList.setAdapter(null);
+        this.binding = null;
+    }
+
     private void onAccountsUpdated(final List<AccountName> accounts) {
         this.accountAdapter.submitList(accounts);
     }
