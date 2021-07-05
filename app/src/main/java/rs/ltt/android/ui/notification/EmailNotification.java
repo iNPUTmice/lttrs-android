@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import rs.ltt.android.R;
 import rs.ltt.android.database.LttrsDatabase;
@@ -115,22 +116,28 @@ public class EmailNotification {
         }
     }
 
-    private static List<String> getActiveEmailIds(final Context context, final Long accountId) {
+    private static List<Tag> getActiveTags(final Context context) {
         final NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
         final StatusBarNotification[] activeNotifications = notificationManager.getActiveNotifications();
-        final ImmutableList.Builder<String> emailIdsBuilder = new ImmutableList.Builder<>();
+        final ImmutableList.Builder<Tag> tagsBuilder = new ImmutableList.Builder<>();
         for (final StatusBarNotification notification : activeNotifications) {
             if (notification.getId() != ID) {
                 continue;
             }
             try {
-                final Tag tag = Tag.parse(notification.getTag());
-                emailIdsBuilder.add(tag.getEmailId());
+                tagsBuilder.add(Tag.parse(notification.getTag()));
             } catch (final Exception e) {
-                //ignore
+                //ignored
             }
         }
-        return emailIdsBuilder.build();
+        return tagsBuilder.build();
+    }
+
+    private static List<String> getActiveEmailIds(final Context context, final Long accountId) {
+        return getActiveTags(context).stream()
+                .filter(tag -> tag.accountId.equals(accountId))
+                .map(Tag::getEmailId)
+                .collect(Collectors.toList());
     }
 
     private static String getGroupKey(final AccountName account) {
@@ -139,6 +146,14 @@ public class EmailNotification {
 
     public static EmailNotification.Builder builder() {
         return new EmailNotification.Builder();
+    }
+
+    public static void cancel(final Context context, final long accountId) {
+        final NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+        getActiveTags(context).stream()
+                .filter(tag -> tag.accountId.equals(accountId))
+                .forEach(tag -> notificationManager.cancel(tag.toString(), ID));
+        notificationManager.cancel(notificationTagSummary(accountId), SUMMARY_ID);
     }
 
     public void refresh() {

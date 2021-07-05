@@ -46,6 +46,7 @@ import rs.ltt.android.entity.AccountName;
 import rs.ltt.android.entity.AccountWithCredentials;
 import rs.ltt.android.entity.SearchSuggestionEntity;
 import rs.ltt.android.service.EventMonitorService;
+import rs.ltt.android.ui.notification.EmailNotification;
 import rs.ltt.jmap.common.entity.Account;
 import rs.ltt.jmap.mua.Mua;
 import rs.ltt.jmap.mua.Status;
@@ -130,16 +131,22 @@ public class MainRepository {
         IO_EXECUTOR.execute(() -> this.appDatabase.accountDao().selectAccount(id));
     }
 
-    public void removeAccount(final long id) {
+    public void removeAccount(final long accountId) {
         IO_EXECUTOR.execute(() -> {
-            this.appDatabase.accountDao().delete(id);
+            this.appDatabase.accountDao().delete(accountId);
             LttrsApplication.get(application).invalidateMostRecentlySelectedAccountId();
-            EventMonitorService.stopMonitoring(application, id);
-            MuaPool.evict(id);
-            final File file = LttrsDatabase.close(id);
+            EventMonitorService.stopMonitoring(application, accountId);
+            cancelAllWork(accountId);
+            MuaPool.evict(accountId);
+            final File file = LttrsDatabase.close(accountId);
             if (file != null && SQLiteDatabase.deleteDatabase(file)) {
                 LOGGER.debug("Successfully deleted {}", file.getAbsolutePath());
             }
+            EmailNotification.cancel(application, accountId);
         });
+    }
+
+    private void cancelAllWork(final Long accountId) {
+        
     }
 }
