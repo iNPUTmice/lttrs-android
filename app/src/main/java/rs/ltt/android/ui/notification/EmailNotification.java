@@ -43,6 +43,7 @@ public class EmailNotification {
 
     private static final String NOTIFICATION_CHANNEL_ID = "email-channel-%d";
     private static final String NOTIFICATION_CHANNEL_GROUP = "group-%d";
+    private static final String NOTIFICATION_TAG_SUMMARY = "summary-%d";
     private final NotificationManager notificationManager;
     private final Context context;
     private final AccountName account;
@@ -98,6 +99,10 @@ public class EmailNotification {
         return String.format(Locale.US, NOTIFICATION_CHANNEL_ID, accountId);
     }
 
+    private static String notificationTagSummary(final Long accountId) {
+        return String.format(Locale.US, NOTIFICATION_TAG_SUMMARY, accountId);
+    }
+
     private static List<String> combine(final List<String> a, final List<String> b) {
         return new ImmutableList.Builder<String>().addAll(a).addAll(b).build();
     }
@@ -142,7 +147,7 @@ public class EmailNotification {
             dismiss(id);
         }
         if (allEmails.isEmpty()) {
-            notificationManager.cancel(SUMMARY_ID);
+            notificationManager.cancel(notificationTagSummary(account.getId()), SUMMARY_ID);
             return;
         }
         for (final EmailNotificationPreview email : addedEmails) {
@@ -152,7 +157,11 @@ public class EmailNotification {
         }
         if (addedEmails.size() > 0 || dismissedEmails.size() > 0) {
             final Notification summaryNotification = getSummary(allEmails);
-            notificationManager.notify(SUMMARY_ID, summaryNotification);
+            notificationManager.notify(
+                    notificationTagSummary(account.getId()),
+                    SUMMARY_ID,
+                    summaryNotification
+            );
         }
     }
 
