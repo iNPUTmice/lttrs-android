@@ -64,6 +64,18 @@ public abstract class AccountDao {
     @Query("select exists (select 1 from account)")
     public abstract boolean hasAccounts();
 
+    @Query("select credentialsId from account where id=:id")
+    abstract Long getCredentialsId(final Long id);
+
+    @Query("delete from account where id=:id")
+    abstract void deleteAccount(final Long id);
+
+    @Query("delete from credentials where id=:id")
+    abstract void deleteCredentials(final Long id);
+
+    @Query("select exists (select 1 from account where credentialsId=:credentialsId)")
+    abstract boolean hasAccountsWithCredentialsId(final Long credentialsId);
+
     @Insert
     abstract Long insert(CredentialsEntity entity);
 
@@ -99,6 +111,16 @@ public abstract class AccountDao {
             ));
         }
         return builder.build();
+    }
+
+    @Transaction
+    public void delete(final long id) {
+        final Long credentialsId = getCredentialsId(id);
+        deleteAccount(id);
+        if (hasAccountsWithCredentialsId(credentialsId)) {
+            return;
+        }
+        deleteCredentials(id);
     }
 
     @Query("update account set selected=1 where id=:id")

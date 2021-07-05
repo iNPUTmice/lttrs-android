@@ -13,6 +13,8 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import rs.ltt.android.R;
 import rs.ltt.android.databinding.FragmentAccountBinding;
+import rs.ltt.android.entity.AccountName;
+import rs.ltt.android.ui.activity.AccountManagerActivity;
 import rs.ltt.android.ui.model.AccountViewModel;
 
 public class AccountFragment extends AbstractAccountManagerFragment {
@@ -39,7 +41,7 @@ public class AccountFragment extends AbstractAccountManagerFragment {
         );
         this.accountViewModel = viewModelProvider.get(AccountViewModel.class);
 
-        this.accountViewModel.getAccountName().observe(getViewLifecycleOwner(), a -> this.binding.setAccount(a));
+        this.accountViewModel.getAccountName().observe(getViewLifecycleOwner(), this::onAccountName);
 
         this.binding.remove.setOnClickListener(this::onRemoveAccount);
         this.binding.identities.setOnClickListener(this::onIdentities);
@@ -48,6 +50,14 @@ public class AccountFragment extends AbstractAccountManagerFragment {
         this.binding.e2ee.setOnClickListener(this::onE2ee);
 
         return this.binding.getRoot();
+    }
+
+    private void onAccountName(final AccountName account) {
+        if (account != null) {
+            this.binding.setAccount(account);
+        } else {
+            AccountManagerActivity.relaunch(requireActivity());
+        }
     }
 
     private void onE2ee(final View view) {

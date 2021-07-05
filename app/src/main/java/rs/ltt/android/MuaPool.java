@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import rs.ltt.android.cache.DatabaseCache;
@@ -52,4 +53,20 @@ public final class MuaPool {
         }
     }
 
+    public static void evict(long id) {
+        synchronized (MuaPool.class) {
+            final Iterator<Map.Entry<AccountWithCredentials, Mua>> iterator = INSTANCES.entrySet().iterator();
+            while (iterator.hasNext()) {
+                final Map.Entry<AccountWithCredentials, Mua> entry = iterator.next();
+                final AccountWithCredentials account = entry.getKey();
+                if (account.getId().equals(id)) {
+                    final Mua mua = entry.getValue();
+                    mua.close();
+                    LOGGER.debug("Evicting {} from MuaPool", account.getAccountId());
+                    iterator.remove();
+                    return;
+                }
+            }
+        }
+    }
 }

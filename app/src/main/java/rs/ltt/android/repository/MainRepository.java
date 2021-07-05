@@ -36,8 +36,10 @@ import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import okhttp3.HttpUrl;
+import rs.ltt.android.LttrsApplication;
 import rs.ltt.android.MuaPool;
 import rs.ltt.android.database.AppDatabase;
+import rs.ltt.android.database.LttrsDatabase;
 import rs.ltt.android.entity.AccountName;
 import rs.ltt.android.entity.AccountWithCredentials;
 import rs.ltt.android.entity.SearchSuggestionEntity;
@@ -124,5 +126,23 @@ public class MainRepository {
     public void setSelectedAccount(final Long id) {
         LOGGER.debug("setSelectedAccount({})", id);
         IO_EXECUTOR.execute(() -> this.appDatabase.accountDao().selectAccount(id));
+    }
+
+    public void removeAccount(final long id) {
+        IO_EXECUTOR.execute(()->{
+            this.appDatabase.accountDao().delete(id);
+            LttrsApplication.get(application).invalidateMostRecentlySelectedAccountId();
+            EventMonitorService.stopMonitoring(application, id);
+            MuaPool.evict(id);
+            LttrsDatabase.close(id);
+            //TODO delete database file
+        });
+        //delete account from main
+        //check if zero other accounts use this credentials -> delete credentials
+        //reset mostRecentlyUsed
+        //stop monitoring
+        //delete from MuaPool. close jmap client (can we ensure callbacks don’t get executed?)
+        //close currently open database?
+        //delete database. in sync with the above?
     }
 }

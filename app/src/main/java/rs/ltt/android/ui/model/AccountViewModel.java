@@ -30,7 +30,7 @@ public class AccountViewModel extends AndroidViewModel {
     }
 
     public void removeAccount() {
-
+        this.mainRepository.removeAccount(this.accountId);
     }
 
     public static class Factory implements ViewModelProvider.Factory {

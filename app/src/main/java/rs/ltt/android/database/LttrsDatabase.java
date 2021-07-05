@@ -27,7 +27,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import rs.ltt.android.database.dao.IdentityDao;
 import rs.ltt.android.database.dao.MailboxDao;
@@ -88,6 +91,19 @@ public abstract class LttrsDatabase extends RoomDatabase {
     @SuppressLint("UseSparseArrays")
     private static final Map<Long, LttrsDatabase> INSTANCES = new HashMap<>();
 
+    private static final Set<Long> RECENTLY_CLOSED = new HashSet<>();
+
+    public static void close(final Long account) {
+        synchronized (LttrsDatabase.class) {
+            final LttrsDatabase lttrsDatabase = INSTANCES.remove(account);
+            if (lttrsDatabase != null) {
+                LOGGER.info("Closing LttrsDatabase account id {}", account);
+                lttrsDatabase.close();
+                RECENTLY_CLOSED.add(account);
+            }
+        }
+    }
+
     public abstract ThreadAndEmailDao threadAndEmailDao();
 
     public abstract MailboxDao mailboxDao();
@@ -109,6 +125,13 @@ public abstract class LttrsDatabase extends RoomDatabase {
             final LttrsDatabase existing = INSTANCES.get(account);
             if (existing != null) {
                 return existing;
+            }
+            if (RECENTLY_CLOSED.contains(account)) {
+                throw new IllegalStateException(String.format(
+                        Locale.US,
+                        "Database for account %d has recently been closed",
+                        account
+                ));
             }
             LOGGER.info("Building LttrsDatabase account id {}", account);
             final Context application = context.getApplicationContext();

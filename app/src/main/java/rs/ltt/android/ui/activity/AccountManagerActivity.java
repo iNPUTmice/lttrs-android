@@ -7,6 +7,7 @@ import android.view.MenuItem;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.FragmentActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
 
@@ -22,6 +23,12 @@ public class AccountManagerActivity extends AppCompatActivity {
 
     public static void launch(final AppCompatActivity activity) {
         final Intent intent = new Intent(activity, AccountManagerActivity.class);
+        activity.startActivity(intent);
+    }
+
+    public static void relaunch(final FragmentActivity activity) {
+        final Intent intent = new Intent(activity, AccountManagerActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         activity.startActivity(intent);
     }
 
@@ -56,8 +63,9 @@ public class AccountManagerActivity extends AppCompatActivity {
     private void configureActionBar() {
         this.setSupportActionBar(this.binding.toolbar);
         final ActionBar actionBar = Objects.requireNonNull(getSupportActionBar());
-        actionBar.setHomeButtonEnabled(true);
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        final boolean taskRoot = isTaskRoot();
+        actionBar.setHomeButtonEnabled(!taskRoot);
+        actionBar.setDisplayHomeAsUpEnabled(!taskRoot);
     }
 
     public NavController getNavController() {

@@ -152,6 +152,7 @@ public class EventMonitorService extends LifecycleService {
                 registration.stopListening();
             }
         }
+        onConnectionStateChange();
     }
 
     private void setup(final AccountWithCredentials account) {
@@ -299,6 +300,13 @@ public class EventMonitorService extends LifecycleService {
     public static void startMonitoring(final Context context, final long accountId) {
         final Intent intent = new Intent(context, EventMonitorService.class);
         intent.setAction(ACTION_START_MONITORING);
+        intent.putExtra(EXTRA_ACCOUNT_ID, accountId);
+        context.startService(intent);
+    }
+
+    public static void stopMonitoring(final Context context, final long accountId) {
+        final Intent intent = new Intent(context, EventMonitorService.class);
+        intent.setAction(ACTION_STOP_MONITORING);
         intent.putExtra(EXTRA_ACCOUNT_ID, accountId);
         context.startService(intent);
     }
