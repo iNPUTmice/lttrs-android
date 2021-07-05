@@ -45,6 +45,14 @@ public class SubmitEmailWorker extends AbstractMuaWorker {
         this.identity = data.getString(IDENTITY_KEY);
     }
 
+    public static Data data(Long account, String identity, String emailId) {
+        return new Data.Builder()
+                .putLong(ACCOUNT_KEY, account)
+                .putString(IDENTITY_KEY, identity)
+                .putString(EMAIL_ID, emailId)
+                .build();
+    }
+
     @NonNull
     @Override
     public Result doWork() {
@@ -67,13 +75,5 @@ public class SubmitEmailWorker extends AbstractMuaWorker {
         } catch (InterruptedException e) {
             return Result.retry();
         }
-    }
-
-    public static Data data(Long account, String identity, String emailId) {
-        return new Data.Builder()
-                .putLong(ACCOUNT_KEY, account)
-                .putString(IDENTITY_KEY, identity)
-                .putString(EMAIL_ID, emailId)
-                .build();
     }
 }

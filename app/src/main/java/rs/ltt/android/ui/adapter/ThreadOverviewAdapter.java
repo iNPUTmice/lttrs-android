@@ -49,13 +49,10 @@ public class ThreadOverviewAdapter extends PagedListAdapter<ThreadOverviewItem, 
 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ThreadOverviewAdapter.class);
-
-    private boolean isLoading = false;
-    private boolean initialLoadComplete = false;
-
     private static final int THREAD_ITEM_VIEW_TYPE = 0;
     private static final int LOADING_ITEM_VIEW_TYPE = 1;
-
+    private boolean isLoading = false;
+    private boolean initialLoadComplete = false;
     private OnFlaggedToggled onFlaggedToggled;
     private OnThreadClicked onThreadClicked;
     private OnSelectionToggled onSelectionToggled;
@@ -189,14 +186,12 @@ public class ThreadOverviewAdapter extends PagedListAdapter<ThreadOverviewItem, 
         }
     }
 
-    public boolean isImportant(ThreadOverviewItem item) {
-        return item.isInMailbox(getImportantMailbox());
+    public void setImportantMailbox(Future<MailboxWithRoleAndName> importantMailbox) {
+        this.importantMailbox = importantMailbox;
     }
 
-    public void setLoading(final boolean loading) {
-        final boolean before = isLoading();
-        this.isLoading = loading;
-        refreshLoadingIndicator(before);
+    public boolean isImportant(ThreadOverviewItem item) {
+        return item.isInMailbox(getImportantMailbox());
     }
 
     private void refreshLoadingIndicator(final boolean before) {
@@ -207,6 +202,12 @@ public class ThreadOverviewAdapter extends PagedListAdapter<ThreadOverviewItem, 
 
     private boolean isLoading() {
         return this.isLoading || !initialLoadComplete;
+    }
+
+    public void setLoading(final boolean loading) {
+        final boolean before = isLoading();
+        this.isLoading = loading;
+        refreshLoadingIndicator(before);
     }
 
     @Override
@@ -222,10 +223,6 @@ public class ThreadOverviewAdapter extends PagedListAdapter<ThreadOverviewItem, 
             refreshLoadingIndicator(before);
         }
         super.submitList(pagedList, runnable);
-    }
-
-    public void setImportantMailbox(Future<MailboxWithRoleAndName> importantMailbox) {
-        this.importantMailbox = importantMailbox;
     }
 
     public void setSelectedThreads(final Set<String> selectedThreads) {
@@ -263,10 +260,24 @@ public class ThreadOverviewAdapter extends PagedListAdapter<ThreadOverviewItem, 
         return !this.initialLoadComplete;
     }
 
+    public interface OnThreadClicked {
+        void onThreadClicked(ThreadOverviewItem threadOverviewItem, boolean important);
+    }
+
     abstract static class AbstractThreadOverviewViewHolder extends RecyclerView.ViewHolder {
 
         AbstractThreadOverviewViewHolder(@NonNull View itemView) {
             super(itemView);
+        }
+    }
+
+    public static class ThreadOverviewLoadingViewHolder extends AbstractThreadOverviewViewHolder {
+
+        final ItemThreadOverviewLoadingBinding binding;
+
+        ThreadOverviewLoadingViewHolder(@NonNull ItemThreadOverviewLoadingBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
     }
 
@@ -283,19 +294,5 @@ public class ThreadOverviewAdapter extends PagedListAdapter<ThreadOverviewItem, 
             this.binding.setThread(thread);
             this.binding.setIsImportant(isImportant(thread));
         }
-    }
-
-    public static class ThreadOverviewLoadingViewHolder extends AbstractThreadOverviewViewHolder {
-
-        final ItemThreadOverviewLoadingBinding binding;
-
-        ThreadOverviewLoadingViewHolder(@NonNull ItemThreadOverviewLoadingBinding binding) {
-            super(binding.getRoot());
-            this.binding = binding;
-        }
-    }
-
-    public interface OnThreadClicked {
-        void onThreadClicked(ThreadOverviewItem threadOverviewItem, boolean important);
     }
 }

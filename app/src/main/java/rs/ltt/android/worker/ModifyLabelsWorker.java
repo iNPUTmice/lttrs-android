@@ -40,6 +40,13 @@ public class ModifyLabelsWorker extends AbstractMailboxModificationWorker {
     private final List<IdentifiableMailboxWithRoleAndName> add;
     private final List<IdentifiableMailboxWithRoleAndName> remove;
 
+    public ModifyLabelsWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
+        super(context, workerParams);
+        final Data data = workerParams.getInputData();
+        this.add = catchException(() -> of(data.getByteArray(ADD_KEY)));
+        this.remove = catchException(() -> of(data.getByteArray(REMOVE_KEY)));
+    }
+
     private static List<IdentifiableMailboxWithRoleAndName> of(final byte[] bytes) throws IOException {
         final DataInputStream dataInputStream = new DataInputStream(new ByteArrayInputStream(bytes));
         final int count = dataInputStream.readInt();
@@ -86,11 +93,13 @@ public class ModifyLabelsWorker extends AbstractMailboxModificationWorker {
         dataOutputStream.writeUTF(Strings.nullToEmpty(mailbox.getName()));
     }
 
-    public ModifyLabelsWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
-        super(context, workerParams);
-        final Data data = workerParams.getInputData();
-        this.add = catchException(() -> of(data.getByteArray(ADD_KEY)));
-        this.remove = catchException(() -> of(data.getByteArray(REMOVE_KEY)));
+    public static Data data(Long account, String threadId, List<IdentifiableMailboxWithRoleAndName> add, List<IdentifiableMailboxWithRoleAndName> remove) {
+        return new Data.Builder()
+                .putLong(ACCOUNT_KEY, account)
+                .putString(THREAD_ID_KEY, threadId)
+                .putByteArray(ADD_KEY, catchException(() -> of(add)))
+                .putByteArray(REMOVE_KEY, catchException(() -> of(remove)))
+                .build();
     }
 
     @Override
@@ -105,14 +114,5 @@ public class ModifyLabelsWorker extends AbstractMailboxModificationWorker {
             );
         }
         return getMua().modifyLabels(emails, add, remove);
-    }
-
-    public static Data data(Long account, String threadId, List<IdentifiableMailboxWithRoleAndName> add, List<IdentifiableMailboxWithRoleAndName> remove) {
-        return new Data.Builder()
-                .putLong(ACCOUNT_KEY, account)
-                .putString(THREAD_ID_KEY, threadId)
-                .putByteArray(ADD_KEY, catchException(() -> of(add)))
-                .putByteArray(REMOVE_KEY, catchException(() -> of(remove)))
-                .build();
     }
 }

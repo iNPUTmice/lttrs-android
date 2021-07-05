@@ -114,14 +114,6 @@ public class LttrsViewModel extends AndroidViewModel {
         this.currentSearchTerm = currentSearchTerm;
     }
 
-    public void setActivityTitle(final String title) {
-        this.activityTitle.postValue(title);
-    }
-
-    public void setActivityTitle(final @StringRes int res) {
-        this.activityTitle.postValue(getApplication().getString(res));
-    }
-
     public void clearActivityTitle() {
         this.activityTitle.postValue(null);
     }
@@ -130,12 +122,20 @@ public class LttrsViewModel extends AndroidViewModel {
         return this.activityTitle;
     }
 
-    public void setSelectedLabel(final LabelWithCount label) {
-        this.selectedLabel.postValue(label);
+    public void setActivityTitle(final String title) {
+        this.activityTitle.postValue(title);
+    }
+
+    public void setActivityTitle(final @StringRes int res) {
+        this.activityTitle.postValue(getApplication().getString(res));
     }
 
     public LiveData<LabelWithCount> getSelectedLabel() {
         return this.selectedLabel;
+    }
+
+    public void setSelectedLabel(final LabelWithCount label) {
+        this.selectedLabel.postValue(label);
     }
 
     public void toggleAccountSelectionVisibility() {

@@ -83,6 +83,15 @@ public class ChooseLabelsViewModel extends LttrsViewModel {
         });
     }
 
+    private static boolean isInMailbox(final IdentifiableMailboxWithRoleAndName mailbox, final List<String> mailboxes, final List<MailboxOverwriteEntity> mailboxOverwrites) {
+        final Boolean overwrite = MailboxOverwriteEntity.getOverwrite(mailboxOverwrites, mailbox);
+        if (overwrite != null) {
+            return overwrite;
+        } else {
+            return mailbox.getId() != null && mailboxes.contains(mailbox.getId());
+        }
+    }
+
     public List<UUID> applyChanges() {
         final List<String> mailboxes = Objects.requireNonNull(this.mailboxes.getValue());
         final List<MailboxOverwriteEntity> mailboxOverwrites = Objects.requireNonNull(this.mailboxOverwrites.getValue());
@@ -131,15 +140,6 @@ public class ChooseLabelsViewModel extends LttrsViewModel {
         return isInMailbox(mailbox, mailboxes, mailboxOverwrites);
     }
 
-    private static boolean isInMailbox(final IdentifiableMailboxWithRoleAndName mailbox, final List<String> mailboxes, final List<MailboxOverwriteEntity> mailboxOverwrites) {
-        final Boolean overwrite = MailboxOverwriteEntity.getOverwrite(mailboxOverwrites, mailbox);
-        if (overwrite != null) {
-            return overwrite;
-        } else {
-            return mailbox.getId() != null && mailboxes.contains(mailbox.getId());
-        }
-    }
-
     private void updateSelectableMailboxes() {
         final List<String> mailboxes = Objects.requireNonNull(this.mailboxes.getValue());
         final List<MailboxWithRoleAndName> existingMailboxes = Objects.requireNonNull(this.existingLabels.getValue());
@@ -155,33 +155,6 @@ public class ChooseLabelsViewModel extends LttrsViewModel {
 
     public LiveData<List<SelectableMailbox>> getSelectableMailboxesLiveData() {
         return this.labels;
-    }
-
-    private static class Selection implements IdentifiableMailboxWithRoleAndName {
-        private final String id;
-        private final String name;
-        private final Role role;
-
-        private Selection(String id, String name, Role role) {
-            this.id = id;
-            this.name = name;
-            this.role = role;
-        }
-
-        @Override
-        public String getName() {
-            return name;
-        }
-
-        @Override
-        public Role getRole() {
-            return role;
-        }
-
-        @Override
-        public String getId() {
-            return id;
-        }
     }
 
     private Boolean getSelectionOverwrite(final IdentifiableMailboxWithRoleAndName mailbox) {
@@ -226,6 +199,33 @@ public class ChooseLabelsViewModel extends LttrsViewModel {
             throw new IllegalArgumentException(getApplication().getString(R.string.reserved_mailbox_name));
         }
         setSelectionOverwrite(new StubLabel(name), true);
+    }
+
+    private static class Selection implements IdentifiableMailboxWithRoleAndName {
+        private final String id;
+        private final String name;
+        private final Role role;
+
+        private Selection(String id, String name, Role role) {
+            this.id = id;
+            this.name = name;
+            this.role = role;
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
+
+        @Override
+        public Role getRole() {
+            return role;
+        }
+
+        @Override
+        public String getId() {
+            return id;
+        }
     }
 
     private static class StubLabel implements IdentifiableMailboxWithRoleAndName {

@@ -38,12 +38,11 @@ import rs.ltt.jmap.common.entity.query.EmailQuery;
 public abstract class AbstractQueryViewModel extends AndroidViewModel {
 
     final QueryRepository queryRepository;
+    private final ListenableFuture<MailboxWithRoleAndName> important;
+    private final HashSet<String> selectedThreads = new HashSet<>();
     private LiveData<PagedList<ThreadOverviewItem>> threads;
     private LiveData<Boolean> refreshing;
     private LiveData<Boolean> runningPagingRequest;
-    private final ListenableFuture<MailboxWithRoleAndName> important;
-
-    private final HashSet<String> selectedThreads = new HashSet<>();
 
     AbstractQueryViewModel(@NonNull Application application, final long accountId) {
         super(application);

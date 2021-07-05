@@ -39,7 +39,7 @@ public abstract class AbstractEntityDao {
         final String expectedState = expectedTypedState.getState();
         final String currentState = getState(type);
         if (expectedState == null || !expectedState.equals(currentState)) {
-            throw new CacheConflictException(type.toString()+" state was '" + currentState + "'. Expected '" + expectedState + "'");
+            throw new CacheConflictException(type.toString() + " state was '" + currentState + "'. Expected '" + expectedState + "'");
         }
     }
 
@@ -47,7 +47,7 @@ public abstract class AbstractEntityDao {
         final String oldState = oldTypedState.getState();
         final String newState = newTypedState.getState();
         if (updateState(type, oldState, newState) != 1) {
-            throw new CacheConflictException("Unable to update from oldState="+oldState+" to newState="+newState);
+            throw new CacheConflictException("Unable to update from oldState=" + oldState + " to newState=" + newState);
         }
     }
 }

@@ -56,29 +56,24 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.AbstractTh
 
     private static final int ITEM_VIEW_TYPE = 1;
     private static final int HEADER_VIEW_TYPE = 2;
-
-    private SubjectWithImportance subjectWithImportance;
-    private Boolean flagged;
-
-    private OnFlaggedToggled onFlaggedToggled;
-
-    private OnComposeActionTriggered onComposeActionTriggered;
-
     private final Set<String> expandedItems;
-
-    public ThreadAdapter(Set<String> expandedItems) {
-        this.expandedItems = expandedItems;
-    }
-
     //we need this rather inconvenient setup instead of simply using PagedListAdapter to allow for
     //a header view. If we were to use the PagedListAdapter the item update callbacks wouldn't work.
     //The problem and the solution is described in this github issue: https://github.com/googlesamples/android-architecture-components/issues/375
     //additional documentation on how to implement a AsyncPagedListDiffer can be found here:
     //https://developer.android.com/reference/android/arch/paging/AsyncPagedListDiffer
     private final AsyncPagedListDiffer<EmailComplete> mDiffer = new AsyncPagedListDiffer<>(
-            new OffsetListUpdateCallback<>(this,1),
+            new OffsetListUpdateCallback<>(this, 1),
             new AsyncDifferConfig.Builder<>(ITEM_CALLBACK).build()
     );
+    private SubjectWithImportance subjectWithImportance;
+    private Boolean flagged;
+    private OnFlaggedToggled onFlaggedToggled;
+    private OnComposeActionTriggered onComposeActionTriggered;
+
+    public ThreadAdapter(Set<String> expandedItems) {
+        this.expandedItems = expandedItems;
+    }
 
     @NonNull
     @Override
@@ -167,7 +162,7 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.AbstractTh
     }
 
     public void expand(Collection<ExpandedPosition> positions) {
-        for(ExpandedPosition expandedPosition : positions) {
+        for (ExpandedPosition expandedPosition : positions) {
             this.expandedItems.add(expandedPosition.emailId);
         }
     }

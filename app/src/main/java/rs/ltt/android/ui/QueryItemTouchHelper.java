@@ -99,6 +99,7 @@ public class QueryItemTouchHelper extends ItemTouchHelper.SimpleCallback {
 
     public interface OnQueryItemSwipe {
         Swipable onQueryItemSwipe(int position);
+
         void onQueryItemSwiped(@NonNull RecyclerView.ViewHolder viewHolder);
     }
 }

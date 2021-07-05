@@ -20,7 +20,8 @@ public class Translations {
         }
     }
 
-    public static @StringRes int translate(final Role role) {
+    public static @StringRes
+    int translate(final Role role) {
         switch (role) {
             case ALL:
                 return R.string.role_name_all;

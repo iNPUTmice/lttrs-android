@@ -70,8 +70,8 @@ public class ThreadViewModel extends AndroidViewModel {
     private final String label;
     private final ThreadViewRepository threadViewRepository;
     private final MediatorLiveData<Event<String>> threadViewRedirect = new MediatorLiveData<>();
-    private LiveData<PagedList<EmailComplete>> emails;
     private final MediatorLiveData<SubjectWithImportance> subjectWithImportance = new MediatorLiveData<>();
+    private LiveData<PagedList<EmailComplete>> emails;
     private LiveData<Boolean> flagged;
     private LiveData<List<MailboxWithRoleAndName>> mailboxes;
     private LiveData<MenuConfiguration> menuConfiguration;

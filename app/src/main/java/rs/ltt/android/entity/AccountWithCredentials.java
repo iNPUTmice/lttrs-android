@@ -38,7 +38,6 @@ public class AccountWithCredentials {
     }
 
     /**
-     *
      * @return The internal database ID
      */
     public Long getId() {
@@ -46,7 +45,6 @@ public class AccountWithCredentials {
     }
 
     /**
-     *
      * @return The JMAP account ID as found in the session resource
      */
     public String getAccountId() {
@@ -54,7 +52,6 @@ public class AccountWithCredentials {
     }
 
     /**
-     *
      * @return The display name ('user-friendly string') of the account as found in the account object in the session resource
      */
     public String getName() {
@@ -62,7 +59,6 @@ public class AccountWithCredentials {
     }
 
     /**
-     *
      * @return The login username (credentials) used to authenticate
      */
     public String getUsername() {
@@ -70,7 +66,6 @@ public class AccountWithCredentials {
     }
 
     /**
-     *
      * @return The login password (credentials) used to authenticate
      */
     public String getPassword() {
@@ -78,7 +73,6 @@ public class AccountWithCredentials {
     }
 
     /**
-     *
      * @return The URL of the session resource when different from the .well-known/jmap or null otherwise
      */
     public HttpUrl getSessionResource() {

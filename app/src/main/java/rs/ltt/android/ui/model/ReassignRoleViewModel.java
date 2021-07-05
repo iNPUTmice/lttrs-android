@@ -35,7 +35,7 @@ public class ReassignRoleViewModel extends AndroidViewModel {
         super(application);
         this.mailboxRepository = new MailboxRepository(application, accountId);
         this.mailbox = this.mailboxRepository.getMailbox(mailboxId);
-        this.isReassignment = Transformations.map(this.mailbox, m-> m.getRole() != null);
+        this.isReassignment = Transformations.map(this.mailbox, m -> m.getRole() != null);
         this.role = role;
     }
 

@@ -49,19 +49,42 @@ import rs.ltt.jmap.mua.Mua;
 
 public class EventMonitorService extends LifecycleService {
 
+    static final Executor PUSH_SERVICE_BACKGROUND_EXECUTOR = Executors.newSingleThreadExecutor();
     private static final String ACTION_WATCH_QUERY = "rs.ltt.android.ACTION_WATCH_QUERY";
     private static final String ACTION_START_MONITORING = "rs.ltt.android.ACTION_START_MONITORING";
     private static final String ACTION_STOP_MONITORING = "rs.ltt.android.ACTION_STOP_MONITORING";
-
     private static final String EXTRA_ACCOUNT_ID = "rs.ltt.android.EXTRA_ACCOUNT_ID";
     private static final String EXTRA_QUERY_INFO = "rs.ltt.android.EXTRA_QUERY_INFO";
-
     private static final Logger LOGGER = LoggerFactory.getLogger(EventMonitorService.class);
-
-    static final Executor PUSH_SERVICE_BACKGROUND_EXECUTOR = Executors.newSingleThreadExecutor();
-
     private final Map<Long, EventMonitorRegistration> eventMonitorRegistrations = new HashMap<>();
     private QueryInfo currentlyWatchedQuery = null;
+
+    public static void watchQuery(final Context context, final QueryInfo queryInfo) {
+        final Intent intent = new Intent(context, EventMonitorService.class);
+        intent.setAction(ACTION_WATCH_QUERY);
+        intent.putExtra(EXTRA_QUERY_INFO, queryInfo);
+        context.startService(intent);
+    }
+
+    public static void startMonitoring(final Context context, final Collection<Long> accountIds) {
+        for (final long accountId : accountIds) {
+            startMonitoring(context, accountId);
+        }
+    }
+
+    public static void startMonitoring(final Context context, final long accountId) {
+        final Intent intent = new Intent(context, EventMonitorService.class);
+        intent.setAction(ACTION_START_MONITORING);
+        intent.putExtra(EXTRA_ACCOUNT_ID, accountId);
+        context.startService(intent);
+    }
+
+    public static void stopMonitoring(final Context context, final long accountId) {
+        final Intent intent = new Intent(context, EventMonitorService.class);
+        intent.setAction(ACTION_STOP_MONITORING);
+        intent.putExtra(EXTRA_ACCOUNT_ID, accountId);
+        context.startService(intent);
+    }
 
     @Nullable
     @Override
@@ -282,33 +305,6 @@ public class EventMonitorService extends LifecycleService {
                     .collect(Collectors.toList())
             );
         }
-    }
-
-    public static void watchQuery(final Context context, final QueryInfo queryInfo) {
-        final Intent intent = new Intent(context, EventMonitorService.class);
-        intent.setAction(ACTION_WATCH_QUERY);
-        intent.putExtra(EXTRA_QUERY_INFO, queryInfo);
-        context.startService(intent);
-    }
-
-    public static void startMonitoring(final Context context, final Collection<Long> accountIds) {
-        for(final long accountId : accountIds) {
-            startMonitoring(context, accountId);
-        }
-    }
-
-    public static void startMonitoring(final Context context, final long accountId) {
-        final Intent intent = new Intent(context, EventMonitorService.class);
-        intent.setAction(ACTION_START_MONITORING);
-        intent.putExtra(EXTRA_ACCOUNT_ID, accountId);
-        context.startService(intent);
-    }
-
-    public static void stopMonitoring(final Context context, final long accountId) {
-        final Intent intent = new Intent(context, EventMonitorService.class);
-        intent.setAction(ACTION_STOP_MONITORING);
-        intent.putExtra(EXTRA_ACCOUNT_ID, accountId);
-        context.startService(intent);
     }
 
     private static final class EventMonitorRegistration {

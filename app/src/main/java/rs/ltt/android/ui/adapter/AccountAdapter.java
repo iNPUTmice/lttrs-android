@@ -17,8 +17,6 @@ import rs.ltt.android.entity.AccountName;
 
 public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.AccountViewHolder> {
 
-    private OnAccountSelected onAccountSelected;
-
     private static final DiffUtil.ItemCallback<AccountName> DIFF_ITEM_CALLBACK = new DiffUtil.ItemCallback<AccountName>() {
         @Override
         public boolean areItemsTheSame(@NonNull AccountName oldItem, @NonNull AccountName newItem) {
@@ -30,11 +28,11 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.AccountV
             return oldItem.equals(newItem);
         }
     };
-
     private final AsyncListDiffer<AccountName> differ = new AsyncListDiffer<>(
             this,
             DIFF_ITEM_CALLBACK
     );
+    private OnAccountSelected onAccountSelected;
 
     @NonNull
     @Override
@@ -71,6 +69,10 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.AccountV
         this.onAccountSelected = listener;
     }
 
+    public interface OnAccountSelected {
+        void onAccountSelected(final long id);
+    }
+
     public static class AccountViewHolder extends RecyclerView.ViewHolder {
 
         private final ItemAccountBinding binding;
@@ -83,10 +85,5 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.AccountV
         public void setAccount(final AccountName account) {
             this.binding.setAccount(account);
         }
-    }
-
-
-    public interface OnAccountSelected {
-        void onAccountSelected(final long id);
     }
 }

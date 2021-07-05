@@ -17,5 +17,6 @@ package rs.ltt.android.ui.adapter;
 
 public interface OnComposeActionTriggered {
     void onEditDraft(String emailId);
+
     void onReplyAll(String emailId);
 }

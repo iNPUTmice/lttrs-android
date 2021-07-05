@@ -103,6 +103,15 @@ public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.Ab
         super();
     }
 
+    private static boolean same(final Label a, final Label b) {
+        if (a instanceof MailboxOverviewItem && b instanceof MailboxOverviewItem) {
+            return ((MailboxOverviewItem) a).getId().equals(((MailboxOverviewItem) b).getId());
+        }
+        if (a instanceof KeywordLabel && b instanceof KeywordLabel) {
+            return a.getRole() != null && a.getRole().equals(b.getRole());
+        }
+        return false;
+    }
 
     @NonNull
     @Override
@@ -218,7 +227,6 @@ public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.Ab
         }
     }
 
-
     public void setAccountInformation(final AccountName accountName) {
         this.accountName = accountName;
         notifyItemChanged(0);
@@ -301,16 +309,6 @@ public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.Ab
 
     public void setOnAdditionalNavigationItemSelected(final OnAdditionalNavigationItemSelected listener) {
         this.onAdditionalNavigationItemSelected = listener;
-    }
-
-    private static boolean same(final Label a, final Label b) {
-        if (a instanceof MailboxOverviewItem && b instanceof MailboxOverviewItem) {
-            return ((MailboxOverviewItem) a).getId().equals(((MailboxOverviewItem) b).getId());
-        }
-        if (a instanceof KeywordLabel && b instanceof KeywordLabel) {
-            return a.getRole() != null && a.getRole().equals(b.getRole());
-        }
-        return false;
     }
 
     public interface OnLabelSelected {

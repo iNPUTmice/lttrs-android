@@ -82,11 +82,9 @@ import rs.ltt.jmap.mua.util.Label;
 
 public class LttrsActivity extends AppCompatActivity implements ThreadModifier, NavController.OnDestinationChangedListener, MenuItem.OnActionExpandListener, DrawerLayout.DrawerListener {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(LttrsActivity.class);
-
     public static final String EXTRA_ACCOUNT_ID = "account";
     public static final String EXTRA_THREAD_ID = "thread";
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(LttrsActivity.class);
     private static final int NUM_TOOLBAR_ICON = 1;
     private static final List<Integer> MAIN_DESTINATIONS = Arrays.asList(
             R.id.inbox,

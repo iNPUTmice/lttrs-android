@@ -78,7 +78,7 @@ public class ModifyKeywordWorker extends AbstractMuaWorker {
             } else {
                 madeChanges = mua.removeKeyword(emails, keyword).get();
             }
-            LOGGER.info("keyword foo. changes?="+madeChanges);
+            LOGGER.info("keyword foo. changes?=" + madeChanges);
             if (!madeChanges) {
                 LOGGER.info("No changes were made to thread {}", threadId);
                 database.overwriteDao().revertKeywordOverwrites(threadId);

@@ -17,8 +17,6 @@ import rs.ltt.android.entity.SelectableMailbox;
 
 public class ChooseLabelsAdapter extends RecyclerView.Adapter<ChooseLabelsAdapter.LabelViewHolder> {
 
-    private OnSelectableMailboxClickListener onSelectableMailboxClickListener;
-
     private static final DiffUtil.ItemCallback<SelectableMailbox> DIFF_ITEM_CALLBACK = new DiffUtil.ItemCallback<SelectableMailbox>() {
         @Override
         public boolean areItemsTheSame(@NonNull SelectableMailbox oldItem, @NonNull SelectableMailbox newItem) {
@@ -34,6 +32,7 @@ public class ChooseLabelsAdapter extends RecyclerView.Adapter<ChooseLabelsAdapte
             this,
             DIFF_ITEM_CALLBACK
     );
+    private OnSelectableMailboxClickListener onSelectableMailboxClickListener;
 
     @NonNull
     @Override
@@ -70,6 +69,10 @@ public class ChooseLabelsAdapter extends RecyclerView.Adapter<ChooseLabelsAdapte
         this.onSelectableMailboxClickListener = listener;
     }
 
+    public interface OnSelectableMailboxClickListener {
+        void onSelectableMailboxClick(SelectableMailbox mailbox);
+    }
+
     public static class LabelViewHolder extends RecyclerView.ViewHolder {
 
         private final ItemMailboxSelectableBinding binding;
@@ -78,9 +81,5 @@ public class ChooseLabelsAdapter extends RecyclerView.Adapter<ChooseLabelsAdapte
             super(binding.getRoot());
             this.binding = binding;
         }
-    }
-
-    public interface  OnSelectableMailboxClickListener {
-        void onSelectableMailboxClick(SelectableMailbox mailbox);
     }
 }

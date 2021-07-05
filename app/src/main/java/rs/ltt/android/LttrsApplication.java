@@ -26,11 +26,20 @@ import rs.ltt.android.ui.notification.ForegroundServiceNotification;
 
 public class LttrsApplication extends Application {
 
+    private final static Object CACHE_LOCK = new Object();
     private final Logger LOGGER = LoggerFactory.getLogger(LttrsApplication.class);
-
     private Long mostRecentlySelectedAccountId = null;
 
-    private final static Object CACHE_LOCK = new Object();
+    public static LttrsApplication get(final Application application) {
+        if (application instanceof LttrsApplication) {
+            return (LttrsApplication) application;
+        }
+        throw new IllegalStateException("Application is not a " + LttrsApplication.class.getSimpleName());
+    }
+
+    public static LttrsApplication get(final Activity activity) {
+        return get(activity.getApplication());
+    }
 
     @Override
     public void onCreate() {
@@ -62,16 +71,5 @@ public class LttrsApplication extends Application {
         synchronized (CACHE_LOCK) {
             this.mostRecentlySelectedAccountId = null;
         }
-    }
-
-    public static LttrsApplication get(final Application application) {
-        if (application instanceof LttrsApplication) {
-            return (LttrsApplication) application;
-        }
-        throw new IllegalStateException("Application is not a " + LttrsApplication.class.getSimpleName());
-    }
-
-    public static LttrsApplication get(final Activity activity) {
-        return get(activity.getApplication());
     }
 }

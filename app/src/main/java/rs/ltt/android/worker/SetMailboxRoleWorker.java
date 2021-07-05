@@ -33,6 +33,14 @@ public class SetMailboxRoleWorker extends AbstractMuaWorker {
         this.role = Role.valueOf(data.getString(MAILBOX_ROLE_KEY));
     }
 
+    public static Data data(Long account, String mailboxId, Role role) {
+        return new Data.Builder()
+                .putLong(ACCOUNT_KEY, account)
+                .putString(MAILBOX_ID_KEY, mailboxId)
+                .putString(MAILBOX_ROLE_KEY, role.toString())
+                .build();
+    }
+
     @NonNull
     @Override
     public Result doWork() {
@@ -50,13 +58,5 @@ public class SetMailboxRoleWorker extends AbstractMuaWorker {
         } catch (InterruptedException e) {
             return Result.retry();
         }
-    }
-
-    public static Data data(Long account, String mailboxId, Role role) {
-        return new Data.Builder()
-                .putLong(ACCOUNT_KEY, account)
-                .putString(MAILBOX_ID_KEY, mailboxId)
-                .putString(MAILBOX_ROLE_KEY, role.toString())
-                .build();
     }
 }

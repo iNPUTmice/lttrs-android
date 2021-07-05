@@ -100,6 +100,19 @@ public class ComposeActivity extends AppCompatActivity {
         nextIntent.setData(uri);
     }
 
+    private static MailToUri getUri(@NonNull final Intent intent) {
+        final Uri data = intent.getData();
+        if (data == null) {
+            return null;
+        }
+        try {
+            return MailToUri.get(data.toString());
+        } catch (final IllegalArgumentException e) {
+            LOGGER.warn("activity was called with invalid URI {}. {}", data.toString(), e.getMessage());
+            return null;
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -185,19 +198,6 @@ public class ComposeActivity extends AppCompatActivity {
         final ComposeAction action = ComposeAction.of(i == null ? null : i.getStringExtra(COMPOSE_ACTION_EXTRA));
         final String emailId = i == null ? null : i.getStringExtra(EMAIL_ID_EXTRA);
         return new ComposeViewModel.Parameter(account, freshStart, action, emailId);
-    }
-
-    private static MailToUri getUri(@NonNull final Intent intent) {
-        final Uri data = intent.getData();
-        if (data == null) {
-            return null;
-        }
-        try {
-            return MailToUri.get(data.toString());
-        } catch (final IllegalArgumentException e) {
-            LOGGER.warn("activity was called with invalid URI {}. {}", data.toString(), e.getMessage());
-            return null;
-        }
     }
 
     private void focusOnBodyOrSubject(final View view, final boolean hasFocus) {

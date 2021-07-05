@@ -34,41 +34,13 @@ import rs.ltt.jmap.common.entity.query.EmailQuery;
 public abstract class QueryRefreshWorker extends AbstractMuaWorker {
 
     protected static final String SKIP_OVER_EMPTY_KEY = "skipOverEmpty";
-    private final boolean skipOverEmpty;
-
     private static final Logger LOGGER = LoggerFactory.getLogger(QueryRefreshWorker.class);
+    private final boolean skipOverEmpty;
 
     public QueryRefreshWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
         final Data data = workerParams.getInputData();
         this.skipOverEmpty = data.getBoolean(SKIP_OVER_EMPTY_KEY, false);
-    }
-
-    abstract EmailQuery getEmailQuery();
-
-    @NonNull
-    @Override
-    public Result doWork() {
-        try {
-            final EmailQuery emailQuery = getEmailQuery();
-            LOGGER.info("Refreshing {}", emailQuery);
-            return refresh(emailQuery);
-        } catch (final Exception e) {
-            LOGGER.info("Unable to refresh query", e);
-            return Result.failure();
-        }
-    }
-
-    protected Result refresh(final EmailQuery emailQuery) throws ExecutionException, InterruptedException {
-        throwOnEmpty(emailQuery);
-        getMua().query(emailQuery).get();
-        return Result.success();
-    }
-
-    protected void throwOnEmpty(final EmailQuery emailQuery) {
-        if (skipOverEmpty && getDatabase().queryDao().empty(emailQuery.asHash())) {
-            throw new IllegalStateException("Do not refresh because query is empty (UI will automatically load this)");
-        }
     }
 
     public static OneTimeWorkRequest main(long accountId) {
@@ -120,5 +92,32 @@ public abstract class QueryRefreshWorker extends AbstractMuaWorker {
 
     public static String uniqueName(final Long accountId) {
         return String.format(Locale.ENGLISH, "account-%d-query-refresh", accountId);
+    }
+
+    abstract EmailQuery getEmailQuery();
+
+    @NonNull
+    @Override
+    public Result doWork() {
+        try {
+            final EmailQuery emailQuery = getEmailQuery();
+            LOGGER.info("Refreshing {}", emailQuery);
+            return refresh(emailQuery);
+        } catch (final Exception e) {
+            LOGGER.info("Unable to refresh query", e);
+            return Result.failure();
+        }
+    }
+
+    protected Result refresh(final EmailQuery emailQuery) throws ExecutionException, InterruptedException {
+        throwOnEmpty(emailQuery);
+        getMua().query(emailQuery).get();
+        return Result.success();
+    }
+
+    protected void throwOnEmpty(final EmailQuery emailQuery) {
+        if (skipOverEmpty && getDatabase().queryDao().empty(emailQuery.asHash())) {
+            throw new IllegalStateException("Do not refresh because query is empty (UI will automatically load this)");
+        }
     }
 }

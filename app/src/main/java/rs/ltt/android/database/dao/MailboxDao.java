@@ -182,7 +182,7 @@ public abstract class MailboxDao extends AbstractEntityDao {
                 }
             }
         }
-        for(String id : update.getDestroyed()) {
+        for (String id : update.getDestroyed()) {
             delete(id);
         }
         throwOnUpdateConflict(Mailbox.class, update.getOldTypedState(), update.getNewTypedState());

@@ -41,12 +41,9 @@ import rs.ltt.jmap.mua.Mua;
 public abstract class AbstractMuaWorker extends Worker {
 
     public static final String TAG_EMAIL_MODIFICATION = "email_modification";
-
-    static final String ACCOUNT_KEY = "account";
-
     protected static final String MAILBOX_ID_KEY = "mailboxId";
     protected static final String KEYWORD_KEY = "keyword";
-
+    static final String ACCOUNT_KEY = "account";
     protected final Long account;
 
     AbstractMuaWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
@@ -74,6 +71,10 @@ public abstract class AbstractMuaWorker extends Worker {
                 || cause instanceof SSLException;
     }
 
+    public static String uniqueName(Long accountId) {
+        return String.format(Locale.ENGLISH, "account-%d", accountId);
+    }
+
     protected LttrsDatabase getDatabase() {
         return LttrsDatabase.getInstance(getApplicationContext(), this.account);
     }
@@ -81,9 +82,5 @@ public abstract class AbstractMuaWorker extends Worker {
     protected Mua getMua() throws ExecutionException {
         final AccountWithCredentials account = AppDatabase.getInstance(getApplicationContext()).accountDao().getAccount(this.account);
         return MuaPool.getInstance(getApplicationContext(), account);
-    }
-
-    public static String uniqueName(Long accountId) {
-        return String.format(Locale.ENGLISH, "account-%d", accountId);
     }
 }

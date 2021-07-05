@@ -33,11 +33,11 @@ import static androidx.room.OnConflictStrategy.REPLACE;
 @Dao
 public abstract class SearchSuggestionDao {
 
-    @Query("select id as "+ BaseColumns._ID +", `query` as "+ SearchManager.SUGGEST_COLUMN_TEXT_1+","+ R.drawable.ic_restore_24dp +" as "+SearchManager.SUGGEST_COLUMN_ICON_1+",`query` as "+SearchManager.SUGGEST_COLUMN_QUERY+" from search_suggestion where `query` like :needle and `query` is not :actual order by id desc limit 30")
+    @Query("select id as " + BaseColumns._ID + ", `query` as " + SearchManager.SUGGEST_COLUMN_TEXT_1 + "," + R.drawable.ic_restore_24dp + " as " + SearchManager.SUGGEST_COLUMN_ICON_1 + ",`query` as " + SearchManager.SUGGEST_COLUMN_QUERY + " from search_suggestion where `query` like :needle and `query` is not :actual order by id desc limit 30")
     abstract Cursor getSearchSuggestions(String needle, String actual);
 
     public Cursor getSearchSuggestions(String needle) {
-        return getSearchSuggestions('%'+needle+(needle.isEmpty()?"":"%"), needle);
+        return getSearchSuggestions('%' + needle + (needle.isEmpty() ? "" : "%"), needle);
     }
 
     @Insert(onConflict = REPLACE)

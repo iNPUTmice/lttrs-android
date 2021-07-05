@@ -28,6 +28,25 @@ public class MainMailboxQueryRefreshWorker extends QueryRefreshWorker {
         super(context, workerParams);
     }
 
+    private static List<String> freshlyAddedEmailIds(final Set<String> preexistingEmailIds,
+                                                     final List<String> postRefreshEmailIds) {
+        final ImmutableList.Builder<String> freshlyAddedEmailIds = new ImmutableList.Builder<>();
+        for (final String emailId : postRefreshEmailIds) {
+            if (preexistingEmailIds.contains(emailId)) {
+                return freshlyAddedEmailIds.build();
+            }
+            freshlyAddedEmailIds.add(emailId);
+        }
+        return freshlyAddedEmailIds.build();
+    }
+
+    public static Data data(final Long account, final boolean skipOverEmpty) {
+        return new Data.Builder()
+                .putLong(ACCOUNT_KEY, account)
+                .putBoolean(SKIP_OVER_EMPTY_KEY, skipOverEmpty)
+                .build();
+    }
+
     @NonNull
     @Override
     protected Result refresh(final EmailQuery emailQuery) throws ExecutionException, InterruptedException {
@@ -57,25 +76,6 @@ public class MainMailboxQueryRefreshWorker extends QueryRefreshWorker {
                 .build()
                 .refresh();
         return Result.success();
-    }
-
-    private static List<String> freshlyAddedEmailIds(final Set<String> preexistingEmailIds,
-                                                     final List<String> postRefreshEmailIds) {
-        final ImmutableList.Builder<String> freshlyAddedEmailIds = new ImmutableList.Builder<>();
-        for (final String emailId : postRefreshEmailIds) {
-            if (preexistingEmailIds.contains(emailId)) {
-                return freshlyAddedEmailIds.build();
-            }
-            freshlyAddedEmailIds.add(emailId);
-        }
-        return freshlyAddedEmailIds.build();
-    }
-
-    public static Data data(final Long account, final boolean skipOverEmpty) {
-        return new Data.Builder()
-                .putLong(ACCOUNT_KEY, account)
-                .putBoolean(SKIP_OVER_EMPTY_KEY, skipOverEmpty)
-                .build();
     }
 
     @Override

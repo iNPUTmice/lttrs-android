@@ -44,10 +44,6 @@ public abstract class AppDatabase extends RoomDatabase {
 
     private static volatile AppDatabase INSTANCE = null;
 
-    public abstract SearchSuggestionDao searchSuggestionDao();
-
-    public abstract AccountDao accountDao();
-
     public static AppDatabase getInstance(final Context context) {
         if (INSTANCE != null) {
             return INSTANCE;
@@ -63,5 +59,9 @@ public abstract class AppDatabase extends RoomDatabase {
             return INSTANCE;
         }
     }
+
+    public abstract SearchSuggestionDao searchSuggestionDao();
+
+    public abstract AccountDao accountDao();
 
 }

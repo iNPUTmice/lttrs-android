@@ -62,15 +62,16 @@ public class ForegroundServiceNotification {
         return notificationBuilder.build();
     }
 
-    private static @DrawableRes int  drawable(final State state) {
+    private static @DrawableRes
+    int drawable(final State state) {
         switch (state) {
             case FAILED:
-                return  R.drawable.ic_baseline_sync_problem_24;
+                return R.drawable.ic_baseline_sync_problem_24;
             case CONNECTED:
                 return R.drawable.ic_baseline_sync_24;
             case CLOSED:
             case CONNECTING:
-                 return R.drawable.ic_baseline_sync_disabled_24;
+                return R.drawable.ic_baseline_sync_disabled_24;
             default:
                 throw new IllegalArgumentException(String.format("%s is an unknown state", state));
         }

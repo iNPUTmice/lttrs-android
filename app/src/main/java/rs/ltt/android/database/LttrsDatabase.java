@@ -110,18 +110,6 @@ public abstract class LttrsDatabase extends RoomDatabase {
         return null;
     }
 
-    public abstract ThreadAndEmailDao threadAndEmailDao();
-
-    public abstract MailboxDao mailboxDao();
-
-    public abstract IdentityDao identityDao();
-
-    public abstract StateDao stateDao();
-
-    public abstract QueryDao queryDao();
-
-    public abstract OverwriteDao overwriteDao();
-
     public static LttrsDatabase getInstance(final Context context, final Long account) {
         final LttrsDatabase instance = INSTANCES.get(account);
         if (instance != null) {
@@ -148,4 +136,16 @@ public abstract class LttrsDatabase extends RoomDatabase {
             return lttrsDatabase;
         }
     }
+
+    public abstract ThreadAndEmailDao threadAndEmailDao();
+
+    public abstract MailboxDao mailboxDao();
+
+    public abstract IdentityDao identityDao();
+
+    public abstract StateDao stateDao();
+
+    public abstract QueryDao queryDao();
+
+    public abstract OverwriteDao overwriteDao();
 }

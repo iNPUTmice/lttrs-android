@@ -26,12 +26,12 @@ public class MainThreadExecutor implements Executor {
 
     private final Handler handler = new Handler(Looper.getMainLooper());
 
+    public static MainThreadExecutor getInstance() {
+        return INSTANCE;
+    }
+
     @Override
     public void execute(final Runnable command) {
         handler.post(command);
-    }
-
-    public static MainThreadExecutor getInstance() {
-        return INSTANCE;
     }
 }

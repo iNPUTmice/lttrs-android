@@ -51,12 +51,18 @@ public class MoveToTrashWorker extends AbstractMuaWorker {
         this.threadIds = threadIds != null ? Sets.newHashSet(threadIds) : Collections.emptySet();
     }
 
+    public static Data data(Long account, Collection<String> threadIds) {
+        return new Data.Builder()
+                .putLong(ACCOUNT_KEY, account)
+                .putStringArray(THREAD_IDS_KEY, threadIds.toArray(new String[0]))
+                .build();
+    }
+
     protected ListenableFuture<Boolean> modify(List<EmailWithMailboxes> emails) throws ExecutionException {
         final Mua mua = getMua();
         LOGGER.info("Modifying {} emails in threads {}", emails.size(), threadIds);
         return mua.moveToTrash(emails);
     }
-
 
     @NonNull
     @Override
@@ -81,12 +87,5 @@ public class MoveToTrashWorker extends AbstractMuaWorker {
         } catch (InterruptedException e) {
             return Result.retry();
         }
-    }
-
-    public static Data data(Long account, Collection<String> threadIds) {
-        return new Data.Builder()
-                .putLong(ACCOUNT_KEY, account)
-                .putStringArray(THREAD_IDS_KEY, threadIds.toArray(new String[0]))
-                .build();
     }
 }

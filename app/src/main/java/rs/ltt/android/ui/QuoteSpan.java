@@ -33,20 +33,16 @@ import org.hsluv.HUSLColorConverter;
 
 public class QuoteSpan extends CharacterStyle implements LeadingMarginSpan {
 
-    private final int depth;
-
-    private final int color;
-    private final boolean nightMode;
-
-    private final int paddingPerLayer;
-
-    private final int width;
-    private final int paddingLeft;
-    private final int paddingRight;
-
     private static final float WIDTH_SP = 2f;
     private static final float PADDING_LEFT_SP = 1.5f;
     private static final float PADDING_RIGHT_SP = 8f;
+    private final int depth;
+    private final int color;
+    private final boolean nightMode;
+    private final int paddingPerLayer;
+    private final int width;
+    private final int paddingLeft;
+    private final int paddingRight;
 
     public QuoteSpan(final int depth, final Context context) {
         final DisplayMetrics metrics = context.getResources().getDisplayMetrics();
@@ -59,6 +55,16 @@ public class QuoteSpan extends CharacterStyle implements LeadingMarginSpan {
 
         this.paddingLeft = depth * width * (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, PADDING_LEFT_SP, metrics);
         this.paddingRight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, PADDING_RIGHT_SP, metrics);
+    }
+
+    private static int color(int level, boolean dark) {
+        final double[] hsluv = new double[]{
+                (173.1 + (level * 80)) % 360,
+                80,
+                dark ? 70 : 50,
+        };
+        final double[] rgb = HUSLColorConverter.hsluvToRgb(hsluv);
+        return Color.rgb((int) Math.round(rgb[0] * 255), (int) Math.round(rgb[1] * 255), (int) Math.round(rgb[2] * 255));
     }
 
     @Override
@@ -86,15 +92,5 @@ public class QuoteSpan extends CharacterStyle implements LeadingMarginSpan {
         }
         p.setStyle(style);
         p.setColor(color);
-    }
-
-    private static int color(int level, boolean dark) {
-        final double[] hsluv = new double[]{
-                (173.1 + (level * 80)) % 360,
-                80,
-                dark ? 70 : 50,
-        };
-        final double[] rgb = HUSLColorConverter.hsluvToRgb(hsluv);
-        return Color.rgb((int) Math.round(rgb[0] * 255), (int) Math.round(rgb[1] * 255), (int) Math.round(rgb[2] * 255));
     }
 }

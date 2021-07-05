@@ -35,16 +35,21 @@ import rs.ltt.android.entity.EmailWithMailboxes;
 
 public abstract class AbstractMailboxModificationWorker extends AbstractMuaWorker {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractMailboxModificationWorker.class);
-
     protected static final String THREAD_ID_KEY = "threadId";
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractMailboxModificationWorker.class);
     protected final String threadId;
 
     AbstractMailboxModificationWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
         final Data data = getInputData();
         this.threadId = data.getString(THREAD_ID_KEY);
+    }
+
+    public static Data data(Long account, String threadId) {
+        return new Data.Builder()
+                .putLong(ACCOUNT_KEY, account)
+                .putString(THREAD_ID_KEY, threadId)
+                .build();
     }
 
     @NonNull
@@ -73,11 +78,4 @@ public abstract class AbstractMailboxModificationWorker extends AbstractMuaWorke
     }
 
     protected abstract ListenableFuture<Boolean> modify(List<EmailWithMailboxes> emails) throws ExecutionException;
-
-    public static Data data(Long account, String threadId) {
-        return new Data.Builder()
-                .putLong(ACCOUNT_KEY, account)
-                .putString(THREAD_ID_KEY, threadId)
-                .build();
-    }
 }

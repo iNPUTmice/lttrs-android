@@ -108,6 +108,19 @@ public class ComposeViewModel extends AndroidViewModel {
         }
     }
 
+    private static Collection<String> inReplyTo(@Nullable EditableEmail editableEmail, ComposeAction action) {
+        if (editableEmail == null) {
+            return Collections.emptyList();
+        }
+        if (action == ComposeAction.EDIT_DRAFT) {
+            return editableEmail.inReplyTo;
+        }
+        if (action == ComposeAction.REPLY_ALL) {
+            return editableEmail.messageId;
+        }
+        return Collections.emptyList();
+    }
+
     private ComposeRepository getRepository(Long accountId) {
         return new ComposeRepository(getApplication(), accountId);
     }
@@ -198,19 +211,6 @@ public class ComposeViewModel extends AndroidViewModel {
         }
         this.draftHasBeenHandled = true;
         return workInfoId;
-    }
-
-    private static Collection<String> inReplyTo(@Nullable EditableEmail editableEmail, ComposeAction action) {
-        if (editableEmail == null) {
-            return Collections.emptyList();
-        }
-        if (action == ComposeAction.EDIT_DRAFT) {
-            return editableEmail.inReplyTo;
-        }
-        if (action == ComposeAction.REPLY_ALL) {
-            return editableEmail.messageId;
-        }
-        return Collections.emptyList();
     }
 
     public UUID saveDraft() {

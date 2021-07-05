@@ -43,6 +43,13 @@ public class DiscardDraftWorker extends AbstractMuaWorker {
         this.emailId = data.getString(DISCARD_ID_KEY);
     }
 
+    public static Data data(Long account, String emailId) {
+        return new Data.Builder()
+                .putLong(ACCOUNT_KEY, account)
+                .putString(DISCARD_ID_KEY, emailId)
+                .build();
+    }
+
     @NonNull
     @Override
     public Result doWork() {
@@ -66,12 +73,5 @@ public class DiscardDraftWorker extends AbstractMuaWorker {
         } catch (InterruptedException e) {
             return Result.retry();
         }
-    }
-
-    public static Data data(Long account, String emailId) {
-        return new Data.Builder()
-                .putLong(ACCOUNT_KEY, account)
-                .putString(DISCARD_ID_KEY, emailId)
-                .build();
     }
 }
