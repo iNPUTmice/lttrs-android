@@ -50,13 +50,11 @@ import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import rs.ltt.android.R;
 import rs.ltt.android.entity.From;
 import rs.ltt.android.entity.IdentityWithNameAndEmail;
 import rs.ltt.android.entity.SubjectWithImportance;
-import rs.ltt.android.entity.ThreadOverviewItem;
 import rs.ltt.android.util.ConsistentColorGeneration;
 import rs.ltt.jmap.common.entity.Role;
 import rs.ltt.jmap.mua.util.EmailAddressUtil;

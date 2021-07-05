@@ -17,8 +17,6 @@ package rs.ltt.android.database;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.room.Database;
 import androidx.room.Room;

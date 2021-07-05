@@ -27,7 +27,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import rs.ltt.jmap.common.entity.Keyword;
 import rs.ltt.jmap.mua.util.KeywordUtil;
 
 public abstract class EmailWithTextBodies extends EmailPreview {

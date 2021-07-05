@@ -24,9 +24,6 @@ import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import rs.ltt.android.entity.MailboxOverviewItem;
 import rs.ltt.android.entity.QueryInfo;
 import rs.ltt.jmap.common.entity.query.EmailQuery;
