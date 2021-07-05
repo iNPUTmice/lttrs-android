@@ -16,6 +16,7 @@
 package rs.ltt.android.repository;
 
 import android.app.Application;
+import android.database.sqlite.SQLiteDatabase;
 
 import androidx.lifecycle.LiveData;
 
@@ -28,6 +29,7 @@ import com.google.common.util.concurrent.SettableFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -129,20 +131,15 @@ public class MainRepository {
     }
 
     public void removeAccount(final long id) {
-        IO_EXECUTOR.execute(()->{
+        IO_EXECUTOR.execute(() -> {
             this.appDatabase.accountDao().delete(id);
             LttrsApplication.get(application).invalidateMostRecentlySelectedAccountId();
             EventMonitorService.stopMonitoring(application, id);
             MuaPool.evict(id);
-            LttrsDatabase.close(id);
-            //TODO delete database file
+            final File file = LttrsDatabase.close(id);
+            if (file != null && SQLiteDatabase.deleteDatabase(file)) {
+                LOGGER.debug("Successfully deleted {}", file.getAbsolutePath());
+            }
         });
-        //delete account from main
-        //check if zero other accounts use this credentials -> delete credentials
-        //reset mostRecentlyUsed
-        //stop monitoring
-        //delete from MuaPool. close jmap client (can we ensure callbacks don’t get executed?)
-        //close currently open database?
-        //delete database. in sync with the above?
     }
 }

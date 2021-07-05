@@ -17,6 +17,8 @@ package rs.ltt.android.database;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.room.Database;
 import androidx.room.Room;
@@ -26,6 +28,7 @@ import androidx.room.TypeConverters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
@@ -93,15 +96,20 @@ public abstract class LttrsDatabase extends RoomDatabase {
 
     private static final Set<Long> RECENTLY_CLOSED = new HashSet<>();
 
-    public static void close(final Long account) {
+    public static File close(final Long account) {
         synchronized (LttrsDatabase.class) {
             final LttrsDatabase lttrsDatabase = INSTANCES.remove(account);
             if (lttrsDatabase != null) {
                 LOGGER.info("Closing LttrsDatabase account id {}", account);
+                final File file = new File(
+                        lttrsDatabase.getOpenHelper().getReadableDatabase().getPath()
+                );
                 lttrsDatabase.close();
                 RECENTLY_CLOSED.add(account);
+                return file;
             }
         }
+        return null;
     }
 
     public abstract ThreadAndEmailDao threadAndEmailDao();
