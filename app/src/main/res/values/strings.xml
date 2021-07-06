@@ -132,4 +132,5 @@
     <string name="end_to_end_encryption">End-to-end encryption</string>
     <string name="remove_account_dialog_title">Remove account?</string>
     <string name="remove_account_dialog_message">Removing this account will delete all of its messages and other data from the phone.</string>
+    <string name="view_emails">View e-mails</string>
 </resources>

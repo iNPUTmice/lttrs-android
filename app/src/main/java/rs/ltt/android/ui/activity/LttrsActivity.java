@@ -38,6 +38,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -108,11 +109,11 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
     private ActionMode actionMode;
     private WeakReference<Snackbar> mostRecentSnackbar;
 
-    public static void launch(final AppCompatActivity activity, final long accountId) {
+    public static void launch(final FragmentActivity activity, final long accountId) {
         launch(activity, accountId, true);
     }
 
-    public static void launch(final AppCompatActivity activity, final long accountId, final boolean skipAnimation) {
+    public static void launch(final FragmentActivity activity, final long accountId, final boolean skipAnimation) {
         final Intent intent = getLaunchIntent(activity, accountId);
         activity.startActivity(intent);
         if (skipAnimation) {
@@ -120,7 +121,7 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
         }
     }
 
-    private static Intent getLaunchIntent(final AppCompatActivity activity, final long accountId) {
+    private static Intent getLaunchIntent(final FragmentActivity activity, final long accountId) {
         final Intent intent = new Intent(activity, LttrsActivity.class);
         intent.setAction(Intent.ACTION_MAIN);
         intent.putExtra(LttrsActivity.EXTRA_ACCOUNT_ID, accountId);

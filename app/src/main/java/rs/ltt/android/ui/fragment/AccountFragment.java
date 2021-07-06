@@ -2,6 +2,9 @@ package rs.ltt.android.ui.fragment;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -15,6 +18,7 @@ import rs.ltt.android.R;
 import rs.ltt.android.databinding.FragmentAccountBinding;
 import rs.ltt.android.entity.AccountName;
 import rs.ltt.android.ui.activity.AccountManagerActivity;
+import rs.ltt.android.ui.activity.LttrsActivity;
 import rs.ltt.android.ui.model.AccountViewModel;
 
 public class AccountFragment extends AbstractAccountManagerFragment {
@@ -22,6 +26,12 @@ public class AccountFragment extends AbstractAccountManagerFragment {
     private FragmentAccountBinding binding;
 
     private AccountViewModel accountViewModel;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -50,6 +60,21 @@ public class AccountFragment extends AbstractAccountManagerFragment {
         this.binding.e2ee.setOnClickListener(this::onE2ee);
 
         return this.binding.getRoot();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull final Menu menu, @NonNull final MenuInflater inflater) {
+        inflater.inflate(R.menu.fragment_account, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem menuItem) {
+        final int itemId = menuItem.getItemId();
+        if (itemId == R.id.launch) {
+            LttrsActivity.launch(getActivity(), accountViewModel.getAccountId());
+        }
+        return super.onOptionsItemSelected(menuItem);
     }
 
     private void onAccountName(final AccountName account) {

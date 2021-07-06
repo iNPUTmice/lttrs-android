@@ -33,6 +33,10 @@ public class AccountViewModel extends AndroidViewModel {
         this.mainRepository.removeAccount(this.accountId);
     }
 
+    public long getAccountId() {
+        return this.accountId;
+    }
+
     public static class Factory implements ViewModelProvider.Factory {
 
         private final Application application;
