@@ -208,8 +208,10 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
             lttrsViewModel.toggleAccountSelectionVisibility();
         });
         navigationAdapter.setOnAccountSelected((id -> {
-            closeDrawer();
-            if (id != lttrsViewModel.getAccountId()) {
+            if (id == lttrsViewModel.getAccountId()) {
+                closeDrawer(true);
+            } else {
+                closeDrawer(false);
                 lttrsViewModel.setSelectedAccount(id);
                 launch(this, id);
             }
@@ -217,11 +219,11 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
         navigationAdapter.setOnAdditionalNavigationItemSelected((type -> {
             switch (type) {
                 case ADD_ACCOUNT:
-                    closeDrawer();
+                    closeDrawer(false);
                     SetupActivity.launch(this);
                     break;
                 case MANAGE_ACCOUNT:
-                    closeDrawer();
+                    closeDrawer(false);
                     AccountManagerActivity.launch(this);
                     break;
                 default:
@@ -238,8 +240,8 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
         lttrsViewModel.getActivityTitle().observe(this, this::setTitle);
     }
 
-    private void closeDrawer() {
-        binding.drawerLayout.closeDrawer(GravityCompat.START);
+    private void closeDrawer(final boolean animate) {
+        binding.drawerLayout.closeDrawer(GravityCompat.START, animate);
         lttrsViewModel.setAccountSelectionVisibility(false);
     }
 
