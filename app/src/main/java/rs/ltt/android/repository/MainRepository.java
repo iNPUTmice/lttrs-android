@@ -19,6 +19,7 @@ import android.app.Application;
 import android.database.sqlite.SQLiteDatabase;
 
 import androidx.lifecycle.LiveData;
+import androidx.work.WorkManager;
 
 import com.google.common.collect.Collections2;
 import com.google.common.util.concurrent.Futures;
@@ -47,6 +48,8 @@ import rs.ltt.android.entity.AccountWithCredentials;
 import rs.ltt.android.entity.SearchSuggestionEntity;
 import rs.ltt.android.service.EventMonitorService;
 import rs.ltt.android.ui.notification.EmailNotification;
+import rs.ltt.android.worker.AbstractMuaWorker;
+import rs.ltt.android.worker.QueryRefreshWorker;
 import rs.ltt.jmap.common.entity.Account;
 import rs.ltt.jmap.mua.Mua;
 import rs.ltt.jmap.mua.Status;
@@ -147,6 +150,8 @@ public class MainRepository {
     }
 
     private void cancelAllWork(final Long accountId) {
-        
+        final WorkManager workManager = WorkManager.getInstance(application);
+        workManager.cancelUniqueWork(AbstractMuaWorker.uniqueName(accountId));
+        workManager.cancelUniqueWork(QueryRefreshWorker.uniqueName(accountId));
     }
 }
