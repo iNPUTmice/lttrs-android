@@ -83,7 +83,7 @@
     <string name="reassign_role">Rolle neu zuweisen</string>
     <string name="create">Erstellen</string>
     <string name="new_label">Neues Label</string>
-    <string name="reserved_mailbox_name">Reservierter Name. Versuche es mit einem anderen Namen.</string>
+    <string name="reserved_mailbox_name">Wähle einen Namen, der nicht reserviert ist.</string>
     <string name="no_name_specified">Kein Name angegeben. Versuche es nochmal.</string>
     <string name="enter_a_label_name">Gib einen Namen für ein neues Label ein</string>
     <string name="add_another_account">Weiteres Konto hinzufügen</string>
@@ -111,4 +111,12 @@
         <item quantity="other">%d neue E-Mails</item>
     </plurals>
     <string name="notification_channel_name_email">E-Mail</string>
+    <string name="view_emails">E-Mails anzeigen</string>
+    <string name="remove_account_dialog_message">Wenn du dieses Konto entfernst, werden alle zugehörigen Nachrichten und andere Daten vom Gerät gelöscht.</string>
+    <string name="remove_account_dialog_title">Konto entfernen\?</string>
+    <string name="end_to_end_encryption">Ende-zu-Ende-Verschlüsselung</string>
+    <string name="identities">Identitäten</string>
+    <string name="remove_account">Konto entfernen</string>
+    <string name="account">Konto</string>
+    <string name="accounts">Konten</string>
 </resources>
