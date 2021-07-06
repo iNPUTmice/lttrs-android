@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright 2019 Daniel Gultsch
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -11,11 +12,8 @@
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
-  -->
-
-<resources>
+  --><resources>
     <string name="app_name" translatable="false">Ltt.rs</string>
-
     <string name="archive">Archive</string>
     <string name="mark_unread">Mark as unread</string>
     <string name="mark_read">Mark as read</string>
@@ -99,7 +97,7 @@
     <string name="apply_changes">Apply changes</string>
     <string name="enter_a_label_name">Type in a new label name</string>
     <string name="no_name_specified">No name specified. Try again.</string>
-    <string name="reserved_mailbox_name">Reserved name. Try a different name.</string>
+    <string name="reserved_mailbox_name">Pick a name that isn\'t reserved.</string>
     <string name="new_label">New label</string>
     <string name="create">Create</string>
     <string name="manage_accounts">Manage accounts</string>
@@ -108,7 +106,7 @@
     <string name="foreground_service">Foreground service</string>
     <string name="role_name_inbox">Inbox</string>
     <string name="role_name_sent">Sent</string>
-    <string name="role_name_all">All mail</string>
+    <string name="role_name_all">All e-mail</string>
     <string name="role_name_archive">Archive</string>
     <string name="role_name_drafts">Drafts</string>
     <string name="role_name_flagged">Starred</string>
@@ -117,7 +115,11 @@
     <string name="role_name_junk">Spam</string>
     <string name="role_name_subscribed">Subscribed</string>
     <string name="session_resource_help_dialog_title">What is a connection URL?</string>
-    <string name="session_resource_help_dialog_message">Ltt.rs uses a relatively new protocol called JMAP to synchronize e-mail. There is a chance that your e-mail provider does not yet support this protocol.\n\nYou should contact your provider and ask about JMAP and the JMAP connection URL.\n\nOn a properly configured server Ltt.rs will be able to discover the connection URL automatically.</string>
+    <string name="session_resource_help_dialog_message">Ltt.rs uses a relatively new JMAP protocol to sync e-mail, but your e-mail provider may not yet support it.
+\n
+\nContact your provider and ask about JMAP and the JMAP connection URL.
+\n
+\nOn a properly configured server Ltt.rs will auto-discover the connection URL.</string>
     <plurals name="x_new_emails">
         <item quantity="one">%d new e-mail</item>
         <item quantity="other">%d new e-mails</item>
@@ -131,6 +133,6 @@
     <string name="vacation_response">Vacation response</string>
     <string name="end_to_end_encryption">End-to-end encryption</string>
     <string name="remove_account_dialog_title">Remove account?</string>
-    <string name="remove_account_dialog_message">Removing this account will delete all of its messages and other data from the phone.</string>
+    <string name="remove_account_dialog_message">Removing this account deletes all its messages and other associated data from the device.</string>
     <string name="view_emails">View e-mails</string>
 </resources>
