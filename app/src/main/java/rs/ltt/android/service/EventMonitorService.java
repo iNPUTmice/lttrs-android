@@ -28,6 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
@@ -294,16 +295,23 @@ public class EventMonitorService extends LifecycleService {
     }
 
     private void updateNotification() {
-        ForegroundServiceNotification.updateConnectionState(this, getCombinedState());
+        final Optional<State> optionalState = getCombinedState();
+        if (optionalState.isPresent()) {
+            ForegroundServiceNotification.updateConnectionState(this, optionalState.get());
+        } else {
+            stopForeground(true);
+        }
     }
 
-    private State getCombinedState() {
+    private Optional<State> getCombinedState() {
         synchronized (eventMonitorRegistrations) {
-            final Collection<EventMonitorRegistration> eventMonitors = eventMonitorRegistrations.values();
-            return State.reduce(eventMonitors.stream()
+            final List<State> states = eventMonitorRegistrations.values().stream()
                     .map(EventMonitorRegistration::getConnectionState)
-                    .collect(Collectors.toList())
-            );
+                    .collect(Collectors.toList());
+            if (states.isEmpty()) {
+                return Optional.empty();
+            }
+            return Optional.of(State.reduce(states));
         }
     }
 
