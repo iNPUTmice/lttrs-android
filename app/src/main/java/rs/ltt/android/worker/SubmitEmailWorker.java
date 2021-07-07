@@ -33,7 +33,7 @@ public class SubmitEmailWorker extends AbstractMuaWorker {
     private static final Logger LOGGER = LoggerFactory.getLogger(SubmitEmailWorker.class);
 
     private static final String EMAIL_ID = "emailId";
-    private static String IDENTITY_KEY = "identity";
+    private static final String IDENTITY_KEY = "identity";
 
     private final String emailId;
     private final String identity;

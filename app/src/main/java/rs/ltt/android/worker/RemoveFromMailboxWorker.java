@@ -36,7 +36,7 @@ public class RemoveFromMailboxWorker extends AbstractMailboxModificationWorker {
 
     private static final String THREAD_ID_KEY = "threadId";
     private static final String MAILBOX_ID_KEY = "mailboxId";
-    private static Logger LOGGER = LoggerFactory.getLogger(RemoveFromMailboxWorker.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RemoveFromMailboxWorker.class);
     private final String mailboxId;
 
     public RemoveFromMailboxWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {

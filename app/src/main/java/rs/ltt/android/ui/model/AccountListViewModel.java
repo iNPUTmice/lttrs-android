@@ -15,7 +15,7 @@ import rs.ltt.android.repository.MainRepository;
 
 public class AccountListViewModel extends AndroidViewModel {
 
-    private MainRepository mainRepository;
+    private final MainRepository mainRepository;
 
     public AccountListViewModel(@NonNull @NotNull Application application) {
         super(application);

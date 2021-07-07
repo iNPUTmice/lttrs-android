@@ -42,12 +42,12 @@ public abstract class AbstractCreateEmailWorker extends AbstractMuaWorker {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCreateEmailWorker.class);
 
-    private static String IDENTITY_KEY = "identity";
-    private static String IN_REPLY_TO_KEY = "in_reply_to";
-    private static String TO_KEY = "to";
-    private static String CC_KEY = "cc";
-    private static String SUBJECT_KEY = "subject";
-    private static String BODY_KEY = "body";
+    private static final String IDENTITY_KEY = "identity";
+    private static final String IN_REPLY_TO_KEY = "in_reply_to";
+    private static final String TO_KEY = "to";
+    private static final String CC_KEY = "cc";
+    private static final String SUBJECT_KEY = "subject";
+    private static final String BODY_KEY = "body";
 
     private final String identity;
     private final List<String> inReplyTo;
