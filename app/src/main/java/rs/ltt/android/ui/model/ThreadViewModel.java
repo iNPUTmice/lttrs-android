@@ -31,6 +31,7 @@ import androidx.work.Data;
 import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -45,6 +46,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 import rs.ltt.android.entity.EmailComplete;
 import rs.ltt.android.entity.ExpandedPosition;
@@ -57,6 +59,7 @@ import rs.ltt.android.repository.ThreadViewRepository;
 import rs.ltt.android.util.CombinedListsLiveData;
 import rs.ltt.android.util.Event;
 import rs.ltt.jmap.common.entity.Role;
+import rs.ltt.jmap.mua.util.LabelUtil;
 
 public class ThreadViewModel extends AndroidViewModel {
 
@@ -68,13 +71,13 @@ public class ThreadViewModel extends AndroidViewModel {
     public final HashSet<String> expandedItems = new HashSet<>();
     private final String threadId;
     private final String label;
-    private final ThreadViewRepository threadViewRepository;
     private final MediatorLiveData<Event<String>> threadViewRedirect = new MediatorLiveData<>();
     private final MediatorLiveData<SubjectWithImportance> subjectWithImportance = new MediatorLiveData<>();
-    private LiveData<PagedList<EmailComplete>> emails;
-    private LiveData<Boolean> flagged;
-    private LiveData<List<MailboxWithRoleAndName>> mailboxes;
-    private LiveData<MenuConfiguration> menuConfiguration;
+    private final LiveData<PagedList<EmailComplete>> emails;
+    private final LiveData<Boolean> flagged;
+    private final LiveData<List<MailboxWithRoleAndName>> mailboxes;
+    private final LiveData<List<MailboxWithRoleAndName>> labels;
+    private final LiveData<MenuConfiguration> menuConfiguration;
 
 
     ThreadViewModel(@NonNull final Application application,
@@ -84,11 +87,11 @@ public class ThreadViewModel extends AndroidViewModel {
         super(application);
         this.threadId = threadId;
         this.label = label;
-        this.threadViewRepository = new ThreadViewRepository(application, accountId);
-        final LiveData<ThreadHeader> header = this.threadViewRepository.getThreadHeader(threadId);
-        this.emails = this.threadViewRepository.getEmails(threadId);
-        this.mailboxes = this.threadViewRepository.getMailboxes(threadId);
-        final ListenableFuture<Seen> seen = this.threadViewRepository.getSeen(threadId);
+        final ThreadViewRepository threadViewRepository = new ThreadViewRepository(application, accountId);
+        final LiveData<ThreadHeader> header = threadViewRepository.getThreadHeader(threadId);
+        this.emails = threadViewRepository.getEmails(threadId);
+        this.mailboxes = threadViewRepository.getMailboxes(threadId);
+        final ListenableFuture<Seen> seen = threadViewRepository.getSeen(threadId);
         this.expandedPositions = Futures.transform(seen, Seen::getExpandedPositions, MoreExecutors.directExecutor());
         Futures.addCallback(seen, new FutureCallback<Seen>() {
             @Override
@@ -104,11 +107,14 @@ public class ThreadViewModel extends AndroidViewModel {
             }
         }, MoreExecutors.directExecutor());
 
-        final LiveData<List<MailboxOverwriteEntity>> overwriteEntityLiveData = this.threadViewRepository.getMailboxOverwrites(threadId);
+        final LiveData<List<MailboxOverwriteEntity>> overwriteEntityLiveData = threadViewRepository.getMailboxOverwrites(threadId);
 
         final CombinedListsLiveData<MailboxOverwriteEntity, MailboxWithRoleAndName> combined = new CombinedListsLiveData<>(overwriteEntityLiveData, mailboxes);
 
-        //TODO transform `combined` into List<String> or something for all labels
+        this.labels = Transformations.map(combined, pair -> combine(pair.first, pair.second).stream()
+                .filter(m -> m.getRole() == null || m.getRole() == Role.INBOX)
+                .sorted(LabelUtil.COMPARATOR)
+                .collect(Collectors.toList()));
 
         this.menuConfiguration = Transformations.map(combined, pair -> {
             List<MailboxOverwriteEntity> overwrites = pair.first;
@@ -141,12 +147,30 @@ public class ThreadViewModel extends AndroidViewModel {
             return importantOverwrite != null ? importantOverwrite.value : MailboxWithRoleAndName.isAnyOfRole(list, Role.IMPORTANT);
         });
 
+        //TODO subject might just become a label
         this.subjectWithImportance.addSource(importance, important -> setSubjectWithImportance(header.getValue(), important));
         this.subjectWithImportance.addSource(header, threadHeader -> setSubjectWithImportance(threadHeader, importance.getValue()));
 
         this.flagged = Transformations.map(header, h -> h != null && h.showAsFlagged());
 
         //TODO add LiveData that is true when header != null and display 'Thread not found' or something in UI
+    }
+
+    private static List<MailboxWithRoleAndName> combine(List<MailboxOverwriteEntity> overwrites, List<MailboxWithRoleAndName> mailboxes) {
+        final ImmutableList.Builder<MailboxWithRoleAndName> builder = ImmutableList.builder();
+        for(final MailboxWithRoleAndName mailbox : mailboxes) {
+            final Boolean overwrite = MailboxOverwriteEntity.getOverwrite(overwrites, mailbox);
+            if (overwrite == null || Boolean.TRUE.equals(overwrite)) {
+                builder.add(mailbox);
+            }
+        }
+        for(final MailboxOverwriteEntity overwrite : overwrites) {
+            if (Boolean.TRUE.equals(overwrite.value) && !overwrite.matches(mailboxes)) {
+                final Role role = overwrite.role.isEmpty() ? null : Role.valueOf(overwrite.role);
+                builder.add(new MailboxWithRoleAndName(role, overwrite.name));
+            }
+        }
+        return builder.build();
     }
 
     private void setSubjectWithImportance(ThreadHeader header, Boolean important) {
@@ -178,6 +202,10 @@ public class ThreadViewModel extends AndroidViewModel {
 
     public String getLabel() {
         return this.label;
+    }
+
+    public LiveData<List<MailboxWithRoleAndName>> getLabels() {
+        return this.labels;
     }
 
     public String getThreadId() {

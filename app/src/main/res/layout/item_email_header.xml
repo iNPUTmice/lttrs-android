@@ -17,41 +17,74 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?selectableItemBackground"
+        android:gravity="center_vertical"
         android:minHeight="48dp"
         android:orientation="vertical"
         android:paddingTop="12dp"
         android:paddingBottom="12dp">
 
-        <ImageView
-            android:id="@+id/star_toggle"
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/star_toggle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="12dp"
+                android:visibility="@{flagged == null ? View.INVISIBLE : View.VISIBLE}"
+                app:isFlagged="@{flagged}"
+                tools:alpha="0.57"
+                tools:src="@drawable/ic_star_border_no_padding_black_24dp" />
+
+            <TextView
+                android:id="@+id/subject"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="16dp"
+                android:layout_toStartOf="@+id/star_toggle"
+                android:text="@{subject}"
+                android:textAppearance="?textAppearanceHeadline5"
+                android:textSize="22sp"
+                tools:text="[Jmap] I-D Action: draft-ietf-jmap-mdn-01.txt" />
+
+
+        </RelativeLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:id="@+id/labels"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="12dp"
-            android:visibility="@{flagged == null ? View.INVISIBLE : View.VISIBLE}"
-            app:isFlagged="@{flagged}"
-            tools:alpha="0.57"
-            tools:src="@drawable/ic_star_border_no_padding_black_24dp" />
+            android:visibility="visible">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="16dp"
-            android:layout_toStartOf="@+id/star_toggle"
-            android:text="@{subject}"
-            android:textAppearance="?textAppearanceHeadline5"
-            android:textSize="22sp"
-            tools:text="[Jmap] I-D Action: draft-ietf-jmap-mdn-01.txt" />
+            <androidx.constraintlayout.helper.widget.Flow
+                android:id="@+id/flow_widget"
+                android:layout_width="0dp"
+                app:flow_wrapMode="chain"
+                app:flow_horizontalStyle="packed"
+                app:flow_horizontalBias="0"
+                app:flow_horizontalGap="8sp"
+                app:flow_verticalGap="4sp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-    </RelativeLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+
 
     <data>
 

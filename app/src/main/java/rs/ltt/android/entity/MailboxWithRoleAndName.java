@@ -15,16 +15,30 @@
 
 package rs.ltt.android.entity;
 
+import androidx.room.Ignore;
+
 import java.util.Collection;
 
 import rs.ltt.jmap.common.entity.IdentifiableMailboxWithRoleAndName;
 import rs.ltt.jmap.common.entity.Role;
+import rs.ltt.jmap.mua.util.Label;
 
-public class MailboxWithRoleAndName implements IdentifiableMailboxWithRoleAndName {
+public class MailboxWithRoleAndName implements IdentifiableMailboxWithRoleAndName, Label {
 
     public String id;
     public Role role;
     public String name;
+
+    public MailboxWithRoleAndName() {
+
+    }
+
+    @Ignore
+    public MailboxWithRoleAndName(Role role, String name) {
+        this.id = null;
+        this.role = role;
+        this.name = name;
+    }
 
     public static boolean isAnyOfRole(Collection<MailboxWithRoleAndName> mailboxes, Role role) {
         for (MailboxWithRoleAndName mailbox : mailboxes) {

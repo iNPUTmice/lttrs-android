@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.core.view.ViewCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.paging.AsyncPagedListDiffer;
 import androidx.paging.PagedList;
@@ -27,17 +28,23 @@ import androidx.recyclerview.widget.AsyncDifferConfig;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 import rs.ltt.android.R;
 import rs.ltt.android.databinding.ItemEmailBinding;
 import rs.ltt.android.databinding.ItemEmailHeaderBinding;
+import rs.ltt.android.databinding.ItemLabelBinding;
 import rs.ltt.android.entity.EmailComplete;
 import rs.ltt.android.entity.ExpandedPosition;
+import rs.ltt.android.entity.MailboxWithRoleAndName;
 import rs.ltt.android.entity.SubjectWithImportance;
 import rs.ltt.android.ui.BindingAdapters;
 import rs.ltt.android.util.Touch;
+import rs.ltt.jmap.mua.util.Label;
 
 public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.AbstractThreadItemViewHolder> {
 
@@ -67,6 +74,7 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.AbstractTh
             new AsyncDifferConfig.Builder<>(ITEM_CALLBACK).build()
     );
     private SubjectWithImportance subjectWithImportance;
+    private List<MailboxWithRoleAndName> labels = Collections.emptyList();
     private Boolean flagged;
     private OnFlaggedToggled onFlaggedToggled;
     private OnComposeActionTriggered onComposeActionTriggered;
@@ -90,42 +98,72 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.AbstractTh
     @Override
     public void onBindViewHolder(@NonNull AbstractThreadItemViewHolder holder, final int position) {
         if (holder instanceof ThreadHeaderViewHolder) {
-            final ThreadHeaderViewHolder headerViewHolder = (ThreadHeaderViewHolder) holder;
-            headerViewHolder.binding.setSubject(subjectWithImportance);
-            headerViewHolder.binding.setFlagged(flagged);
-            headerViewHolder.binding.starToggle.setOnClickListener(v -> {
-                if (onFlaggedToggled != null && subjectWithImportance != null) {
-                    final boolean target = !flagged;
-                    BindingAdapters.setIsFlagged(headerViewHolder.binding.starToggle, target);
-                    onFlaggedToggled.onFlaggedToggled(subjectWithImportance.threadId, target);
-                }
-            });
-            Touch.expandTouchArea(headerViewHolder.binding.starToggle, 16);
+            onBindViewHolder((ThreadHeaderViewHolder) holder);
         } else if (holder instanceof ThreadItemViewHolder) {
-            final ThreadItemViewHolder itemViewHolder = (ThreadItemViewHolder) holder;
-            final EmailComplete email = mDiffer.getItem(position - 1);
-            final boolean lastEmail = mDiffer.getItemCount() == position;
-            final boolean expanded = email != null && expandedItems.contains(email.id);
-            itemViewHolder.binding.setExpanded(expanded);
-            itemViewHolder.binding.setEmail(email);
-            itemViewHolder.binding.divider.setVisibility(lastEmail ? View.GONE : View.VISIBLE);
-            if (expanded) {
-                Touch.expandTouchArea(itemViewHolder.binding.moreOptions, 8);
-            } else {
-                itemViewHolder.binding.header.setTouchDelegate(null);
-            }
-            itemViewHolder.binding.header.setOnClickListener(v -> {
-                if (expandedItems.contains(email.id)) {
-                    expandedItems.remove(email.id);
-                } else {
-                    expandedItems.add(email.id);
-                }
-                notifyItemChanged(position);
-            });
-            itemViewHolder.binding.edit.setOnClickListener(v -> onComposeActionTriggered.onEditDraft(email.id));
-            itemViewHolder.binding.replyAll.setOnClickListener(v -> onComposeActionTriggered.onReplyAll(email.id));
+            onBindViewHolder((ThreadItemViewHolder) holder, position);
         }
+    }
 
+    private void onBindViewHolder(@NonNull final ThreadHeaderViewHolder headerViewHolder) {
+        headerViewHolder.binding.setSubject(subjectWithImportance);
+        headerViewHolder.binding.setFlagged(flagged);
+        headerViewHolder.binding.starToggle.setOnClickListener(v -> {
+            if (onFlaggedToggled != null && subjectWithImportance != null) {
+                final boolean target = !flagged;
+                BindingAdapters.setIsFlagged(headerViewHolder.binding.starToggle, target);
+                onFlaggedToggled.onFlaggedToggled(subjectWithImportance.threadId, target);
+            }
+        });
+        if (this.labels.isEmpty()) {
+            headerViewHolder.binding.labels.setVisibility(View.GONE);
+        } else {
+            headerViewHolder.binding.labels.setVisibility(View.VISIBLE);
+            headerViewHolder.binding.labels.removeViews(1, headerViewHolder.binding.labels.getChildCount() - 1);
+            final LayoutInflater inflater = LayoutInflater.from(headerViewHolder.binding.getRoot().getContext());
+            final int[] ids = new int[labels.size()];
+            int i = 0;
+            for(final Label label : labels) {
+                final ItemLabelBinding itemLabelBinding = DataBindingUtil.inflate(
+                        inflater,
+                        R.layout.item_label,
+                        headerViewHolder.binding.labels,
+                        false
+                );
+                itemLabelBinding.setLabel(label);
+                final int id = ViewCompat.generateViewId();
+                itemLabelBinding.getRoot().setId(id);
+                headerViewHolder.binding.labels.addView(itemLabelBinding.getRoot());
+                ids[i] = id;
+                ++i;
+            }
+            headerViewHolder.binding.flowWidget.setReferencedIds(ids);
+            headerViewHolder.binding.flowWidget.requestLayout();
+        }
+        Touch.expandTouchArea(headerViewHolder.binding.starToggle, 16);
+    }
+
+    private void onBindViewHolder(@NonNull final ThreadItemViewHolder itemViewHolder, final int position) {
+        final EmailComplete email = mDiffer.getItem(position - 1);
+        final boolean lastEmail = mDiffer.getItemCount() == position;
+        final boolean expanded = email != null && expandedItems.contains(email.id);
+        itemViewHolder.binding.setExpanded(expanded);
+        itemViewHolder.binding.setEmail(email);
+        itemViewHolder.binding.divider.setVisibility(lastEmail ? View.GONE : View.VISIBLE);
+        if (expanded) {
+            Touch.expandTouchArea(itemViewHolder.binding.moreOptions, 8);
+        } else {
+            itemViewHolder.binding.header.setTouchDelegate(null);
+        }
+        itemViewHolder.binding.header.setOnClickListener(v -> {
+            if (expandedItems.contains(email.id)) {
+                expandedItems.remove(email.id);
+            } else {
+                expandedItems.add(email.id);
+            }
+            notifyItemChanged(position);
+        });
+        itemViewHolder.binding.edit.setOnClickListener(v -> onComposeActionTriggered.onEditDraft(email.id));
+        itemViewHolder.binding.replyAll.setOnClickListener(v -> onComposeActionTriggered.onReplyAll(email.id));
     }
 
     @Override
@@ -146,6 +184,12 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.AbstractTh
 
     public void setFlagged(Boolean flagged) {
         this.flagged = flagged;
+        notifyItemChanged(0);
+    }
+
+    public void setLabels(final List<MailboxWithRoleAndName> labels) {
+        this.labels = labels;
+        //TODO notify only if actually changed
         notifyItemChanged(0);
     }
 

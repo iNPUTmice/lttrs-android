@@ -94,21 +94,36 @@ public class MailboxOverwriteEntity {
     }
 
     public static Boolean getOverwrite(final List<MailboxOverwriteEntity> mailboxOverwrites, IdentifiableMailboxWithRoleAndName mailbox) {
-        final Role role = mailbox.getRole();
-        final String name = mailbox.getName();
         for (final MailboxOverwriteEntity overwrite : mailboxOverwrites) {
-            if (role != null) {
-                if (role.toString().equals(overwrite.role)) {
-                    return overwrite.value;
-                }
-            } else if (name != null) {
-                if (name.equals(overwrite.name)) {
-                    return overwrite.value;
-                }
+            if (overwrite.matches(mailbox)) {
+                return overwrite.value;
             }
         }
         return null;
     }
+
+    public boolean matches(final IdentifiableMailboxWithRoleAndName mailbox) {
+        final Role role = mailbox.getRole();
+        final String name = mailbox.getName();
+        if (role != null) {
+            return role.toString().equals(this.role);
+        } else if (name != null) {
+            return name.equals(this.name);
+        } else {
+            return false;
+        }
+    }
+
+
+    public boolean matches(final Collection<? extends IdentifiableMailboxWithRoleAndName> mailboxes) {
+        for(final IdentifiableMailboxWithRoleAndName mailbox : mailboxes) {
+            if (matches(mailbox)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     @Override
     public boolean equals(Object o) {

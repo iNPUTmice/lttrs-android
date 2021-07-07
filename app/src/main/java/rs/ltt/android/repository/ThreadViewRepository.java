@@ -53,7 +53,6 @@ public class ThreadViewRepository extends AbstractRepository {
         return database.mailboxDao().getMailboxesForThreadLiveData(threadId);
     }
 
-
     public LiveData<List<MailboxOverwriteEntity>> getMailboxOverwrites(String threadId) {
         return database.overwriteDao().getMailboxOverwrites(threadId);
     }

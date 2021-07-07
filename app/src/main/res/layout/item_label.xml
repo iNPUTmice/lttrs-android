@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="label"
+            type="rs.ltt.jmap.mua.util.Label" />
+    </data>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/background_label"
+        android:textAppearance="?textAppearanceBody2"
+        tools:text="@string/role_name_inbox"
+        app:name="@{label}"/>
+
+</layout>
