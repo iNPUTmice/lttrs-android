@@ -158,13 +158,13 @@ public class ThreadViewModel extends AndroidViewModel {
 
     private static List<MailboxWithRoleAndName> combine(List<MailboxOverwriteEntity> overwrites, List<MailboxWithRoleAndName> mailboxes) {
         final ImmutableList.Builder<MailboxWithRoleAndName> builder = ImmutableList.builder();
-        for(final MailboxWithRoleAndName mailbox : mailboxes) {
+        for (final MailboxWithRoleAndName mailbox : mailboxes) {
             final Boolean overwrite = MailboxOverwriteEntity.getOverwrite(overwrites, mailbox);
             if (overwrite == null || Boolean.TRUE.equals(overwrite)) {
                 builder.add(mailbox);
             }
         }
-        for(final MailboxOverwriteEntity overwrite : overwrites) {
+        for (final MailboxOverwriteEntity overwrite : overwrites) {
             if (Boolean.TRUE.equals(overwrite.value) && !overwrite.matches(mailboxes)) {
                 final Role role = overwrite.role.isEmpty() ? null : Role.valueOf(overwrite.role);
                 builder.add(new MailboxWithRoleAndName(role, overwrite.name));

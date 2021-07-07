@@ -20,6 +20,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.helper.widget.Flow;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.ViewCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.paging.AsyncPagedListDiffer;
@@ -28,7 +30,9 @@ import androidx.recyclerview.widget.AsyncDifferConfig;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -47,7 +51,7 @@ import rs.ltt.android.util.Touch;
 import rs.ltt.jmap.mua.util.Label;
 
 public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.AbstractThreadItemViewHolder> {
-
+    
     private static final DiffUtil.ItemCallback<EmailComplete> ITEM_CALLBACK = new DiffUtil.ItemCallback<EmailComplete>() {
 
         @Override
@@ -118,28 +122,45 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.AbstractTh
             headerViewHolder.binding.labels.setVisibility(View.GONE);
         } else {
             headerViewHolder.binding.labels.setVisibility(View.VISIBLE);
-            headerViewHolder.binding.labels.removeViews(1, headerViewHolder.binding.labels.getChildCount() - 1);
-            final LayoutInflater inflater = LayoutInflater.from(headerViewHolder.binding.getRoot().getContext());
-            final int[] ids = new int[labels.size()];
-            int i = 0;
-            for(final Label label : labels) {
-                final ItemLabelBinding itemLabelBinding = DataBindingUtil.inflate(
-                        inflater,
-                        R.layout.item_label,
-                        headerViewHolder.binding.labels,
-                        false
-                );
-                itemLabelBinding.setLabel(label);
-                final int id = ViewCompat.generateViewId();
-                itemLabelBinding.getRoot().setId(id);
-                headerViewHolder.binding.labels.addView(itemLabelBinding.getRoot());
-                ids[i] = id;
-                ++i;
-            }
-            headerViewHolder.binding.flowWidget.setReferencedIds(ids);
-            headerViewHolder.binding.flowWidget.requestLayout();
+            updateLabels(headerViewHolder.binding.labels, headerViewHolder.binding.flowWidget);
         }
         Touch.expandTouchArea(headerViewHolder.binding.starToggle, 16);
+    }
+
+
+    private void updateLabels(final ConstraintLayout labels, final Flow flowWidget) {
+        if (skip(labels)) {
+            return;
+        }
+        labels.removeViews(1, labels.getChildCount() - 1);
+        final LayoutInflater inflater = LayoutInflater.from(labels.getContext());
+        final int[] ids = new int[this.labels.size()];
+        int i = 0;
+        for (final Label label : this.labels) {
+            final ItemLabelBinding itemLabelBinding = DataBindingUtil.inflate(
+                    inflater,
+                    R.layout.item_label,
+                    labels,
+                    false
+            );
+            itemLabelBinding.setLabel(label);
+            final int id = ViewCompat.generateViewId();
+            itemLabelBinding.getRoot().setId(id);
+            labels.addView(itemLabelBinding.getRoot());
+            ids[i] = id;
+            ++i;
+        }
+        flowWidget.setReferencedIds(ids);
+        labels.setTag(this.labels);
+    }
+
+    private boolean skip(final ConstraintLayout labels) {
+        final Object tag = labels.getTag();
+        if (tag instanceof List) {
+            final List<?> current = (List<?>) labels.getTag();
+            return current.equals(this.labels);
+        }
+        return false;
     }
 
     private void onBindViewHolder(@NonNull final ThreadItemViewHolder itemViewHolder, final int position) {
@@ -188,8 +209,11 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.AbstractTh
     }
 
     public void setLabels(final List<MailboxWithRoleAndName> labels) {
+        final boolean unchanged = this.labels.equals(labels);
         this.labels = labels;
-        //TODO notify only if actually changed
+        if (unchanged) {
+            return;
+        }
         notifyItemChanged(0);
     }
 

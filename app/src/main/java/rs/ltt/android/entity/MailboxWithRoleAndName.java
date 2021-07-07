@@ -17,6 +17,9 @@ package rs.ltt.android.entity;
 
 import androidx.room.Ignore;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Objects;
+
 import java.util.Collection;
 
 import rs.ltt.jmap.common.entity.IdentifiableMailboxWithRoleAndName;
@@ -98,5 +101,29 @@ public class MailboxWithRoleAndName implements IdentifiableMailboxWithRoleAndNam
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("id", id)
+                .add("role", role)
+                .add("name", name)
+                .toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MailboxWithRoleAndName mailbox = (MailboxWithRoleAndName) o;
+        return Objects.equal(id, mailbox.id) &&
+                role == mailbox.role &&
+                Objects.equal(name, mailbox.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id, role, name);
     }
 }

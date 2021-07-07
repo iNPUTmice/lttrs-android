@@ -116,7 +116,7 @@ public class MailboxOverwriteEntity {
 
 
     public boolean matches(final Collection<? extends IdentifiableMailboxWithRoleAndName> mailboxes) {
-        for(final IdentifiableMailboxWithRoleAndName mailbox : mailboxes) {
+        for (final IdentifiableMailboxWithRoleAndName mailbox : mailboxes) {
             if (matches(mailbox)) {
                 return true;
             }
