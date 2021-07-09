@@ -83,16 +83,16 @@
     <string name="reassign_role">Réassigner le rôle</string>
     <string name="create">Créer</string>
     <string name="new_label">Nouvelle étiquette</string>
-    <string name="reserved_mailbox_name">Nom réservé. Essayez un autre nom.</string>
+    <string name="reserved_mailbox_name">Choisissez un nom qui n’est pas réservé.</string>
     <string name="no_name_specified">Aucun nom spécifié. Réessayez.</string>
     <string name="enter_a_label_name">Saisissez un nouveau nom d’étiquette</string>
     <string name="add_another_account">Ajouter un autre compte</string>
     <string name="manage_accounts">Gérer les comptes</string>
-    <string name="session_resource_help_dialog_message">Ltt.rs utilise un protocole relativement nouveau appelé JMAP pour synchroniser le courrier électronique. Il est possible que votre fournisseur de messagerie ne prenne pas encore en charge ce protocole.
+    <string name="session_resource_help_dialog_message">Ltt.rs utilise un protocole JMAP relativement nouveau pour synchroniser les courriels, mais il se peut que votre fournisseur de messagerie ne le prenne pas encore en charge.
 \n
-\nVous devez contacter votre fournisseur et vous renseigner sur JMAP et l\'URL de connexion JMAP.
+\nContactez votre fournisseur et renseignez-vous sur JMAP et l’URL de connexion JMAP.
 \n
-\nSur un serveur correctement configuré, Ltt.rs sera capable de découvrir l\'URL de connexion automatiquement.</string>
+\nSur un serveur correctement configuré, Ltt.rs découvrira automatiquement l’URL de connexion.</string>
     <string name="session_resource_help_dialog_title">Qu\'est-ce qu\'une URL de connexion\?</string>
     <string name="role_name_subscribed">Abonnements</string>
     <string name="role_name_junk">Pourriel</string>
@@ -101,7 +101,7 @@
     <string name="role_name_flagged">Favoris</string>
     <string name="role_name_drafts">Brouillons</string>
     <string name="role_name_archive">Archives</string>
-    <string name="role_name_all">Tous les messages</string>
+    <string name="role_name_all">Tous les courriels</string>
     <string name="role_name_sent">Envoyés</string>
     <string name="role_name_inbox">Boîte de réception</string>
     <string name="foreground_service">Service de premier plan</string>
@@ -111,4 +111,14 @@
         <item quantity="other">%d nouveaux courriels</item>
     </plurals>
     <string name="notification_channel_name_email">Courriel</string>
+    <string name="view_emails">Afficher les courriels</string>
+    <string name="remove_account_dialog_message">La retrait de ce compte supprime tous ses messages et autres données associées sur l’appareil.</string>
+    <string name="remove_account_dialog_title">Retirer le compte\?</string>
+    <string name="end_to_end_encryption">Chiffrement de bout en bout</string>
+    <string name="vacation_response">Réponse d’absence</string>
+    <string name="manage_labels">Gérer les étiquettes</string>
+    <string name="identities">Identités</string>
+    <string name="remove_account">Retirer le compte</string>
+    <string name="account">Compte</string>
+    <string name="accounts">Comptes</string>
 </resources>
