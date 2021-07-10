@@ -57,7 +57,7 @@
         <item quantity="other">%d aus %s entfernt</item>
     </plurals>
     <string name="remove_label">Label entfernen</string>
-    <string name="remove_label_x">Entferne Label %s</string>
+    <string name="remove_label_x">Label %s entfernen</string>
     <string name="to_x">An %s</string>
     <string name="enter_a_secure_url">Gib eine sichere URL ein</string>
     <string name="enter_a_valid_url">Gib eine gültige Verbindungs-URL ein</string>
@@ -88,11 +88,11 @@
     <string name="enter_a_label_name">Gib einen Namen für ein neues Label ein</string>
     <string name="add_another_account">Weiteres Konto hinzufügen</string>
     <string name="manage_accounts">Konten verwalten</string>
-    <string name="session_resource_help_dialog_message">Ltt.rs verwendet ein relativ neues Protokoll namens JMAP, um E-Mails zu synchronisieren. Es besteht die Möglichkeit, dass dein E-Mail-Anbieter dieses Protokoll noch nicht unterstützt.
+    <string name="session_resource_help_dialog_message">Ltt.rs verwendet ein relativ neues JMAP-Protokoll zum Synchronisieren von E-Mails, das Ihr E-Mail-Anbieter jedoch möglicherweise noch nicht unterstützt.
 \n
-\nDu solltest deinen Anbieter kontaktieren und nach JMAP und der JMAP-Verbindungs-URL fragen.
+\nWenden Sie sich an Ihren Anbieter und fragen Sie nach JMAP und der JMAP-Verbindungs-URL.
 \n
-\nAuf einem richtig konfigurierten Server kann Ltt.rs die Verbindungs-URL automatisch ermitteln.</string>
+\nAuf einem korrekt konfigurierten Server erkennt Ltt.rs die Verbindungs-URL automatisch.</string>
     <string name="session_resource_help_dialog_title">Was ist eine Verbindungs-URL\?</string>
     <string name="role_name_subscribed">Abonnements</string>
     <string name="role_name_junk">Spam</string>
@@ -119,4 +119,6 @@
     <string name="remove_account">Konto entfernen</string>
     <string name="account">Konto</string>
     <string name="accounts">Konten</string>
+    <string name="vacation_response">Urlaubsantwort</string>
+    <string name="manage_labels">Labels verwalten</string>
 </resources>
