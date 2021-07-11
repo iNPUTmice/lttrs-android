@@ -83,16 +83,16 @@
     <string name="change_labels">Cambia etichette</string>
     <string name="create">Crea</string>
     <string name="new_label">Nuova etichetta</string>
-    <string name="reserved_mailbox_name">Nome riservato. Provane uno diverso.</string>
+    <string name="reserved_mailbox_name">Scegli un nome che non sia riservato.</string>
     <string name="no_name_specified">Nessun nome specificato. Riprova.</string>
     <string name="enter_a_label_name">Digita una nuova etichetta</string>
     <string name="add_another_account">Aggiungi un altro account</string>
     <string name="manage_accounts">Gestisci gli account</string>
-    <string name="session_resource_help_dialog_message">Ltt.rs usa un protocollo relativamente nuovo chiamato JMAP per sincronizzare la posta elettronica. C\'è la possibilità che il tuo fornitore di posta elettronica non supporti ancora questo protocollo.
+    <string name="session_resource_help_dialog_message">Ltt.rs usa un protocollo JMAP relativamente nuovo per sincronizzare la posta elettronica, ma il tuo fornitore potrebbe non supportarlo ancora.
 \n
-\nDovresti contattare il tuo provider e chiedere informazioni su JMAP e sull\'URL di connessione JMAP.
+\nContatta il tuo provider e chiedi di JMAP e dell\'URL di connessione JMAP.
 \n
-\nSu un server correttamente configurato, Ltt.rs sarà in grado di scoprire automaticamente l\'URL di connessione.</string>
+\nSu un server correttamente configurato, Ltt.rs scoprirà automaticamente l\'URL di connessione.</string>
     <string name="session_resource_help_dialog_title">Che cos\'è un URL di connessione\?</string>
     <string name="role_name_subscribed">Abbonamenti</string>
     <string name="role_name_junk">Posta indesiderata</string>
@@ -101,7 +101,7 @@
     <string name="role_name_flagged">Preferiti</string>
     <string name="role_name_drafts">Bozze</string>
     <string name="role_name_archive">Archivio</string>
-    <string name="role_name_all">Tutta la posta</string>
+    <string name="role_name_all">Tutte le e-mail</string>
     <string name="role_name_sent">Inviati</string>
     <string name="role_name_inbox">Posta in arrivo</string>
     <string name="foreground_service">Servizio in primo piano</string>
@@ -110,4 +110,15 @@
         <item quantity="one">%d nuova e-mail</item>
         <item quantity="other">%d nuove e-mail</item>
     </plurals>
+    <string name="notification_channel_name_email">E-mail</string>
+    <string name="view_emails">Visualizza le e-mail</string>
+    <string name="remove_account_dialog_message">La rimozione di questo account elimina tutti i suoi messaggi e altri dati associati dal dispositivo.</string>
+    <string name="remove_account_dialog_title">Rimuovere l\'account\?</string>
+    <string name="end_to_end_encryption">Crittografia dall\'inizio alla fine</string>
+    <string name="vacation_response">Risposta per le vacanze</string>
+    <string name="manage_labels">Gestisci le etichette</string>
+    <string name="identities">Identità</string>
+    <string name="remove_account">Rimuovi l\'account</string>
+    <string name="account">Account</string>
+    <string name="accounts">Account</string>
 </resources>

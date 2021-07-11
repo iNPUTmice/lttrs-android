@@ -100,4 +100,5 @@
         <item quantity="one">%d nuevo correo</item>
         <item quantity="other">%d nuevos correos</item>
     </plurals>
+    <string name="notification_channel_name_email">Correo electrónico</string>
 </resources>
