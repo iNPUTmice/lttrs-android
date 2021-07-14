@@ -23,6 +23,7 @@
     <color name="colorSecondaryOnSurface">#8a000000</color> <!-- black 54 -->
     <color name="colorShadowOnPrimary">#1f000000</color> <!-- black 12, might be increased to black 20 -->
     <color name="colorBackground">#ffffffff</color> <!-- white -->
+    <color name="colorBackgroundSecondary">#eeeeee</color> <!-- gray 200 -->
     <color name="colorSurface">#ffffffff</color> <!-- white -->
     <color name="colorDivider">#1f000000</color> <!-- black 12 -->
     <color name="primary12">#1f008577</color>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <FrameLayout
+        android:id="@+id/attachment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:background="@drawable/background_attachment"
+        android:elevation="2dp"
+        android:foreground="@drawable/foreground_attachment">
+
+        <RelativeLayout
+            android:layout_width="@dimen/attachment_width"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/icon_media_type"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_margin="12dp"
+                tools:src="@drawable/ic_archive_black_24dp"
+                app:tint="@color/colorPrimary" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@+id/action"
+                android:layout_toEndOf="@+id/icon_media_type"
+                android:ellipsize="middle"
+                android:maxLines="1"
+                android:textAppearance="?textAppearanceBody1"
+                tools:text="this_is_my_archive_test.zip" />
+
+            <ImageButton
+                android:id="@+id/action"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="12dp"
+                android:src="@drawable/ic_baseline_save_alt_24" />
+
+        </RelativeLayout>
+    </FrameLayout>
+</layout>

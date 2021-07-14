@@ -22,5 +22,6 @@
     <dimen name="mailbox_height_port">56dp</dimen>
     <dimen name="mailbox_width_land">192dp</dimen>
     <dimen name="mailbox_height_land">48dp</dimen>
-
+    <dimen name="attachment_width">264dp</dimen>
+    <dimen name="attachment_corner_radius">2dp</dimen>
 </resources>

@@ -18,6 +18,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <import type="android.view.View" />
 
         <variable
@@ -26,14 +27,14 @@
 
         <variable
             name="expanded"
-            type="boolean"/>
+            type="boolean" />
     </data>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="?colorSurface">
+        android:background="?colorSurface"
+        android:orientation="vertical">
 
         <RelativeLayout
             android:id="@+id/header"
@@ -73,9 +74,9 @@
                 android:layout_toEndOf="@id/avatar"
                 android:ellipsize="end"
                 android:maxLines="2"
-                android:visibility="@{expanded ? View.GONE : View.VISIBLE}"
                 android:text="@{email.getPreview()}"
                 android:textAppearance="?textAppearanceBody2"
+                android:visibility="@{expanded ? View.GONE : View.VISIBLE}"
                 app:firstBaselineToTopHeight="20sp"
                 tools:text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores" />
 
@@ -88,11 +89,11 @@
                 android:layout_toEndOf="@id/avatar"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:visibility="@{expanded ? View.VISIBLE : View.GONE}"
-                app:to="@{email.getTo()}"
                 android:textAppearance="?textAppearanceBody2"
+                android:visibility="@{expanded ? View.VISIBLE : View.GONE}"
                 app:firstBaselineToTopHeight="20sp"
-                tools:text="to Romeo Montague"/>
+                app:to="@{email.getTo()}"
+                tools:text="to Romeo Montague" />
 
 
             <TextView
@@ -105,66 +106,65 @@
                 android:layout_marginEnd="16dp"
                 android:layout_toEndOf="@id/from"
                 android:maxLines="1"
-                app:date="@{email.receivedAt}"
                 android:textAppearance="?textAppearanceCaption"
+                app:date="@{email.receivedAt}"
                 tools:text="Mar 24" />
 
             <ImageButton
-                android:visibility="@{(expanded &amp;&amp; !email.draft)? View.VISIBLE : View.GONE}"
                 android:id="@+id/reply_all"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_toStartOf="@+id/forward"
-                android:padding="12dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_reply_all_black_24dp" />
+                android:padding="12dp"
+                android:src="@drawable/ic_reply_all_black_24dp"
+                android:visibility="@{(expanded &amp;&amp; !email.draft)? View.VISIBLE : View.GONE}" />
 
             <ImageButton
-                android:visibility="@{(expanded &amp;&amp; !email.draft) ? View.VISIBLE : View.GONE}"
                 android:id="@+id/forward"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:padding="12dp"
                 android:layout_toStartOf="@+id/more_options"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_forward_black_24dp" />
+                android:padding="12dp"
+                android:src="@drawable/ic_forward_black_24dp"
+                android:visibility="@{(expanded &amp;&amp; !email.draft) ? View.VISIBLE : View.GONE}" />
 
             <ImageButton
-                android:visibility="@{(expanded &amp;&amp; !email.draft) ? View.VISIBLE : View.GONE}"
                 android:id="@+id/more_options"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:padding="2dp"
                 android:layout_marginEnd="8dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_more_vert_black_24dp" />
+                android:padding="2dp"
+                android:src="@drawable/ic_more_vert_black_24dp"
+                android:visibility="@{(expanded &amp;&amp; !email.draft) ? View.VISIBLE : View.GONE}" />
 
             <ImageButton
-                android:visibility="@{(expanded &amp;&amp; email.draft) ? View.VISIBLE : View.GONE}"
                 android:id="@+id/edit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:padding="12dp"
                 android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_edit_24dp" />
-
+                android:padding="12dp"
+                android:src="@drawable/ic_edit_24dp"
+                android:visibility="@{(expanded &amp;&amp; email.draft) ? View.VISIBLE : View.GONE}" />
 
 
         </RelativeLayout>
 
         <LinearLayout
-            android:visibility="@{expanded ? View.VISIBLE : View.GONE}"
             android:id="@+id/body"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
             android:orientation="vertical"
-            android:layout_marginBottom="16dp">
+            android:visibility="@{expanded ? View.VISIBLE : View.GONE}">
 
             <TextView
                 android:id="@+id/text"
@@ -172,12 +172,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-                app:body="@{email.getText()}"
-                android:textAppearance="?textAppearanceBody2"
                 android:autoLink="web"
+                android:textAppearance="?textAppearanceBody2"
+                app:body="@{email.getText()}"
                 tools:text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores" />
-
-
         </LinearLayout>
 
         <View
