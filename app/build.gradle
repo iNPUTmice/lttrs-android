@@ -115,13 +115,13 @@ dependencies {
 
     //Testing
     testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation "androidx.test.espresso:espresso-core:$rootProject.ext.espressoVersion"
     androidTestImplementation "androidx.test.espresso:espresso-intents:$rootProject.ext.espressoVersion"
     androidTestImplementation "androidx.test.espresso:espresso-contrib:$rootProject.ext.espressoVersion"
     androidTestImplementation("rs.ltt.jmap:jmap-mock-server:$rootProject.ext.muaVersion") {
         changing = true
     }
-    androidTestImplementation 'androidx.test:runner:1.3.0'
-    androidTestUtil 'androidx.test:orchestrator:1.3.0'
+    androidTestImplementation 'androidx.test:runner:1.4.0'
+    androidTestUtil 'androidx.test:orchestrator:1.4.0'
 }
