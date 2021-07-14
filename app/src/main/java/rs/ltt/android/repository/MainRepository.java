@@ -134,19 +134,22 @@ public class MainRepository {
         IO_EXECUTOR.execute(() -> this.appDatabase.accountDao().selectAccount(id));
     }
 
-    public void removeAccount(final long accountId) {
-        IO_EXECUTOR.execute(() -> {
-            this.appDatabase.accountDao().delete(accountId);
-            LttrsApplication.get(application).invalidateMostRecentlySelectedAccountId();
-            EventMonitorService.stopMonitoring(application, accountId);
-            cancelAllWork(accountId);
-            MuaPool.evict(accountId);
-            final File file = LttrsDatabase.close(accountId);
-            if (file != null && SQLiteDatabase.deleteDatabase(file)) {
-                LOGGER.debug("Successfully deleted {}", file.getAbsolutePath());
-            }
-            EmailNotification.cancel(application, accountId);
-        });
+    public void removeAccountAsync(final long accountId) {
+        IO_EXECUTOR.execute(() -> removeAccount(accountId));
+    }
+
+    private void removeAccount(final long accountId) {
+        this.appDatabase.accountDao().delete(accountId);
+        LttrsApplication.get(application).invalidateMostRecentlySelectedAccountId();
+        EventMonitorService.stopMonitoring(application, accountId);
+        cancelAllWork(accountId);
+        MuaPool.evict(accountId);
+        final File file = LttrsDatabase.close(accountId);
+        if (file != null && SQLiteDatabase.deleteDatabase(file)) {
+            LOGGER.debug("Successfully deleted {}", file.getAbsolutePath());
+        }
+        EmailNotification.cancel(application, accountId);
+        EmailNotification.deleteChannel(application, accountId);
     }
 
     private void cancelAllWork(final Long accountId) {

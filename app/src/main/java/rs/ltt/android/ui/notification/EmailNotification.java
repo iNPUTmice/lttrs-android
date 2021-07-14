@@ -88,8 +88,21 @@ public class EmailNotification {
 
     }
 
+    public static void deleteChannel(final Context context, final Long accountId) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            return;
+        }
+        final NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+        notificationManager.deleteNotificationChannel(notificationChannelId(accountId));
+        notificationManager.deleteNotificationChannelGroup(notificationChannelGroup(accountId));
+    }
+
+    private static String notificationChannelGroup(final long accountId) {
+        return String.format(Locale.US, NOTIFICATION_CHANNEL_GROUP, accountId);
+    }
+
     private static String notificationChannelGroup(final AccountWithCredentials account) {
-        return String.format(Locale.US, NOTIFICATION_CHANNEL_GROUP, account.getId());
+        return notificationChannelGroup(account.getId());
     }
 
     private static String notificationChannelId(final AccountWithCredentials account) {
@@ -147,6 +160,8 @@ public class EmailNotification {
     public static EmailNotification.Builder builder() {
         return new EmailNotification.Builder();
     }
+
+
 
     public static void cancel(final Context context, final long accountId) {
         final NotificationManager notificationManager = context.getSystemService(NotificationManager.class);

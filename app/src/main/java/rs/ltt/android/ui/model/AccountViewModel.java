@@ -30,7 +30,7 @@ public class AccountViewModel extends AndroidViewModel {
     }
 
     public void removeAccount() {
-        this.mainRepository.removeAccount(this.accountId);
+        this.mainRepository.removeAccountAsync(this.accountId);
     }
 
     public long getAccountId() {
@@ -42,7 +42,7 @@ public class AccountViewModel extends AndroidViewModel {
         private final Application application;
         private final long accountId;
 
-        public Factory(@NonNull final Application application, @NonNull final long accountId) {
+        public Factory(@NonNull final Application application, final long accountId) {
             this.application = application;
             this.accountId = accountId;
         }
