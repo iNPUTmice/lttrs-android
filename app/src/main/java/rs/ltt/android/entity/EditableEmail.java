@@ -67,7 +67,7 @@ public class EditableEmail implements IdentifiableEmailWithAddresses, Identifiab
                 textBody.add(entity);
             }
         }
-        Collections.sort(textBody, (o1, o2) -> o1.position.compareTo(o2.position));
+        //Collections.sort(textBody, (o1, o2) -> o1.position.compareTo(o2.position));
         EmailBodyPartEntity first = Iterables.getFirst(textBody, null);
         Map<String, EmailBodyValueEntity> map = Maps.uniqueIndex(bodyValueEntities, value -> value.partId);
         EmailBodyValueEntity value = map.get(first.partId);

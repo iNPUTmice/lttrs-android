@@ -199,7 +199,7 @@ public class EmailNotification {
         final From from = email.getFrom();
         final AvatarDrawable avatar = new AvatarDrawable(context, from);
         final NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle()
-                .bigText(String.format("%s\n%s", email.subject, email.getText()));
+                .bigText(String.format("%s\n%s", email.subject, email.getPreview()));
         return new NotificationCompat.Builder(context, notificationChannelId(account.getId()))
                 .setSmallIcon(R.drawable.ic_email_outline_24dp)
                 .setContentTitle(getFromAsString(context, from))

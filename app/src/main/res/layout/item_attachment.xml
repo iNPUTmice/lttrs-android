@@ -3,11 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+
+        <variable
+            name="attachment"
+            type="rs.ltt.android.entity.Attachment" />
+    </data>
+
     <FrameLayout
-        android:id="@+id/attachment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
         android:background="@drawable/background_attachment"
         android:elevation="2dp"
         android:foreground="@drawable/foreground_attachment">
@@ -23,8 +28,9 @@
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
                 android:layout_margin="12dp"
-                tools:src="@drawable/ic_archive_black_24dp"
-                app:tint="@color/colorPrimary" />
+                android:src="@{attachment.type}"
+                app:tint="@color/colorPrimary"
+                tools:src="@drawable/ic_archive_black_24dp" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -34,6 +40,7 @@
                 android:layout_toEndOf="@+id/icon_media_type"
                 android:ellipsize="middle"
                 android:maxLines="1"
+                android:text="@{attachment.name}"
                 android:textAppearance="?textAppearanceBody1"
                 tools:text="this_is_my_archive_test.zip" />
 

@@ -26,7 +26,10 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
+import rs.ltt.jmap.common.entity.EmailBodyPart;
 import rs.ltt.jmap.mua.util.KeywordUtil;
 
 public abstract class EmailWithTextBodies extends EmailPreview {
@@ -44,6 +47,7 @@ public abstract class EmailWithTextBodies extends EmailPreview {
         return KeywordUtil.draft(this);
     }
 
+    //TODO use getTextBodies
     public String getPreview() {
         return preview;
     }
@@ -60,19 +64,18 @@ public abstract class EmailWithTextBodies extends EmailPreview {
         return null;
     }
 
-    //TODO rename to getTextBodies and return List<String>
-    public String getText() {
-        final ArrayList<EmailBodyPartEntity> textBody = new ArrayList<>();
-        for (EmailBodyPartEntity entity : bodyPartEntities) {
-            if (entity.bodyPartType == EmailBodyPartType.TEXT_BODY) {
-                textBody.add(entity);
-            }
-        }
-        Collections.sort(textBody, (o1, o2) -> o1.position.compareTo(o2.position));
-        EmailBodyPartEntity first = Iterables.getFirst(textBody, null);
-        Map<String, EmailBodyValueEntity> map = Maps.uniqueIndex(bodyValueEntities, value -> value.partId);
-        EmailBodyValueEntity value = map.get(first.partId);
-        return value.value;
+    public List<String> getTextBodies() {
+        final List<EmailBodyPartEntity> textBodies = EmailBodyPartEntity.filter(bodyPartEntities, EmailBodyPartType.TEXT_BODY);
+        final Map<String, EmailBodyValueEntity> map = Maps.uniqueIndex(bodyValueEntities, value -> value.partId);
+        return textBodies.stream()
+                .map(body -> map.get(body.partId))
+                .filter(Objects::nonNull)
+                .map(value -> value.value)
+                .collect(Collectors.toList());
+    }
+
+    public List<EmailBodyPartEntity> getAttachments() {
+        return EmailBodyPartEntity.filter(bodyPartEntities, EmailBodyPartType.ATTACHMENT);
     }
 
     public Collection<String> getTo() {

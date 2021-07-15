@@ -20,10 +20,14 @@ import androidx.room.Entity;
 import androidx.room.ForeignKey;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.net.MediaType;
 
+import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import rs.ltt.android.util.MediaTypes;
 import rs.ltt.jmap.common.entity.Email;
 import rs.ltt.jmap.common.entity.EmailBodyPart;
 
@@ -35,14 +39,14 @@ import rs.ltt.jmap.common.entity.EmailBodyPart;
                 onDelete = ForeignKey.CASCADE
         )
 )
-public class EmailBodyPartEntity {
+public class EmailBodyPartEntity implements Attachment, Comparable<EmailBodyPartEntity> {
 
     @NonNull
     public String emailId;
     @NonNull
     public EmailBodyPartType bodyPartType;
-    @NonNull
-    public Long position;
+
+    public long position;
     public String partId;
     public String blobId;
     public Long size;
@@ -83,5 +87,27 @@ public class EmailBodyPartEntity {
         entity.disposition = emailBodyPart.getDisposition();
         entity.cid = emailBodyPart.getCid();
         return entity;
+    }
+
+    @Override
+    public String getName() {
+        return this.name;
+    }
+
+    @Override
+    public MediaType getType() {
+        return MediaTypes.of(type, charset);
+    }
+
+    @Override
+    public int compareTo(final EmailBodyPartEntity o) {
+        return Long.compare(position, o.position);
+    }
+
+    public static List<EmailBodyPartEntity> filter(final List<EmailBodyPartEntity> entities, final EmailBodyPartType type) {
+        return entities.stream()
+                .filter(bp -> bp.bodyPartType == type)
+                .sorted()
+                .collect(Collectors.toList());
     }
 }

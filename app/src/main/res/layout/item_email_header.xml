@@ -45,7 +45,6 @@
                 tools:src="@drawable/ic_star_border_no_padding_black_24dp" />
 
             <TextView
-                android:id="@+id/subject"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"

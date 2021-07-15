@@ -41,6 +41,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.common.net.MediaType;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -50,12 +51,14 @@ import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import rs.ltt.android.R;
 import rs.ltt.android.entity.From;
 import rs.ltt.android.entity.IdentityWithNameAndEmail;
 import rs.ltt.android.entity.SubjectWithImportance;
 import rs.ltt.android.util.ConsistentColorGeneration;
+import rs.ltt.android.util.MediaTypes;
 import rs.ltt.jmap.common.entity.Role;
 import rs.ltt.jmap.mua.util.EmailAddressUtil;
 import rs.ltt.jmap.mua.util.EmailBodyUtil;
@@ -98,13 +101,13 @@ public class BindingAdapters {
     }
 
     @BindingAdapter("body")
-    public static void setBody(final TextView textView, String body) {
+    public static void setBody(final TextView textView, List<String> textBodies) {
         final SpannableStringBuilder builder = new SpannableStringBuilder();
-        for (EmailBodyUtil.Block block : EmailBodyUtil.parse(body)) {
+        for (final EmailBodyUtil.Block block : EmailBodyUtil.parse(textBodies)) {
             if (builder.length() != 0) {
                 builder.append('\n');
             }
-            int start = builder.length();
+            final int start = builder.length();
             builder.append(block.toString());
             if (block.getDepth() > 0) {
                 builder.setSpan(new QuoteSpan(block.getDepth(), textView.getContext()), start, builder.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -127,7 +130,7 @@ public class BindingAdapters {
         textView.setText(context.getString(R.string.to_x, builder.toString()));
     }
 
-    @BindingAdapter("app:tint")
+    @BindingAdapter("tint")
     public static void setTint(final ImageView imageView, final String key) {
         imageView.setImageTintList(
                 ColorStateList.valueOf(ConsistentColorGeneration.rgbFromKey(Strings.nullToEmpty(key)))
@@ -343,5 +346,34 @@ public class BindingAdapters {
                 representations);
         adapter.setDropDownViewResource(R.layout.item_simple_spinner_dropdown);
         spinner.setAdapter(adapter);
+    }
+
+    @BindingAdapter("android:src")
+    public static void setMediaType(final ImageView imageView, final MediaType mediaType) {
+        imageView.setImageResource(toDrawable(mediaType));
+    }
+
+    private static @DrawableRes int toDrawable(final MediaType type) {
+        if (type == null) {
+            return R.drawable.ic_baseline_attachment_24;
+        } else if (type.is(MediaType.ANY_IMAGE_TYPE)) {
+            return R.drawable.ic_baseline_image_24;
+        } else if (type.is(MediaType.ANY_VIDEO_TYPE)) {
+            return R.drawable.ic_baseline_movie_24;
+        } else if (type.is(MediaType.ANY_AUDIO_TYPE)) {
+            return R.drawable.ic_baseline_audiotrack_24;
+        } else if (MediaTypes.isCalendar(type)) {
+            return R.drawable.ic_baseline_event_24;
+        } else if (type.is(MediaType.PDF)) {
+            return R.drawable.ic_baseline_pdf_box_24;
+        } else if (MediaTypes.isArchive(type)) {
+            return R.drawable.ic_archive_black_24dp;
+        } else if (MediaTypes.isVcard(type)) {
+            return R.drawable.ic_baseline_person_24;
+        } else if (MediaTypes.isEbook(type)) {
+            return R.drawable.ic_baseline_book_24;
+        } else {
+            return R.drawable.ic_baseline_attachment_24;
+        }
     }
 }
