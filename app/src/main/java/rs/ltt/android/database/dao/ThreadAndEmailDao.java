@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Collection;
 import java.util.List;
 
+import rs.ltt.android.entity.DownloadableBlob;
 import rs.ltt.android.entity.EditableEmail;
 import rs.ltt.android.entity.EmailBodyPartEntity;
 import rs.ltt.android.entity.EmailBodyValueEntity;
@@ -188,6 +189,9 @@ public abstract class ThreadAndEmailDao extends AbstractEntityDao {
     @Transaction
     @Query("select id from email where id=:id")
     public abstract EmailWithKeywords getEmailWithKeyword(String id);
+
+    @Query("select blobId,type,name from email_body_part where emailId=:emailId and blobId=:blobId")
+    public abstract DownloadableBlob getDownloadable(String emailId, String blobId);
 
     @Transaction
     @Query("select id,receivedAt,preview,email.threadId from thread_item join email on thread_item.emailId=email.id where thread_item.threadId=:threadId order by position")

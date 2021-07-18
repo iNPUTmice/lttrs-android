@@ -372,6 +372,10 @@ public class BindingAdapters {
             return R.drawable.ic_baseline_person_24;
         } else if (MediaTypes.isEbook(type)) {
             return R.drawable.ic_baseline_book_24;
+        } else if (MediaTypes.isDocument(type)) {
+            return R.drawable.ic_baseline_document_24;
+        } else if (MediaTypes.isTour(type)) {
+            return R.drawable.ic_baseline_tour_24;
         } else {
             return R.drawable.ic_baseline_attachment_24;
         }

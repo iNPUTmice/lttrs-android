@@ -16,6 +16,7 @@
 package rs.ltt.android.ui.model;
 
 import android.app.Application;
+import android.net.Uri;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -28,10 +29,13 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.PagedList;
 import androidx.work.Data;
+import androidx.work.ExistingWorkPolicy;
+import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.net.MediaType;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -48,6 +52,8 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
+import rs.ltt.android.BlobStorage;
+import rs.ltt.android.entity.Attachment;
 import rs.ltt.android.entity.EmailComplete;
 import rs.ltt.android.entity.ExpandedPosition;
 import rs.ltt.android.entity.MailboxOverwriteEntity;
@@ -58,6 +64,8 @@ import rs.ltt.android.entity.ThreadHeader;
 import rs.ltt.android.repository.ThreadViewRepository;
 import rs.ltt.android.util.CombinedListsLiveData;
 import rs.ltt.android.util.Event;
+import rs.ltt.android.util.MainThreadExecutor;
+import rs.ltt.android.worker.BlobDownloadWorker;
 import rs.ltt.jmap.common.entity.Role;
 import rs.ltt.jmap.mua.util.LabelUtil;
 
@@ -68,7 +76,9 @@ public class ThreadViewModel extends AndroidViewModel {
     public final AtomicBoolean jumpedToFirstUnread = new AtomicBoolean(false);
     public final ListenableFuture<List<ExpandedPosition>> expandedPositions;
     public final MutableLiveData<Event<Seen>> seenEvent = new MutableLiveData<>();
+    private final MediatorLiveData<Event<ViewIntent>> viewIntentEvent = new MediatorLiveData<>();
     public final HashSet<String> expandedItems = new HashSet<>();
+    private final long accountId;
     private final String threadId;
     private final String label;
     private final MediatorLiveData<Event<String>> threadViewRedirect = new MediatorLiveData<>();
@@ -85,6 +95,7 @@ public class ThreadViewModel extends AndroidViewModel {
                     final String threadId,
                     final String label) {
         super(application);
+        this.accountId = accountId;
         this.threadId = threadId;
         this.label = label;
         final ThreadViewRepository threadViewRepository = new ThreadViewRepository(application, accountId);
@@ -180,6 +191,14 @@ public class ThreadViewModel extends AndroidViewModel {
         this.subjectWithImportance.postValue(SubjectWithImportance.of(header, important));
     }
 
+    public LiveData<Event<Seen>> getSeenEvent() {
+        return this.seenEvent;
+    }
+
+    public LiveData<Event<ViewIntent>> getViewIntentEvent() {
+        return this.viewIntentEvent;
+    }
+
     public LiveData<Event<String>> getThreadViewRedirect() {
         return this.threadViewRedirect;
     }
@@ -237,6 +256,64 @@ public class ThreadViewModel extends AndroidViewModel {
                 }
             }
         });
+    }
+
+    public void open(final String emailId, final Attachment attachment) {
+        final ListenableFuture<Uri> future = BlobStorage.getFileBackendUri(
+                getApplication(), accountId, attachment.getBlobId()
+        );
+        Futures.addCallback(future, new FutureCallback<Uri>() {
+            @Override
+            public void onSuccess(@Nullable Uri uri) {
+                viewIntentEvent.postValue(new Event<>(new ViewIntent(uri, attachment.getMediaType())));
+            }
+
+            @Override
+            public void onFailure(@NotNull Throwable throwable) {
+                LOGGER.info("Unable to get uri", throwable);
+                queueDownload(emailId, attachment);
+            }
+        }, MainThreadExecutor.getInstance());
+
+    }
+
+    private void queueDownload(final String emailId, final Attachment attachment) {
+        final WorkManager workManager = WorkManager.getInstance(getApplication());
+        final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(BlobDownloadWorker.class)
+                .setInputData(BlobDownloadWorker.data(accountId, emailId, attachment.getBlobId()))
+                .build();
+        workManager.enqueueUniqueWork(
+                BlobDownloadWorker.uniqueName(),
+                ExistingWorkPolicy.APPEND_OR_REPLACE,
+                workRequest
+        );
+        final LiveData<WorkInfo> workInfo = workManager.getWorkInfoByIdLiveData(workRequest.getId());
+        waitForDownload(attachment.getMediaType(), workInfo);
+    }
+
+    //TODO add action
+    private void waitForDownload(final MediaType mediaType, final LiveData<WorkInfo> workInfoLiveData) {
+        viewIntentEvent.addSource(workInfoLiveData, workInfo -> {
+            final WorkInfo.State state = workInfo.getState();
+            if (state.isFinished()) {
+                viewIntentEvent.removeSource(workInfoLiveData);
+                if (state == WorkInfo.State.SUCCEEDED) {
+                    final Uri uri = BlobDownloadWorker.getUri(workInfo);
+                    viewIntentEvent.postValue(new Event<>(new ViewIntent(uri, mediaType)));
+                }
+                //TODO show some form of error
+            }
+        });
+    }
+
+    public static class ViewIntent {
+        public final Uri uri;
+        public final MediaType mediaType;
+
+        public ViewIntent(Uri uri, MediaType mediaType) {
+            this.uri = uri;
+            this.mediaType = mediaType;
+        }
     }
 
     public static class MenuConfiguration {

@@ -18,6 +18,7 @@ package rs.ltt.android.ui.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.helper.widget.Flow;
@@ -30,15 +31,21 @@ import androidx.recyclerview.widget.AsyncDifferConfig;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import rs.ltt.android.R;
+import rs.ltt.android.databinding.ItemAttachmentBinding;
 import rs.ltt.android.databinding.ItemEmailBinding;
 import rs.ltt.android.databinding.ItemEmailHeaderBinding;
 import rs.ltt.android.databinding.ItemLabelBinding;
+import rs.ltt.android.entity.EmailBodyPartEntity;
 import rs.ltt.android.entity.EmailComplete;
 import rs.ltt.android.entity.ExpandedPosition;
 import rs.ltt.android.entity.MailboxWithRoleAndName;
@@ -48,6 +55,8 @@ import rs.ltt.android.util.Touch;
 import rs.ltt.jmap.mua.util.Label;
 
 public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.AbstractThreadItemViewHolder> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ThreadAdapter.class);
 
     private static final DiffUtil.ItemCallback<EmailComplete> ITEM_CALLBACK = new DiffUtil.ItemCallback<EmailComplete>() {
 
@@ -79,6 +88,7 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.AbstractTh
     private Boolean flagged;
     private OnFlaggedToggled onFlaggedToggled;
     private OnComposeActionTriggered onComposeActionTriggered;
+    private OnAttachmentActionTriggered onAttachmentActionTriggered;
 
     public ThreadAdapter(Set<String> expandedItems) {
         this.expandedItems = expandedItems;
@@ -182,6 +192,48 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.AbstractTh
         });
         itemViewHolder.binding.edit.setOnClickListener(v -> onComposeActionTriggered.onEditDraft(email.id));
         itemViewHolder.binding.replyAll.setOnClickListener(v -> onComposeActionTriggered.onReplyAll(email.id));
+        updateAttachments(itemViewHolder.binding.attachments, email.getAttachments());
+    }
+
+    private void updateAttachments(final LinearLayout attachments, final List<EmailBodyPartEntity> emailAttachments) {
+        if (skip(attachments, emailAttachments)) {
+            return;
+        }
+        final LayoutInflater layoutInflater = LayoutInflater.from(attachments.getContext());
+        attachments.removeAllViews();
+        for (final EmailBodyPartEntity attachment : emailAttachments) {
+            attachments.addView(getAttachmentView(layoutInflater, attachments, attachment));
+        }
+        attachments.setTag(emailAttachments.hashCode());
+    }
+
+    private View getAttachmentView(final LayoutInflater layoutInflater, final LinearLayout attachments, final EmailBodyPartEntity attachment) {
+        final ItemAttachmentBinding binding = DataBindingUtil.inflate(
+                layoutInflater,
+                R.layout.item_attachment,
+                attachments,
+                false
+        );
+        binding.setAttachment(attachment);
+        binding.getRoot().setOnClickListener(
+                v -> Objects.requireNonNull(onAttachmentActionTriggered, "Attachment Action listener not set")
+                        .onOpenTriggered(attachment.emailId, attachment)
+        );
+        binding.action.setOnClickListener(
+                v -> Objects.requireNonNull(onAttachmentActionTriggered, "Attachment Action listener not set")
+                        .onActionTriggered(attachment.emailId, attachment)
+        );
+        binding.getRoot().setId(ViewCompat.generateViewId());
+        return binding.getRoot();
+    }
+
+    private static boolean skip(final LinearLayout attachments, final List<EmailBodyPartEntity> emailAttachments) {
+        final Object tag = attachments.getTag();
+        if (tag instanceof Integer) {
+            final int hashCode = (Integer) tag;
+            return hashCode == emailAttachments.hashCode();
+        }
+        return false;
     }
 
     @Override
@@ -220,6 +272,10 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.AbstractTh
 
     public void setOnComposeActionTriggeredListener(OnComposeActionTriggered listener) {
         this.onComposeActionTriggered = listener;
+    }
+
+    public void setOnAttachmentActionTriggered(OnAttachmentActionTriggered listener) {
+        this.onAttachmentActionTriggered = listener;
     }
 
     public void submitList(PagedList<EmailComplete> pagedList, Runnable runnable) {

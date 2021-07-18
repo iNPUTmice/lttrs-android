@@ -133,4 +133,6 @@
     <string name="remove_account_dialog_title">Remove account?</string>
     <string name="remove_account_dialog_message">Removing this account will delete all of its messages and other data from the phone.</string>
     <string name="view_emails">View e-mails</string>
+    <string name="attachments">Attachments</string>
+    <string name="no_application_to_open_x">No application found to view %s. Try downloading the attachment instead.</string>
 </resources>
