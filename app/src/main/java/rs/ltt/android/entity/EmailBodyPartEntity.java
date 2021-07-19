@@ -115,6 +115,11 @@ public class EmailBodyPartEntity implements Attachment, Comparable<EmailBodyPart
     }
 
     @Override
+    public Long getSize() {
+        return this.size;
+    }
+
+    @Override
     public int compareTo(final EmailBodyPartEntity o) {
         return Long.compare(position, o.position);
     }

@@ -1,5 +1,6 @@
 package rs.ltt.android.worker;
 
+import android.app.NotificationManager;
 import android.content.Context;
 import android.net.Uri;
 
@@ -11,6 +12,7 @@ import androidx.work.WorkerParameters;
 
 import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.RateLimiter;
 
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -38,15 +40,19 @@ public class BlobDownloadWorker extends AbstractMuaWorker {
 
     private final String emailId;
     private final String blobId;
+    private final NotificationManager notificationManager;
+    private final RateLimiter notificationRateLimiter = RateLimiter.create(1);
     private DownloadableBlob downloadable;
     private Call call;
     private ListenableFuture<Download> downloadFuture;
+    private int currentlyShownProgress = 0;
 
     public BlobDownloadWorker(@NonNull @NotNull Context context, @NonNull @NotNull WorkerParameters workerParams) {
         super(context, workerParams);
         final Data data = workerParams.getInputData();
         this.emailId = data.getString(EMAIL_ID_KEY);
         this.blobId = data.getString(BLOB_ID_KEY);
+        this.notificationManager = context.getSystemService(NotificationManager.class);
     }
 
     public static Uri getUri(final WorkInfo workInfo) {
@@ -77,7 +83,8 @@ public class BlobDownloadWorker extends AbstractMuaWorker {
         final File temporaryFile = storage.temporaryFile;
         final Mua mua = getMua();
         final long rangeStart = temporaryFile.exists() ? temporaryFile.length() : 0;
-        updateProgress(0, true);
+        final Long size = this.downloadable.getSize();
+        setForegroundAsync(getForegroundInfo());
         try {
             this.downloadFuture = mua.download(downloadable, rangeStart);
             final Download download = this.downloadFuture.get();
@@ -98,9 +105,20 @@ public class BlobDownloadWorker extends AbstractMuaWorker {
                 }
                 transmitted += count;
                 outputStream.write(buffer, 0, count);
-                updateProgress(download.progress(transmitted), download.indeterminate());
+                if (download.indeterminate() && size != null) {
+                    updateProgress(Download.progress(transmitted, size), false);
+                } else {
+                    updateProgress(download.progress(transmitted), download.indeterminate());
+                }
             }
             outputStream.flush();
+            //There seems to be a minimum display time of sorts. Even for very short running jobs
+            //WorkManager will display the foreground notification for at least some time x.
+            //However if the download finishes earlier the notification would still show 'downloading'
+            //stuck at 100% (Even though we already have the file and performed a view action)
+            //Therefore we change the notification to 'Download complete' for the remainder of time x.
+            //For long running download jobs this will effectively not be shown
+            notifyDownloadComplete();
             LOGGER.info("Finished downloading {}", storage.temporaryFile.getAbsolutePath());
             if (storage.moveTemporaryToFile()) {
                 final Uri uri = BlobStorage.getFileProviderUri(getApplicationContext(), storage.file);
@@ -131,21 +149,48 @@ public class BlobDownloadWorker extends AbstractMuaWorker {
         }
     }
 
-    private ForegroundInfo getForegroundInfo(final int progress, final boolean indeterminate) {
+    private ForegroundInfo getForegroundInfo() {
         final DownloadableBlob downloadable = Preconditions.checkNotNull(
                 this.downloadable,
                 "getForegroundInfo can only be called after setting downloadable"
         );
-        return new ForegroundInfo(AttachmentNotification.DOWNLOAD_ID, AttachmentNotification.get(
+        return new ForegroundInfo(AttachmentNotification.DOWNLOAD_ID, AttachmentNotification.getDownloading(
                 getApplicationContext(),
                 getId(),
                 downloadable,
-                progress,
-                indeterminate
+                0,
+                true
+        ));
+    }
+
+    private void notifyDownloadComplete() {
+        final DownloadableBlob downloadable = Preconditions.checkNotNull(
+                this.downloadable,
+                "getForegroundInfo can only be called after setting downloadable"
+        );
+        notificationManager.notify(AttachmentNotification.DOWNLOAD_ID, AttachmentNotification.getDownloaded(
+                getApplicationContext(),
+                downloadable
         ));
     }
 
     private void updateProgress(final int progress, final boolean indeterminate) {
-        setForegroundAsync(getForegroundInfo(progress, indeterminate));
+        if (currentlyShownProgress == progress) {
+            return;
+        }
+        if (notificationRateLimiter.tryAcquire()) {
+            final DownloadableBlob downloadable = Preconditions.checkNotNull(
+                    this.downloadable,
+                    "getForegroundInfo can only be called after setting downloadable"
+            );
+            notificationManager.notify(AttachmentNotification.DOWNLOAD_ID, AttachmentNotification.getDownloading(
+                    getApplicationContext(),
+                    getId(),
+                    downloadable,
+                    progress,
+                    indeterminate
+            ));
+            this.currentlyShownProgress = progress;
+        }
     }
 }

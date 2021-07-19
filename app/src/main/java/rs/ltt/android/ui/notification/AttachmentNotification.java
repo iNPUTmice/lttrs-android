@@ -9,6 +9,7 @@ import android.os.Build;
 import androidx.core.app.NotificationCompat;
 import androidx.work.WorkManager;
 
+import java.util.Locale;
 import java.util.UUID;
 
 import rs.ltt.android.R;
@@ -39,11 +40,11 @@ public class AttachmentNotification {
     }
 
 
-    public static Notification get(final Context context,
-                                   final UUID id,
-                                   final Downloadable downloadable,
-                                   final int progress,
-                                   final boolean indeterminate) {
+    public static Notification getDownloading(final Context context,
+                                              final UUID id,
+                                              final Downloadable downloadable,
+                                              final int progress,
+                                              final boolean indeterminate) {
         final NotificationCompat.Action cancelAction = new NotificationCompat.Action(
                 R.drawable.ic_baseline_cancel_24,
                 context.getString(R.string.cancel),
@@ -58,10 +59,23 @@ public class AttachmentNotification {
             notificationBuilder.setProgress(1, 1, true);
         } else {
             notificationBuilder.setProgress(100, progress, false);
+            notificationBuilder.setSubText(String.format(Locale.US, "%d%%", progress));
         }
         notificationBuilder.setSmallIcon(R.drawable.ic_baseline_download_24);
         notificationBuilder.setShowWhen(false);
         notificationBuilder.addAction(cancelAction);
+        return notificationBuilder.build();
+    }
+
+    public static Notification getDownloaded(final Context context, final Downloadable downloadable) {
+        final NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(
+                context,
+                NOTIFICATION_CHANNEL_ID
+        );
+        notificationBuilder.setContentTitle(context.getString(R.string.download_complete));
+        notificationBuilder.setContentText(downloadable.getName());
+        notificationBuilder.setSmallIcon(R.drawable.ic_baseline_download_done_24);
+        notificationBuilder.setShowWhen(false);
         return notificationBuilder.build();
     }
 

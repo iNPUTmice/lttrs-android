@@ -14,4 +14,6 @@ public interface Attachment extends Downloadable {
     default MediaType getMediaType() {
         return MediaTypes.of(getType(), getCharset());
     }
+
+    Long getSize();
 }
