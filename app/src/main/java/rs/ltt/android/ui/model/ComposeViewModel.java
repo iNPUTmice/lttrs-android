@@ -16,6 +16,7 @@
 package rs.ltt.android.ui.model;
 
 import android.app.Application;
+import android.net.Uri;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -305,6 +306,14 @@ public class ComposeViewModel extends AndroidViewModel {
 
     private Draft getCurrentDraft() {
         return Draft.of(this.to, this.cc, this.subject, this.body);
+    }
+
+    public void addAttachment(final Uri uri) {
+        //TODO start BlobUploadWorker
+        //TODO listen for Result (Upload)
+        //TODO create MutableLiveData<List<Attachment>> attachments
+        //TODO create Attachment from result and add to list
+        //TODO do we want to create StubAttachment while waiting for Worker?
     }
 
     public static class Parameter {

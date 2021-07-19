@@ -26,6 +26,8 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -36,6 +38,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.common.base.Preconditions;
+import com.google.common.net.MediaType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +51,7 @@ import rs.ltt.android.databinding.ActivityComposeBinding;
 import rs.ltt.android.ui.ChipDrawableSpan;
 import rs.ltt.android.ui.ComposeAction;
 import rs.ltt.android.ui.model.ComposeViewModel;
+import rs.ltt.android.util.MediaTypes;
 import rs.ltt.jmap.mua.util.MailToUri;
 
 //TODO handle save instance state
@@ -62,6 +66,7 @@ public class ComposeActivity extends AppCompatActivity {
     private static final String EMAIL_ID_EXTRA = "email_id";
     private ActivityComposeBinding binding;
     private ComposeViewModel composeViewModel;
+    private ActivityResultLauncher<String> getAttachmentLauncher;
 
     public static void compose(final Fragment fragment) {
         launch(fragment, null, null, ComposeAction.NEW);
@@ -122,6 +127,11 @@ public class ComposeActivity extends AppCompatActivity {
             finishAffinity();
             return;
         }
+
+        this.getAttachmentLauncher = registerForActivityResult(
+                new ActivityResultContracts.GetContent(),
+                uri -> composeViewModel.addAttachment(uri)
+        );
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_compose);
 
@@ -231,6 +241,9 @@ public class ComposeActivity extends AppCompatActivity {
             return true;
         } else if (itemId == R.id.action_discard) {
             discardDraft();
+            return true;
+        } else if (itemId == R.id.action_attach_file) {
+            this.getAttachmentLauncher.launch(MediaTypes.toString(MediaType.ANY_TYPE));
             return true;
         } else {
             return super.onOptionsItemSelected(item);
