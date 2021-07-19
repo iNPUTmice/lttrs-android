@@ -22,12 +22,14 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.concurrent.ExecutionException;
 
 import okhttp3.Call;
 import rs.ltt.android.cache.BlobStorage;
 import rs.ltt.android.entity.DownloadableBlob;
 import rs.ltt.android.ui.notification.AttachmentNotification;
 import rs.ltt.jmap.client.blob.Download;
+import rs.ltt.jmap.client.blob.Progress;
 import rs.ltt.jmap.mua.Mua;
 
 public class BlobDownloadWorker extends AbstractMuaWorker {
@@ -83,19 +85,20 @@ public class BlobDownloadWorker extends AbstractMuaWorker {
         final File temporaryFile = storage.temporaryFile;
         final Mua mua = getMua();
         final long rangeStart = temporaryFile.exists() ? temporaryFile.length() : 0;
-        final Long size = this.downloadable.getSize();
+        final Long expectedSize = this.downloadable.getSize();
         setForegroundAsync(getForegroundInfo());
+        this.downloadFuture = mua.download(downloadable, rangeStart);
+        final Download download;
         try {
-            this.downloadFuture = mua.download(downloadable, rangeStart);
-            final Download download = this.downloadFuture.get();
-            this.call = download.getCall();
-            final InputStream inputStream = download.getInputStream();
-            final OutputStream outputStream;
-            if (download.isResumed()) {
-                outputStream = new FileOutputStream(temporaryFile, true);
-            } else {
-                outputStream = new FileOutputStream(temporaryFile);
-            }
+            download = this.downloadFuture.get();
+        } catch (final ExecutionException | InterruptedException e) {
+            LOGGER.warn("Unable to execute download request", e);
+            return Result.failure();
+        }
+        this.call = download.getCall();
+        //TODO compare contentLength with expectedSize
+        try (final InputStream inputStream = download.getInputStream();
+             final OutputStream outputStream = new FileOutputStream(temporaryFile, download.isResumed())) {
             long transmitted = rangeStart;
             int count;
             final byte[] buffer = new byte[8192];
@@ -105,33 +108,34 @@ public class BlobDownloadWorker extends AbstractMuaWorker {
                 }
                 transmitted += count;
                 outputStream.write(buffer, 0, count);
-                if (download.indeterminate() && size != null) {
-                    updateProgress(Download.progress(transmitted, size), false);
+                if (download.indeterminate() && expectedSize != null) {
+                    updateProgress(Progress.progress(transmitted, expectedSize), false);
                 } else {
                     updateProgress(download.progress(transmitted), download.indeterminate());
                 }
             }
             outputStream.flush();
-            //There seems to be a minimum display time of sorts. Even for very short running jobs
-            //WorkManager will display the foreground notification for at least some time x.
-            //However if the download finishes earlier the notification would still show 'downloading'
-            //stuck at 100% (Even though we already have the file and performed a view action)
-            //Therefore we change the notification to 'Download complete' for the remainder of time x.
-            //For long running download jobs this will effectively not be shown
-            notifyDownloadComplete();
-            LOGGER.info("Finished downloading {}", storage.temporaryFile.getAbsolutePath());
-            if (storage.moveTemporaryToFile()) {
-                final Uri uri = BlobStorage.getFileProviderUri(getApplicationContext(), storage.file);
-                final Data data = new Data.Builder()
-                        .putString(URI_KEY, uri.toString()) //to be picked up by view intent
-                        .putString(StoreAttachmentWorker.FILE_KEY, storage.file.getAbsolutePath()) //to be picked up by StoreAttachmentWorker
-                        .build();
-                return Result.success(data);
-            } else {
-                return Result.failure();
-            }
         } catch (final Exception e) {
             LOGGER.warn("Unable to download file", e);
+            return Result.failure();
+        }
+
+        //There seems to be a minimum display time of sorts. Even for very short running jobs
+        //WorkManager will display the foreground notification for at least some time x.
+        //However if the download finishes earlier the notification would still show 'downloading'
+        //stuck at 100% (Even though we already have the file and performed a view action)
+        //Therefore we change the notification to 'Download complete' for the remainder of time x.
+        //For long running download jobs this will effectively not be shown
+        notifyDownloadComplete();
+        LOGGER.info("Finished downloading {}", storage.temporaryFile.getAbsolutePath());
+        if (storage.moveTemporaryToFile()) {
+            final Uri uri = BlobStorage.getFileProviderUri(getApplicationContext(), storage.file);
+            final Data data = new Data.Builder()
+                    .putString(URI_KEY, uri.toString()) //to be picked up by view intent
+                    .putString(StoreAttachmentWorker.FILE_KEY, storage.file.getAbsolutePath()) //to be picked up by StoreAttachmentWorker
+                    .build();
+            return Result.success(data);
+        } else {
             return Result.failure();
         }
     }
