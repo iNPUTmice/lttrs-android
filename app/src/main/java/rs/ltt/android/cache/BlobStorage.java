@@ -1,4 +1,4 @@
-package rs.ltt.android;
+package rs.ltt.android.cache;
 
 import android.content.Context;
 import android.net.Uri;
@@ -15,7 +15,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.sql.Blob;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -52,21 +54,38 @@ public class BlobStorage {
         return new BlobStorage(temporary, file);
     }
 
-    public static ListenableFuture<Uri> getFileBackendUri(final Context context, final long accountId, final String blobId) {
+    public static ListenableFuture<Uri> getFileProviderUri(final Context context, final long accountId, final String blobId) {
         final ListenableFuture<BlobStorage> blobFuture = Futures.submit(() -> get(context, accountId, blobId), IO_EXECUTOR);
-        return Futures.transform(blobFuture, new Function<BlobStorage, Uri>() {
-            @Override
-            public @Nullable Uri apply(@Nullable BlobStorage blobStorage) {
-                if (blobStorage != null && blobStorage.file.exists()) {
-                    return getFileProviderUri(context, blobStorage.file);
-                }
-                throw new IllegalStateException();
+        return Futures.transform(blobFuture, blobStorage -> {
+            if (Objects.requireNonNull(blobStorage).file.exists()) {
+                return getFileProviderUri(context, blobStorage.file);
+            } else {
+                throw new InvalidCacheException(blobStorage.file);
             }
+        }, IO_EXECUTOR);
+    }
+
+    public static ListenableFuture<BlobStorage> getIfCached(final Context context, final long accountId, final String blobId) {
+        final ListenableFuture<BlobStorage> blobFuture = Futures.submit(() -> get(context, accountId, blobId), IO_EXECUTOR);
+        return Futures.transform(blobFuture, blobStorage -> {
+            if (Objects.requireNonNull(blobStorage).file.exists()) {
+                return blobStorage;
+            } else {
+                throw new InvalidCacheException(blobStorage.file);
+            }
+
         }, IO_EXECUTOR);
     }
 
     public static Uri getFileProviderUri(final Context context, File file) {
         final String authority = String.format("%s.provider.FileProvider", context.getPackageName());
         return FileProvider.getUriForFile(context, authority, file);
+    }
+
+    public static class InvalidCacheException extends IllegalStateException {
+
+        InvalidCacheException(final File file) {
+            super(String.format("%s not found", file.getAbsolutePath()));
+        }
     }
 }

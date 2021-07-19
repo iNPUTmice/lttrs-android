@@ -17,7 +17,6 @@ package rs.ltt.android.ui.fragment;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -26,7 +25,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
@@ -82,12 +80,10 @@ public class ThreadFragment extends AbstractLttrsFragment implements OnFlaggedTo
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        this.createDocumentLauncher = registerForActivityResult(new CreateDocumentContract(), new ActivityResultCallback<Uri>() {
-            @Override
-            public void onActivityResult(Uri result) {
-                LOGGER.info("write document to {}", result);
-            }
-        });
+        this.createDocumentLauncher = registerForActivityResult(
+                new CreateDocumentContract(),
+                uri -> threadViewModel.storeAttachment(uri)
+        );
     }
 
     @Override
@@ -361,6 +357,7 @@ public class ThreadFragment extends AbstractLttrsFragment implements OnFlaggedTo
     @Override
     public void onActionTriggered(final String emailId, final Attachment attachment) {
         LOGGER.info("launching for {}", MediaTypes.toString(attachment.getMediaType()));
+        this.threadViewModel.setAttachmentReference(emailId, attachment.getBlobId());
         this.createDocumentLauncher.launch(attachment);
     }
 }

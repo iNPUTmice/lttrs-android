@@ -52,7 +52,7 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
-import rs.ltt.android.BlobStorage;
+import rs.ltt.android.cache.BlobStorage;
 import rs.ltt.android.entity.Attachment;
 import rs.ltt.android.entity.EmailComplete;
 import rs.ltt.android.entity.ExpandedPosition;
@@ -66,6 +66,7 @@ import rs.ltt.android.util.CombinedListsLiveData;
 import rs.ltt.android.util.Event;
 import rs.ltt.android.util.MainThreadExecutor;
 import rs.ltt.android.worker.BlobDownloadWorker;
+import rs.ltt.android.worker.StoreAttachmentWorker;
 import rs.ltt.jmap.common.entity.Role;
 import rs.ltt.jmap.mua.util.LabelUtil;
 
@@ -89,6 +90,7 @@ public class ThreadViewModel extends AndroidViewModel {
     private final LiveData<List<MailboxWithRoleAndName>> labels;
     private final LiveData<MenuConfiguration> menuConfiguration;
 
+    private AttachmentReference attachmentReference = null;
 
     ThreadViewModel(@NonNull final Application application,
                     final long accountId,
@@ -258,11 +260,12 @@ public class ThreadViewModel extends AndroidViewModel {
         });
     }
 
+    private ListenableFuture<Uri> getFileProviderUri(final String blobId) {
+        return BlobStorage.getFileProviderUri(getApplication(), accountId, blobId);
+    }
+
     public void open(final String emailId, final Attachment attachment) {
-        final ListenableFuture<Uri> future = BlobStorage.getFileBackendUri(
-                getApplication(), accountId, attachment.getBlobId()
-        );
-        Futures.addCallback(future, new FutureCallback<Uri>() {
+        Futures.addCallback(getFileProviderUri(attachment.getBlobId()), new FutureCallback<Uri>() {
             @Override
             public void onSuccess(@Nullable Uri uri) {
                 viewIntentEvent.postValue(new Event<>(new ViewIntent(uri, attachment.getMediaType())));
@@ -270,11 +273,13 @@ public class ThreadViewModel extends AndroidViewModel {
 
             @Override
             public void onFailure(@NotNull Throwable throwable) {
-                LOGGER.info("Unable to get uri", throwable);
-                queueDownload(emailId, attachment);
+                if (throwable instanceof BlobStorage.InvalidCacheException) {
+                    queueDownload(emailId, attachment);
+                } else {
+                    //TODO show error message?
+                }
             }
         }, MainThreadExecutor.getInstance());
-
     }
 
     private void queueDownload(final String emailId, final Attachment attachment) {
@@ -291,7 +296,6 @@ public class ThreadViewModel extends AndroidViewModel {
         waitForDownload(attachment.getMediaType(), workInfo);
     }
 
-    //TODO add action
     private void waitForDownload(final MediaType mediaType, final LiveData<WorkInfo> workInfoLiveData) {
         viewIntentEvent.addSource(workInfoLiveData, workInfo -> {
             final WorkInfo.State state = workInfo.getState();
@@ -304,6 +308,57 @@ public class ThreadViewModel extends AndroidViewModel {
                 //TODO show some form of error
             }
         });
+    }
+
+    public void setAttachmentReference(final String emailId, final String blobId) {
+        this.attachmentReference = new AttachmentReference(emailId, blobId);
+    }
+
+    public void storeAttachment(final Uri uri) {
+        final AttachmentReference attachment = this.attachmentReference;
+        if (attachment == null) {
+            throw new IllegalStateException("AttachmentReference has not been set");
+        }
+        this.attachmentReference = null;
+        final ListenableFuture<BlobStorage> future = BlobStorage.getIfCached(
+                getApplication(), accountId, attachment.blobId
+        );
+        Futures.addCallback(future, new FutureCallback<BlobStorage>() {
+            @Override
+            public void onSuccess(final BlobStorage blobStorage) {
+                storeAttachment(blobStorage, uri);
+            }
+
+            @Override
+            public void onFailure(@NotNull Throwable throwable) {
+                if (throwable instanceof BlobStorage.InvalidCacheException) {
+                    downloadAndStoreAttachment(attachment, uri);
+                } else {
+                    //TODO display error message?
+                }
+            }
+        }, MoreExecutors.directExecutor());
+    }
+
+    private void storeAttachment(final BlobStorage blobStorage, final Uri uri) {
+        final WorkManager workManager = WorkManager.getInstance(getApplication());
+        final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(StoreAttachmentWorker.class)
+                .setInputData(StoreAttachmentWorker.data(blobStorage.file, uri))
+                .build();
+        workManager.enqueue(workRequest);
+    }
+
+    private void downloadAndStoreAttachment(final AttachmentReference attachmentReference, final Uri uri) {
+        final WorkManager workManager = WorkManager.getInstance(getApplication());
+        final OneTimeWorkRequest downloadWorkRequest = new OneTimeWorkRequest.Builder(BlobDownloadWorker.class)
+                .setInputData(BlobDownloadWorker.data(accountId, attachmentReference.emailId, attachmentReference.blobId))
+                .build();
+        final OneTimeWorkRequest storeWorkRequest = new OneTimeWorkRequest.Builder(StoreAttachmentWorker.class)
+                .setInputData(StoreAttachmentWorker.data(uri))
+                .build();
+        workManager.beginUniqueWork(BlobDownloadWorker.uniqueName(), ExistingWorkPolicy.APPEND_OR_REPLACE, downloadWorkRequest)
+                .then(storeWorkRequest)
+                .enqueue();
     }
 
     public static class ViewIntent {
@@ -365,6 +420,16 @@ public class ThreadViewModel extends AndroidViewModel {
         @Override
         public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
             return Objects.requireNonNull(modelClass.cast(new ThreadViewModel(application, accountId, threadId, label)));
+        }
+    }
+
+    private static class AttachmentReference {
+        public final String emailId;
+        public final String blobId;
+
+        private AttachmentReference(String emailId, String blobId) {
+            this.emailId = emailId;
+            this.blobId = blobId;
         }
     }
 

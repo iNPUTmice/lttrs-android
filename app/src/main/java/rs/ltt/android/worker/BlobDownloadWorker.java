@@ -22,7 +22,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import okhttp3.Call;
-import rs.ltt.android.BlobStorage;
+import rs.ltt.android.cache.BlobStorage;
 import rs.ltt.android.entity.DownloadableBlob;
 import rs.ltt.android.ui.notification.AttachmentNotification;
 import rs.ltt.jmap.client.blob.Download;
@@ -85,7 +85,11 @@ public class BlobDownloadWorker extends AbstractMuaWorker {
             LOGGER.info("Finished downloading {}", storage.temporaryFile.getAbsolutePath());
             if (storage.moveTemporaryToFile()) {
                 final Uri uri = BlobStorage.getFileProviderUri(getApplicationContext(), storage.file);
-                return Result.success(new Data.Builder().putString(URI_KEY, uri.toString()).build());
+                final Data data = new Data.Builder()
+                        .putString(URI_KEY, uri.toString()) //to be picked up by view intent
+                        .putString(StoreAttachmentWorker.FILE_KEY, storage.file.getAbsolutePath()) //to be picked up by StoreAttachmentWorker
+                        .build();
+                return Result.success(data);
             } else {
                 return Result.failure();
             }
