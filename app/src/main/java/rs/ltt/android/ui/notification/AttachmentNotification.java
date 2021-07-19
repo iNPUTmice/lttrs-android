@@ -55,9 +55,9 @@ public class AttachmentNotification {
         );
         notificationBuilder.setContentTitle(downloadable.getName());
         if (indeterminate) {
-            notificationBuilder.setProgress(1,1,true);
+            notificationBuilder.setProgress(1, 1, true);
         } else {
-            notificationBuilder.setProgress(100,progress, false);
+            notificationBuilder.setProgress(100, progress, false);
         }
         notificationBuilder.setSmallIcon(R.drawable.ic_baseline_download_24);
         notificationBuilder.setShowWhen(false);

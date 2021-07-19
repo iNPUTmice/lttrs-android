@@ -6,16 +6,13 @@ import android.net.Uri;
 import androidx.core.content.FileProvider;
 
 import com.google.common.base.CharMatcher;
-import com.google.common.base.Function;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.sql.Blob;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.Executor;
@@ -33,13 +30,6 @@ public class BlobStorage {
     private BlobStorage(File temporaryFile, File file) {
         this.temporaryFile = temporaryFile;
         this.file = file;
-    }
-
-    public boolean moveTemporaryToFile() {
-        if (file.delete()) {
-            LOGGER.warn("Deleted preexisting blob file {}", file.getAbsolutePath());
-        }
-        return temporaryFile.renameTo(file);
     }
 
     public static BlobStorage get(final Context context, final long accountId, final String blobId) {
@@ -80,6 +70,13 @@ public class BlobStorage {
     public static Uri getFileProviderUri(final Context context, File file) {
         final String authority = String.format("%s.provider.FileProvider", context.getPackageName());
         return FileProvider.getUriForFile(context, authority, file);
+    }
+
+    public boolean moveTemporaryToFile() {
+        if (file.delete()) {
+            LOGGER.warn("Deleted preexisting blob file {}", file.getAbsolutePath());
+        }
+        return temporaryFile.renameTo(file);
     }
 
     public static class InvalidCacheException extends IllegalStateException {

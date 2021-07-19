@@ -94,6 +94,15 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.AbstractTh
         this.expandedItems = expandedItems;
     }
 
+    private static boolean skip(final LinearLayout attachments, final List<EmailBodyPartEntity> emailAttachments) {
+        final Object tag = attachments.getTag();
+        if (tag instanceof Integer) {
+            final int hashCode = (Integer) tag;
+            return hashCode == emailAttachments.hashCode();
+        }
+        return false;
+    }
+
     @NonNull
     @Override
     public AbstractThreadItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -133,7 +142,6 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.AbstractTh
         }
         Touch.expandTouchArea(headerViewHolder.binding.starToggle, 16);
     }
-
 
     private void updateLabels(final ConstraintLayout labels, final Flow flowWidget) {
         if (skip(labels)) {
@@ -225,15 +233,6 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.AbstractTh
         );
         binding.getRoot().setId(ViewCompat.generateViewId());
         return binding.getRoot();
-    }
-
-    private static boolean skip(final LinearLayout attachments, final List<EmailBodyPartEntity> emailAttachments) {
-        final Object tag = attachments.getTag();
-        if (tag instanceof Integer) {
-            final int hashCode = (Integer) tag;
-            return hashCode == emailAttachments.hashCode();
-        }
-        return false;
     }
 
     @Override

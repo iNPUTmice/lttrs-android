@@ -49,6 +49,25 @@ public class BlobDownloadWorker extends AbstractMuaWorker {
         this.blobId = data.getString(BLOB_ID_KEY);
     }
 
+    public static Uri getUri(final WorkInfo workInfo) {
+        Preconditions.checkState(workInfo.getState() == WorkInfo.State.SUCCEEDED, "Work must have succeeded to extract uri");
+        final Data data = workInfo.getOutputData();
+        final String uri = Preconditions.checkNotNull(data.getString(URI_KEY), "OutputData is missing URI");
+        return Uri.parse(uri);
+    }
+
+    public static Data data(final Long account, final String emailId, final String blobId) {
+        return new Data.Builder()
+                .putLong(ACCOUNT_KEY, account)
+                .putString(EMAIL_ID_KEY, emailId)
+                .putString(BLOB_ID_KEY, blobId)
+                .build();
+    }
+
+    public static String uniqueName() {
+        return "blob-download";
+    }
+
     @NonNull
     @NotNull
     @Override
@@ -99,13 +118,6 @@ public class BlobDownloadWorker extends AbstractMuaWorker {
         }
     }
 
-    public static Uri getUri(final WorkInfo workInfo) {
-        Preconditions.checkState(workInfo.getState() == WorkInfo.State.SUCCEEDED, "Work must have succeeded to extract uri");
-        final Data data = workInfo.getOutputData();
-        final String uri = Preconditions.checkNotNull(data.getString(URI_KEY), "OutputData is missing URI");
-        return Uri.parse(uri);
-    }
-
     @Override
     public void onStopped() {
         super.onStopped();
@@ -135,17 +147,5 @@ public class BlobDownloadWorker extends AbstractMuaWorker {
 
     private void updateProgress(final int progress, final boolean indeterminate) {
         setForegroundAsync(getForegroundInfo(progress, indeterminate));
-    }
-
-    public static Data data(final Long account, final String emailId, final String blobId) {
-        return new Data.Builder()
-                .putLong(ACCOUNT_KEY, account)
-                .putString(EMAIL_ID_KEY, emailId)
-                .putString(BLOB_ID_KEY, blobId)
-                .build();
-    }
-
-    public static String uniqueName() {
-        return "blob-download";
     }
 }

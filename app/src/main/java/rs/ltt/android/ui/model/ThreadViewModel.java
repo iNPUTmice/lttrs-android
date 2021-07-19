@@ -77,8 +77,8 @@ public class ThreadViewModel extends AndroidViewModel {
     public final AtomicBoolean jumpedToFirstUnread = new AtomicBoolean(false);
     public final ListenableFuture<List<ExpandedPosition>> expandedPositions;
     public final MutableLiveData<Event<Seen>> seenEvent = new MutableLiveData<>();
-    private final MediatorLiveData<Event<ViewIntent>> viewIntentEvent = new MediatorLiveData<>();
     public final HashSet<String> expandedItems = new HashSet<>();
+    private final MediatorLiveData<Event<ViewIntent>> viewIntentEvent = new MediatorLiveData<>();
     private final long accountId;
     private final String threadId;
     private final String label;

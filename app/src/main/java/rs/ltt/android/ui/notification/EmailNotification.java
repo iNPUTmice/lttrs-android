@@ -162,7 +162,6 @@ public class EmailNotification {
     }
 
 
-
     public static void cancel(final Context context, final long accountId) {
         final NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
         getActiveTags(context).stream()

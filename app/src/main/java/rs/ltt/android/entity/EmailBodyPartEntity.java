@@ -87,6 +87,13 @@ public class EmailBodyPartEntity implements Attachment, Comparable<EmailBodyPart
         return entity;
     }
 
+    public static List<EmailBodyPartEntity> filter(final List<EmailBodyPartEntity> entities, final EmailBodyPartType type) {
+        return entities.stream()
+                .filter(bp -> bp.bodyPartType == type)
+                .sorted()
+                .collect(Collectors.toList());
+    }
+
     @Override
     public String getBlobId() {
         return this.blobId;
@@ -110,13 +117,6 @@ public class EmailBodyPartEntity implements Attachment, Comparable<EmailBodyPart
     @Override
     public int compareTo(final EmailBodyPartEntity o) {
         return Long.compare(position, o.position);
-    }
-
-    public static List<EmailBodyPartEntity> filter(final List<EmailBodyPartEntity> entities, final EmailBodyPartType type) {
-        return entities.stream()
-                .filter(bp -> bp.bodyPartType == type)
-                .sorted()
-                .collect(Collectors.toList());
     }
 
     @Override

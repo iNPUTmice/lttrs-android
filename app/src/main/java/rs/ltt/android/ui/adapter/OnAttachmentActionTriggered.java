@@ -4,5 +4,6 @@ import rs.ltt.android.entity.Attachment;
 
 public interface OnAttachmentActionTriggered {
     void onOpenTriggered(String emailId, Attachment attachment);
+
     void onActionTriggered(String emailId, Attachment attachment);
 }

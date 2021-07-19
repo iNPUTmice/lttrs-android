@@ -8,14 +8,14 @@ import java.nio.charset.UnsupportedCharsetException;
 @SuppressWarnings("UnstableApiUsage")
 public final class MediaTypes {
 
-    private static final MediaType X_VCALENDAR = MediaType.create("text","x-vcalendar");
-    private static final MediaType CALENDAR = MediaType.create("text","calendar");
-    private static final MediaType RAR = MediaType.create("application","rar");
-    private static final MediaType VCARD = MediaType.create("text","x-vcard");
-    private static final MediaType MOBI = MediaType.create("application","vnd.amazon.mobi8-ebook");
-    private static final MediaType TEX = MediaType.create("text","x-tex");
-    private static final MediaType PLAIN = MediaType.create("text","plain");
-    private static final MediaType GPX_XML = MediaType.create("application","gpx+xml");
+    private static final MediaType X_VCALENDAR = MediaType.create("text", "x-vcalendar");
+    private static final MediaType CALENDAR = MediaType.create("text", "calendar");
+    private static final MediaType RAR = MediaType.create("application", "rar");
+    private static final MediaType VCARD = MediaType.create("text", "x-vcard");
+    private static final MediaType MOBI = MediaType.create("application", "vnd.amazon.mobi8-ebook");
+    private static final MediaType TEX = MediaType.create("text", "x-tex");
+    private static final MediaType PLAIN = MediaType.create("text", "plain");
+    private static final MediaType GPX_XML = MediaType.create("application", "gpx+xml");
 
     private MediaTypes() {
 

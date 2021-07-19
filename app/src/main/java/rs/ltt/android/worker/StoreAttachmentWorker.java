@@ -22,11 +22,9 @@ import java.util.Objects;
 
 public class StoreAttachmentWorker extends Worker {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(StoreAttachmentWorker.class);
-
     public static final String FILE_KEY = "file";
     public static final String TARGET_URI_KEY = "target";
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(StoreAttachmentWorker.class);
     private final File file;
     private final Uri target;
 
