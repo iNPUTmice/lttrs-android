@@ -49,7 +49,6 @@ import java.util.UUID;
 import rs.ltt.android.LttrsNavigationDirections;
 import rs.ltt.android.R;
 import rs.ltt.android.databinding.FragmentThreadBinding;
-import rs.ltt.android.entity.Attachment;
 import rs.ltt.android.entity.EmailComplete;
 import rs.ltt.android.entity.ExpandedPosition;
 import rs.ltt.android.entity.Seen;
@@ -64,6 +63,7 @@ import rs.ltt.android.ui.adapter.ThreadAdapter;
 import rs.ltt.android.ui.model.ThreadViewModel;
 import rs.ltt.android.util.Event;
 import rs.ltt.android.util.MediaTypes;
+import rs.ltt.jmap.common.entity.Attachment;
 
 public class ThreadFragment extends AbstractLttrsFragment implements OnFlaggedToggled, OnComposeActionTriggered, OnAttachmentActionTriggered {
 

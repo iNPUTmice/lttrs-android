@@ -7,7 +7,7 @@
 
         <variable
             name="attachment"
-            type="rs.ltt.android.entity.Attachment" />
+            type="rs.ltt.jmap.common.entity.Attachment" />
     </data>
 
     <FrameLayout

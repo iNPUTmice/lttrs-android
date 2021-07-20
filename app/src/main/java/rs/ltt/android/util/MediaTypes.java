@@ -2,9 +2,6 @@ package rs.ltt.android.util;
 
 import com.google.common.net.MediaType;
 
-import java.nio.charset.Charset;
-import java.nio.charset.UnsupportedCharsetException;
-
 @SuppressWarnings("UnstableApiUsage")
 public final class MediaTypes {
 
@@ -19,23 +16,6 @@ public final class MediaTypes {
 
     private MediaTypes() {
 
-    }
-
-    public static MediaType of(final String type, final String charsetName) {
-        final MediaType mediaType = type == null ? null : MediaType.parse(type);
-        final Charset charset = parseCharset(charsetName);
-        if (mediaType != null && charset != null) {
-            return mediaType.withCharset(charset);
-        }
-        return mediaType;
-    }
-
-    private static Charset parseCharset(final String charset) {
-        try {
-            return charset == null ? null : Charset.forName(charset);
-        } catch (final UnsupportedCharsetException e) {
-            return null;
-        }
     }
 
     public static boolean isCalendar(final MediaType mediaType) {

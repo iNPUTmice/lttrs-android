@@ -23,13 +23,20 @@ import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.work.ExistingWorkPolicy;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkInfo;
+import androidx.work.WorkManager;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
+import com.google.common.net.MediaType;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -54,6 +61,9 @@ import rs.ltt.android.repository.ComposeRepository;
 import rs.ltt.android.ui.ComposeAction;
 import rs.ltt.android.util.Event;
 import rs.ltt.android.util.MergedListsLiveData;
+import rs.ltt.android.worker.BlobDownloadWorker;
+import rs.ltt.android.worker.BlobUploadWorker;
+import rs.ltt.jmap.common.entity.Attachment;
 import rs.ltt.jmap.common.entity.EmailAddress;
 import rs.ltt.jmap.mua.util.EmailAddressUtil;
 import rs.ltt.jmap.mua.util.EmailUtil;
@@ -75,6 +85,7 @@ public class ComposeViewModel extends AndroidViewModel {
     private final MutableLiveData<String> cc = new MutableLiveData<>();
     private final MutableLiveData<String> subject = new MutableLiveData<>();
     private final MutableLiveData<String> body = new MutableLiveData<>();
+    private final MediatorLiveData<List<Attachment>> attachments = new MediatorLiveData<>();
     private final LiveData<List<IdentityWithNameAndEmail>> identities;
 
     private boolean draftHasBeenHandled = false;
@@ -83,6 +94,8 @@ public class ComposeViewModel extends AndroidViewModel {
         super(application);
         this.composeAction = parameter.composeAction;
         this.uri = parameter.uri;
+        //TODO accountIds needs to be a mutable LiveData property that can be changed as soon as we have one attachment
+        //in case ComposeAction.NEW it starts will a list of all accountIds or else it starts with a a singleton list
         final LiveData<List<Long>> accountIds = AppDatabase.getInstance(application).accountDao().getAccountIds();
         if (composeAction == ComposeAction.NEW) {
             Preconditions.checkState(
@@ -142,12 +155,16 @@ public class ComposeViewModel extends AndroidViewModel {
         return this.extendedAddresses;
     }
 
+    public MutableLiveData<String> getSubject() {
+        return this.subject;
+    }
+
     public MutableLiveData<String> getBody() {
         return this.body;
     }
 
-    public MutableLiveData<String> getSubject() {
-        return this.subject;
+    public LiveData<List<Attachment>> getAttachments() {
+        return this.attachments;
     }
 
     public LiveData<List<IdentityWithNameAndEmail>> getIdentities() {
@@ -309,11 +326,51 @@ public class ComposeViewModel extends AndroidViewModel {
     }
 
     public void addAttachment(final Uri uri) {
-        //TODO start BlobUploadWorker
-        //TODO listen for Result (Upload)
-        //TODO create MutableLiveData<List<Attachment>> attachments
-        //TODO create Attachment from result and add to list
+        final IdentityWithNameAndEmail identity = getIdentity();
+        if (identity == null) {
+            postErrorMessage(R.string.select_sender);
+            return;
+        }
+        final LiveData<WorkInfo> workInfoLiveData = uploadAttachment(identity, uri);
         //TODO do we want to create StubAttachment while waiting for Worker?
+        waitForUpload(workInfoLiveData);
+    }
+
+    private void waitForUpload(final LiveData<WorkInfo> workInfoLiveData) {
+        attachments.addSource(workInfoLiveData, workInfo -> {
+            final WorkInfo.State state = workInfo.getState();
+            if (state.isFinished()) {
+                attachments.removeSource(workInfoLiveData);
+                if (state == WorkInfo.State.SUCCEEDED) {
+                    addAttachment(BlobUploadWorker.getAttachment(workInfo));
+                } else {
+                    postErrorMessage(R.string.failed_to_upload_attachment);
+                }
+            }
+        });
+    }
+
+    private void addAttachment(final Attachment attachment) {
+        final ImmutableList.Builder<Attachment> attachmentBuilder = new ImmutableList.Builder<>();
+        final List<Attachment> current = this.attachments.getValue();
+        if (current != null) {
+            attachmentBuilder.addAll(current);
+        }
+        attachmentBuilder.add(attachment);
+        this.attachments.postValue(attachmentBuilder.build());
+    }
+
+    private LiveData<WorkInfo> uploadAttachment(final IdentityWithNameAndEmail identity, final Uri uri) {
+        final WorkManager workManager = WorkManager.getInstance(getApplication());
+        final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(BlobUploadWorker.class)
+                .setInputData(BlobUploadWorker.data(identity.getAccountId(), uri))
+                .build();
+        workManager.enqueueUniqueWork(
+                BlobUploadWorker.uniqueName(),
+                ExistingWorkPolicy.APPEND_OR_REPLACE,
+                workRequest
+        );
+        return workManager.getWorkInfoByIdLiveData(workRequest.getId());
     }
 
     public static class Parameter {

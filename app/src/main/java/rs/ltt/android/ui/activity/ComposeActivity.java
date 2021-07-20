@@ -43,6 +43,7 @@ import com.google.common.net.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.UUID;
 
 import rs.ltt.android.LttrsApplication;
@@ -52,6 +53,7 @@ import rs.ltt.android.ui.ChipDrawableSpan;
 import rs.ltt.android.ui.ComposeAction;
 import rs.ltt.android.ui.model.ComposeViewModel;
 import rs.ltt.android.util.MediaTypes;
+import rs.ltt.jmap.common.entity.Attachment;
 import rs.ltt.jmap.mua.util.MailToUri;
 
 //TODO handle save instance state
@@ -130,7 +132,7 @@ public class ComposeActivity extends AppCompatActivity {
 
         this.getAttachmentLauncher = registerForActivityResult(
                 new ActivityResultContracts.GetContent(),
-                uri -> composeViewModel.addAttachment(uri)
+                this::addAttachment
         );
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_compose);
@@ -178,7 +180,21 @@ public class ComposeActivity extends AppCompatActivity {
         binding.ccLabel.setOnClickListener(v -> requestFocusAndOpenKeyboard(binding.cc));
         binding.placeholder.setOnClickListener(v -> requestFocusAndOpenKeyboard(binding.body));
 
+        composeViewModel.getAttachments().observe(this, this::onAttachmentsUpdated);
+
         //TODO once we handle instance state ourselves we need to call ChipDrawableSpan.reset() on `to`
+    }
+
+    private void onAttachmentsUpdated(final List<Attachment> attachments) {
+        //TODO draw attachments
+    }
+
+    private void addAttachment(final Uri uri) {
+        if (uri == null) {
+            LOGGER.warn("addAttachment called with null uri");
+            return;
+        }
+         composeViewModel.addAttachment(uri);
     }
 
     private void redirectToSetupActivity() {

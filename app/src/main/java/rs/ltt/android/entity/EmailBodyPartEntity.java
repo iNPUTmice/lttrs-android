@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import rs.ltt.jmap.common.entity.Attachment;
 import rs.ltt.jmap.common.entity.Email;
 import rs.ltt.jmap.common.entity.EmailBodyPart;
 

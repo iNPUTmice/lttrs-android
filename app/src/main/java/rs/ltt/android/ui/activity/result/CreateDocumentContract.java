@@ -10,8 +10,8 @@ import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import rs.ltt.android.entity.Attachment;
 import rs.ltt.android.util.MediaTypes;
+import rs.ltt.jmap.common.entity.Attachment;
 
 public class CreateDocumentContract extends ActivityResultContract<Attachment, Uri> {
 

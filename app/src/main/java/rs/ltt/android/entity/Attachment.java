@@ -1,19 +1,53 @@
 package rs.ltt.android.entity;
 
-import com.google.common.net.MediaType;
+import com.google.common.base.MoreObjects;
 
-import rs.ltt.android.util.MediaTypes;
-import rs.ltt.jmap.common.entity.Downloadable;
+public class Attachment implements rs.ltt.jmap.common.entity.Attachment {
 
-public interface Attachment extends Downloadable {
+    private final String blobId;
+    private final String type;
+    private final String name;
+    private final long size;
 
-    String getName();
-
-    String getCharset();
-
-    default MediaType getMediaType() {
-        return MediaTypes.of(getType(), getCharset());
+    public Attachment(String blobId, String type, String name, long size) {
+        this.blobId = blobId;
+        this.type = type;
+        this.name = name;
+        this.size = size;
     }
 
-    Long getSize();
+    @Override
+    public String getBlobId() {
+        return blobId;
+    }
+
+    @Override
+    public String getType() {
+        return type;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public String getCharset() {
+        return null;
+    }
+
+    @Override
+    public Long getSize() {
+        return size;
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("blobId", blobId)
+                .add("type", type)
+                .add("name", name)
+                .add("size", size)
+                .toString();
+    }
 }

@@ -53,7 +53,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import rs.ltt.android.cache.BlobStorage;
-import rs.ltt.android.entity.Attachment;
 import rs.ltt.android.entity.EmailComplete;
 import rs.ltt.android.entity.ExpandedPosition;
 import rs.ltt.android.entity.MailboxOverwriteEntity;
@@ -67,6 +66,7 @@ import rs.ltt.android.util.Event;
 import rs.ltt.android.util.MainThreadExecutor;
 import rs.ltt.android.worker.BlobDownloadWorker;
 import rs.ltt.android.worker.StoreAttachmentWorker;
+import rs.ltt.jmap.common.entity.Attachment;
 import rs.ltt.jmap.common.entity.Role;
 import rs.ltt.jmap.mua.util.LabelUtil;
 
