@@ -136,5 +136,7 @@
     <string name="attachments">Attachments</string>
     <string name="no_application_to_open_x">No application found to view %s. Try downloading the attachment instead.</string>
     <string name="download_complete">Download complete</string>
+    <string name="the_file_exceeds_the_limit_of_x">The file exceeds the limit of %s</string>
     <string name="failed_to_upload_attachment">Failed to upload attachment</string>
+    <string name="upload_complete">Upload complete</string>
 </resources>

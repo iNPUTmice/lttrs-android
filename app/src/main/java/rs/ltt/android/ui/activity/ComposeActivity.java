@@ -25,6 +25,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -49,6 +50,7 @@ import java.util.UUID;
 import rs.ltt.android.LttrsApplication;
 import rs.ltt.android.R;
 import rs.ltt.android.databinding.ActivityComposeBinding;
+import rs.ltt.android.databinding.ItemAttachmentBinding;
 import rs.ltt.android.ui.ChipDrawableSpan;
 import rs.ltt.android.ui.ComposeAction;
 import rs.ltt.android.ui.model.ComposeViewModel;
@@ -186,7 +188,32 @@ public class ComposeActivity extends AppCompatActivity {
     }
 
     private void onAttachmentsUpdated(final List<Attachment> attachments) {
-        //TODO draw attachments
+        if (attachments.isEmpty()) {
+            binding.attachments.setVisibility(View.GONE);
+        } else {
+            binding.attachments.setVisibility(View.VISIBLE);
+            binding.attachments.removeAllViews();
+            for (final Attachment attachment : attachments) {
+                binding.attachments.addView(renderAttachment(attachment));
+            }
+        }
+    }
+
+    private View renderAttachment(final Attachment attachment) {
+        final ItemAttachmentBinding attachmentBinding = ItemAttachmentBinding.inflate(
+                getLayoutInflater(),
+                binding.attachments,
+                false
+        );
+        attachmentBinding.setAttachment(attachment);
+        attachmentBinding.action.setImageResource(R.drawable.ic_baseline_close_24);
+        attachmentBinding.action.setOnClickListener((v) -> deleteAttachment(attachment));
+        //TODO wire up 'open/view'
+        return attachmentBinding.getRoot();
+    }
+
+    private void deleteAttachment(final Attachment attachment) {
+        composeViewModel.deleteAttachment(attachment);
     }
 
     private void addAttachment(final Uri uri) {
@@ -194,7 +221,7 @@ public class ComposeActivity extends AppCompatActivity {
             LOGGER.warn("addAttachment called with null uri");
             return;
         }
-         composeViewModel.addAttachment(uri);
+        composeViewModel.addAttachment(uri);
     }
 
     private void redirectToSetupActivity() {

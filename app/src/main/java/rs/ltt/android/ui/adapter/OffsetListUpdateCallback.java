@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.AdapterListUpdateCallback;
 import androidx.recyclerview.widget.ListUpdateCallback;
 import androidx.recyclerview.widget.RecyclerView;
 
+//TODO toggle offset
 public class OffsetListUpdateCallback<VH extends RecyclerView.ViewHolder> implements ListUpdateCallback {
 
     private final AdapterListUpdateCallback adapterCallback;

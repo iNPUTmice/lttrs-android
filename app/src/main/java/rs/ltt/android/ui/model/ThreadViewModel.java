@@ -264,6 +264,7 @@ public class ThreadViewModel extends AndroidViewModel {
         return BlobStorage.getFileProviderUri(getApplication(), accountId, blobId);
     }
 
+    //TODO move all open attachments methods to parent viewmodel
     public void open(final String emailId, final Attachment attachment) {
         Futures.addCallback(getFileProviderUri(attachment.getBlobId()), new FutureCallback<Uri>() {
             @Override
@@ -283,6 +284,7 @@ public class ThreadViewModel extends AndroidViewModel {
     }
 
     private void queueDownload(final String emailId, final Attachment attachment) {
+        //TODO complain (show error) on missing emailId (can happening during drafting)
         final WorkManager workManager = WorkManager.getInstance(getApplication());
         final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(BlobDownloadWorker.class)
                 .setInputData(BlobDownloadWorker.data(accountId, emailId, attachment.getBlobId()))

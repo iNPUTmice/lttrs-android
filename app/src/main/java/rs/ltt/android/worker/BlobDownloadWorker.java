@@ -96,7 +96,9 @@ public class BlobDownloadWorker extends AbstractMuaWorker {
             return Result.failure();
         }
         this.call = download.getCall();
-        //TODO compare contentLength with expectedSize
+        if (expectedSize != null && expectedSize != download.getContentLength()) {
+            LOGGER.info("expected size {} does not match ContentLength {}", expectedSize, download.getContentLength());
+        }
         try (final InputStream inputStream = download.getInputStream();
              final OutputStream outputStream = new FileOutputStream(temporaryFile, download.isResumed())) {
             long transmitted = rangeStart;
@@ -116,6 +118,7 @@ public class BlobDownloadWorker extends AbstractMuaWorker {
             }
             outputStream.flush();
         } catch (final Exception e) {
+            //TODO get cause. When cause FailureToResume delete tmp file
             LOGGER.warn("Unable to download file", e);
             return Result.failure();
         }
@@ -158,7 +161,7 @@ public class BlobDownloadWorker extends AbstractMuaWorker {
                 this.downloadable,
                 "getForegroundInfo can only be called after setting downloadable"
         );
-        return new ForegroundInfo(AttachmentNotification.DOWNLOAD_ID, AttachmentNotification.getDownloading(
+        return new ForegroundInfo(AttachmentNotification.DOWNLOAD_ID, AttachmentNotification.downloading(
                 getApplicationContext(),
                 getId(),
                 downloadable,
@@ -172,7 +175,7 @@ public class BlobDownloadWorker extends AbstractMuaWorker {
                 this.downloadable,
                 "getForegroundInfo can only be called after setting downloadable"
         );
-        notificationManager.notify(AttachmentNotification.DOWNLOAD_ID, AttachmentNotification.getDownloaded(
+        notificationManager.notify(AttachmentNotification.DOWNLOAD_ID, AttachmentNotification.downloaded(
                 getApplicationContext(),
                 downloadable
         ));
@@ -187,7 +190,7 @@ public class BlobDownloadWorker extends AbstractMuaWorker {
                     this.downloadable,
                     "getForegroundInfo can only be called after setting downloadable"
             );
-            notificationManager.notify(AttachmentNotification.DOWNLOAD_ID, AttachmentNotification.getDownloading(
+            notificationManager.notify(AttachmentNotification.DOWNLOAD_ID, AttachmentNotification.downloading(
                     getApplicationContext(),
                     getId(),
                     downloadable,

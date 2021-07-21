@@ -1,5 +1,6 @@
 package rs.ltt.android.worker;
 
+import android.app.NotificationManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
@@ -8,11 +9,15 @@ import android.provider.OpenableColumns;
 
 import androidx.annotation.NonNull;
 import androidx.work.Data;
+import androidx.work.ForegroundInfo;
 import androidx.work.WorkInfo;
 import androidx.work.WorkerParameters;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.net.MediaType;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.RateLimiter;
 
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -20,8 +25,11 @@ import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.util.Objects;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
 
 import rs.ltt.android.entity.Attachment;
+import rs.ltt.android.ui.notification.AttachmentNotification;
 import rs.ltt.jmap.client.blob.Progress;
 import rs.ltt.jmap.client.blob.Upload;
 import rs.ltt.jmap.client.blob.Uploadable;
@@ -36,11 +44,17 @@ public class BlobUploadWorker extends AbstractMuaWorker implements Progress {
     private static final String TYPE_KEY = "type";
     private static final String SIZE_KEY = "size";
     private final Uri uri;
+    private String name;
+    private final NotificationManager notificationManager;
+    private final RateLimiter notificationRateLimiter = RateLimiter.create(1);
+    private int currentlyShownProgress = 0;
+    private ListenableFuture<Upload> uploadFuture;
 
     public BlobUploadWorker(@NonNull @NotNull Context context, @NonNull @NotNull WorkerParameters workerParams) {
         super(context, workerParams);
         final Data data = workerParams.getInputData();
         this.uri = Uri.parse(Objects.requireNonNull(data.getString(URI_KEY)));
+        this.notificationManager = context.getSystemService(NotificationManager.class);
     }
 
     public static Data data(Long accountId, final Uri uri) {
@@ -76,7 +90,6 @@ public class BlobUploadWorker extends AbstractMuaWorker implements Progress {
         final ContentResolver contentResolver = getApplicationContext().getContentResolver();
         final String type = contentResolver.getType(uri);
         final long size;
-        final String name;
         try (final Cursor cursor = contentResolver.query(uri, null, null, null, null)) {
             cursor.moveToFirst();
             size = cursor.getLong(cursor.getColumnIndexOrThrow(OpenableColumns.SIZE));
@@ -85,6 +98,7 @@ public class BlobUploadWorker extends AbstractMuaWorker implements Progress {
             LOGGER.debug("Unable to retrieve file size and name", e);
             return Result.failure();
         }
+        setForegroundAsync(getForegroundInfo());
         final Mua mua = getMua();
         try (final InputStream inputStream = contentResolver.openInputStream(uri)) {
             final Uploadable uploadable = new ContentProviderUpload(
@@ -92,8 +106,11 @@ public class BlobUploadWorker extends AbstractMuaWorker implements Progress {
                     MediaType.parse(type),
                     size
             );
-            final Upload upload = mua.upload(uploadable, this).get();
+            this.uploadFuture = mua.upload(uploadable, this);
+            final Upload upload = this.uploadFuture.get();
             LOGGER.info("Upload succeeded {}", upload);
+            notifyUploadComplete();
+            //TODO copy blob to cache
             final Data data = new Data.Builder()
                     .putString(BLOB_ID_KEY, upload.getBlobId())
                     .putString(TYPE_KEY, upload.getType())
@@ -101,15 +118,61 @@ public class BlobUploadWorker extends AbstractMuaWorker implements Progress {
                     .putLong(SIZE_KEY, upload.getSize())
                     .build();
             return Result.success(data);
+        } catch (final ExecutionException e) {
+            LOGGER.info("Failure uploading blob (ee) ", e.getCause());
+            return Result.failure(Failure.of(e.getCause()));
         } catch (final Exception e) {
             LOGGER.info("Failure uploading blob", e);
-            return Result.failure();
+            return Result.failure(Failure.of(e));
         }
+    }
+
+    private ForegroundInfo getForegroundInfo() {
+        return new ForegroundInfo(AttachmentNotification.UPLOAD_ID, AttachmentNotification.uploading(
+                getApplicationContext(),
+                getId(),
+                Strings.nullToEmpty(this.name),
+                0,
+                true
+        ));
+    }
+
+    private void notifyUploadComplete() {
+        notificationManager.notify(AttachmentNotification.UPLOAD_ID, AttachmentNotification.uploaded(
+                getApplicationContext(),
+                Strings.nullToEmpty(this.name)
+        ));
     }
 
     @Override
     public void onProgress(int progress) {
-        LOGGER.debug("progress {}", progress);
+        if (isDone(this.uploadFuture) || currentlyShownProgress == progress) {
+            return;
+        }
+        if (notificationRateLimiter.tryAcquire()) {
+            notificationManager.notify(AttachmentNotification.UPLOAD_ID, AttachmentNotification.uploading(
+                    getApplicationContext(),
+                    getId(),
+                    Strings.nullToEmpty(this.name),
+                    progress,
+                    false
+            ));
+            this.currentlyShownProgress = progress;
+        }
+    }
+
+    private static boolean isDone(final ListenableFuture<?> future) {
+        return future != null && future.isDone();
+    }
+
+    @Override
+    public void onStopped() {
+        super.onStopped();
+        if (this.uploadFuture != null) {
+            if (this.uploadFuture.cancel(true)) {
+                LOGGER.info("Cancelled upload future");
+            }
+        }
     }
 
     private static class ContentProviderUpload implements Uploadable {

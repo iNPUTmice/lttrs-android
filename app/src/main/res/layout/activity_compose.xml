@@ -256,6 +256,13 @@
                     android:padding="16dp"
                     android:text="@={composeViewModel.body}" />
 
+                <LinearLayout
+                    android:id="@+id/attachments"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="16dp"
+                    android:orientation="vertical"/>
+
 
                 <!-- placeholder so we have something to fetch click event and redirect them to compose-->
                 <View

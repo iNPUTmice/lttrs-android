@@ -28,6 +28,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.work.Data;
 import androidx.work.ExistingWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkInfo;
@@ -36,7 +37,6 @@ import androidx.work.WorkManager;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
-import com.google.common.net.MediaType;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -45,11 +45,13 @@ import com.google.common.util.concurrent.MoreExecutors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.CancellationException;
 import java.util.stream.Collectors;
 
 import rs.ltt.android.R;
@@ -60,9 +62,10 @@ import rs.ltt.android.entity.IdentityWithNameAndEmail;
 import rs.ltt.android.repository.ComposeRepository;
 import rs.ltt.android.ui.ComposeAction;
 import rs.ltt.android.util.Event;
+import rs.ltt.android.util.FileSizes;
 import rs.ltt.android.util.MergedListsLiveData;
-import rs.ltt.android.worker.BlobDownloadWorker;
 import rs.ltt.android.worker.BlobUploadWorker;
+import rs.ltt.android.worker.Failure;
 import rs.ltt.jmap.common.entity.Attachment;
 import rs.ltt.jmap.common.entity.EmailAddress;
 import rs.ltt.jmap.mua.util.EmailAddressUtil;
@@ -277,9 +280,11 @@ public class ComposeViewModel extends AndroidViewModel {
     }
 
     private void postErrorMessage(@StringRes final int res, final Object... objects) {
-        this.errorMessage.postValue(
-                new Event<>(getApplication().getString(res, objects))
-        );
+        postErrorMessage(getApplication().getString(res, objects));
+    }
+
+    private void postErrorMessage(final String message) {
+        this.errorMessage.postValue(new Event<>(message));
     }
 
     private EditableEmail getEmail() {
@@ -343,11 +348,31 @@ public class ComposeViewModel extends AndroidViewModel {
                 attachments.removeSource(workInfoLiveData);
                 if (state == WorkInfo.State.SUCCEEDED) {
                     addAttachment(BlobUploadWorker.getAttachment(workInfo));
-                } else {
-                    postErrorMessage(R.string.failed_to_upload_attachment);
+                } else if (state == WorkInfo.State.FAILED) {
+                    postAttachmentFailure(workInfo.getOutputData());
                 }
             }
         });
+    }
+
+    private void postAttachmentFailure(final Data data) {
+        final Failure failure;
+        try {
+            failure = Failure.of(data);
+        } catch (IllegalArgumentException e) {
+            postErrorMessage(R.string.failed_to_upload_attachment);
+            return;
+        }
+        if (failure instanceof Failure.MaxUploadSizeExceeded) {
+            final long max = ((Failure.MaxUploadSizeExceeded) failure).getMaxUploadSize();
+            postErrorMessage(R.string.the_file_exceeds_the_limit_of_x, FileSizes.toString(max));
+        } else if (failure.getException() != CancellationException.class) {
+            if (Strings.isNullOrEmpty(failure.getMessage())) {
+                postErrorMessage(R.string.failed_to_upload_attachment);
+            } else {
+                postErrorMessage(failure.getMessage());
+            }
+        }
     }
 
     private void addAttachment(final Attachment attachment) {
@@ -371,6 +396,13 @@ public class ComposeViewModel extends AndroidViewModel {
                 workRequest
         );
         return workManager.getWorkInfoByIdLiveData(workRequest.getId());
+    }
+
+    public void deleteAttachment(final Attachment attachment) {
+        final List<Attachment> current = this.attachments.getValue();
+        final ArrayList<Attachment> attachments = current == null ? new ArrayList<>() : new ArrayList<>(current);
+        attachments.remove(attachment);
+        this.attachments.postValue(ImmutableList.copyOf(attachments));
     }
 
     public static class Parameter {
