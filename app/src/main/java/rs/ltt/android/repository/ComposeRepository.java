@@ -65,7 +65,8 @@ public class ComposeRepository extends AbstractRepository {
                         draft.getTo(),
                         draft.getCc(),
                         draft.getSubject(),
-                        draft.getBody()
+                        draft.getBody(),
+                        draft.getAttachments()
                 ))
                 .build();
         final WorkManager workManager = WorkManager.getInstance(application);
@@ -113,7 +114,8 @@ public class ComposeRepository extends AbstractRepository {
                         draft.getTo(),
                         draft.getCc(),
                         draft.getSubject(),
-                        draft.getBody()
+                        draft.getBody(),
+                        draft.getAttachments()
                 ))
                 .build();
         final WorkManager workManager = WorkManager.getInstance(application);

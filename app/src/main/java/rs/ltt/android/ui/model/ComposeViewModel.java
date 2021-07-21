@@ -327,7 +327,7 @@ public class ComposeViewModel extends AndroidViewModel {
     }
 
     private Draft getCurrentDraft() {
-        return Draft.of(this.to, this.cc, this.subject, this.body);
+        return Draft.of(this.to, this.cc, this.subject, this.body, this.attachments);
     }
 
     public void addAttachment(final Uri uri) {
@@ -377,10 +377,7 @@ public class ComposeViewModel extends AndroidViewModel {
 
     private void addAttachment(final Attachment attachment) {
         final ImmutableList.Builder<Attachment> attachmentBuilder = new ImmutableList.Builder<>();
-        final List<Attachment> current = this.attachments.getValue();
-        if (current != null) {
-            attachmentBuilder.addAll(current);
-        }
+        attachmentBuilder.addAll(nullToEmpty(this.attachments.getValue()));
         attachmentBuilder.add(attachment);
         this.attachments.postValue(attachmentBuilder.build());
     }
@@ -403,6 +400,10 @@ public class ComposeViewModel extends AndroidViewModel {
         final ArrayList<Attachment> attachments = current == null ? new ArrayList<>() : new ArrayList<>(current);
         attachments.remove(attachment);
         this.attachments.postValue(ImmutableList.copyOf(attachments));
+    }
+
+    private static <T> List<T> nullToEmpty(final List<T> in) {
+        return in == null ? Collections.emptyList() : in;
     }
 
     public static class Parameter {
@@ -434,20 +435,23 @@ public class ComposeViewModel extends AndroidViewModel {
         private final Collection<EmailAddress> cc;
         private final String subject;
         private final String body;
+        private final Collection<Attachment> attachments;
 
-        private Draft(Collection<EmailAddress> to, Collection<EmailAddress> cc, String subject, String body) {
+        private Draft(Collection<EmailAddress> to, Collection<EmailAddress> cc, String subject, String body, Collection<Attachment> attachments) {
             this.to = to;
             this.cc = cc;
             this.subject = subject;
             this.body = body;
+            this.attachments = attachments;
         }
 
-        public static Draft of(LiveData<String> to, LiveData<String> cc, LiveData<String> subject, LiveData<String> body) {
+        public static Draft of(LiveData<String> to, LiveData<String> cc, LiveData<String> subject, LiveData<String> body, LiveData<List<Attachment>> attachments) {
             return new Draft(
                     EmailAddressUtil.parse(Strings.nullToEmpty(to.getValue())),
                     EmailAddressUtil.parse(Strings.nullToEmpty(cc.getValue())),
                     Strings.nullToEmpty(subject.getValue()),
-                    Strings.nullToEmpty(body.getValue())
+                    Strings.nullToEmpty(body.getValue()),
+                    nullToEmpty(attachments.getValue())
             );
         }
 
@@ -459,7 +463,8 @@ public class ComposeViewModel extends AndroidViewModel {
                     uri.getTo(),
                     uri.getCc(),
                     Strings.nullToEmpty(uri.getSubject()),
-                    Strings.nullToEmpty(uri.getBody())
+                    Strings.nullToEmpty(uri.getBody()),
+                    Collections.emptyList()
             );
         }
 
@@ -468,7 +473,8 @@ public class ComposeViewModel extends AndroidViewModel {
                     email.getTo(),
                     email.getCc(),
                     email.subject,
-                    email.getText()
+                    email.getText(),
+                    Collections.emptyList() // TODO replace with email.getAttachments
             );
         }
 
@@ -478,7 +484,8 @@ public class ComposeViewModel extends AndroidViewModel {
                     replyAddresses.getTo(),
                     replyAddresses.getCc(),
                     EmailUtil.getResponseSubject(email),
-                    ""
+                    "",
+                    Collections.emptyList() // TODO replace with email.getAttachments
             );
         }
 
@@ -520,7 +527,12 @@ public class ComposeViewModel extends AndroidViewModel {
                     && EmailAddressUtil.equalCollections(draft.getTo(), to)
                     && EmailAddressUtil.equalCollections(draft.getCc(), cc)
                     && subject.equals(draft.subject)
-                    && body.equals(draft.body);
+                    && body.equals(draft.body)
+                    && attachments.equals(draft.attachments);
+        }
+
+        public Collection<Attachment> getAttachments() {
+            return attachments;
         }
     }
 
