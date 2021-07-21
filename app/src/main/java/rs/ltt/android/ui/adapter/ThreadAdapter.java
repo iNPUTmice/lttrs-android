@@ -31,9 +31,6 @@ import androidx.recyclerview.widget.AsyncDifferConfig;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -55,9 +52,7 @@ import rs.ltt.android.util.Touch;
 import rs.ltt.jmap.mua.util.Label;
 
 public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.AbstractThreadItemViewHolder> {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ThreadAdapter.class);
-
+    
     private static final DiffUtil.ItemCallback<EmailComplete> ITEM_CALLBACK = new DiffUtil.ItemCallback<EmailComplete>() {
 
         @Override
@@ -67,7 +62,9 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.AbstractTh
 
         @Override
         public boolean areContentsTheSame(@NonNull EmailComplete oldItem, @NonNull EmailComplete newItem) {
-            return false;
+            //TODO this can probably be reduced to check if id and isDraft equals. Because isDraft(()
+            //is the only (displayed) thing that is realistically going to change in an otherwise immutable email
+            return oldItem.equals(newItem);
         }
     };
 

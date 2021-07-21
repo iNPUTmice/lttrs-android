@@ -17,13 +17,13 @@ package rs.ltt.android.entity;
 
 import androidx.room.Relation;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.Maps;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import rs.ltt.jmap.mua.util.KeywordUtil;
@@ -65,7 +65,7 @@ public abstract class EmailWithTextBodies extends EmailPreview {
         final Map<String, EmailBodyValueEntity> map = Maps.uniqueIndex(bodyValueEntities, value -> value.partId);
         return textBodies.stream()
                 .map(body -> map.get(body.partId))
-                .filter(Objects::nonNull)
+                .filter(java.util.Objects::nonNull)
                 .map(value -> value.value)
                 .collect(Collectors.toList());
     }
@@ -82,5 +82,21 @@ public abstract class EmailWithTextBodies extends EmailPreview {
             }
         }
         return toMap.values();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        EmailWithTextBodies that = (EmailWithTextBodies) o;
+        return Objects.equal(preview, that.preview) &&
+                Objects.equal(bodyPartEntities, that.bodyPartEntities) &&
+                Objects.equal(bodyValueEntities, that.bodyValueEntities);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(super.hashCode(), preview, bodyPartEntities, bodyValueEntities);
     }
 }
