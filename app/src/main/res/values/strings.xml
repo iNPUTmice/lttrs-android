@@ -139,4 +139,5 @@
     <string name="the_file_exceeds_the_limit_of_x">The file exceeds the limit of %s</string>
     <string name="failed_to_upload_attachment">Failed to upload attachment</string>
     <string name="upload_complete">Upload complete</string>
+    <string name="attachment_is_not_cached">Attachment is not cached</string>
 </resources>

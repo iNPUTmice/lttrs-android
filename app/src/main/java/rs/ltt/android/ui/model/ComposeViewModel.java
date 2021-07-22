@@ -21,7 +21,6 @@ import android.net.Uri;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
-import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -72,7 +71,7 @@ import rs.ltt.jmap.mua.util.EmailAddressUtil;
 import rs.ltt.jmap.mua.util.EmailUtil;
 import rs.ltt.jmap.mua.util.MailToUri;
 
-public class ComposeViewModel extends AndroidViewModel {
+public class ComposeViewModel extends AbstractAttachmentViewModel {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ComposeViewModel.class);
 
@@ -136,6 +135,10 @@ public class ComposeViewModel extends AndroidViewModel {
             return editableEmail.messageId;
         }
         return Collections.emptyList();
+    }
+
+    private static <T> List<T> nullToEmpty(final List<T> in) {
+        return in == null ? Collections.emptyList() : in;
     }
 
     private ComposeRepository getRepository(Long accountId) {
@@ -403,8 +406,28 @@ public class ComposeViewModel extends AndroidViewModel {
         this.attachments.postValue(ImmutableList.copyOf(attachments));
     }
 
-    private static <T> List<T> nullToEmpty(final List<T> in) {
-        return in == null ? Collections.emptyList() : in;
+    @Override
+    protected void queueDownload(final String emailId, final Attachment attachment) {
+        if (emailId == null) {
+            postErrorMessage(R.string.attachment_is_not_cached);
+            return;
+        }
+        super.queueDownload(emailId, attachment);
+    }
+
+    @Override
+    protected long getAccountId() {
+        final IdentityWithNameAndEmail identity = getIdentity();
+        if (identity == null) {
+            throw new IllegalStateException("There are attachments but no selected identity");
+        }
+        return identity.getAccountId();
+    }
+
+    public void open(final Attachment attachment) {
+        final EmailWithReferences email = getEmail();
+        final String emailId = email == null ? null : email.getId();
+        open(emailId, attachment);
     }
 
     public static class Parameter {

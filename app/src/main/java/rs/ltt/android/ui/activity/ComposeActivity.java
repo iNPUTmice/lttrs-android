@@ -25,7 +25,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -53,7 +52,9 @@ import rs.ltt.android.databinding.ActivityComposeBinding;
 import rs.ltt.android.databinding.ItemAttachmentBinding;
 import rs.ltt.android.ui.ChipDrawableSpan;
 import rs.ltt.android.ui.ComposeAction;
+import rs.ltt.android.ui.ViewIntent;
 import rs.ltt.android.ui.model.ComposeViewModel;
+import rs.ltt.android.util.Event;
 import rs.ltt.android.util.MediaTypes;
 import rs.ltt.jmap.common.entity.Attachment;
 import rs.ltt.jmap.mua.util.MailToUri;
@@ -184,7 +185,15 @@ public class ComposeActivity extends AppCompatActivity {
 
         composeViewModel.getAttachments().observe(this, this::onAttachmentsUpdated);
 
+        composeViewModel.getViewIntentEvent().observe(this, this::onViewIntentEvent);
+
         //TODO once we handle instance state ourselves we need to call ChipDrawableSpan.reset() on `to`
+    }
+
+    private void onViewIntentEvent(final Event<ViewIntent> viewIntentEvent) {
+        if (viewIntentEvent.isConsumable()) {
+            viewIntentEvent.consume().launch(this);
+        }
     }
 
     private void onAttachmentsUpdated(final List<? extends Attachment> attachments) {
@@ -208,6 +217,7 @@ public class ComposeActivity extends AppCompatActivity {
         attachmentBinding.setAttachment(attachment);
         attachmentBinding.action.setImageResource(R.drawable.ic_baseline_close_24);
         attachmentBinding.action.setOnClickListener((v) -> deleteAttachment(attachment));
+        attachmentBinding.getRoot().setOnClickListener((v -> composeViewModel.open(attachment)));
         //TODO wire up 'open/view'
         return attachmentBinding.getRoot();
     }

@@ -70,7 +70,7 @@ import rs.ltt.jmap.common.entity.Attachment;
 import rs.ltt.jmap.common.entity.Role;
 import rs.ltt.jmap.mua.util.LabelUtil;
 
-public class ThreadViewModel extends AndroidViewModel {
+public class ThreadViewModel extends AbstractAttachmentViewModel {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ThreadViewModel.class);
 
@@ -78,7 +78,6 @@ public class ThreadViewModel extends AndroidViewModel {
     public final ListenableFuture<List<ExpandedPosition>> expandedPositions;
     public final MutableLiveData<Event<Seen>> seenEvent = new MutableLiveData<>();
     public final HashSet<String> expandedItems = new HashSet<>();
-    private final MediatorLiveData<Event<ViewIntent>> viewIntentEvent = new MediatorLiveData<>();
     private final long accountId;
     private final String threadId;
     private final String label;
@@ -197,10 +196,6 @@ public class ThreadViewModel extends AndroidViewModel {
         return this.seenEvent;
     }
 
-    public LiveData<Event<ViewIntent>> getViewIntentEvent() {
-        return this.viewIntentEvent;
-    }
-
     public LiveData<Event<String>> getThreadViewRedirect() {
         return this.threadViewRedirect;
     }
@@ -260,58 +255,6 @@ public class ThreadViewModel extends AndroidViewModel {
         });
     }
 
-    private ListenableFuture<Uri> getFileProviderUri(final String blobId) {
-        return BlobStorage.getFileProviderUri(getApplication(), accountId, blobId);
-    }
-
-    //TODO move all open attachments methods to parent viewmodel
-    public void open(final String emailId, final Attachment attachment) {
-        Futures.addCallback(getFileProviderUri(attachment.getBlobId()), new FutureCallback<Uri>() {
-            @Override
-            public void onSuccess(@Nullable Uri uri) {
-                viewIntentEvent.postValue(new Event<>(new ViewIntent(uri, attachment.getMediaType())));
-            }
-
-            @Override
-            public void onFailure(@NotNull Throwable throwable) {
-                if (throwable instanceof BlobStorage.InvalidCacheException) {
-                    queueDownload(emailId, attachment);
-                } else {
-                    //TODO show error message?
-                }
-            }
-        }, MainThreadExecutor.getInstance());
-    }
-
-    private void queueDownload(final String emailId, final Attachment attachment) {
-        //TODO complain (show error) on missing emailId (can happening during drafting)
-        final WorkManager workManager = WorkManager.getInstance(getApplication());
-        final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(BlobDownloadWorker.class)
-                .setInputData(BlobDownloadWorker.data(accountId, emailId, attachment.getBlobId()))
-                .build();
-        workManager.enqueueUniqueWork(
-                BlobDownloadWorker.uniqueName(),
-                ExistingWorkPolicy.APPEND_OR_REPLACE,
-                workRequest
-        );
-        final LiveData<WorkInfo> workInfo = workManager.getWorkInfoByIdLiveData(workRequest.getId());
-        waitForDownload(attachment.getMediaType(), workInfo);
-    }
-
-    private void waitForDownload(final MediaType mediaType, final LiveData<WorkInfo> workInfoLiveData) {
-        viewIntentEvent.addSource(workInfoLiveData, workInfo -> {
-            final WorkInfo.State state = workInfo.getState();
-            if (state.isFinished()) {
-                viewIntentEvent.removeSource(workInfoLiveData);
-                if (state == WorkInfo.State.SUCCEEDED) {
-                    final Uri uri = BlobDownloadWorker.getUri(workInfo);
-                    viewIntentEvent.postValue(new Event<>(new ViewIntent(uri, mediaType)));
-                }
-                //TODO show some form of error
-            }
-        });
-    }
-
     public void setAttachmentReference(final String emailId, final String blobId) {
         this.attachmentReference = new AttachmentReference(emailId, blobId);
     }
@@ -363,14 +306,9 @@ public class ThreadViewModel extends AndroidViewModel {
                 .enqueue();
     }
 
-    public static class ViewIntent {
-        public final Uri uri;
-        public final MediaType mediaType;
-
-        public ViewIntent(Uri uri, MediaType mediaType) {
-            this.uri = uri;
-            this.mediaType = mediaType;
-        }
+    @Override
+    protected long getAccountId() {
+        return this.accountId;
     }
 
     public static class MenuConfiguration {

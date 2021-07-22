@@ -54,6 +54,7 @@ import rs.ltt.android.entity.ExpandedPosition;
 import rs.ltt.android.entity.Seen;
 import rs.ltt.android.entity.SubjectWithImportance;
 import rs.ltt.android.ui.ItemAnimators;
+import rs.ltt.android.ui.ViewIntent;
 import rs.ltt.android.ui.activity.ComposeActivity;
 import rs.ltt.android.ui.activity.result.CreateDocumentContract;
 import rs.ltt.android.ui.adapter.OnAttachmentActionTriggered;
@@ -161,23 +162,9 @@ public class ThreadFragment extends AbstractLttrsFragment implements OnFlaggedTo
         }
     }
 
-    private void onViewIntentEvent(final Event<ThreadViewModel.ViewIntent> viewIntentEvent) {
+    private void onViewIntentEvent(final Event<ViewIntent> viewIntentEvent) {
         if (viewIntentEvent.isConsumable()) {
-            onViewIntent(viewIntentEvent.consume());
-        }
-    }
-
-    private void onViewIntent(final ThreadViewModel.ViewIntent viewIntent) {
-        final Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setDataAndType(viewIntent.uri, MediaTypes.toString(viewIntent.mediaType));
-        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        try {
-            startActivity(intent);
-        } catch (final ActivityNotFoundException e) {
-            new MaterialAlertDialogBuilder(requireActivity())
-                    .setMessage(getString(R.string.no_application_to_open_x, MediaTypes.toString(viewIntent.mediaType)))
-                    .setPositiveButton(R.string.ok, null)
-                    .show();
+            viewIntentEvent.consume().launch(requireActivity());
         }
     }
 

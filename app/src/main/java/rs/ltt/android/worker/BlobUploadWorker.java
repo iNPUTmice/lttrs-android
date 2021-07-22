@@ -25,7 +25,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.util.Objects;
-import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 
 import rs.ltt.android.entity.Attachment;
@@ -44,9 +43,9 @@ public class BlobUploadWorker extends AbstractMuaWorker implements Progress {
     private static final String TYPE_KEY = "type";
     private static final String SIZE_KEY = "size";
     private final Uri uri;
-    private String name;
     private final NotificationManager notificationManager;
     private final RateLimiter notificationRateLimiter = RateLimiter.create(1);
+    private String name;
     private int currentlyShownProgress = 0;
     private ListenableFuture<Upload> uploadFuture;
 
@@ -80,6 +79,10 @@ public class BlobUploadWorker extends AbstractMuaWorker implements Progress {
                 data.getString(NAME_KEY),
                 data.getLong(SIZE_KEY, 0)
         );
+    }
+
+    private static boolean isDone(final ListenableFuture<?> future) {
+        return future != null && future.isDone();
     }
 
     @NonNull
@@ -159,10 +162,6 @@ public class BlobUploadWorker extends AbstractMuaWorker implements Progress {
             ));
             this.currentlyShownProgress = progress;
         }
-    }
-
-    private static boolean isDone(final ListenableFuture<?> future) {
-        return future != null && future.isDone();
     }
 
     @Override

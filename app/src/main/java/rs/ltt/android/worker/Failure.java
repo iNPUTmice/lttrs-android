@@ -4,8 +4,6 @@ import androidx.work.Data;
 
 import com.google.common.base.Strings;
 
-import java.util.concurrent.ExecutionException;
-
 import rs.ltt.jmap.client.blob.MaxUploadSizeExceededException;
 import rs.ltt.jmap.common.entity.IdentifiableMailboxWithRoleAndName;
 import rs.ltt.jmap.common.entity.Role;
