@@ -15,7 +15,6 @@
 
 package rs.ltt.android.ui.fragment;
 
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -32,7 +31,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.paging.PagedList;
 
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.FutureCallback;

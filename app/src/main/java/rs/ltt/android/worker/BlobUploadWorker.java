@@ -15,6 +15,7 @@ import androidx.work.WorkerParameters;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.io.ByteStreams;
 import com.google.common.net.MediaType;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.RateLimiter;
@@ -23,10 +24,12 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
+import rs.ltt.android.cache.BlobStorage;
 import rs.ltt.android.entity.Attachment;
 import rs.ltt.android.ui.notification.AttachmentNotification;
 import rs.ltt.jmap.client.blob.Progress;
@@ -113,7 +116,7 @@ public class BlobUploadWorker extends AbstractMuaWorker implements Progress {
             final Upload upload = this.uploadFuture.get();
             LOGGER.info("Upload succeeded {}", upload);
             notifyUploadComplete();
-            //TODO copy blob to cache
+            cacheBlob(uri, upload.getBlobId());
             final Data data = new Data.Builder()
                     .putString(BLOB_ID_KEY, upload.getBlobId())
                     .putString(TYPE_KEY, upload.getType())
@@ -127,6 +130,34 @@ public class BlobUploadWorker extends AbstractMuaWorker implements Progress {
         } catch (final Exception e) {
             LOGGER.info("Failure uploading blob", e);
             return Result.failure(Failure.of(e));
+        }
+    }
+
+    private void cacheBlob(final Uri uri, final String blobId) {
+        final BlobStorage blobStorage = BlobStorage.get(
+                getApplicationContext(),
+                account,
+                blobId
+        );
+        if (blobStorage.file.exists()) {
+            LOGGER.info("Blob {} is already cached", blobId);
+            return;
+        }
+        final ContentResolver contentResolver = getApplicationContext().getContentResolver();
+        final long bytesCopied;
+        try (final InputStream inputStream = contentResolver.openInputStream(uri);
+             final FileOutputStream fileOutputStream = new FileOutputStream(blobStorage.temporaryFile)) {
+            bytesCopied = ByteStreams.copy(inputStream, fileOutputStream);
+            fileOutputStream.flush();
+        } catch (final Exception e) {
+            LOGGER.warn("Unable to write InputStream to blob cache", e);
+            if (blobStorage.temporaryFile.delete()) {
+                LOGGER.info("Deleted temporary file");
+            }
+            return;
+        }
+        if (blobStorage.moveTemporaryToFile()) {
+            LOGGER.info("Successfully cached blob {}. {} bytes written", blobId, bytesCopied);
         }
     }
 

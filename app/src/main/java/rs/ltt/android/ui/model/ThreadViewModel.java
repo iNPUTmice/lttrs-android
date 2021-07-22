@@ -20,7 +20,6 @@ import android.net.Uri;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -35,7 +34,6 @@ import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.net.MediaType;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -63,10 +61,8 @@ import rs.ltt.android.entity.ThreadHeader;
 import rs.ltt.android.repository.ThreadViewRepository;
 import rs.ltt.android.util.CombinedListsLiveData;
 import rs.ltt.android.util.Event;
-import rs.ltt.android.util.MainThreadExecutor;
 import rs.ltt.android.worker.BlobDownloadWorker;
 import rs.ltt.android.worker.StoreAttachmentWorker;
-import rs.ltt.jmap.common.entity.Attachment;
 import rs.ltt.jmap.common.entity.Role;
 import rs.ltt.jmap.mua.util.LabelUtil;
 
