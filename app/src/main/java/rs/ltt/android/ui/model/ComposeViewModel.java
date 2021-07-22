@@ -249,7 +249,7 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
         }
         final Draft currentDraft = getCurrentDraft();
         if (currentDraft.isEmpty()) {
-            LOGGER.info("not storing draft. To, subject and body are empty.");
+            LOGGER.info("not storing draft. To, subject, body and attachments are empty.");
             return null;
         }
         final EmailWithReferences editableEmail = getEmail();
@@ -527,7 +527,7 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
         }
 
         public boolean isEmpty() {
-            return to.isEmpty() && subject.trim().isEmpty() && body.trim().isEmpty();
+            return to.isEmpty() && subject.trim().isEmpty() && body.trim().isEmpty() && attachments.isEmpty();
         }
 
         public Collection<EmailAddress> getTo() {
