@@ -85,7 +85,7 @@ public abstract class AbstractCreateEmailWorker extends AbstractMuaWorker {
                             final Collection<EmailAddress> cc,
                             final String subject,
                             final String body,
-                            final Collection<Attachment> attachments) {
+                            final Collection<? extends Attachment> attachments) {
         return new Data.Builder()
                 .putLong(ACCOUNT_KEY, account)
                 .putString(IDENTITY_KEY, identity)

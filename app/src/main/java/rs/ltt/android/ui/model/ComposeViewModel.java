@@ -56,7 +56,7 @@ import java.util.stream.Collectors;
 
 import rs.ltt.android.R;
 import rs.ltt.android.database.AppDatabase;
-import rs.ltt.android.entity.EditableEmail;
+import rs.ltt.android.entity.EmailWithReferences;
 import rs.ltt.android.entity.IdentifiableWithOwner;
 import rs.ltt.android.entity.IdentityWithNameAndEmail;
 import rs.ltt.android.repository.ComposeRepository;
@@ -78,7 +78,7 @@ public class ComposeViewModel extends AndroidViewModel {
 
     private final ComposeAction composeAction;
     private final MailToUri uri;
-    private final ListenableFuture<EditableEmail> email;
+    private final ListenableFuture<EmailWithReferences> email;
 
     private final MutableLiveData<Event<String>> errorMessage = new MutableLiveData<>();
 
@@ -88,7 +88,7 @@ public class ComposeViewModel extends AndroidViewModel {
     private final MutableLiveData<String> cc = new MutableLiveData<>();
     private final MutableLiveData<String> subject = new MutableLiveData<>();
     private final MutableLiveData<String> body = new MutableLiveData<>();
-    private final MediatorLiveData<List<Attachment>> attachments = new MediatorLiveData<>();
+    private final MediatorLiveData<List<? extends Attachment>> attachments = new MediatorLiveData<>();
     private final LiveData<List<IdentityWithNameAndEmail>> identities;
 
     private boolean draftHasBeenHandled = false;
@@ -125,7 +125,7 @@ public class ComposeViewModel extends AndroidViewModel {
         }
     }
 
-    private static Collection<String> inReplyTo(@Nullable EditableEmail editableEmail, ComposeAction action) {
+    private static Collection<String> inReplyTo(@Nullable EmailWithReferences editableEmail, ComposeAction action) {
         if (editableEmail == null) {
             return Collections.emptyList();
         }
@@ -166,7 +166,7 @@ public class ComposeViewModel extends AndroidViewModel {
         return this.body;
     }
 
-    public LiveData<List<Attachment>> getAttachments() {
+    public LiveData<List<? extends Attachment>> getAttachments() {
         return this.attachments;
     }
 
@@ -190,7 +190,7 @@ public class ComposeViewModel extends AndroidViewModel {
     }
 
     public boolean discard() {
-        final EditableEmail email = getEmail();
+        final EmailWithReferences email = getEmail();
         final boolean isOnlyEmailInThread = email == null || getRepository(email.accountId).discard(email);
         this.draftHasBeenHandled = true;
         return isOnlyEmailInThread;
@@ -202,7 +202,7 @@ public class ComposeViewModel extends AndroidViewModel {
             postErrorMessage(R.string.select_sender);
             throw new IllegalStateException();
         }
-        final EditableEmail editableEmail = getEmail();
+        final EmailWithReferences editableEmail = getEmail();
         if (editableEmail != null) {
             IdentifiableWithOwner.checkSameOwner(editableEmail, identity);
         }
@@ -249,7 +249,7 @@ public class ComposeViewModel extends AndroidViewModel {
             LOGGER.info("not storing draft. To, subject and body are empty.");
             return null;
         }
-        final EditableEmail editableEmail = getEmail();
+        final EmailWithReferences editableEmail = getEmail();
         final Draft originalDraft = Draft.with(this.composeAction, this.uri, editableEmail);
         if (originalDraft != null && currentDraft.unedited(originalDraft)) {
             LOGGER.info("Not storing draft. Nothing has been changed");
@@ -257,7 +257,7 @@ public class ComposeViewModel extends AndroidViewModel {
             return null;
         }
         LOGGER.info("Saving draft");
-        final EditableEmail discard;
+        final EmailWithReferences discard;
         if (this.composeAction == ComposeAction.EDIT_DRAFT) {
             discard = editableEmail;
             LOGGER.info("Requesting to delete previous draft={}", discard == null ? null : discard.id);
@@ -287,7 +287,7 @@ public class ComposeViewModel extends AndroidViewModel {
         this.errorMessage.postValue(new Event<>(message));
     }
 
-    private EditableEmail getEmail() {
+    private EmailWithReferences getEmail() {
         if (this.email != null && this.email.isDone()) {
             try {
                 return this.email.get();
@@ -299,9 +299,9 @@ public class ComposeViewModel extends AndroidViewModel {
     }
 
     private void initializeWithEmail() {
-        Futures.addCallback(this.email, new FutureCallback<EditableEmail>() {
+        Futures.addCallback(this.email, new FutureCallback<EmailWithReferences>() {
             @Override
-            public void onSuccess(@Nullable final EditableEmail result) {
+            public void onSuccess(@Nullable final EmailWithReferences result) {
                 initializeWithEmail(result);
             }
 
@@ -312,7 +312,7 @@ public class ComposeViewModel extends AndroidViewModel {
         }, MoreExecutors.directExecutor());
     }
 
-    private void initializeWithEmail(final EditableEmail email) {
+    private void initializeWithEmail(final EmailWithReferences email) {
         final Draft draft = Draft.with(composeAction, uri, email);
         if (draft == null) {
             return;
@@ -324,6 +324,7 @@ public class ComposeViewModel extends AndroidViewModel {
         }
         subject.postValue(draft.subject);
         body.postValue(draft.body);
+        attachments.postValue(draft.attachments);
     }
 
     private Draft getCurrentDraft() {
@@ -396,7 +397,7 @@ public class ComposeViewModel extends AndroidViewModel {
     }
 
     public void deleteAttachment(final Attachment attachment) {
-        final List<Attachment> current = this.attachments.getValue();
+        final List<? extends Attachment> current = this.attachments.getValue();
         final ArrayList<Attachment> attachments = current == null ? new ArrayList<>() : new ArrayList<>(current);
         attachments.remove(attachment);
         this.attachments.postValue(ImmutableList.copyOf(attachments));
@@ -435,9 +436,9 @@ public class ComposeViewModel extends AndroidViewModel {
         private final Collection<EmailAddress> cc;
         private final String subject;
         private final String body;
-        private final Collection<Attachment> attachments;
+        private final List<? extends Attachment> attachments;
 
-        private Draft(Collection<EmailAddress> to, Collection<EmailAddress> cc, String subject, String body, Collection<Attachment> attachments) {
+        private Draft(Collection<EmailAddress> to, Collection<EmailAddress> cc, String subject, String body, List<? extends Attachment> attachments) {
             this.to = to;
             this.cc = cc;
             this.subject = subject;
@@ -445,7 +446,7 @@ public class ComposeViewModel extends AndroidViewModel {
             this.attachments = attachments;
         }
 
-        public static Draft of(LiveData<String> to, LiveData<String> cc, LiveData<String> subject, LiveData<String> body, LiveData<List<Attachment>> attachments) {
+        public static Draft of(LiveData<String> to, LiveData<String> cc, LiveData<String> subject, LiveData<String> body, LiveData<List<? extends Attachment>> attachments) {
             return new Draft(
                     EmailAddressUtil.parse(Strings.nullToEmpty(to.getValue())),
                     EmailAddressUtil.parse(Strings.nullToEmpty(cc.getValue())),
@@ -468,17 +469,17 @@ public class ComposeViewModel extends AndroidViewModel {
             );
         }
 
-        private static Draft edit(EditableEmail email) {
+        private static Draft edit(EmailWithReferences email) {
             return new Draft(
                     email.getTo(),
                     email.getCc(),
                     email.subject,
                     email.getText(),
-                    Collections.emptyList() // TODO replace with email.getAttachments
+                    email.getAttachments()
             );
         }
 
-        private static Draft replyAll(EditableEmail email) {
+        private static Draft replyAll(EmailWithReferences email) {
             EmailUtil.ReplyAddresses replyAddresses = EmailUtil.replyAll(email);
             return new Draft(
                     replyAddresses.getTo(),
@@ -489,7 +490,7 @@ public class ComposeViewModel extends AndroidViewModel {
             );
         }
 
-        public static Draft with(final ComposeAction action, final MailToUri uri, EditableEmail editableEmail) {
+        public static Draft with(final ComposeAction action, final MailToUri uri, EmailWithReferences editableEmail) {
             switch (action) {
                 case NEW:
                     return newEmail(uri);
@@ -531,7 +532,7 @@ public class ComposeViewModel extends AndroidViewModel {
                     && attachments.equals(draft.attachments);
         }
 
-        public Collection<Attachment> getAttachments() {
+        public Collection<? extends Attachment> getAttachments() {
             return attachments;
         }
     }

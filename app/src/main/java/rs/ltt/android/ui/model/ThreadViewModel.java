@@ -53,7 +53,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import rs.ltt.android.cache.BlobStorage;
-import rs.ltt.android.entity.EmailComplete;
+import rs.ltt.android.entity.EmailWithBodies;
 import rs.ltt.android.entity.ExpandedPosition;
 import rs.ltt.android.entity.MailboxOverwriteEntity;
 import rs.ltt.android.entity.MailboxWithRoleAndName;
@@ -84,7 +84,7 @@ public class ThreadViewModel extends AndroidViewModel {
     private final String label;
     private final MediatorLiveData<Event<String>> threadViewRedirect = new MediatorLiveData<>();
     private final MediatorLiveData<SubjectWithImportance> subjectWithImportance = new MediatorLiveData<>();
-    private final LiveData<PagedList<EmailComplete>> emails;
+    private final LiveData<PagedList<EmailWithBodies>> emails;
     private final LiveData<Boolean> flagged;
     private final LiveData<List<MailboxWithRoleAndName>> mailboxes;
     private final LiveData<List<MailboxWithRoleAndName>> labels;
@@ -205,7 +205,7 @@ public class ThreadViewModel extends AndroidViewModel {
         return this.threadViewRedirect;
     }
 
-    public LiveData<PagedList<EmailComplete>> getEmails() {
+    public LiveData<PagedList<EmailWithBodies>> getEmails() {
         return emails;
     }
 

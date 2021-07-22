@@ -29,7 +29,7 @@ import rs.ltt.android.R;
 import rs.ltt.android.database.LttrsDatabase;
 import rs.ltt.android.entity.AccountName;
 import rs.ltt.android.entity.AccountWithCredentials;
-import rs.ltt.android.entity.EmailNotificationPreview;
+import rs.ltt.android.entity.EmailWithBodiesAndSubject;
 import rs.ltt.android.entity.From;
 import rs.ltt.android.ui.AvatarDrawable;
 import rs.ltt.android.ui.activity.LttrsActivity;
@@ -48,15 +48,15 @@ public class EmailNotification {
     private final NotificationManager notificationManager;
     private final Context context;
     private final AccountName account;
-    private final List<EmailNotificationPreview> addedEmails;
+    private final List<EmailWithBodiesAndSubject> addedEmails;
     private final List<String> dismissedEmails;
-    private final List<EmailNotificationPreview> allEmails;
+    private final List<EmailWithBodiesAndSubject> allEmails;
 
     private EmailNotification(final Context context,
                               final AccountName account,
-                              final List<EmailNotificationPreview> addedEmails,
+                              final List<EmailWithBodiesAndSubject> addedEmails,
                               final List<String> dismissedEmails,
-                              final List<EmailNotificationPreview> allEmails) {
+                              final List<EmailWithBodiesAndSubject> allEmails) {
         this.context = context;
         this.notificationManager = context.getSystemService(NotificationManager.class);
         this.account = account;
@@ -179,7 +179,7 @@ public class EmailNotification {
             notificationManager.cancel(notificationTagSummary(account.getId()), SUMMARY_ID);
             return;
         }
-        for (final EmailNotificationPreview email : addedEmails) {
+        for (final EmailWithBodiesAndSubject email : addedEmails) {
             final Tag tag = new Tag(account.id, email.getId());
             final Notification notification = get(email);
             notificationManager.notify(tag.toString(), ID, notification);
@@ -194,8 +194,8 @@ public class EmailNotification {
         }
     }
 
-    private Notification get(final EmailNotificationPreview email) {
-        final From from = email.getFrom();
+    private Notification get(final EmailWithBodiesAndSubject email) {
+        final From from = email.getFirstFrom();
         final AvatarDrawable avatar = new AvatarDrawable(context, from);
         final NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle()
                 .bigText(String.format("%s\n%s", email.subject, email.getPreview()));
@@ -214,18 +214,18 @@ public class EmailNotification {
                 .build();
     }
 
-    private PendingIntent getPendingIntent(final EmailNotificationPreview email) {
+    private PendingIntent getPendingIntent(final EmailWithBodiesAndSubject email) {
         final Tag tag = new Tag(account.getId(), email.getId());
         final Intent intent = LttrsActivity.viewIntent(context, tag, email.threadId);
         return PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
     }
 
-    private Notification getSummary(final List<EmailNotificationPreview> emails) {
+    private Notification getSummary(final List<EmailWithBodiesAndSubject> emails) {
         final NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
-        for (final EmailNotificationPreview email : emails) {
+        for (final EmailWithBodiesAndSubject email : emails) {
             inboxStyle.addLine(String.format(
                     "<b>%s</b> %s",
-                    getFromAsString(context, email.getFrom()),
+                    getFromAsString(context, email.getFirstFrom()),
                     email.subject
             ));
         }
@@ -277,14 +277,14 @@ public class EmailNotification {
                     account.getId()
             );
             final LttrsDatabase database = LttrsDatabase.getInstance(context, account.getId());
-            final List<EmailNotificationPreview> emails = database.threadAndEmailDao().getEmails(
+            final List<EmailWithBodiesAndSubject> emails = database.threadAndEmailDao().getEmails(
                     combine(freshlyAddedEmailIds, activeEmailNotifications)
             );
 
-            final ImmutableList.Builder<EmailNotificationPreview> allNotificationBuilder = ImmutableList.builder();
-            final ImmutableList.Builder<EmailNotificationPreview> addedNotificationBuilder = ImmutableList.builder();
+            final ImmutableList.Builder<EmailWithBodiesAndSubject> allNotificationBuilder = ImmutableList.builder();
+            final ImmutableList.Builder<EmailWithBodiesAndSubject> addedNotificationBuilder = ImmutableList.builder();
             final ImmutableList.Builder<String> dismissedNotificationBuilder = ImmutableList.builder();
-            for (final EmailNotificationPreview email : emails) {
+            for (final EmailWithBodiesAndSubject email : emails) {
                 //TODO Take keyword overwrite into account
                 if (KeywordUtil.seen(email)) {
                     if (activeEmailNotifications.contains(email.getId())) {

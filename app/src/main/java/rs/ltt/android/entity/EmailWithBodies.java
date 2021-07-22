@@ -28,7 +28,11 @@ import java.util.stream.Collectors;
 
 import rs.ltt.jmap.mua.util.KeywordUtil;
 
-public abstract class EmailWithTextBodies extends EmailPreview {
+/**
+ * This e-mail model represents and individual e-mail in the thread view. It does not have a subject
+ * because the subject is displayed once for the entire thread.
+ */
+public class EmailWithBodies extends EmailPreview {
 
     //TODO remove preview. use body values
     public String preview;
@@ -48,7 +52,7 @@ public abstract class EmailWithTextBodies extends EmailPreview {
         return preview;
     }
 
-    public From getFrom() {
+    public From getFirstFrom() {
         if (KeywordUtil.draft(this)) {
             return From.draft();
         }
@@ -74,7 +78,7 @@ public abstract class EmailWithTextBodies extends EmailPreview {
         return EmailBodyPartEntity.filter(bodyPartEntities, EmailBodyPartType.ATTACHMENT);
     }
 
-    public Collection<String> getTo() {
+    public Collection<String> getToAndCc() {
         LinkedHashMap<String, String> toMap = new LinkedHashMap<>();
         for (EmailAddress emailAddress : emailAddresses) {
             if (emailAddress.type == EmailAddressType.TO || emailAddress.type == EmailAddressType.CC) {
@@ -89,7 +93,7 @@ public abstract class EmailWithTextBodies extends EmailPreview {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        EmailWithTextBodies that = (EmailWithTextBodies) o;
+        EmailWithBodies that = (EmailWithBodies) o;
         return Objects.equal(preview, that.preview) &&
                 Objects.equal(bodyPartEntities, that.bodyPartEntities) &&
                 Objects.equal(bodyValueEntities, that.bodyValueEntities);

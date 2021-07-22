@@ -29,7 +29,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
-import rs.ltt.android.entity.EditableEmail;
+import rs.ltt.android.entity.EmailWithReferences;
 import rs.ltt.android.entity.IdentityWithNameAndEmail;
 import rs.ltt.android.ui.model.ComposeViewModel;
 import rs.ltt.android.worker.AbstractMuaWorker;
@@ -51,11 +51,11 @@ public class ComposeRepository extends AbstractRepository {
         return database.identityDao().getIdentitiesLiveData(accountId);
     }
 
-    public ListenableFuture<EditableEmail> getEditableEmail(final String id) {
+    public ListenableFuture<EmailWithReferences> getEditableEmail(final String id) {
         return database.threadAndEmailDao().getEditableEmail(accountId, id);
     }
 
-    public UUID sendEmail(IdentifiableIdentity identity, ComposeViewModel.Draft draft, final Collection<String> inReplyTo, EditableEmail discard) {
+    public UUID sendEmail(IdentifiableIdentity identity, ComposeViewModel.Draft draft, final Collection<String> inReplyTo, EmailWithReferences discard) {
         final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(SendEmailWorker.class)
                 .setConstraints(CONNECTED_CONSTRAINT)
                 .setInputData(SendEmailWorker.data(
@@ -87,7 +87,7 @@ public class ComposeRepository extends AbstractRepository {
         return workRequest.getId();
     }
 
-    public UUID submitEmail(IdentityWithNameAndEmail identity, EditableEmail editableEmail) {
+    public UUID submitEmail(IdentityWithNameAndEmail identity, EmailWithReferences editableEmail) {
         final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(SubmitEmailWorker.class)
                 .setConstraints(CONNECTED_CONSTRAINT)
                 .setInputData(SubmitEmailWorker.data(
@@ -104,7 +104,7 @@ public class ComposeRepository extends AbstractRepository {
     public UUID saveDraft(final IdentifiableIdentity identity,
                           final ComposeViewModel.Draft draft,
                           final Collection<String> inReplyTo,
-                          final EditableEmail discard) {
+                          final EmailWithReferences discard) {
         final OneTimeWorkRequest saveDraftRequest = new OneTimeWorkRequest.Builder(SaveDraftWorker.class)
                 .setConstraints(CONNECTED_CONSTRAINT)
                 .setInputData(SendEmailWorker.data(
@@ -136,7 +136,7 @@ public class ComposeRepository extends AbstractRepository {
         return saveDraftRequest.getId();
     }
 
-    public boolean discard(EditableEmail editableEmail) {
+    public boolean discard(EmailWithReferences editableEmail) {
         final OneTimeWorkRequest discardDraft = new OneTimeWorkRequest.Builder(DiscardDraftWorker.class)
                 .setConstraints(CONNECTED_CONSTRAINT)
                 .setInputData(DiscardDraftWorker.data(accountId, editableEmail.id))

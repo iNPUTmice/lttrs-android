@@ -25,6 +25,10 @@ import java.util.Set;
 
 import rs.ltt.jmap.common.entity.IdentifiableEmailWithKeywords;
 
+/**
+ * This e-mail model is used for workers that modify keywords. It is also the base class for a lot of
+ * the other email models
+ */
 public class EmailWithKeywords implements IdentifiableEmailWithKeywords {
 
     public String id;

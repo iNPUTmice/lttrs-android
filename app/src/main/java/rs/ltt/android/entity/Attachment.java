@@ -31,6 +31,65 @@ public class Attachment implements rs.ltt.jmap.common.entity.Attachment {
         this.size = size;
     }
 
+    public static List<rs.ltt.jmap.common.entity.Attachment> of(final byte[] bytes) {
+        try {
+            return ofThrow(bytes);
+        } catch (IOException e) {
+            return Collections.emptyList();
+        }
+    }
+
+    private static List<rs.ltt.jmap.common.entity.Attachment> ofThrow(final byte[] bytes) throws IOException {
+        final DataInputStream dataInputStream = new DataInputStream(new ByteArrayInputStream(bytes));
+        final int count = dataInputStream.readInt();
+        if (count == 0) {
+            return Collections.emptyList();
+        }
+        final ImmutableList.Builder<rs.ltt.jmap.common.entity.Attachment> builder = new ImmutableList.Builder<>();
+        for (int i = 0; i < count; ++i) {
+            builder.add(read(dataInputStream));
+        }
+        return builder.build();
+    }
+
+    private static @NonNull
+    Attachment read(final DataInputStream dataInputStream) throws IOException {
+        final String blobId = dataInputStream.readUTF();
+        final String type = dataInputStream.readUTF();
+        final String name = dataInputStream.readUTF();
+        final long size = dataInputStream.readLong();
+        return new Attachment(blobId, type, name, size);
+    }
+
+    public static byte[] toByteArray(final Collection<? extends rs.ltt.jmap.common.entity.Attachment> attachments) {
+        try {
+            return toByteArrayThrows(attachments);
+        } catch (final IOException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public static byte[] toByteArrayThrows(final Collection<? extends rs.ltt.jmap.common.entity.Attachment> attachments) throws IOException {
+        final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        final DataOutputStream dataOutputStream = new DataOutputStream(byteArrayOutputStream);
+        if (attachments == null) {
+            dataOutputStream.writeInt(0);
+            return byteArrayOutputStream.toByteArray();
+        }
+        dataOutputStream.writeInt(attachments.size());
+        for (final rs.ltt.jmap.common.entity.Attachment attachment : attachments) {
+            write(dataOutputStream, attachment);
+        }
+        return byteArrayOutputStream.toByteArray();
+    }
+
+    private static void write(DataOutputStream dataOutputStream, rs.ltt.jmap.common.entity.Attachment attachment) throws IOException {
+        dataOutputStream.writeUTF(attachment.getBlobId());
+        dataOutputStream.writeUTF(attachment.getType());
+        dataOutputStream.writeUTF(attachment.getName());
+        dataOutputStream.writeLong(attachment.getSize());
+    }
+
     @Override
     public String getBlobId() {
         return blobId;
@@ -65,65 +124,6 @@ public class Attachment implements rs.ltt.jmap.common.entity.Attachment {
                 .add("name", name)
                 .add("size", size)
                 .toString();
-    }
-
-    public static List<rs.ltt.jmap.common.entity.Attachment> of(final byte[] bytes) {
-        try {
-            return ofThrow(bytes);
-        } catch (IOException e) {
-            return Collections.emptyList();
-        }
-    }
-
-    private static List<rs.ltt.jmap.common.entity.Attachment> ofThrow(final byte[] bytes) throws IOException {
-        final DataInputStream dataInputStream = new DataInputStream(new ByteArrayInputStream(bytes));
-        final int count = dataInputStream.readInt();
-        if (count == 0) {
-            return Collections.emptyList();
-        }
-        final ImmutableList.Builder<rs.ltt.jmap.common.entity.Attachment> builder = new ImmutableList.Builder<>();
-        for (int i = 0; i < count; ++i) {
-            builder.add(read(dataInputStream));
-        }
-        return builder.build();
-    }
-
-    private static @NonNull
-    Attachment read(final DataInputStream dataInputStream) throws IOException {
-        final String blobId = dataInputStream.readUTF();
-        final String type = dataInputStream.readUTF();
-        final String name = dataInputStream.readUTF();
-        final long size = dataInputStream.readLong();
-        return new Attachment(blobId, type, name, size);
-    }
-
-    public static byte[] toByteArray(final Collection<rs.ltt.jmap.common.entity.Attachment> attachments) {
-        try {
-            return toByteArrayThrows(attachments);
-        } catch (final IOException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    public static byte[] toByteArrayThrows(final Collection<rs.ltt.jmap.common.entity.Attachment> attachments) throws IOException {
-        final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        final DataOutputStream dataOutputStream = new DataOutputStream(byteArrayOutputStream);
-        if (attachments == null) {
-            dataOutputStream.writeInt(0);
-            return byteArrayOutputStream.toByteArray();
-        }
-        dataOutputStream.writeInt(attachments.size());
-        for (final rs.ltt.jmap.common.entity.Attachment attachment : attachments) {
-            write(dataOutputStream, attachment);
-        }
-        return byteArrayOutputStream.toByteArray();
-    }
-
-    private static void write(DataOutputStream dataOutputStream, rs.ltt.jmap.common.entity.Attachment attachment) throws IOException {
-        dataOutputStream.writeUTF(attachment.getBlobId());
-        dataOutputStream.writeUTF(attachment.getType());
-        dataOutputStream.writeUTF(attachment.getName());
-        dataOutputStream.writeLong(attachment.getSize());
     }
 
     @Override

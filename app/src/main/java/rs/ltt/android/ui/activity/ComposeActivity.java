@@ -187,7 +187,7 @@ public class ComposeActivity extends AppCompatActivity {
         //TODO once we handle instance state ourselves we need to call ChipDrawableSpan.reset() on `to`
     }
 
-    private void onAttachmentsUpdated(final List<Attachment> attachments) {
+    private void onAttachmentsUpdated(final List<? extends Attachment> attachments) {
         if (attachments.isEmpty()) {
             binding.attachments.setVisibility(View.GONE);
         } else {
