@@ -39,7 +39,7 @@ public abstract class AbstractAttachmentViewModel extends AndroidViewModel {
     protected abstract long getAccountId();
 
     public void open(final String emailId, final Attachment attachment) {
-        Futures.addCallback(getFileProviderUri(attachment.getBlobId()), new FutureCallback<Uri>() {
+        Futures.addCallback(getFileProviderUri(attachment), new FutureCallback<Uri>() {
             @Override
             public void onSuccess(@Nullable Uri uri) {
                 viewIntentEvent.postValue(new Event<>(new ViewIntent(uri, attachment.getMediaType())));
@@ -89,8 +89,8 @@ public abstract class AbstractAttachmentViewModel extends AndroidViewModel {
         return this.viewIntentEvent;
     }
 
-    private ListenableFuture<Uri> getFileProviderUri(final String blobId) {
-        return BlobStorage.getFileProviderUri(getApplication(), getAccountId(), blobId);
+    private ListenableFuture<Uri> getFileProviderUri(final Attachment attachment) {
+        return BlobStorage.getFileProviderUri(getApplication(), getAccountId(), attachment);
     }
 
 }

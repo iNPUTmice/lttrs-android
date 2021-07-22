@@ -18,6 +18,9 @@ import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import rs.ltt.jmap.common.entity.Attachment;
+
+
 public class BlobStorage {
 
     private static final Executor IO_EXECUTOR = Executors.newSingleThreadExecutor();
@@ -44,11 +47,11 @@ public class BlobStorage {
         return new BlobStorage(temporary, file);
     }
 
-    public static ListenableFuture<Uri> getFileProviderUri(final Context context, final long accountId, final String blobId) {
-        final ListenableFuture<BlobStorage> blobFuture = Futures.submit(() -> get(context, accountId, blobId), IO_EXECUTOR);
+    public static ListenableFuture<Uri> getFileProviderUri(final Context context, final long accountId, final Attachment attachment) {
+        final ListenableFuture<BlobStorage> blobFuture = Futures.submit(() -> get(context, accountId, attachment.getBlobId()), IO_EXECUTOR);
         return Futures.transform(blobFuture, blobStorage -> {
             if (Objects.requireNonNull(blobStorage).file.exists()) {
-                return getFileProviderUri(context, blobStorage.file);
+                return getFileProviderUri(context, blobStorage.file, attachment.getName());
             } else {
                 throw new InvalidCacheException(blobStorage.file);
             }
@@ -67,9 +70,9 @@ public class BlobStorage {
         }, IO_EXECUTOR);
     }
 
-    public static Uri getFileProviderUri(final Context context, File file) {
+    public static Uri getFileProviderUri(final Context context, File file, final String displayName) {
         final String authority = String.format("%s.provider.FileProvider", context.getPackageName());
-        return FileProvider.getUriForFile(context, authority, file);
+        return FileProvider.getUriForFile(context, authority, file, displayName);
     }
 
     public boolean moveTemporaryToFile() {

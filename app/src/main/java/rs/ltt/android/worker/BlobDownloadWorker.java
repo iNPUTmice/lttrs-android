@@ -132,7 +132,9 @@ public class BlobDownloadWorker extends AbstractMuaWorker {
         notifyDownloadComplete();
         LOGGER.info("Finished downloading {}", storage.temporaryFile.getAbsolutePath());
         if (storage.moveTemporaryToFile()) {
-            final Uri uri = BlobStorage.getFileProviderUri(getApplicationContext(), storage.file);
+            final Uri uri = BlobStorage.getFileProviderUri(
+                    getApplicationContext(), storage.file, downloadable.getName()
+            );
             final Data data = new Data.Builder()
                     .putString(URI_KEY, uri.toString()) //to be picked up by view intent
                     .putString(StoreAttachmentWorker.FILE_KEY, storage.file.getAbsolutePath()) //to be picked up by StoreAttachmentWorker
