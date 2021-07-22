@@ -127,6 +127,8 @@ public class PreexistingMailboxTest {
         Thread.sleep(3000);
     }
 
+    //TODO check the same for sending directly (this will use a different worker)
+
     @After
     public void stopServer() throws IOException {
         mockWebServer.shutdown();

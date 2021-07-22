@@ -41,6 +41,7 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,6 +54,7 @@ import java.util.UUID;
 import java.util.concurrent.CancellationException;
 import java.util.stream.Collectors;
 
+import rs.ltt.android.MuaPool;
 import rs.ltt.android.R;
 import rs.ltt.android.database.AppDatabase;
 import rs.ltt.android.entity.EmailWithReferences;
@@ -67,6 +69,7 @@ import rs.ltt.android.worker.BlobUploadWorker;
 import rs.ltt.android.worker.Failure;
 import rs.ltt.jmap.common.entity.Attachment;
 import rs.ltt.jmap.common.entity.EmailAddress;
+import rs.ltt.jmap.mua.util.AttachmentUtil.CombinedAttachmentSizeExceedsLimitException;
 import rs.ltt.jmap.mua.util.EmailAddressUtil;
 import rs.ltt.jmap.mua.util.EmailUtil;
 import rs.ltt.jmap.mua.util.MailToUri;
@@ -383,7 +386,7 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
         final ImmutableList.Builder<Attachment> attachmentBuilder = new ImmutableList.Builder<>();
         attachmentBuilder.addAll(nullToEmpty(this.attachments.getValue()));
         attachmentBuilder.add(attachment);
-        this.attachments.postValue(attachmentBuilder.build());
+        refreshAttachments(attachmentBuilder.build());
     }
 
     private LiveData<WorkInfo> uploadAttachment(final IdentityWithNameAndEmail identity, final Uri uri) {
@@ -400,10 +403,40 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
     }
 
     public void deleteAttachment(final Attachment attachment) {
-        final List<? extends Attachment> current = this.attachments.getValue();
-        final ArrayList<Attachment> attachments = current == null ? new ArrayList<>() : new ArrayList<>(current);
-        attachments.remove(attachment);
-        this.attachments.postValue(ImmutableList.copyOf(attachments));
+        final List<? extends Attachment> current = new ArrayList<>(nullToEmpty(this.attachments.getValue()));
+        if (current.remove(attachment)) {
+            refreshAttachments(ImmutableList.copyOf(current));
+        }
+    }
+
+    private void refreshAttachments(final List<Attachment> attachments) {
+        this.attachments.postValue(attachments);
+        final IdentityWithNameAndEmail identity = getIdentity();
+        if (identity != null) {
+            verifyAttachmentsDoNotExceedLimit(identity.getAccountId(), attachments);
+        }
+    }
+
+    private void verifyAttachmentsDoNotExceedLimit(final long accountId, final List<Attachment> attachments) {
+        final ListenableFuture<Void> verificationFuture = Futures.transformAsync(
+                MuaPool.getInstance(getApplication(), accountId),
+                mua -> mua.verifyAttachmentsDoNotExceedLimit(attachments),
+                MoreExecutors.directExecutor()
+        );
+        Futures.addCallback(verificationFuture, new FutureCallback<Void>() {
+            @Override
+            public void onSuccess(final Void unused) {
+                LOGGER.debug("Attachments passed size check");
+            }
+
+            @Override
+            public void onFailure(@NotNull final Throwable throwable) {
+                if (throwable instanceof CombinedAttachmentSizeExceedsLimitException) {
+                    CombinedAttachmentSizeExceedsLimitException exception = (CombinedAttachmentSizeExceedsLimitException) throwable;
+                    postErrorMessage(R.string.combined_size_of_attachments_exceeds_the_limit_of_x, FileSizes.toString(exception.getLimit()));
+                }
+            }
+        }, MoreExecutors.directExecutor());
     }
 
     @Override

@@ -2,6 +2,10 @@ package rs.ltt.android;
 
 import android.content.Context;
 
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.MoreExecutors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,6 +14,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import rs.ltt.android.cache.DatabaseCache;
+import rs.ltt.android.database.AppDatabase;
 import rs.ltt.android.database.LttrsDatabase;
 import rs.ltt.android.entity.AccountWithCredentials;
 import rs.ltt.jmap.client.session.FileSessionCache;
@@ -23,6 +28,14 @@ public final class MuaPool {
 
     private MuaPool() {
 
+    }
+
+    public static ListenableFuture<Mua> getInstance(final Context context, final long accountId) {
+        return Futures.transform(
+                AppDatabase.getInstance(context).accountDao().getAccountFuture(accountId),
+                account -> getInstance(context, account),
+                MoreExecutors.directExecutor()
+        );
     }
 
     public static Mua getInstance(final Context context, final AccountWithCredentials account) {
