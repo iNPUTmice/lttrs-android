@@ -24,8 +24,9 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
+import androidx.paging.AsyncPagedListDiffer;
 import androidx.paging.PagedList;
-import androidx.paging.PagedListAdapter;
+import androidx.recyclerview.widget.AsyncDifferConfig;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -45,12 +46,29 @@ import rs.ltt.android.entity.ThreadOverviewItem;
 import rs.ltt.android.ui.BindingAdapters;
 import rs.ltt.android.util.Touch;
 
-public class ThreadOverviewAdapter extends PagedListAdapter<ThreadOverviewItem, ThreadOverviewAdapter.AbstractThreadOverviewViewHolder> {
+public class ThreadOverviewAdapter extends RecyclerView.Adapter<ThreadOverviewAdapter.AbstractThreadOverviewViewHolder> {
 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ThreadOverviewAdapter.class);
     private static final int THREAD_ITEM_VIEW_TYPE = 0;
     private static final int LOADING_ITEM_VIEW_TYPE = 1;
+    private static final DiffUtil.ItemCallback<ThreadOverviewItem> ITEM_CALLBACK = new DiffUtil.ItemCallback<ThreadOverviewItem>() {
+        @Override
+        public boolean areItemsTheSame(@NonNull ThreadOverviewItem oldItem, @NonNull ThreadOverviewItem newItem) {
+            return oldItem.threadId.equals(newItem.threadId);
+        }
+
+        @Override
+        public boolean areContentsTheSame(@NonNull ThreadOverviewItem oldItem, @NonNull ThreadOverviewItem newItem) {
+            return oldItem.equals(newItem);
+        }
+    };
+
+    private final AsyncPagedListDiffer<ThreadOverviewItem> mDiffer = new AsyncPagedListDiffer<>(
+            new OffsetListUpdateCallback<>(this, 0),
+            new AsyncDifferConfig.Builder<>(ITEM_CALLBACK).build()
+    );
+
     private boolean isLoading = false;
     private boolean initialLoadComplete = false;
     private OnFlaggedToggled onFlaggedToggled;
@@ -58,21 +76,6 @@ public class ThreadOverviewAdapter extends PagedListAdapter<ThreadOverviewItem, 
     private OnSelectionToggled onSelectionToggled;
     private Set<String> selectedThreads = Collections.emptySet();
     private Future<MailboxWithRoleAndName> importantMailbox; //TODO this needs to be a LiveData and needs to trigger a refresh when changed
-
-
-    public ThreadOverviewAdapter() {
-        super(new DiffUtil.ItemCallback<ThreadOverviewItem>() {
-            @Override
-            public boolean areItemsTheSame(@NonNull ThreadOverviewItem oldItem, @NonNull ThreadOverviewItem newItem) {
-                return oldItem.threadId.equals(newItem.threadId);
-            }
-
-            @Override
-            public boolean areContentsTheSame(@NonNull ThreadOverviewItem oldItem, @NonNull ThreadOverviewItem newItem) {
-                return oldItem.equals(newItem);
-            }
-        });
-    }
 
     @NonNull
     @Override
@@ -153,7 +156,7 @@ public class ThreadOverviewAdapter extends PagedListAdapter<ThreadOverviewItem, 
     }
 
     public int getPosition(final String threadId) {
-        final PagedList<ThreadOverviewItem> currentList = getCurrentList();
+        final PagedList<ThreadOverviewItem> currentList = this.mDiffer.getCurrentList();
         if (currentList == null) {
             return RecyclerView.NO_POSITION;
         }
@@ -196,7 +199,7 @@ public class ThreadOverviewAdapter extends PagedListAdapter<ThreadOverviewItem, 
 
     private void refreshLoadingIndicator(final boolean before) {
         if (before != isLoading()) {
-            notifyItemChanged(super.getItemCount());
+            notifyItemChanged(mDiffer.getItemCount());
         }
     }
 
@@ -210,33 +213,30 @@ public class ThreadOverviewAdapter extends PagedListAdapter<ThreadOverviewItem, 
         refreshLoadingIndicator(before);
     }
 
-    @Override
     public void submitList(final PagedList<ThreadOverviewItem> pagedList) {
         submitList(pagedList, null);
     }
 
-    @Override
     public void submitList(final PagedList<ThreadOverviewItem> pagedList, final Runnable runnable) {
         final boolean before = isLoading();
         this.initialLoadComplete = true;
         if (pagedList != null && pagedList.size() == 0) {
             refreshLoadingIndicator(before);
         }
-        super.submitList(pagedList, runnable);
+        this.mDiffer.submitList(pagedList, runnable);
     }
 
     public void setSelectedThreads(final Set<String> selectedThreads) {
         this.selectedThreads = selectedThreads;
     }
 
-    @Override
     public ThreadOverviewItem getItem(int position) {
-        return super.getItem(position);
+        return this.mDiffer.getItem(position);
     }
 
     @Override
     public int getItemViewType(int position) {
-        return position < super.getItemCount() ? THREAD_ITEM_VIEW_TYPE : LOADING_ITEM_VIEW_TYPE;
+        return position < this.mDiffer.getItemCount() ? THREAD_ITEM_VIEW_TYPE : LOADING_ITEM_VIEW_TYPE;
     }
 
     public void setOnFlaggedToggledListener(OnFlaggedToggled listener) {
@@ -253,11 +253,15 @@ public class ThreadOverviewAdapter extends PagedListAdapter<ThreadOverviewItem, 
 
     @Override
     public int getItemCount() {
-        return super.getItemCount() + 1;
+        return this.mDiffer.getItemCount() + 1;
     }
 
     public boolean isInitialLoad() {
         return !this.initialLoadComplete;
+    }
+
+    public PagedList<ThreadOverviewItem> getCurrentList() {
+        return this.mDiffer.getCurrentList();
     }
 
     public interface OnThreadClicked {
