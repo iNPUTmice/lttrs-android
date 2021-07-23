@@ -51,8 +51,8 @@ public class ComposeRepository extends AbstractRepository {
         return database.identityDao().getIdentitiesLiveData(accountId);
     }
 
-    public ListenableFuture<EmailWithReferences> getEditableEmail(final String id) {
-        return database.threadAndEmailDao().getEditableEmail(accountId, id);
+    public ListenableFuture<EmailWithReferences> getEmailWithReferences(final String id) {
+        return database.threadAndEmailDao().getEmailWithReferences(accountId, id);
     }
 
     public UUID sendEmail(IdentifiableIdentity identity, ComposeViewModel.Draft draft, final Collection<String> inReplyTo, EmailWithReferences discard) {

@@ -120,7 +120,7 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
             Preconditions.checkNotNull(parameter.emailId);
             Preconditions.checkNotNull(parameter.accountId);
             this.identities = getRepository(parameter.accountId).getIdentities();
-            this.email = getRepository(parameter.accountId).getEditableEmail(parameter.emailId);
+            this.email = getRepository(parameter.accountId).getEmailWithReferences(parameter.emailId);
             if (parameter.freshStart) {
                 initializeWithEmail();
             }
