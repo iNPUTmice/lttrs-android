@@ -228,7 +228,7 @@ public class ThreadOverviewAdapter extends RecyclerView.Adapter<ThreadOverviewAd
 
     private void refreshLoadingIndicator(final boolean before) {
         if (before != isLoading()) {
-            notifyItemChanged(mDiffer.getItemCount());
+            notifyItemChanged(mDiffer.getItemCount() + offsetListUpdateCallback.getCurrentOffset());
         }
     }
 
