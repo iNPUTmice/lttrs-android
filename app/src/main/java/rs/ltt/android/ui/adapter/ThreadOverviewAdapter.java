@@ -16,6 +16,7 @@
 package rs.ltt.android.ui.adapter;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,11 +41,13 @@ import java.util.concurrent.Future;
 
 import rs.ltt.android.R;
 import rs.ltt.android.databinding.ItemThreadOverviewBinding;
+import rs.ltt.android.databinding.ItemThreadOverviewEmptyActionBinding;
 import rs.ltt.android.databinding.ItemThreadOverviewLoadingBinding;
 import rs.ltt.android.entity.MailboxWithRoleAndName;
 import rs.ltt.android.entity.ThreadOverviewItem;
 import rs.ltt.android.ui.BindingAdapters;
 import rs.ltt.android.ui.EmptyMailboxAction;
+import rs.ltt.android.ui.fragment.AbstractQueryFragment;
 import rs.ltt.android.util.Touch;
 
 public class ThreadOverviewAdapter extends RecyclerView.Adapter<ThreadOverviewAdapter.AbstractThreadOverviewViewHolder> {
@@ -78,6 +81,7 @@ public class ThreadOverviewAdapter extends RecyclerView.Adapter<ThreadOverviewAd
     private OnFlaggedToggled onFlaggedToggled;
     private OnThreadClicked onThreadClicked;
     private OnSelectionToggled onSelectionToggled;
+    private OnEmptyMailboxActionClicked onEmptyMailboxActionClicked;
     private Set<String> selectedThreads = Collections.emptySet();
     private Future<MailboxWithRoleAndName> importantMailbox; //TODO this needs to be a LiveData and needs to trigger a refresh when changed
     private EmptyMailboxAction emptyMailboxAction = null;
@@ -89,7 +93,7 @@ public class ThreadOverviewAdapter extends RecyclerView.Adapter<ThreadOverviewAd
         if (viewType == THREAD_ITEM_VIEW_TYPE) {
             return new ThreadOverviewViewHolder(DataBindingUtil.inflate(layoutInflater, R.layout.item_thread_overview, parent, false));
         } else if (viewType == EMPTY_MAILBOX_VIEW_TYPE) {
-            return new ThreadOverviewEmptyMailboxViewHolder(DataBindingUtil.inflate(layoutInflater, R.layout.item_thread_overview_loading, parent, false));
+            return new ThreadOverviewEmptyMailboxViewHolder(DataBindingUtil.inflate(layoutInflater, R.layout.item_thread_overview_empty_action, parent, false));
         } else {
             return new ThreadOverviewLoadingViewHolder(DataBindingUtil.inflate(layoutInflater, R.layout.item_thread_overview_loading, parent, false));
         }
@@ -106,8 +110,21 @@ public class ThreadOverviewAdapter extends RecyclerView.Adapter<ThreadOverviewAd
         }
     }
 
-    private void onBindViewHolder(ThreadOverviewEmptyMailboxViewHolder holder) {
-        LOGGER.info("binding empty mailbox view");
+    private void onBindViewHolder(final ThreadOverviewEmptyMailboxViewHolder holder) {
+        final EmptyMailboxAction action = this.emptyMailboxAction;
+        if (action == null) {
+            return;
+        }
+        final Resources resources = holder.binding.getRoot().getContext().getResources();
+        holder.binding.setAction(action);
+        holder.binding.text.setText(
+                resources.getQuantityString(R.plurals.x_emails_in_trash, action.getItemCount(), action.getItemCount())
+        );
+        holder.binding.emptyMailbox.setOnClickListener((v) -> {
+            if (onEmptyMailboxActionClicked != null) {
+                onEmptyMailboxActionClicked.onEmptyMailboxActionClicked(action);
+            }
+        });
     }
 
     private void onBindViewHolder(final ThreadOverviewViewHolder threadOverviewHolder, final int position) {
@@ -253,8 +270,10 @@ public class ThreadOverviewAdapter extends RecyclerView.Adapter<ThreadOverviewAd
     public int getItemViewType(int position) {
         if (offsetListUpdateCallback.isOffsetVisible() && position == 0) {
             return EMPTY_MAILBOX_VIEW_TYPE;
+        } else if (position < mDiffer.getItemCount() + offsetListUpdateCallback.getCurrentOffset()) {
+            return THREAD_ITEM_VIEW_TYPE;
         } else {
-            return position < this.mDiffer.getItemCount() ? THREAD_ITEM_VIEW_TYPE : LOADING_ITEM_VIEW_TYPE;
+            return LOADING_ITEM_VIEW_TYPE;
         }
     }
 
@@ -264,6 +283,10 @@ public class ThreadOverviewAdapter extends RecyclerView.Adapter<ThreadOverviewAd
 
     public void setOnThreadClickedListener(OnThreadClicked listener) {
         this.onThreadClicked = listener;
+    }
+
+    public void setOnEmptyMailboxActionClickedListener(OnEmptyMailboxActionClicked listener) {
+        this.onEmptyMailboxActionClicked = listener;
     }
 
     public void setOnSelectionToggled(final OnSelectionToggled listener) {
@@ -287,6 +310,10 @@ public class ThreadOverviewAdapter extends RecyclerView.Adapter<ThreadOverviewAd
         void onThreadClicked(ThreadOverviewItem threadOverviewItem, boolean important);
     }
 
+    public interface OnEmptyMailboxActionClicked {
+        void onEmptyMailboxActionClicked(EmptyMailboxAction action);
+    }
+
     abstract static class AbstractThreadOverviewViewHolder extends RecyclerView.ViewHolder {
 
         AbstractThreadOverviewViewHolder(@NonNull View itemView) {
@@ -296,9 +323,9 @@ public class ThreadOverviewAdapter extends RecyclerView.Adapter<ThreadOverviewAd
 
     public static class ThreadOverviewEmptyMailboxViewHolder extends AbstractThreadOverviewViewHolder {
 
-        final ItemThreadOverviewLoadingBinding binding;
+        final ItemThreadOverviewEmptyActionBinding binding;
 
-        ThreadOverviewEmptyMailboxViewHolder(@NonNull ItemThreadOverviewLoadingBinding binding) {
+        ThreadOverviewEmptyMailboxViewHolder(@NonNull ItemThreadOverviewEmptyActionBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
         }

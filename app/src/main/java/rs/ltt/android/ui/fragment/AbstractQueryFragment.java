@@ -37,6 +37,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
@@ -68,7 +69,7 @@ import rs.ltt.jmap.mua.util.LabelWithCount;
 
 
 public abstract class AbstractQueryFragment extends AbstractLttrsFragment implements OnFlaggedToggled,
-        ThreadOverviewAdapter.OnThreadClicked, QueryItemTouchHelper.OnQueryItemSwipe, ActionMode.Callback, LifecycleObserver, OnSelectionToggled {
+        ThreadOverviewAdapter.OnThreadClicked, QueryItemTouchHelper.OnQueryItemSwipe, ActionMode.Callback, LifecycleObserver, OnSelectionToggled, ThreadOverviewAdapter.OnEmptyMailboxActionClicked {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractQueryFragment.class);
     protected FragmentThreadListBinding binding;
@@ -135,6 +136,7 @@ public abstract class AbstractQueryFragment extends AbstractLttrsFragment implem
         this.binding.threadList.setAdapter(threadOverviewAdapter);
         this.threadOverviewAdapter.setOnFlaggedToggledListener(this);
         this.threadOverviewAdapter.setOnThreadClickedListener(this);
+        this.threadOverviewAdapter.setOnEmptyMailboxActionClickedListener(this);
         this.threadOverviewAdapter.setOnSelectionToggled(this);
         this.threadOverviewAdapter.setImportantMailbox(viewModel.getImportant());
     }
@@ -268,6 +270,21 @@ public abstract class AbstractQueryFragment extends AbstractLttrsFragment implem
         }
         LOGGER.debug("trying to swipe " + item.getSubject());
         return onQueryItemSwipe(item);
+    }
+
+    @Override
+    public void onEmptyMailboxActionClicked(final EmptyMailboxAction action) {
+        final String message = requireActivity().getResources().getQuantityString(
+                R.plurals.x_emails_will_permanently_deleted,
+                action.getItemCount(),
+                action.getItemCount()
+        );
+        new MaterialAlertDialogBuilder(requireActivity())
+                .setTitle(R.string.empty_trash_dialog_title)
+                .setMessage(message)
+                .setPositiveButton(R.string.empty, null)
+                .setNegativeButton(R.string.cancel, null)
+                .show();
     }
 
     protected abstract QueryItemTouchHelper.Swipable onQueryItemSwipe(ThreadOverviewItem item);
