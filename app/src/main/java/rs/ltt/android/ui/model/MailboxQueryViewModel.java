@@ -26,12 +26,14 @@ import androidx.lifecycle.ViewModelProvider;
 
 import rs.ltt.android.entity.MailboxOverviewItem;
 import rs.ltt.android.entity.QueryInfo;
+import rs.ltt.android.ui.EmptyMailboxAction;
 import rs.ltt.jmap.common.entity.query.EmailQuery;
 import rs.ltt.jmap.mua.util.StandardQueries;
 
 public class MailboxQueryViewModel extends AbstractQueryViewModel {
 
     private final LiveData<MailboxOverviewItem> mailbox;
+    private final LiveData<EmptyMailboxAction> emptyMailboxAction;
     private final String mailboxId;
 
     private final LiveData<EmailQuery> emailQueryLiveData;
@@ -48,11 +50,23 @@ public class MailboxQueryViewModel extends AbstractQueryViewModel {
                 return StandardQueries.mailbox(mailbox);
             }
         });
+        this.emptyMailboxAction = Transformations.map(this.mailbox, mailbox -> {
+            if (EmptyMailboxAction.emptyWorthy(mailbox)) {
+                return new EmptyMailboxAction(mailbox.getRole(), mailbox.totalThreads);
+            } else {
+                return null;
+            }
+        });
         init();
     }
 
     public LiveData<MailboxOverviewItem> getMailbox() {
         return mailbox;
+    }
+
+    @Override
+    public LiveData<EmptyMailboxAction> getEmptyMailboxAction() {
+        return this.emptyMailboxAction;
     }
 
     @Override

@@ -22,18 +22,25 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.common.base.Preconditions;
 
-//TODO make offset toggle-able
-//TODO use OffsetListUpdateCallback in ThreadOverviewAdapter
 public class OffsetListUpdateCallback<VH extends RecyclerView.ViewHolder> implements ListUpdateCallback {
 
     private final AdapterListUpdateCallback adapterCallback;
     private final int offset;
     private boolean isOffsetVisible = true;
 
+    public OffsetListUpdateCallback(final RecyclerView.Adapter<VH> adapter, final int offset, final boolean isOffsetVisible) {
+        this(adapter, offset);
+        this.isOffsetVisible = isOffsetVisible;
+    }
+
     public OffsetListUpdateCallback(final RecyclerView.Adapter<VH> adapter, final int offset) {
-        Preconditions.checkArgument(offset >= 0,"Offset can not be negative");
+        Preconditions.checkArgument(offset >= 0, "Offset can not be negative");
         this.adapterCallback = new AdapterListUpdateCallback(adapter);
         this.offset = offset;
+    }
+
+    public boolean isOffsetVisible() {
+        return this.isOffsetVisible;
     }
 
     public void setOffsetVisible(final boolean offsetVisible) {
@@ -68,7 +75,7 @@ public class OffsetListUpdateCallback<VH extends RecyclerView.ViewHolder> implem
         adapterCallback.onChanged(position + getCurrentOffset(), count, payload);
     }
 
-    private int getCurrentOffset() {
+    public int getCurrentOffset() {
         return this.isOffsetVisible ? this.offset : 0;
     }
 

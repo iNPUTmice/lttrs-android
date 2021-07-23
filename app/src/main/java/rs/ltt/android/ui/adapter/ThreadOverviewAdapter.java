@@ -44,6 +44,7 @@ import rs.ltt.android.databinding.ItemThreadOverviewLoadingBinding;
 import rs.ltt.android.entity.MailboxWithRoleAndName;
 import rs.ltt.android.entity.ThreadOverviewItem;
 import rs.ltt.android.ui.BindingAdapters;
+import rs.ltt.android.ui.EmptyMailboxAction;
 import rs.ltt.android.util.Touch;
 
 public class ThreadOverviewAdapter extends RecyclerView.Adapter<ThreadOverviewAdapter.AbstractThreadOverviewViewHolder> {
@@ -52,6 +53,7 @@ public class ThreadOverviewAdapter extends RecyclerView.Adapter<ThreadOverviewAd
     private static final Logger LOGGER = LoggerFactory.getLogger(ThreadOverviewAdapter.class);
     private static final int THREAD_ITEM_VIEW_TYPE = 0;
     private static final int LOADING_ITEM_VIEW_TYPE = 1;
+    private static final int EMPTY_MAILBOX_VIEW_TYPE = 2;
     private static final DiffUtil.ItemCallback<ThreadOverviewItem> ITEM_CALLBACK = new DiffUtil.ItemCallback<ThreadOverviewItem>() {
         @Override
         public boolean areItemsTheSame(@NonNull ThreadOverviewItem oldItem, @NonNull ThreadOverviewItem newItem) {
@@ -64,8 +66,10 @@ public class ThreadOverviewAdapter extends RecyclerView.Adapter<ThreadOverviewAd
         }
     };
 
+    private final OffsetListUpdateCallback<AbstractThreadOverviewViewHolder> offsetListUpdateCallback = new OffsetListUpdateCallback<>(this, 1, false);
+
     private final AsyncPagedListDiffer<ThreadOverviewItem> mDiffer = new AsyncPagedListDiffer<>(
-            new OffsetListUpdateCallback<>(this, 0),
+            offsetListUpdateCallback,
             new AsyncDifferConfig.Builder<>(ITEM_CALLBACK).build()
     );
 
@@ -76,6 +80,7 @@ public class ThreadOverviewAdapter extends RecyclerView.Adapter<ThreadOverviewAd
     private OnSelectionToggled onSelectionToggled;
     private Set<String> selectedThreads = Collections.emptySet();
     private Future<MailboxWithRoleAndName> importantMailbox; //TODO this needs to be a LiveData and needs to trigger a refresh when changed
+    private EmptyMailboxAction emptyMailboxAction = null;
 
     @NonNull
     @Override
@@ -83,6 +88,8 @@ public class ThreadOverviewAdapter extends RecyclerView.Adapter<ThreadOverviewAd
         final LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         if (viewType == THREAD_ITEM_VIEW_TYPE) {
             return new ThreadOverviewViewHolder(DataBindingUtil.inflate(layoutInflater, R.layout.item_thread_overview, parent, false));
+        } else if (viewType == EMPTY_MAILBOX_VIEW_TYPE) {
+            return new ThreadOverviewEmptyMailboxViewHolder(DataBindingUtil.inflate(layoutInflater, R.layout.item_thread_overview_loading, parent, false));
         } else {
             return new ThreadOverviewLoadingViewHolder(DataBindingUtil.inflate(layoutInflater, R.layout.item_thread_overview_loading, parent, false));
         }
@@ -94,7 +101,13 @@ public class ThreadOverviewAdapter extends RecyclerView.Adapter<ThreadOverviewAd
             onBindViewHolder((ThreadOverviewLoadingViewHolder) holder);
         } else if (holder instanceof ThreadOverviewViewHolder) {
             onBindViewHolder((ThreadOverviewViewHolder) holder, position);
+        } else if (holder instanceof ThreadOverviewEmptyMailboxViewHolder) {
+            onBindViewHolder((ThreadOverviewEmptyMailboxViewHolder) holder);
         }
+    }
+
+    private void onBindViewHolder(ThreadOverviewEmptyMailboxViewHolder holder) {
+        LOGGER.info("binding empty mailbox view");
     }
 
     private void onBindViewHolder(final ThreadOverviewViewHolder threadOverviewHolder, final int position) {
@@ -151,11 +164,11 @@ public class ThreadOverviewAdapter extends RecyclerView.Adapter<ThreadOverviewAd
     public void notifyItemChanged(final String threadId) {
         final int position = getPosition(threadId);
         if (position != RecyclerView.NO_POSITION) {
-            notifyItemChanged(position);
+            notifyItemChanged(position + (offsetListUpdateCallback.isOffsetVisible() ? 1 : 0));
         }
     }
 
-    public int getPosition(final String threadId) {
+    private int getPosition(final String threadId) {
         final PagedList<ThreadOverviewItem> currentList = this.mDiffer.getCurrentList();
         if (currentList == null) {
             return RecyclerView.NO_POSITION;
@@ -213,10 +226,6 @@ public class ThreadOverviewAdapter extends RecyclerView.Adapter<ThreadOverviewAd
         refreshLoadingIndicator(before);
     }
 
-    public void submitList(final PagedList<ThreadOverviewItem> pagedList) {
-        submitList(pagedList, null);
-    }
-
     public void submitList(final PagedList<ThreadOverviewItem> pagedList, final Runnable runnable) {
         final boolean before = isLoading();
         this.initialLoadComplete = true;
@@ -226,17 +235,27 @@ public class ThreadOverviewAdapter extends RecyclerView.Adapter<ThreadOverviewAd
         this.mDiffer.submitList(pagedList, runnable);
     }
 
+    public void setEmptyMailboxAction(final EmptyMailboxAction emptyMailboxAction) {
+        this.emptyMailboxAction = emptyMailboxAction;
+        this.offsetListUpdateCallback.setOffsetVisible(emptyMailboxAction != null);
+    }
+
+
     public void setSelectedThreads(final Set<String> selectedThreads) {
         this.selectedThreads = selectedThreads;
     }
 
     public ThreadOverviewItem getItem(int position) {
-        return this.mDiffer.getItem(position);
+        return this.mDiffer.getItem(offsetListUpdateCallback.isOffsetVisible() ? position - 1 : position);
     }
 
     @Override
     public int getItemViewType(int position) {
-        return position < this.mDiffer.getItemCount() ? THREAD_ITEM_VIEW_TYPE : LOADING_ITEM_VIEW_TYPE;
+        if (offsetListUpdateCallback.isOffsetVisible() && position == 0) {
+            return EMPTY_MAILBOX_VIEW_TYPE;
+        } else {
+            return position < this.mDiffer.getItemCount() ? THREAD_ITEM_VIEW_TYPE : LOADING_ITEM_VIEW_TYPE;
+        }
     }
 
     public void setOnFlaggedToggledListener(OnFlaggedToggled listener) {
@@ -253,7 +272,7 @@ public class ThreadOverviewAdapter extends RecyclerView.Adapter<ThreadOverviewAd
 
     @Override
     public int getItemCount() {
-        return this.mDiffer.getItemCount() + 1;
+        return this.mDiffer.getItemCount() + 1 + this.offsetListUpdateCallback.getCurrentOffset();
     }
 
     public boolean isInitialLoad() {
@@ -273,6 +292,17 @@ public class ThreadOverviewAdapter extends RecyclerView.Adapter<ThreadOverviewAd
         AbstractThreadOverviewViewHolder(@NonNull View itemView) {
             super(itemView);
         }
+    }
+
+    public static class ThreadOverviewEmptyMailboxViewHolder extends AbstractThreadOverviewViewHolder {
+
+        final ItemThreadOverviewLoadingBinding binding;
+
+        ThreadOverviewEmptyMailboxViewHolder(@NonNull ItemThreadOverviewLoadingBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
+        }
+
     }
 
     public static class ThreadOverviewLoadingViewHolder extends AbstractThreadOverviewViewHolder {
