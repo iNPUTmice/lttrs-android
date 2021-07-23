@@ -47,7 +47,6 @@ import rs.ltt.android.entity.MailboxWithRoleAndName;
 import rs.ltt.android.entity.ThreadOverviewItem;
 import rs.ltt.android.ui.BindingAdapters;
 import rs.ltt.android.ui.EmptyMailboxAction;
-import rs.ltt.android.ui.fragment.AbstractQueryFragment;
 import rs.ltt.android.util.Touch;
 
 public class ThreadOverviewAdapter extends RecyclerView.Adapter<ThreadOverviewAdapter.AbstractThreadOverviewViewHolder> {

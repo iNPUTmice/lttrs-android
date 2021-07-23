@@ -282,7 +282,10 @@ public abstract class AbstractQueryFragment extends AbstractLttrsFragment implem
         new MaterialAlertDialogBuilder(requireActivity())
                 .setTitle(R.string.empty_trash_dialog_title)
                 .setMessage(message)
-                .setPositiveButton(R.string.empty, null)
+                .setPositiveButton(
+                        R.string.empty,
+                        (dialog, which) -> getThreadModifier().executeEmptyMailboxAction(action)
+                )
                 .setNegativeButton(R.string.cancel, null)
                 .show();
     }

@@ -65,6 +65,7 @@ import rs.ltt.android.R;
 import rs.ltt.android.databinding.ActivityLttrsBinding;
 import rs.ltt.android.entity.MailboxOverviewItem;
 import rs.ltt.android.entity.MailboxWithRoleAndName;
+import rs.ltt.android.ui.EmptyMailboxAction;
 import rs.ltt.android.ui.ItemAnimators;
 import rs.ltt.android.ui.Theme;
 import rs.ltt.android.ui.ThreadModifier;
@@ -552,6 +553,11 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
         snackbar.setAction(R.string.undo, v -> lttrsViewModel.addKeyword(threadIds, keyword));
         showSnackbar(snackbar);
         lttrsViewModel.removeKeyword(threadIds, keyword);
+    }
+
+    @Override
+    public void executeEmptyMailboxAction(EmptyMailboxAction action) {
+        this.lttrsViewModel.executeEmptyMailboxAction(action);
     }
 
     @Override

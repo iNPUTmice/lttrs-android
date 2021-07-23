@@ -14,6 +14,7 @@ public class EmptyMailboxAction {
     );
     private final Role role;
     private final int itemCount;
+
     public EmptyMailboxAction(Role role, int itemCount) {
         this.role = role;
         this.itemCount = itemCount;

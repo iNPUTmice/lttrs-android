@@ -29,11 +29,13 @@ import rs.ltt.android.entity.KeywordOverwriteEntity;
 import rs.ltt.android.entity.MailboxOverviewItem;
 import rs.ltt.android.entity.MailboxOverwriteEntity;
 import rs.ltt.android.entity.MailboxWithRoleAndName;
+import rs.ltt.android.ui.EmptyMailboxAction;
 import rs.ltt.android.util.Event;
 import rs.ltt.android.util.MainThreadExecutor;
 import rs.ltt.android.worker.AbstractMuaWorker;
 import rs.ltt.android.worker.ArchiveWorker;
 import rs.ltt.android.worker.CopyToMailboxWorker;
+import rs.ltt.android.worker.EmptyTrashWorker;
 import rs.ltt.android.worker.Failure;
 import rs.ltt.android.worker.MarkImportantWorker;
 import rs.ltt.android.worker.ModifyKeywordWorker;
@@ -275,11 +277,28 @@ public class LttrsRepository extends AbstractRepository {
     protected LiveData<WorkInfo> dispatchWorkRequest(final OneTimeWorkRequest workRequest) {
         final WorkManager workManager = WorkManager.getInstance(application);
         workManager.enqueueUniqueWork(
-                ArchiveWorker.uniqueName(accountId),
+                AbstractMuaWorker.uniqueName(accountId),
                 ExistingWorkPolicy.APPEND_OR_REPLACE,
                 workRequest
         );
         return observeForFailure(workRequest);
+    }
+
+    public void executeEmptyMailboxAction(final EmptyMailboxAction action) {
+        final Role role = action.getRole();
+        if (role == Role.TRASH) {
+            emptyTrash();
+        } else {
+            throw new IllegalStateException(String.format("Emptying %s has not been implemented", role));
+        }
+    }
+
+    private void emptyTrash() {
+        final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(EmptyTrashWorker.class)
+                .setConstraints(CONNECTED_CONSTRAINT)
+                .setInputData(EmptyTrashWorker.data(accountId))
+                .build();
+        dispatchWorkRequest(workRequest);
     }
 
     protected LiveData<WorkInfo> observeForFailure(final OneTimeWorkRequest workRequest) {
