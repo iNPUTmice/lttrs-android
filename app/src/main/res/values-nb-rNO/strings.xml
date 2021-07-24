@@ -88,4 +88,37 @@
     <string name="change_labels">Endre etiketter</string>
     <string name="cancel">Avbryt</string>
     <string name="confirm">Bekreft</string>
+    <string name="remove_account_dialog_message">Fjerning av kontoen sletter alle dens meldinger og all annen tilknyttet data fra enheten.</string>
+    <string name="session_resource_help_dialog_message">Ltt.rs bruker den relativt nye JMAP-protokollen til å synkronisere e-post, men det er ikke sikkert at din tilbyder støtter denne protokollen enda.
+\n
+\nKontakt din tilbyder og spør om JMAP og JMAP-tilkoblingsnettadresse.
+\n
+\nPå en tjener som er satt opp riktig vil Ltt.rs oppdage tilkoblingsnettadressen automatisk.</string>
+    <string name="role_name_all">All e-post</string>
+    <string name="vacation_response">Feriesvar</string>
+    <string name="view_emails">Vis e-poster</string>
+    <string name="remove_account_dialog_title">Fjern konto\?</string>
+    <string name="end_to_end_encryption">Ende-til-ende -kryptering</string>
+    <string name="manage_labels">Håndter etiketter</string>
+    <string name="identities">Identiteter</string>
+    <string name="remove_account">Fjern konto</string>
+    <string name="account">Konto</string>
+    <string name="accounts">Kontoer</string>
+    <string name="notification_channel_name_email">E-post</string>
+    <plurals name="x_new_emails">
+        <item quantity="one">%d ny e-post</item>
+        <item quantity="other">%d nye e-poster</item>
+    </plurals>
+    <string name="session_resource_help_dialog_title">Hva er tilkoblingsnettadressen\?</string>
+    <string name="role_name_subscribed">Abonnert</string>
+    <string name="role_name_junk">Søppelpost</string>
+    <string name="role_name_trash">Papirkurv</string>
+    <string name="role_name_important">Viktig</string>
+    <string name="role_name_flagged">Stjernemerket</string>
+    <string name="role_name_drafts">Kladder</string>
+    <string name="role_name_archive">Arkiv</string>
+    <string name="role_name_sent">Sendt</string>
+    <string name="role_name_inbox">Innboks</string>
+    <string name="foreground_service">Forgrunnstjeneste</string>
+    <string name="foreground_service_notification_text">Ltt.rs fortsetter å kjøre for å varsle deg om mottatt e-post</string>
 </resources>

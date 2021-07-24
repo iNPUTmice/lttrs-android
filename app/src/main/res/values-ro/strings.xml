@@ -115,4 +115,5 @@
         <item quantity="few">%d e-mailuri noi</item>
         <item quantity="other">%d de e-mailuri noi</item>
     </plurals>
+    <string name="notification_channel_name_email">E-mail</string>
 </resources>

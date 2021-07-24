@@ -1,0 +1,12 @@
+Machbarkeitsnachweis eines E-Mail (JMAP) Clients (ausgesprochen \"Letters\"). Macht starken Gebrauch von Android Jetpack, um wartungsfreundlicher zu sein als einige der anderen Android-E-Mail-Clients.
+
+Funktionen und Designüberlegungen:
+
+* Starker Cache, aber nicht vollständig offline-fähig. Ltt.rs nutzt die großartigen Caching-Fähigkeiten von JMAP. Allerdings wird beim Markieren eines Threads als gelesen ein Paketumlauf zum Server durchgeführt, um Dinge wie die Leseanzahl zu aktualisieren. Die Aktion selbst geht nicht verloren, auch wenn sie offline ausgeführt wird.
+* Konto einrichten und fertig. Einstellungen laden zur Featuritis und dessen Freund, der Unwartbarkeit, ein. Es gibt einen spezifischen Arbeitsablauf. Für andere ist K-9 Mail oder FairEmail besser geeignet.
+* Minimale Abhängigkeiten. Nur bekannte, gut getestete Bibliotheken von seriösen Herstellern. Bibliotheken von Drittanbietern sind oft von schlechter Qualität und werden am Ende nicht mehr gewartet.
+* Erstklassiges Autocrypt¹. Ltt.rs passt genau in seine strengen UX-Richtlinien.
+* Basiert auf jmap-mua, einem kopflosen E-Mail-Client, oder einer Bibliothek, die alles handhabt, was ein E-Mail-Client auch tun würde, abgesehen von Datenspeicherung und UI. Es gibt auch lttrs-cli, das die gleiche Bibliothek verwendet.
+* Schaut im Zweifelsfall auf Gmail als Inspiration.
+
+¹: Geplantes Feature
