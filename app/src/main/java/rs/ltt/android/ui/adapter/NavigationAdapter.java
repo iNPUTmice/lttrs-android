@@ -194,12 +194,18 @@ public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.Ab
 
     private void onBindViewHolder(final NavigationHeaderViewHolder viewHolder) {
         final @DrawableRes int imageResource;
+        final @StringRes int imageDescriptionResource;
         if (accountSelectionVisible) {
             imageResource = R.drawable.ic_baseline_keyboard_arrow_up_24;
+            imageDescriptionResource = R.string.close_account_selector;
         } else {
             imageResource = R.drawable.ic_keyboard_arrow_down_black_24dp;
+            imageDescriptionResource = R.string.open_account_selector;
         }
         viewHolder.binding.toggle.setImageResource(imageResource);
+        viewHolder.binding.toggle.setContentDescription(
+                viewHolder.binding.getRoot().getContext().getString(imageDescriptionResource)
+        );
         viewHolder.binding.toggle.setOnClickListener(v -> onAccountViewToggled.onAccountViewToggled());
         viewHolder.binding.wrapper.setOnClickListener(v -> onAccountViewToggled.onAccountViewToggled());
         if (this.accountName != null) {

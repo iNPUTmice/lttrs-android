@@ -14,76 +14,72 @@
   -->
 
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp">
 
-        <FrameLayout
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="192dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/cover"
+            tools:ignore="ContentDescription" />
+
+        <RelativeLayout
+            android:id="@+id/wrapper"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp">
+            android:layout_gravity="bottom"
+            android:background="@color/colorShadowOnPrimary"
+            android:minHeight="56dp">
 
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="192dp"
-
-                android:scaleType="centerCrop"
-                android:src="@drawable/cover" />
-
-            <RelativeLayout
-                android:id="@+id/wrapper"
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:minHeight="56dp"
-                android:background="@color/colorShadowOnPrimary">
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="16dp"
+                android:layout_toStartOf="@+id/toggle"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
 
-                <LinearLayout
-                    android:layout_alignParentStart="true"
-                    android:layout_toStartOf="@+id/toggle"
+                <TextView
+                    android:id="@+id/name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginStart="16dp"
-                    android:gravity="center_vertical"
-                    android:orientation="vertical">
+                    android:clickable="false"
+                    android:fontFamily="sans-serif-medium"
+                    android:textAppearance="?textAppearanceBody1"
+                    android:textColor="@color/colorOnPrimary"
+                    tools:text="Sam Miller" />
 
-                    <TextView
-                        android:id="@+id/name"
-                        android:clickable="false"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-medium"
-                        tools:text="Sam Miller"
-                        android:textAppearance="?textAppearanceBody1"
-                        android:textColor="@color/colorOnPrimary" />
-
-                    <TextView
-                        android:id="@+id/account"
-                        android:clickable="false"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        tools:text="sam.miller@example.com"
-                        android:textAppearance="?textAppearanceBody2"
-                        android:textColor="@color/colorOnPrimary" />
-                </LinearLayout>
-
-                <ImageButton
-                    android:id="@+id/toggle"
+                <TextView
+                    android:id="@+id/account"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:padding="12dp"
-                    android:src="@drawable/ic_keyboard_arrow_down_black_24dp"
-                    app:tint="@color/colorOnPrimary" />
-            </RelativeLayout>
+                    android:clickable="false"
+                    android:textAppearance="?textAppearanceBody2"
+                    android:textColor="@color/colorOnPrimary"
+                    tools:text="sam.miller@example.com" />
+            </LinearLayout>
 
-        </FrameLayout>
+            <ImageButton
+                android:id="@+id/toggle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/open_account_selector"
+                android:padding="12dp"
+                android:src="@drawable/ic_keyboard_arrow_down_black_24dp"
+                app:tint="@color/colorOnPrimary" />
+        </RelativeLayout>
+
     </FrameLayout>
 
 </layout>
