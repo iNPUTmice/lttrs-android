@@ -23,7 +23,7 @@ public class EmptyMailboxAction {
     public static boolean emptyWorthy(final MailboxOverviewItem mailbox) {
         return mailbox != null
                 && EMPTY_WORTHY_ROLES.contains(mailbox.getRole())
-                && mailbox.totalThreads > 0;
+                && mailbox.totalEmails > 0;
     }
 
     public int getItemCount() {

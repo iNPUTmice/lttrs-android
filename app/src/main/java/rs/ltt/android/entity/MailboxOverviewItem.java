@@ -28,7 +28,7 @@ public class MailboxOverviewItem extends MailboxWithRoleAndName implements Label
 
     public Integer sortOrder;
 
-    public Integer totalThreads;
+    public Integer totalEmails;
 
     public Integer unreadThreads;
 
@@ -42,7 +42,7 @@ public class MailboxOverviewItem extends MailboxWithRoleAndName implements Label
                 Objects.equal(name, that.name) &&
                 role == that.role &&
                 Objects.equal(sortOrder, that.sortOrder) &&
-                Objects.equal(totalThreads, that.totalThreads) &&
+                Objects.equal(totalEmails, that.totalEmails) &&
                 Objects.equal(unreadThreads, that.unreadThreads);
     }
 
@@ -53,7 +53,7 @@ public class MailboxOverviewItem extends MailboxWithRoleAndName implements Label
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id, parentId, name, role, sortOrder, totalThreads, unreadThreads);
+        return Objects.hashCode(id, parentId, name, role, sortOrder, totalEmails, unreadThreads);
     }
 
     @Override

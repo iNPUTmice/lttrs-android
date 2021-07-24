@@ -52,7 +52,7 @@ public class MailboxQueryViewModel extends AbstractQueryViewModel {
         });
         this.emptyMailboxAction = Transformations.map(this.mailbox, mailbox -> {
             if (EmptyMailboxAction.emptyWorthy(mailbox)) {
-                return new EmptyMailboxAction(mailbox.getRole(), mailbox.totalThreads);
+                return new EmptyMailboxAction(mailbox.getRole(), mailbox.totalEmails);
             } else {
                 return null;
             }

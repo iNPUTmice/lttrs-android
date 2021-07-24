@@ -70,13 +70,13 @@ public abstract class MailboxDao extends AbstractEntityDao {
     @Query("select id,role,name from mailbox where name in(:names)")
     public abstract List<MailboxWithRoleAndName> getMailboxesByNames(final String[] names);
 
-    @Query("select id,parentId,name,sortOrder,unreadThreads,totalThreads,role from mailbox")
+    @Query("select id,parentId,name,sortOrder,unreadThreads,totalEmails,role from mailbox")
     public abstract LiveData<List<MailboxOverviewItem>> getMailboxes();
 
-    @Query("select id,parentId,name,sortOrder,unreadThreads,totalThreads,role from mailbox where role=:role limit 1")
+    @Query("select id,parentId,name,sortOrder,unreadThreads,totalEmails,role from mailbox where role=:role limit 1")
     public abstract LiveData<MailboxOverviewItem> getMailboxOverviewItemLiveData(Role role);
 
-    @Query("select id,parentid,name,sortOrder,unreadThreads,totalThreads,role from mailbox where id=:id")
+    @Query("select id,parentid,name,sortOrder,unreadThreads,totalEmails,role from mailbox where id=:id")
     public abstract LiveData<MailboxOverviewItem> getMailboxOverviewItemLiveData(String id);
 
     @Query("select id,role,name from mailbox where role=:role limit 1")
@@ -95,10 +95,10 @@ public abstract class MailboxDao extends AbstractEntityDao {
         return getMailboxesWithRoleEqualsNullOrIn(Role.INBOX);
     }
 
-    @Query("select id,parentid,name,sortOrder,unreadThreads,totalThreads,role from mailbox where id=:id")
+    @Query("select id,parentid,name,sortOrder,unreadThreads,totalEmails,role from mailbox where id=:id")
     public abstract MailboxOverviewItem getMailbox(String id);
 
-    @Query("select id,parentId,name,sortOrder,unreadThreads,totalThreads,role from mailbox where role=:role limit 1")
+    @Query("select id,parentId,name,sortOrder,unreadThreads,totalEmails,role from mailbox where role=:role limit 1")
     public abstract MailboxOverviewItem getMailboxOverviewItem(Role role);
 
     @Query("select distinct mailbox.id,role,name from email join email_mailbox on email_mailbox.emailId=email.id join mailbox on email_mailbox.mailboxId=mailbox.id where threadId=:threadId")
