@@ -27,7 +27,7 @@ import com.google.common.util.concurrent.MoreExecutors;
 
 import java.util.List;
 
-import rs.ltt.android.entity.EmailComplete;
+import rs.ltt.android.entity.EmailWithBodies;
 import rs.ltt.android.entity.ExpandedPosition;
 import rs.ltt.android.entity.KeywordOverwriteEntity;
 import rs.ltt.android.entity.MailboxOverwriteEntity;
@@ -41,7 +41,7 @@ public class ThreadViewRepository extends AbstractRepository {
         super(application, accountId);
     }
 
-    public LiveData<PagedList<EmailComplete>> getEmails(String threadId) {
+    public LiveData<PagedList<EmailWithBodies>> getEmails(String threadId) {
         return new LivePagedListBuilder<>(database.threadAndEmailDao().getEmails(threadId), 30).build();
     }
 

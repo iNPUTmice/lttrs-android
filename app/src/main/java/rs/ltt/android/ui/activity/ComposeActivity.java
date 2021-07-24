@@ -26,6 +26,8 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -36,18 +38,25 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.common.base.Preconditions;
+import com.google.common.net.MediaType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.UUID;
 
 import rs.ltt.android.LttrsApplication;
 import rs.ltt.android.R;
 import rs.ltt.android.databinding.ActivityComposeBinding;
+import rs.ltt.android.databinding.ItemAttachmentBinding;
 import rs.ltt.android.ui.ChipDrawableSpan;
 import rs.ltt.android.ui.ComposeAction;
+import rs.ltt.android.ui.ViewIntent;
 import rs.ltt.android.ui.model.ComposeViewModel;
+import rs.ltt.android.util.Event;
+import rs.ltt.android.util.MediaTypes;
+import rs.ltt.jmap.common.entity.Attachment;
 import rs.ltt.jmap.mua.util.MailToUri;
 
 //TODO handle save instance state
@@ -62,6 +71,7 @@ public class ComposeActivity extends AppCompatActivity {
     private static final String EMAIL_ID_EXTRA = "email_id";
     private ActivityComposeBinding binding;
     private ComposeViewModel composeViewModel;
+    private ActivityResultLauncher<String> getAttachmentLauncher;
 
     public static void compose(final Fragment fragment) {
         launch(fragment, null, null, ComposeAction.NEW);
@@ -123,6 +133,11 @@ public class ComposeActivity extends AppCompatActivity {
             return;
         }
 
+        this.getAttachmentLauncher = registerForActivityResult(
+                new ActivityResultContracts.GetContent(),
+                this::addAttachment
+        );
+
         binding = DataBindingUtil.setContentView(this, R.layout.activity_compose);
 
         setupActionBar();
@@ -168,7 +183,55 @@ public class ComposeActivity extends AppCompatActivity {
         binding.ccLabel.setOnClickListener(v -> requestFocusAndOpenKeyboard(binding.cc));
         binding.placeholder.setOnClickListener(v -> requestFocusAndOpenKeyboard(binding.body));
 
+        composeViewModel.getAttachments().observe(this, this::onAttachmentsUpdated);
+
+        composeViewModel.getViewIntentEvent().observe(this, this::onViewIntentEvent);
+
         //TODO once we handle instance state ourselves we need to call ChipDrawableSpan.reset() on `to`
+    }
+
+    private void onViewIntentEvent(final Event<ViewIntent> viewIntentEvent) {
+        if (viewIntentEvent.isConsumable()) {
+            viewIntentEvent.consume().launch(this);
+        }
+    }
+
+    private void onAttachmentsUpdated(final List<? extends Attachment> attachments) {
+        if (attachments.isEmpty()) {
+            binding.attachments.setVisibility(View.GONE);
+        } else {
+            binding.attachments.setVisibility(View.VISIBLE);
+            binding.attachments.removeAllViews();
+            for (final Attachment attachment : attachments) {
+                binding.attachments.addView(renderAttachment(attachment));
+            }
+        }
+    }
+
+    private View renderAttachment(final Attachment attachment) {
+        final ItemAttachmentBinding attachmentBinding = ItemAttachmentBinding.inflate(
+                getLayoutInflater(),
+                binding.attachments,
+                false
+        );
+        attachmentBinding.setAttachment(attachment);
+        attachmentBinding.action.setImageResource(R.drawable.ic_baseline_close_24);
+        attachmentBinding.action.setOnClickListener((v) -> deleteAttachment(attachment));
+        attachmentBinding.getRoot().setOnClickListener((v -> composeViewModel.open(attachment)));
+        //TODO wire up 'open/view'
+        return attachmentBinding.getRoot();
+    }
+
+    private void deleteAttachment(final Attachment attachment) {
+        composeViewModel.deleteAttachment(attachment);
+    }
+
+    private void addAttachment(final Uri uri) {
+        if (uri == null) {
+            LOGGER.warn("addAttachment called with null uri");
+            return;
+        }
+        composeViewModel.addAttachment(uri);
     }
 
     private void redirectToSetupActivity() {
@@ -231,6 +294,9 @@ public class ComposeActivity extends AppCompatActivity {
             return true;
         } else if (itemId == R.id.action_discard) {
             discardDraft();
+            return true;
+        } else if (itemId == R.id.action_attach_file) {
+            this.getAttachmentLauncher.launch(MediaTypes.toString(MediaType.ANY_TYPE));
             return true;
         } else {
             return super.onOptionsItemSelected(item);

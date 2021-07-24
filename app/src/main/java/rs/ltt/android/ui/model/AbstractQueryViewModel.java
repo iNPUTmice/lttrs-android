@@ -20,6 +20,7 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 import androidx.paging.PagedList;
 
@@ -33,6 +34,7 @@ import rs.ltt.android.entity.MailboxWithRoleAndName;
 import rs.ltt.android.entity.QueryInfo;
 import rs.ltt.android.entity.ThreadOverviewItem;
 import rs.ltt.android.repository.QueryRepository;
+import rs.ltt.android.ui.EmptyMailboxAction;
 import rs.ltt.jmap.common.entity.query.EmailQuery;
 
 public abstract class AbstractQueryViewModel extends AndroidViewModel {
@@ -88,6 +90,9 @@ public abstract class AbstractQueryViewModel extends AndroidViewModel {
         return this.selectedThreads;
     }
 
+    public LiveData<EmptyMailboxAction> getEmptyMailboxAction() {
+        return new MutableLiveData<>(null);
+    }
 
     public void onRefresh() {
         final EmailQuery emailQuery = getQuery().getValue();

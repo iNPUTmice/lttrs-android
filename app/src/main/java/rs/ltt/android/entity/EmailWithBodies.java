@@ -17,22 +17,22 @@ package rs.ltt.android.entity;
 
 import androidx.room.Relation;
 
-import com.google.common.collect.Iterables;
+import com.google.common.base.Objects;
 import com.google.common.collect.Maps;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
-import rs.ltt.jmap.common.entity.EmailBodyPart;
 import rs.ltt.jmap.mua.util.KeywordUtil;
 
-public abstract class EmailWithTextBodies extends EmailPreview {
+/**
+ * This e-mail model represents and individual e-mail in the thread view. It does not have a subject
+ * because the subject is displayed once for the entire thread.
+ */
+public class EmailWithBodies extends EmailPreview {
 
     //TODO remove preview. use body values
     public String preview;
@@ -52,7 +52,7 @@ public abstract class EmailWithTextBodies extends EmailPreview {
         return preview;
     }
 
-    public From getFrom() {
+    public From getFirstFrom() {
         if (KeywordUtil.draft(this)) {
             return From.draft();
         }
@@ -69,7 +69,7 @@ public abstract class EmailWithTextBodies extends EmailPreview {
         final Map<String, EmailBodyValueEntity> map = Maps.uniqueIndex(bodyValueEntities, value -> value.partId);
         return textBodies.stream()
                 .map(body -> map.get(body.partId))
-                .filter(Objects::nonNull)
+                .filter(java.util.Objects::nonNull)
                 .map(value -> value.value)
                 .collect(Collectors.toList());
     }
@@ -78,7 +78,7 @@ public abstract class EmailWithTextBodies extends EmailPreview {
         return EmailBodyPartEntity.filter(bodyPartEntities, EmailBodyPartType.ATTACHMENT);
     }
 
-    public Collection<String> getTo() {
+    public Collection<String> getToAndCc() {
         LinkedHashMap<String, String> toMap = new LinkedHashMap<>();
         for (EmailAddress emailAddress : emailAddresses) {
             if (emailAddress.type == EmailAddressType.TO || emailAddress.type == EmailAddressType.CC) {
@@ -86,5 +86,21 @@ public abstract class EmailWithTextBodies extends EmailPreview {
             }
         }
         return toMap.values();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        EmailWithBodies that = (EmailWithBodies) o;
+        return Objects.equal(preview, that.preview) &&
+                Objects.equal(bodyPartEntities, that.bodyPartEntities) &&
+                Objects.equal(bodyValueEntities, that.bodyValueEntities);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(super.hashCode(), preview, bodyPartEntities, bodyValueEntities);
     }
 }

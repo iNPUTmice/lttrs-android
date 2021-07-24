@@ -79,7 +79,7 @@ public abstract class AbstractMuaWorker extends Worker {
         return LttrsDatabase.getInstance(getApplicationContext(), this.account);
     }
 
-    protected Mua getMua() throws ExecutionException {
+    protected Mua getMua() {
         final AccountWithCredentials account = AppDatabase.getInstance(getApplicationContext()).accountDao().getAccount(this.account);
         return MuaPool.getInstance(getApplicationContext(), account);
     }

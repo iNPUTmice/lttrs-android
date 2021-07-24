@@ -44,6 +44,7 @@ import rs.ltt.android.entity.AccountName;
 import rs.ltt.android.repository.LttrsRepository;
 import rs.ltt.android.repository.MainRepository;
 import rs.ltt.android.ui.AdditionalNavigationItem;
+import rs.ltt.android.ui.EmptyMailboxAction;
 import rs.ltt.android.util.Event;
 import rs.ltt.android.worker.Failure;
 import rs.ltt.jmap.common.entity.IdentifiableMailboxWithRole;
@@ -231,6 +232,10 @@ public class LttrsViewModel extends AndroidViewModel {
     public void setSelectedAccount(long id) {
         this.mainRepository.setSelectedAccount(id);
         LttrsApplication.get(getApplication()).invalidateMostRecentlySelectedAccountId();
+    }
+
+    public void executeEmptyMailboxAction(final EmptyMailboxAction action) {
+        this.lttrsRepository.executeEmptyMailboxAction(action);
     }
 
     public static class Factory implements ViewModelProvider.Factory {

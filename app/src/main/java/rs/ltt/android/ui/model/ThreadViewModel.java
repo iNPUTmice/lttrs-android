@@ -16,10 +16,10 @@
 package rs.ltt.android.ui.model;
 
 import android.app.Application;
+import android.net.Uri;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -28,6 +28,8 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.PagedList;
 import androidx.work.Data;
+import androidx.work.ExistingWorkPolicy;
+import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 
@@ -48,7 +50,8 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
-import rs.ltt.android.entity.EmailComplete;
+import rs.ltt.android.cache.BlobStorage;
+import rs.ltt.android.entity.EmailWithBodies;
 import rs.ltt.android.entity.ExpandedPosition;
 import rs.ltt.android.entity.MailboxOverwriteEntity;
 import rs.ltt.android.entity.MailboxWithRoleAndName;
@@ -58,10 +61,12 @@ import rs.ltt.android.entity.ThreadHeader;
 import rs.ltt.android.repository.ThreadViewRepository;
 import rs.ltt.android.util.CombinedListsLiveData;
 import rs.ltt.android.util.Event;
+import rs.ltt.android.worker.BlobDownloadWorker;
+import rs.ltt.android.worker.StoreAttachmentWorker;
 import rs.ltt.jmap.common.entity.Role;
 import rs.ltt.jmap.mua.util.LabelUtil;
 
-public class ThreadViewModel extends AndroidViewModel {
+public class ThreadViewModel extends AbstractAttachmentViewModel {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ThreadViewModel.class);
 
@@ -69,22 +74,25 @@ public class ThreadViewModel extends AndroidViewModel {
     public final ListenableFuture<List<ExpandedPosition>> expandedPositions;
     public final MutableLiveData<Event<Seen>> seenEvent = new MutableLiveData<>();
     public final HashSet<String> expandedItems = new HashSet<>();
+    private final long accountId;
     private final String threadId;
     private final String label;
     private final MediatorLiveData<Event<String>> threadViewRedirect = new MediatorLiveData<>();
     private final MediatorLiveData<SubjectWithImportance> subjectWithImportance = new MediatorLiveData<>();
-    private final LiveData<PagedList<EmailComplete>> emails;
+    private final LiveData<PagedList<EmailWithBodies>> emails;
     private final LiveData<Boolean> flagged;
     private final LiveData<List<MailboxWithRoleAndName>> mailboxes;
     private final LiveData<List<MailboxWithRoleAndName>> labels;
     private final LiveData<MenuConfiguration> menuConfiguration;
 
+    private AttachmentReference attachmentReference = null;
 
     ThreadViewModel(@NonNull final Application application,
                     final long accountId,
                     final String threadId,
                     final String label) {
         super(application);
+        this.accountId = accountId;
         this.threadId = threadId;
         this.label = label;
         final ThreadViewRepository threadViewRepository = new ThreadViewRepository(application, accountId);
@@ -180,11 +188,15 @@ public class ThreadViewModel extends AndroidViewModel {
         this.subjectWithImportance.postValue(SubjectWithImportance.of(header, important));
     }
 
+    public LiveData<Event<Seen>> getSeenEvent() {
+        return this.seenEvent;
+    }
+
     public LiveData<Event<String>> getThreadViewRedirect() {
         return this.threadViewRedirect;
     }
 
-    public LiveData<PagedList<EmailComplete>> getEmails() {
+    public LiveData<PagedList<EmailWithBodies>> getEmails() {
         return emails;
     }
 
@@ -239,6 +251,62 @@ public class ThreadViewModel extends AndroidViewModel {
         });
     }
 
+    public void setAttachmentReference(final String emailId, final String blobId) {
+        this.attachmentReference = new AttachmentReference(emailId, blobId);
+    }
+
+    public void storeAttachment(final Uri uri) {
+        final AttachmentReference attachment = this.attachmentReference;
+        if (attachment == null) {
+            throw new IllegalStateException("AttachmentReference has not been set");
+        }
+        this.attachmentReference = null;
+        final ListenableFuture<BlobStorage> future = BlobStorage.getIfCached(
+                getApplication(), accountId, attachment.blobId
+        );
+        Futures.addCallback(future, new FutureCallback<BlobStorage>() {
+            @Override
+            public void onSuccess(final BlobStorage blobStorage) {
+                storeAttachment(blobStorage, uri);
+            }
+
+            @Override
+            public void onFailure(@NotNull Throwable throwable) {
+                if (throwable instanceof BlobStorage.InvalidCacheException) {
+                    downloadAndStoreAttachment(attachment, uri);
+                } else {
+                    //TODO display error message?
+                }
+            }
+        }, MoreExecutors.directExecutor());
+    }
+
+    private void storeAttachment(final BlobStorage blobStorage, final Uri uri) {
+        final WorkManager workManager = WorkManager.getInstance(getApplication());
+        final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(StoreAttachmentWorker.class)
+                .setInputData(StoreAttachmentWorker.data(blobStorage.file, uri))
+                .build();
+        workManager.enqueue(workRequest);
+    }
+
+    private void downloadAndStoreAttachment(final AttachmentReference attachmentReference, final Uri uri) {
+        final WorkManager workManager = WorkManager.getInstance(getApplication());
+        final OneTimeWorkRequest downloadWorkRequest = new OneTimeWorkRequest.Builder(BlobDownloadWorker.class)
+                .setInputData(BlobDownloadWorker.data(accountId, attachmentReference.emailId, attachmentReference.blobId))
+                .build();
+        final OneTimeWorkRequest storeWorkRequest = new OneTimeWorkRequest.Builder(StoreAttachmentWorker.class)
+                .setInputData(StoreAttachmentWorker.data(uri))
+                .build();
+        workManager.beginUniqueWork(BlobDownloadWorker.uniqueName(), ExistingWorkPolicy.APPEND_OR_REPLACE, downloadWorkRequest)
+                .then(storeWorkRequest)
+                .enqueue();
+    }
+
+    @Override
+    protected long getAccountId() {
+        return this.accountId;
+    }
+
     public static class MenuConfiguration {
         public final boolean archive;
         public final boolean removeLabel;
@@ -288,6 +356,16 @@ public class ThreadViewModel extends AndroidViewModel {
         @Override
         public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
             return Objects.requireNonNull(modelClass.cast(new ThreadViewModel(application, accountId, threadId, label)));
+        }
+    }
+
+    private static class AttachmentReference {
+        public final String emailId;
+        public final String blobId;
+
+        private AttachmentReference(String emailId, String blobId) {
+            this.emailId = emailId;
+            this.blobId = blobId;
         }
     }
 

@@ -51,7 +51,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import rs.ltt.android.R;
 import rs.ltt.android.entity.From;
@@ -353,7 +352,8 @@ public class BindingAdapters {
         imageView.setImageResource(toDrawable(mediaType));
     }
 
-    private static @DrawableRes int toDrawable(final MediaType type) {
+    private static @DrawableRes
+    int toDrawable(final MediaType type) {
         if (type == null) {
             return R.drawable.ic_baseline_attachment_24;
         } else if (type.is(MediaType.ANY_IMAGE_TYPE)) {
@@ -372,6 +372,10 @@ public class BindingAdapters {
             return R.drawable.ic_baseline_person_24;
         } else if (MediaTypes.isEbook(type)) {
             return R.drawable.ic_baseline_book_24;
+        } else if (MediaTypes.isDocument(type)) {
+            return R.drawable.ic_baseline_document_24;
+        } else if (MediaTypes.isTour(type)) {
+            return R.drawable.ic_baseline_tour_24;
         } else {
             return R.drawable.ic_baseline_attachment_24;
         }

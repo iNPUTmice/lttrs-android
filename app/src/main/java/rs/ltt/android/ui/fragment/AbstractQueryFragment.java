@@ -37,6 +37,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
@@ -46,16 +47,15 @@ import org.slf4j.LoggerFactory;
 import java.util.Collection;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import rs.ltt.android.LttrsNavigationDirections;
 import rs.ltt.android.R;
 import rs.ltt.android.databinding.FragmentThreadListBinding;
-import rs.ltt.android.entity.MailboxWithRoleAndName;
 import rs.ltt.android.entity.ThreadOverviewItem;
 import rs.ltt.android.service.EventMonitorService;
 import rs.ltt.android.ui.ActionModeMenuConfiguration;
+import rs.ltt.android.ui.EmptyMailboxAction;
 import rs.ltt.android.ui.ItemAnimators;
 import rs.ltt.android.ui.QueryItemTouchHelper;
 import rs.ltt.android.ui.SelectionTracker;
@@ -69,7 +69,7 @@ import rs.ltt.jmap.mua.util.LabelWithCount;
 
 
 public abstract class AbstractQueryFragment extends AbstractLttrsFragment implements OnFlaggedToggled,
-        ThreadOverviewAdapter.OnThreadClicked, QueryItemTouchHelper.OnQueryItemSwipe, ActionMode.Callback, LifecycleObserver, OnSelectionToggled {
+        ThreadOverviewAdapter.OnThreadClicked, QueryItemTouchHelper.OnQueryItemSwipe, ActionMode.Callback, LifecycleObserver, OnSelectionToggled, ThreadOverviewAdapter.OnEmptyMailboxActionClicked {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractQueryFragment.class);
     protected FragmentThreadListBinding binding;
@@ -84,7 +84,7 @@ public abstract class AbstractQueryFragment extends AbstractLttrsFragment implem
         final AbstractQueryViewModel viewModel = getQueryViewModel();
         this.binding = DataBindingUtil.inflate(inflater, R.layout.fragment_thread_list, container, false);
 
-        setupAdapter(viewModel.getImportant());
+        setupAdapter(viewModel);
         setupSelectionTracker(getQueryViewModel().getSelectedThreads());
         observeThreadOverviewItems(viewModel.getThreadOverviewItems());
 
@@ -106,11 +106,17 @@ public abstract class AbstractQueryFragment extends AbstractLttrsFragment implem
         ItemAnimators.disableChangeAnimation(binding.threadList.getItemAnimator());
 
         viewModel.isRunningPagingRequest().observe(getViewLifecycleOwner(), threadOverviewAdapter::setLoading);
+        viewModel.getEmptyMailboxAction().observe(getViewLifecycleOwner(), this::setEmptyMailboxAction);
 
         this.itemTouchHelper = new ItemTouchHelper(new QueryItemTouchHelper(this));
         this.itemTouchHelper.attachToRecyclerView(binding.threadList);
 
         return binding.getRoot();
+    }
+
+    private void setEmptyMailboxAction(final EmptyMailboxAction emptyMailboxAction) {
+        //TODO if != null we might need to scroll to top
+        threadOverviewAdapter.setEmptyMailboxAction(emptyMailboxAction);
     }
 
     @Override
@@ -125,13 +131,14 @@ public abstract class AbstractQueryFragment extends AbstractLttrsFragment implem
         }
     }
 
-    private void setupAdapter(final Future<MailboxWithRoleAndName> importantMailbox) {
+    private void setupAdapter(final AbstractQueryViewModel viewModel) {
         this.threadOverviewAdapter = new ThreadOverviewAdapter();
         this.binding.threadList.setAdapter(threadOverviewAdapter);
         this.threadOverviewAdapter.setOnFlaggedToggledListener(this);
         this.threadOverviewAdapter.setOnThreadClickedListener(this);
+        this.threadOverviewAdapter.setOnEmptyMailboxActionClickedListener(this);
         this.threadOverviewAdapter.setOnSelectionToggled(this);
-        this.threadOverviewAdapter.setImportantMailbox(importantMailbox);
+        this.threadOverviewAdapter.setImportantMailbox(viewModel.getImportant());
     }
 
     private void setupSelectionTracker(final Set<String> dataSource) {
@@ -149,6 +156,7 @@ public abstract class AbstractQueryFragment extends AbstractLttrsFragment implem
     private void observeThreadOverviewItems(final LiveData<PagedList<ThreadOverviewItem>> liveData) {
         final AtomicBoolean actionModeRefreshed = new AtomicBoolean(false);
         liveData.observe(getViewLifecycleOwner(), threadOverviewItems -> {
+            //TODO externalize this to be reused for MailboxAction thing
             final RecyclerView.LayoutManager layoutManager = binding.threadList.getLayoutManager();
             final boolean atTop;
             if (layoutManager instanceof LinearLayoutManager) {
@@ -260,7 +268,26 @@ public abstract class AbstractQueryFragment extends AbstractLttrsFragment implem
         if (item == null) {
             throw new IllegalStateException("Swipe Item not found");
         }
+        LOGGER.debug("trying to swipe " + item.getSubject());
         return onQueryItemSwipe(item);
+    }
+
+    @Override
+    public void onEmptyMailboxActionClicked(final EmptyMailboxAction action) {
+        final String message = requireActivity().getResources().getQuantityString(
+                R.plurals.x_emails_will_permanently_deleted,
+                action.getItemCount(),
+                action.getItemCount()
+        );
+        new MaterialAlertDialogBuilder(requireActivity())
+                .setTitle(R.string.empty_trash_dialog_title)
+                .setMessage(message)
+                .setPositiveButton(
+                        R.string.empty,
+                        (dialog, which) -> getThreadModifier().executeEmptyMailboxAction(action)
+                )
+                .setNegativeButton(R.string.cancel, null)
+                .show();
     }
 
     protected abstract QueryItemTouchHelper.Swipable onQueryItemSwipe(ThreadOverviewItem item);

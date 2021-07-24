@@ -1,5 +1,7 @@
 package rs.ltt.android.entity;
 
+import com.google.common.base.Objects;
+
 public abstract class From {
 
     public static Draft draft() {
@@ -34,6 +36,20 @@ public abstract class From {
 
         public String getEmail() {
             return this.emailAddress.getEmail();
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Named named = (Named) o;
+            return seen == named.seen &&
+                    Objects.equal(emailAddress, named.emailAddress);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hashCode(emailAddress, seen);
         }
     }
 

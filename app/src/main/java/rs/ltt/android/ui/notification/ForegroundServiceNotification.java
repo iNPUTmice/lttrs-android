@@ -35,7 +35,6 @@ public class ForegroundServiceNotification {
         notificationChannel.setSound(null, null);
         notificationChannel.setShowBadge(false);
         notificationManager.createNotificationChannel(notificationChannel);
-
     }
 
     public static Notification get(final Context context) {

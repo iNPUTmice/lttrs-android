@@ -28,14 +28,17 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import rs.ltt.android.entity.IdentityWithNameAndEmail;
 import rs.ltt.android.util.UserAgent;
+import rs.ltt.jmap.common.entity.Attachment;
 import rs.ltt.jmap.common.entity.Email;
 import rs.ltt.jmap.common.entity.EmailAddress;
 import rs.ltt.jmap.common.entity.EmailBodyPart;
 import rs.ltt.jmap.common.entity.EmailBodyValue;
 import rs.ltt.jmap.mua.Status;
+import rs.ltt.jmap.mua.util.AttachmentUtil;
 import rs.ltt.jmap.mua.util.EmailAddressUtil;
 
 public abstract class AbstractCreateEmailWorker extends AbstractMuaWorker {
@@ -48,6 +51,7 @@ public abstract class AbstractCreateEmailWorker extends AbstractMuaWorker {
     private static final String CC_KEY = "cc";
     private static final String SUBJECT_KEY = "subject";
     private static final String BODY_KEY = "body";
+    private static final String ATTACHMENTS_KEY = "attachments";
 
     private final String identity;
     private final List<String> inReplyTo;
@@ -55,6 +59,7 @@ public abstract class AbstractCreateEmailWorker extends AbstractMuaWorker {
     private final Collection<EmailAddress> cc;
     private final String subject;
     private final String body;
+    private final List<Attachment> attachments;
 
 
     AbstractCreateEmailWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
@@ -69,6 +74,8 @@ public abstract class AbstractCreateEmailWorker extends AbstractMuaWorker {
         this.body = data.getString(BODY_KEY);
         final String[] inReplyTo = data.getStringArray(IN_REPLY_TO_KEY);
         this.inReplyTo = inReplyTo == null ? Collections.emptyList() : Arrays.asList(inReplyTo);
+        final byte[] attachments = data.getByteArray(ATTACHMENTS_KEY);
+        this.attachments = attachments == null ? null : rs.ltt.android.entity.Attachment.of(attachments);
     }
 
     public static Data data(final Long account,
@@ -77,7 +84,8 @@ public abstract class AbstractCreateEmailWorker extends AbstractMuaWorker {
                             final Collection<EmailAddress> to,
                             final Collection<EmailAddress> cc,
                             final String subject,
-                            final String body) {
+                            final String body,
+                            final Collection<? extends Attachment> attachments) {
         return new Data.Builder()
                 .putLong(ACCOUNT_KEY, account)
                 .putString(IDENTITY_KEY, identity)
@@ -86,6 +94,7 @@ public abstract class AbstractCreateEmailWorker extends AbstractMuaWorker {
                 .putString(CC_KEY, EmailAddressUtil.toHeaderValue(cc))
                 .putString(SUBJECT_KEY, subject)
                 .putString(BODY_KEY, body)
+                .putByteArray(ATTACHMENTS_KEY, rs.ltt.android.entity.Attachment.toByteArray(attachments))
                 .build();
     }
 
@@ -117,6 +126,9 @@ public abstract class AbstractCreateEmailWorker extends AbstractMuaWorker {
                 .partId(partId)
                 .type("text/plain")
                 .build();
+        final List<EmailBodyPart> attachments = this.attachments.stream()
+                .map(AttachmentUtil::toEmailBodyPart)
+                .collect(Collectors.toList());
         return Email.builder()
                 .from(identity.getEmailAddress())
                 .inReplyTo(this.inReplyTo)
@@ -126,6 +138,7 @@ public abstract class AbstractCreateEmailWorker extends AbstractMuaWorker {
                 .subject(this.subject)
                 .bodyValue(partId, emailBodyValue)
                 .textBody(emailBodyPart)
+                .attachments(attachments)
                 .build();
     }
 

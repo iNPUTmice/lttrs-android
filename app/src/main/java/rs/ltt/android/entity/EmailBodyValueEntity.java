@@ -19,6 +19,7 @@ import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 
 import java.util.List;
@@ -65,4 +66,20 @@ public class EmailBodyValueEntity {
         return entity;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        EmailBodyValueEntity that = (EmailBodyValueEntity) o;
+        return Objects.equal(emailId, that.emailId) &&
+                Objects.equal(partId, that.partId) &&
+                Objects.equal(value, that.value) &&
+                Objects.equal(isEncodingProblem, that.isEncodingProblem) &&
+                Objects.equal(isTruncated, that.isTruncated);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(emailId, partId, value, isEncodingProblem, isTruncated);
+    }
 }

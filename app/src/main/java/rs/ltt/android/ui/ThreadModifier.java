@@ -44,4 +44,6 @@ public interface ThreadModifier {
     void removeFlag(Collection<String> threadIds);
 
     void removeFromKeyword(Collection<String> threadIds, String keyword);
+
+    void executeEmptyMailboxAction(EmptyMailboxAction action);
 }

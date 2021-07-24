@@ -27,6 +27,7 @@ import java.util.concurrent.ExecutionException;
 
 import rs.ltt.android.entity.IdentityWithNameAndEmail;
 import rs.ltt.jmap.common.entity.Email;
+import rs.ltt.jmap.mua.Mua;
 
 public class SaveDraftWorker extends AbstractCreateEmailWorker {
 
@@ -42,12 +43,13 @@ public class SaveDraftWorker extends AbstractCreateEmailWorker {
         final IdentityWithNameAndEmail identity = getIdentity();
         final Email email = buildEmail(identity);
         try {
-            final String emailId = getMua().draft(email).get();
+            final Mua mua = getMua();
+            final String emailId = mua.draft(email).get();
             return refreshAndFetchThreadId(emailId);
         } catch (final ExecutionException e) {
             LOGGER.warn("Unable to safe email as draft", e);
             return Result.failure(Failure.of(e.getCause()));
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             return Result.retry();
         }
     }

@@ -16,6 +16,7 @@
 package rs.ltt.android.ui.adapter;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,8 +25,9 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
+import androidx.paging.AsyncPagedListDiffer;
 import androidx.paging.PagedList;
-import androidx.paging.PagedListAdapter;
+import androidx.recyclerview.widget.AsyncDifferConfig;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -39,40 +41,49 @@ import java.util.concurrent.Future;
 
 import rs.ltt.android.R;
 import rs.ltt.android.databinding.ItemThreadOverviewBinding;
+import rs.ltt.android.databinding.ItemThreadOverviewEmptyActionBinding;
 import rs.ltt.android.databinding.ItemThreadOverviewLoadingBinding;
 import rs.ltt.android.entity.MailboxWithRoleAndName;
 import rs.ltt.android.entity.ThreadOverviewItem;
 import rs.ltt.android.ui.BindingAdapters;
+import rs.ltt.android.ui.EmptyMailboxAction;
 import rs.ltt.android.util.Touch;
 
-public class ThreadOverviewAdapter extends PagedListAdapter<ThreadOverviewItem, ThreadOverviewAdapter.AbstractThreadOverviewViewHolder> {
+public class ThreadOverviewAdapter extends RecyclerView.Adapter<ThreadOverviewAdapter.AbstractThreadOverviewViewHolder> {
 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ThreadOverviewAdapter.class);
     private static final int THREAD_ITEM_VIEW_TYPE = 0;
     private static final int LOADING_ITEM_VIEW_TYPE = 1;
+    private static final int EMPTY_MAILBOX_VIEW_TYPE = 2;
+    private static final DiffUtil.ItemCallback<ThreadOverviewItem> ITEM_CALLBACK = new DiffUtil.ItemCallback<ThreadOverviewItem>() {
+        @Override
+        public boolean areItemsTheSame(@NonNull ThreadOverviewItem oldItem, @NonNull ThreadOverviewItem newItem) {
+            return oldItem.threadId.equals(newItem.threadId);
+        }
+
+        @Override
+        public boolean areContentsTheSame(@NonNull ThreadOverviewItem oldItem, @NonNull ThreadOverviewItem newItem) {
+            return oldItem.equals(newItem);
+        }
+    };
+
+    private final OffsetListUpdateCallback<AbstractThreadOverviewViewHolder> offsetListUpdateCallback = new OffsetListUpdateCallback<>(this, 1, false);
+
+    private final AsyncPagedListDiffer<ThreadOverviewItem> mDiffer = new AsyncPagedListDiffer<>(
+            offsetListUpdateCallback,
+            new AsyncDifferConfig.Builder<>(ITEM_CALLBACK).build()
+    );
+
     private boolean isLoading = false;
     private boolean initialLoadComplete = false;
     private OnFlaggedToggled onFlaggedToggled;
     private OnThreadClicked onThreadClicked;
     private OnSelectionToggled onSelectionToggled;
+    private OnEmptyMailboxActionClicked onEmptyMailboxActionClicked;
     private Set<String> selectedThreads = Collections.emptySet();
     private Future<MailboxWithRoleAndName> importantMailbox; //TODO this needs to be a LiveData and needs to trigger a refresh when changed
-
-
-    public ThreadOverviewAdapter() {
-        super(new DiffUtil.ItemCallback<ThreadOverviewItem>() {
-            @Override
-            public boolean areItemsTheSame(@NonNull ThreadOverviewItem oldItem, @NonNull ThreadOverviewItem newItem) {
-                return oldItem.threadId.equals(newItem.threadId);
-            }
-
-            @Override
-            public boolean areContentsTheSame(@NonNull ThreadOverviewItem oldItem, @NonNull ThreadOverviewItem newItem) {
-                return oldItem.equals(newItem);
-            }
-        });
-    }
+    private EmptyMailboxAction emptyMailboxAction = null;
 
     @NonNull
     @Override
@@ -80,6 +91,8 @@ public class ThreadOverviewAdapter extends PagedListAdapter<ThreadOverviewItem, 
         final LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         if (viewType == THREAD_ITEM_VIEW_TYPE) {
             return new ThreadOverviewViewHolder(DataBindingUtil.inflate(layoutInflater, R.layout.item_thread_overview, parent, false));
+        } else if (viewType == EMPTY_MAILBOX_VIEW_TYPE) {
+            return new ThreadOverviewEmptyMailboxViewHolder(DataBindingUtil.inflate(layoutInflater, R.layout.item_thread_overview_empty_action, parent, false));
         } else {
             return new ThreadOverviewLoadingViewHolder(DataBindingUtil.inflate(layoutInflater, R.layout.item_thread_overview_loading, parent, false));
         }
@@ -91,7 +104,26 @@ public class ThreadOverviewAdapter extends PagedListAdapter<ThreadOverviewItem, 
             onBindViewHolder((ThreadOverviewLoadingViewHolder) holder);
         } else if (holder instanceof ThreadOverviewViewHolder) {
             onBindViewHolder((ThreadOverviewViewHolder) holder, position);
+        } else if (holder instanceof ThreadOverviewEmptyMailboxViewHolder) {
+            onBindViewHolder((ThreadOverviewEmptyMailboxViewHolder) holder);
         }
+    }
+
+    private void onBindViewHolder(final ThreadOverviewEmptyMailboxViewHolder holder) {
+        final EmptyMailboxAction action = this.emptyMailboxAction;
+        if (action == null) {
+            return;
+        }
+        final Resources resources = holder.binding.getRoot().getContext().getResources();
+        holder.binding.setAction(action);
+        holder.binding.text.setText(
+                resources.getQuantityString(R.plurals.x_emails_in_trash, action.getItemCount(), action.getItemCount())
+        );
+        holder.binding.emptyMailbox.setOnClickListener((v) -> {
+            if (onEmptyMailboxActionClicked != null) {
+                onEmptyMailboxActionClicked.onEmptyMailboxActionClicked(action);
+            }
+        });
     }
 
     private void onBindViewHolder(final ThreadOverviewViewHolder threadOverviewHolder, final int position) {
@@ -148,12 +180,12 @@ public class ThreadOverviewAdapter extends PagedListAdapter<ThreadOverviewItem, 
     public void notifyItemChanged(final String threadId) {
         final int position = getPosition(threadId);
         if (position != RecyclerView.NO_POSITION) {
-            notifyItemChanged(position);
+            notifyItemChanged(position + (offsetListUpdateCallback.isOffsetVisible() ? 1 : 0));
         }
     }
 
-    public int getPosition(final String threadId) {
-        final PagedList<ThreadOverviewItem> currentList = getCurrentList();
+    private int getPosition(final String threadId) {
+        final PagedList<ThreadOverviewItem> currentList = this.mDiffer.getCurrentList();
         if (currentList == null) {
             return RecyclerView.NO_POSITION;
         }
@@ -196,7 +228,7 @@ public class ThreadOverviewAdapter extends PagedListAdapter<ThreadOverviewItem, 
 
     private void refreshLoadingIndicator(final boolean before) {
         if (before != isLoading()) {
-            notifyItemChanged(super.getItemCount());
+            notifyItemChanged(mDiffer.getItemCount() + offsetListUpdateCallback.getCurrentOffset());
         }
     }
 
@@ -210,33 +242,38 @@ public class ThreadOverviewAdapter extends PagedListAdapter<ThreadOverviewItem, 
         refreshLoadingIndicator(before);
     }
 
-    @Override
-    public void submitList(final PagedList<ThreadOverviewItem> pagedList) {
-        submitList(pagedList, null);
-    }
-
-    @Override
     public void submitList(final PagedList<ThreadOverviewItem> pagedList, final Runnable runnable) {
         final boolean before = isLoading();
         this.initialLoadComplete = true;
         if (pagedList != null && pagedList.size() == 0) {
             refreshLoadingIndicator(before);
         }
-        super.submitList(pagedList, runnable);
+        this.mDiffer.submitList(pagedList, runnable);
     }
+
+    public void setEmptyMailboxAction(final EmptyMailboxAction emptyMailboxAction) {
+        this.emptyMailboxAction = emptyMailboxAction;
+        this.offsetListUpdateCallback.setOffsetVisible(emptyMailboxAction != null);
+    }
+
 
     public void setSelectedThreads(final Set<String> selectedThreads) {
         this.selectedThreads = selectedThreads;
     }
 
-    @Override
     public ThreadOverviewItem getItem(int position) {
-        return super.getItem(position);
+        return this.mDiffer.getItem(offsetListUpdateCallback.isOffsetVisible() ? position - 1 : position);
     }
 
     @Override
     public int getItemViewType(int position) {
-        return position < super.getItemCount() ? THREAD_ITEM_VIEW_TYPE : LOADING_ITEM_VIEW_TYPE;
+        if (offsetListUpdateCallback.isOffsetVisible() && position == 0) {
+            return EMPTY_MAILBOX_VIEW_TYPE;
+        } else if (position < mDiffer.getItemCount() + offsetListUpdateCallback.getCurrentOffset()) {
+            return THREAD_ITEM_VIEW_TYPE;
+        } else {
+            return LOADING_ITEM_VIEW_TYPE;
+        }
     }
 
     public void setOnFlaggedToggledListener(OnFlaggedToggled listener) {
@@ -247,21 +284,33 @@ public class ThreadOverviewAdapter extends PagedListAdapter<ThreadOverviewItem, 
         this.onThreadClicked = listener;
     }
 
+    public void setOnEmptyMailboxActionClickedListener(OnEmptyMailboxActionClicked listener) {
+        this.onEmptyMailboxActionClicked = listener;
+    }
+
     public void setOnSelectionToggled(final OnSelectionToggled listener) {
         this.onSelectionToggled = listener;
     }
 
     @Override
     public int getItemCount() {
-        return super.getItemCount() + 1;
+        return this.mDiffer.getItemCount() + 1 + this.offsetListUpdateCallback.getCurrentOffset();
     }
 
     public boolean isInitialLoad() {
         return !this.initialLoadComplete;
     }
 
+    public PagedList<ThreadOverviewItem> getCurrentList() {
+        return this.mDiffer.getCurrentList();
+    }
+
     public interface OnThreadClicked {
         void onThreadClicked(ThreadOverviewItem threadOverviewItem, boolean important);
+    }
+
+    public interface OnEmptyMailboxActionClicked {
+        void onEmptyMailboxActionClicked(EmptyMailboxAction action);
     }
 
     abstract static class AbstractThreadOverviewViewHolder extends RecyclerView.ViewHolder {
@@ -269,6 +318,17 @@ public class ThreadOverviewAdapter extends PagedListAdapter<ThreadOverviewItem, 
         AbstractThreadOverviewViewHolder(@NonNull View itemView) {
             super(itemView);
         }
+    }
+
+    public static class ThreadOverviewEmptyMailboxViewHolder extends AbstractThreadOverviewViewHolder {
+
+        final ItemThreadOverviewEmptyActionBinding binding;
+
+        ThreadOverviewEmptyMailboxViewHolder(@NonNull ItemThreadOverviewEmptyActionBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
+        }
+
     }
 
     public static class ThreadOverviewLoadingViewHolder extends AbstractThreadOverviewViewHolder {

@@ -27,6 +27,7 @@ import java.util.concurrent.ExecutionException;
 
 import rs.ltt.android.entity.IdentityWithNameAndEmail;
 import rs.ltt.jmap.common.entity.Email;
+import rs.ltt.jmap.mua.Mua;
 
 public class SendEmailWorker extends AbstractCreateEmailWorker {
 
@@ -42,13 +43,14 @@ public class SendEmailWorker extends AbstractCreateEmailWorker {
         final IdentityWithNameAndEmail identity = getIdentity();
         final Email email = buildEmail(identity);
         try {
-            final String emailId = getMua().send(email, identity).get();
+            final Mua mua = getMua();
+            final String emailId = mua.send(email, identity).get();
             return refreshAndFetchThreadId(emailId);
         } catch (final ExecutionException e) {
             //TODO we might have a weird corner case here where saving the draft works but submission fails. Do we need to handle that somehow?
             LOGGER.warn("Unable to send email", e);
-            return Result.failure();
-        } catch (InterruptedException e) {
+            return Result.failure(Failure.of(e.getCause()));
+        } catch (final InterruptedException e) {
             return Result.retry();
         }
     }

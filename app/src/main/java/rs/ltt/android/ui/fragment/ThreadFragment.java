@@ -24,6 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
@@ -46,25 +47,31 @@ import java.util.UUID;
 import rs.ltt.android.LttrsNavigationDirections;
 import rs.ltt.android.R;
 import rs.ltt.android.databinding.FragmentThreadBinding;
-import rs.ltt.android.entity.EmailComplete;
+import rs.ltt.android.entity.EmailWithBodies;
 import rs.ltt.android.entity.ExpandedPosition;
 import rs.ltt.android.entity.Seen;
 import rs.ltt.android.entity.SubjectWithImportance;
 import rs.ltt.android.ui.ItemAnimators;
+import rs.ltt.android.ui.ViewIntent;
 import rs.ltt.android.ui.activity.ComposeActivity;
+import rs.ltt.android.ui.activity.result.CreateDocumentContract;
+import rs.ltt.android.ui.adapter.OnAttachmentActionTriggered;
 import rs.ltt.android.ui.adapter.OnComposeActionTriggered;
 import rs.ltt.android.ui.adapter.OnFlaggedToggled;
 import rs.ltt.android.ui.adapter.ThreadAdapter;
 import rs.ltt.android.ui.model.ThreadViewModel;
 import rs.ltt.android.util.Event;
+import rs.ltt.android.util.MediaTypes;
+import rs.ltt.jmap.common.entity.Attachment;
 
-public class ThreadFragment extends AbstractLttrsFragment implements OnFlaggedToggled, OnComposeActionTriggered {
+public class ThreadFragment extends AbstractLttrsFragment implements OnFlaggedToggled, OnComposeActionTriggered, OnAttachmentActionTriggered {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ThreadFragment.class);
 
     private FragmentThreadBinding binding;
     private ThreadViewModel threadViewModel;
     private ThreadAdapter threadAdapter;
+    private ActivityResultLauncher<Attachment> createDocumentLauncher;
 
     private ThreadViewModel.MenuConfiguration menuConfiguration = ThreadViewModel.MenuConfiguration.none();
 
@@ -72,6 +79,10 @@ public class ThreadFragment extends AbstractLttrsFragment implements OnFlaggedTo
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        this.createDocumentLauncher = registerForActivityResult(
+                new CreateDocumentContract(),
+                uri -> threadViewModel.storeAttachment(uri)
+        );
     }
 
     @Override
@@ -93,7 +104,8 @@ public class ThreadFragment extends AbstractLttrsFragment implements OnFlaggedTo
         threadViewModel = viewModelProvider.get(ThreadViewModel.class);
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_thread, container, false);
 
-        threadViewModel.seenEvent.observe(getViewLifecycleOwner(), this::onSeenEvent);
+        threadViewModel.getSeenEvent().observe(getViewLifecycleOwner(), this::onSeenEvent);
+        threadViewModel.getViewIntentEvent().observe(getViewLifecycleOwner(), this::onViewIntentEvent);
 
         //do we want a custom layout manager that does *NOT* remember scroll position when more
         //than one item is expanded. with variable sized items this might be annoying
@@ -120,10 +132,10 @@ public class ThreadFragment extends AbstractLttrsFragment implements OnFlaggedTo
         });
         threadAdapter.setOnFlaggedToggledListener(this);
         threadAdapter.setOnComposeActionTriggeredListener(this);
+        threadAdapter.setOnAttachmentActionTriggered(this);
         threadViewModel.getThreadViewRedirect().observe(getViewLifecycleOwner(), this::onThreadViewRedirect);
         return binding.getRoot();
     }
-
 
     @Override
     public void onDestroyView() {
@@ -148,6 +160,12 @@ public class ThreadFragment extends AbstractLttrsFragment implements OnFlaggedTo
         }
     }
 
+    private void onViewIntentEvent(final Event<ViewIntent> viewIntentEvent) {
+        if (viewIntentEvent.isConsumable()) {
+            viewIntentEvent.consume().launch(requireActivity());
+        }
+    }
+
     private void onThreadViewRedirect(final Event<String> event) {
         if (event.isConsumable()) {
             final String threadId = event.consume();
@@ -161,7 +179,7 @@ public class ThreadFragment extends AbstractLttrsFragment implements OnFlaggedTo
         }
     }
 
-    private void onEmailsChanged(final PagedList<EmailComplete> fullEmails) {
+    private void onEmailsChanged(final PagedList<EmailWithBodies> fullEmails) {
         if (threadViewModel.jumpedToFirstUnread.compareAndSet(false, true)) {
             Futures.addCallback(
                     threadViewModel.expandedPositions,
@@ -188,11 +206,11 @@ public class ThreadFragment extends AbstractLttrsFragment implements OnFlaggedTo
         }
     }
 
-    public void submitList(final PagedList<EmailComplete> pagedList) {
+    public void submitList(final PagedList<EmailWithBodies> pagedList) {
         submitList(pagedList, null);
     }
 
-    public void submitList(final PagedList<EmailComplete> pagedList, final Runnable runnable) {
+    public void submitList(final PagedList<EmailWithBodies> pagedList, final Runnable runnable) {
         configureItemAnimator();
         threadAdapter.submitList(pagedList, runnable);
     }
@@ -204,6 +222,7 @@ public class ThreadFragment extends AbstractLttrsFragment implements OnFlaggedTo
         );
     }
 
+    //TODO migrate to contracts
     @Override
     public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         LOGGER.info("on activity result code={}, result={}, intent={}", requestCode, resultCode, data);
@@ -313,5 +332,17 @@ public class ThreadFragment extends AbstractLttrsFragment implements OnFlaggedTo
                 getLttrsViewModel().getAccountId(),
                 emailId
         );
+    }
+
+    @Override
+    public void onOpenTriggered(final String emailId, final Attachment attachment) {
+        threadViewModel.open(emailId, attachment);
+    }
+
+    @Override
+    public void onActionTriggered(final String emailId, final Attachment attachment) {
+        LOGGER.info("launching for {}", MediaTypes.toString(attachment.getMediaType()));
+        this.threadViewModel.setAttachmentReference(emailId, attachment.getBlobId());
+        this.createDocumentLauncher.launch(attachment);
     }
 }

@@ -19,15 +19,14 @@ import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
-import com.google.common.net.MediaType;
 
-import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import rs.ltt.android.util.MediaTypes;
+import rs.ltt.jmap.common.entity.Attachment;
 import rs.ltt.jmap.common.entity.Email;
 import rs.ltt.jmap.common.entity.EmailBodyPart;
 
@@ -89,14 +88,36 @@ public class EmailBodyPartEntity implements Attachment, Comparable<EmailBodyPart
         return entity;
     }
 
+    public static List<EmailBodyPartEntity> filter(final List<EmailBodyPartEntity> entities, final EmailBodyPartType type) {
+        return entities.stream()
+                .filter(bp -> bp.bodyPartType == type)
+                .sorted()
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public String getBlobId() {
+        return this.blobId;
+    }
+
+    @Override
+    public String getType() {
+        return this.type;
+    }
+
     @Override
     public String getName() {
         return this.name;
     }
 
     @Override
-    public MediaType getType() {
-        return MediaTypes.of(type, charset);
+    public String getCharset() {
+        return charset;
+    }
+
+    @Override
+    public Long getSize() {
+        return this.size;
     }
 
     @Override
@@ -104,10 +125,26 @@ public class EmailBodyPartEntity implements Attachment, Comparable<EmailBodyPart
         return Long.compare(position, o.position);
     }
 
-    public static List<EmailBodyPartEntity> filter(final List<EmailBodyPartEntity> entities, final EmailBodyPartType type) {
-        return entities.stream()
-                .filter(bp -> bp.bodyPartType == type)
-                .sorted()
-                .collect(Collectors.toList());
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        EmailBodyPartEntity that = (EmailBodyPartEntity) o;
+        return position == that.position &&
+                Objects.equal(emailId, that.emailId) &&
+                bodyPartType == that.bodyPartType &&
+                Objects.equal(partId, that.partId) &&
+                Objects.equal(blobId, that.blobId) &&
+                Objects.equal(size, that.size) &&
+                Objects.equal(name, that.name) &&
+                Objects.equal(type, that.type) &&
+                Objects.equal(charset, that.charset) &&
+                Objects.equal(disposition, that.disposition) &&
+                Objects.equal(cid, that.cid);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(emailId, bodyPartType, position, partId, blobId, size, name, type, charset, disposition, cid);
     }
 }
