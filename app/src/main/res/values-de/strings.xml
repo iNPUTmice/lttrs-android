@@ -88,9 +88,9 @@
     <string name="enter_a_label_name">Gib einen Namen für ein neues Label ein</string>
     <string name="add_another_account">Weiteres Konto hinzufügen</string>
     <string name="manage_accounts">Konten verwalten</string>
-    <string name="session_resource_help_dialog_message">Ltt.rs verwendet ein relativ neues JMAP-Protokoll zum Synchronisieren von E-Mails, das Ihr E-Mail-Anbieter jedoch möglicherweise noch nicht unterstützt.
+    <string name="session_resource_help_dialog_message">Ltt.rs verwendet ein relativ neues JMAP-Protokoll zum Synchronisieren von E-Mails, das dein E-Mail-Anbieter jedoch möglicherweise noch nicht unterstützt.
 \n
-\nWenden Sie sich an Ihren Anbieter und fragen Sie nach JMAP und der JMAP-Verbindungs-URL.
+\nWende dich an deinen Anbieter und frage nach JMAP und der JMAP-Verbindungs-URL.
 \n
 \nAuf einem korrekt konfigurierten Server erkennt Ltt.rs die Verbindungs-URL automatisch.</string>
     <string name="session_resource_help_dialog_title">Was ist eine Verbindungs-URL\?</string>
@@ -121,4 +121,23 @@
     <string name="accounts">Konten</string>
     <string name="vacation_response">Urlaubsantwort</string>
     <string name="manage_labels">Labels verwalten</string>
+    <plurals name="x_emails_will_permanently_deleted">
+        <item quantity="one">%d E-Mail wird dauerhaft gelöscht.</item>
+        <item quantity="other">%d E-Mails werden dauerhaft gelöscht.</item>
+    </plurals>
+    <plurals name="x_emails_in_trash">
+        <item quantity="one">Derzeit befindet sich %d E-Mail im Papierkorb.</item>
+        <item quantity="other">Derzeit befinden sich %d E-Mails im Papierkorb.</item>
+    </plurals>
+    <string name="empty">Leer</string>
+    <string name="empty_trash_dialog_title">Papierkorb leeren\?</string>
+    <string name="empty_trash">Papierkorb leeren</string>
+    <string name="combined_size_of_attachments_exceeds_the_limit_of_x">Die Gesamtgröße aller Anhänge überschreitet das Limit von %s</string>
+    <string name="attachment_is_not_cached">Anhang wird nicht zwischengespeichert</string>
+    <string name="upload_complete">Upload abgeschlossen</string>
+    <string name="failed_to_upload_attachment">Hochladen des Anhangs fehlgeschlagen</string>
+    <string name="the_file_exceeds_the_limit_of_x">Die Datei überschreitet das Limit von %s</string>
+    <string name="download_complete">Download abgeschlossen</string>
+    <string name="no_application_to_open_x">Keine Anwendung gefunden, um %s anzuzeigen. Versuche stattdessen, den Anhang herunterzuladen.</string>
+    <string name="attachments">Anhänge</string>
 </resources>
