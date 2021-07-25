@@ -121,4 +121,6 @@
     <string name="identities">Identités</string>
     <string name="remove_account">Retirer le compte</string>
     <string name="account">Compte</string>
+    <string name="no_application_to_open_x">Aucune application n’a été trouvée pour afficher %s. Essayez plutôt de télécharger la pièce jointe.</string>
+    <string name="attachments">Pièce jointe</string>
 </resources>
