@@ -122,5 +122,24 @@
     <string name="remove_account">Retirer le compte</string>
     <string name="account">Compte</string>
     <string name="no_application_to_open_x">Aucune application n’a été trouvée pour afficher %s. Essayez plutôt de télécharger la pièce jointe.</string>
-    <string name="attachments">Pièce jointe</string>
+    <string name="attachments">Pièces jointes</string>
+    <string name="failed_to_upload_attachment">Impossible de téléverser la pièce jointe</string>
+    <plurals name="x_emails_will_permanently_deleted">
+        <item quantity="one">%d courriel sera définitivement supprimé.</item>
+        <item quantity="other">%d courriels seront définitivement supprimés.</item>
+    </plurals>
+    <plurals name="x_emails_in_trash">
+        <item quantity="one">Il y a actuellement %d courriel dans la corbeille.</item>
+        <item quantity="other">Il y a actuellement %d courriels dans la corbeille.</item>
+    </plurals>
+    <string name="close_account_selector">Fermer le sélecteur de compte</string>
+    <string name="open_account_selector">Masquer le sélecteur de compte</string>
+    <string name="empty">Vide</string>
+    <string name="empty_trash_dialog_title">Vider la corbeille \?</string>
+    <string name="empty_trash">Vider la corbeille</string>
+    <string name="combined_size_of_attachments_exceeds_the_limit_of_x">La taille combinée de toutes les pièces jointes dépasse la limite de %s</string>
+    <string name="attachment_is_not_cached">La pièce jointe n’est pas mise en cache</string>
+    <string name="upload_complete">Téléversement terminé</string>
+    <string name="the_file_exceeds_the_limit_of_x">Le fichier dépasse la limite de %s</string>
+    <string name="download_complete">Téléchargement terminé</string>
 </resources>
