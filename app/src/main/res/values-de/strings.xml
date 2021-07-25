@@ -137,7 +137,7 @@
     <string name="upload_complete">Upload abgeschlossen</string>
     <string name="failed_to_upload_attachment">Hochladen des Anhangs fehlgeschlagen</string>
     <string name="the_file_exceeds_the_limit_of_x">Die Datei überschreitet das Limit von %s</string>
-    <string name="download_complete">Download abgeschlossen</string>
+    <string name="download_complete">Herunterladen abgeschlossen</string>
     <string name="no_application_to_open_x">Keine Anwendung gefunden, um %s anzuzeigen. Versuche stattdessen, den Anhang herunterzuladen.</string>
     <string name="attachments">Anhänge</string>
 </resources>
