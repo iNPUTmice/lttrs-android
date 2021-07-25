@@ -121,4 +121,25 @@
     <string name="remove_account">Rimuovi l\'account</string>
     <string name="account">Account</string>
     <string name="accounts">Account</string>
+    <plurals name="x_emails_will_permanently_deleted">
+        <item quantity="one">%d e-mail sarà eliminata in modo permanente.</item>
+        <item quantity="other">%d e-mail saranno eliminate in modo permanente.</item>
+    </plurals>
+    <plurals name="x_emails_in_trash">
+        <item quantity="one">Attualmente c’è %d e-mail nel cestino.</item>
+        <item quantity="other">Attualmente ci sono %d e-mail nel cestino.</item>
+    </plurals>
+    <string name="close_account_selector">Chiudi il selettore di account</string>
+    <string name="open_account_selector">Nascondi il selettore di account</string>
+    <string name="empty">Vuoto</string>
+    <string name="empty_trash_dialog_title">Svuotare il cestino\?</string>
+    <string name="empty_trash">Svuota il cestino</string>
+    <string name="combined_size_of_attachments_exceeds_the_limit_of_x">La dimensione combinata di tutti gli allegati supera il limite di %s</string>
+    <string name="attachment_is_not_cached">L’allegato non viene memorizzato nella cache</string>
+    <string name="upload_complete">Caricamento finito</string>
+    <string name="failed_to_upload_attachment">Impossibile caricare l’allegato</string>
+    <string name="the_file_exceeds_the_limit_of_x">Il file supera il limite di %s</string>
+    <string name="download_complete">Scaricamento finito</string>
+    <string name="no_application_to_open_x">Nessuna applicazione trovata per visualizzare %s. Prova invece a scaricare l’allegato.</string>
+    <string name="attachments">Allegati</string>
 </resources>
