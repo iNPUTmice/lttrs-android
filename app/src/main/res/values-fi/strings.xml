@@ -102,4 +102,29 @@
         <item quantity="other">%d uutta sähköpostia</item>
     </plurals>
     <string name="notification_channel_name_email">Sähköposti</string>
+    <plurals name="x_emails_will_permanently_deleted">
+        <item quantity="one">%d sähköposti poistetaan pysyvästi.</item>
+        <item quantity="other">%d sähköpostia poistetaan pysyvästi.</item>
+    </plurals>
+    <plurals name="x_emails_in_trash">
+        <item quantity="one">Roskakorissa on tällä hetkellä %d sähköposti.</item>
+        <item quantity="other">Roskakorissa on tällä hetkellä %d sähköpostia.</item>
+    </plurals>
+    <string name="close_account_selector">Sulje tilinvalitsin</string>
+    <string name="open_account_selector">Piilota tilinvalitsin</string>
+    <string name="empty">Tyhjä</string>
+    <string name="empty_trash_dialog_title">Tyhjennä roskakori\?</string>
+    <string name="empty_trash">Tyhjennä roskakori</string>
+    <string name="combined_size_of_attachments_exceeds_the_limit_of_x">Kaikkien liitetiedostojen yhteenlaskettu koko ylittää rajan %s</string>
+    <string name="attachment_is_not_cached">Liitettä ei ole välimuistissa</string>
+    <string name="upload_complete">Lataus valmis</string>
+    <string name="failed_to_upload_attachment">Liitetiedoston lataaminen epäonnistui</string>
+    <string name="the_file_exceeds_the_limit_of_x">Tiedosto ylittää %s -rajan</string>
+    <string name="download_complete">Lataus valmis</string>
+    <string name="no_application_to_open_x">Sovellusta ei löytynyt %s:n näyttämiseksi. Yritä ladata liite sen sijaan.</string>
+    <string name="attachments">Liitteet</string>
+    <string name="view_emails">Näytä sähköpostit</string>
+    <string name="remove_account_dialog_message">Tämän tilin poistaminen poistaa kaikki sen viestit ja muut siihen liittyvät tiedot laitteesta.</string>
+    <string name="remove_account_dialog_title">Poista tili\?</string>
+    <string name="end_to_end_encryption">Päästä päähän -salaus</string>
 </resources>
