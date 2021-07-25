@@ -101,4 +101,17 @@
         <item quantity="other">%d nuevos correos</item>
     </plurals>
     <string name="notification_channel_name_email">Correo electrónico</string>
+    <string name="close_account_selector">Cerrar el selector de cuenta</string>
+    <string name="open_account_selector">Ocultar el selector de cuenta</string>
+    <string name="empty">Vacío</string>
+    <string name="empty_trash_dialog_title">¿Vaciar la papelera\?</string>
+    <string name="empty_trash">Vaciar la papelera</string>
+    <plurals name="x_emails_in_trash">
+        <item quantity="one">Actualmente hay %d correo electrónico en la papelera.</item>
+        <item quantity="other">Actualmente hay %d correos electrónicos en la papelera.</item>
+    </plurals>
+    <plurals name="x_emails_will_permanently_deleted">
+        <item quantity="one">%d correo electrónico será eliminado permanentemente.</item>
+        <item quantity="other">%d correos electrónicos serán eliminados permanentemente.</item>
+    </plurals>
 </resources>
