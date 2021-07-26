@@ -31,6 +31,20 @@ android {
         execution 'ANDROIDX_TEST_ORCHESTRATOR'
     }
 
+    flavorDimensions "distribution"
+
+    productFlavors {
+
+        fdroid {
+            dimension "distribution"
+        }
+
+        playstore {
+            dimension "distribution"
+        }
+
+    }
+
     buildTypes {
         release {
             minifyEnabled true
@@ -97,6 +111,13 @@ dependencies {
 
     //Google
     implementation "com.google.android.material:material:$rootProject.ext.material"
+
+    //Google - Firebase Messaging
+    playstoreImplementation('com.google.firebase:firebase-messaging:22.0.0') {
+        exclude group: 'com.google.firebase', module: 'firebase-core'
+        exclude group: 'com.google.firebase', module: 'firebase-analytics'
+        exclude group: 'com.google.firebase', module: 'firebase-measurement-connector'
+    }
 
 
     //Third party
