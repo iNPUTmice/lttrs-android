@@ -39,6 +39,7 @@ import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import okhttp3.HttpUrl;
+import rs.ltt.android.BuildConfig;
 import rs.ltt.android.LttrsApplication;
 import rs.ltt.android.MuaPool;
 import rs.ltt.android.database.AppDatabase;
@@ -96,7 +97,12 @@ public class MainRepository {
 
                 EventMonitorService.startMonitoring(application, accountIdMap.values());
 
-                PushManager.register(application, credentials);
+                if (PushManager.register(application, credentials)) {
+                    LOGGER.info("Attempting to register for Firebase Messaging");
+                } else {
+                    //TODO schedule recurring worker?
+                    LOGGER.info("Firebase Messaging (Push) is not available in flavor {}", BuildConfig.FLAVOR);
+                }
 
                 final Long internalIdForPrimary = accountIdMap.getOrDefault(
                         primaryAccountId,

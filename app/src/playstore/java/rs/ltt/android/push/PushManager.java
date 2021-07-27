@@ -3,9 +3,15 @@ package rs.ltt.android.push;
 import android.content.Context;
 import android.os.Looper;
 
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.ProcessLifecycleOwner;
+import androidx.work.ExistingWorkPolicy;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
+
 import com.damnhandy.uri.template.UriTemplate;
+import com.google.android.gms.common.GoogleApiAvailabilityLight;
 import com.google.android.gms.tasks.Task;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
@@ -20,14 +26,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Map;
 
 import rs.ltt.android.R;
 import rs.ltt.android.database.AppDatabase;
 import rs.ltt.android.entity.AccountWithCredentials;
 import rs.ltt.android.entity.CredentialsEntity;
 import rs.ltt.android.util.JmapClients;
+import rs.ltt.android.worker.QueryRefreshWorker;
 import rs.ltt.jmap.client.JmapClient;
 import rs.ltt.jmap.client.MethodResponses;
+import rs.ltt.jmap.common.entity.AbstractIdentifiableEntity;
 import rs.ltt.jmap.common.entity.PushMessage;
 import rs.ltt.jmap.common.entity.PushSubscription;
 import rs.ltt.jmap.common.entity.PushVerification;
@@ -68,7 +77,7 @@ public class PushManager {
         final SetPushSubscriptionMethodCall setPushSubscription = SetPushSubscriptionMethodCall.builder()
                 .update(ImmutableMap.of(
                         pushMessage.getPushSubscriptionId(),
-                        ImmutableMap.of("verificationCode",pushMessage.getVerificationCode())
+                        ImmutableMap.of("verificationCode", pushMessage.getVerificationCode())
                 ))
                 .build();
         final ListenableFuture<MethodResponses> methodResponsesFuture = jmapClient.call(setPushSubscription);
@@ -92,23 +101,52 @@ public class PushManager {
 
     private void onStateChangeReceived(final long cid, final StateChange pushMessage) {
         LOGGER.info("onStateChangeReceived({},{})", cid, pushMessage);
+        for (final Map.Entry<String, Map<Class<? extends AbstractIdentifiableEntity>, String>> entry : pushMessage.getChanged().entrySet()) {
+            final String accountId = entry.getKey();
+            final Map<Class<? extends AbstractIdentifiableEntity>, String> change = entry.getValue();
+            final AccountWithCredentials account = AppDatabase.getInstance(context).accountDao().getAccount(cid, accountId);
+            if (account == null) {
+                LOGGER.error("Account with cid={} and accountId={} not found", cid, accountId);
+                continue;
+            }
+            onStateChangeReceived(account, change);
+        }
+
+    }
+
+    private void onStateChangeReceived(final AccountWithCredentials account, final Map<Class<? extends AbstractIdentifiableEntity>, String> change) {
+        final boolean activityStarted = ProcessLifecycleOwner.get().getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED);
+        LOGGER.error("Account {} has received a state change {} (activityStarted={})", account.getName(), change, activityStarted);
+        //TODO skip if application is in foreground (it's just easier to test if we don’t skip)
+        final OneTimeWorkRequest workRequest = QueryRefreshWorker.main(account.getId());
+        final WorkManager workManager = WorkManager.getInstance(context.getApplicationContext());
+        workManager.enqueueUniqueWork(
+                QueryRefreshWorker.uniqueName(account.getId()),
+                ExistingWorkPolicy.KEEP,
+                workRequest
+        );
     }
 
     public void onNewToken(final String token) {
 
     }
 
-    public static void register(final Context context, final List<AccountWithCredentials> accounts) {
-        final PushManager pushManager = new PushManager(context);
-        AppDatabase appDatabase = AppDatabase.getInstance(context);
-        accounts.stream().map(AccountWithCredentials::getId)
-                .map(id -> appDatabase.accountDao().getCredentialsForAccount(id))
-                .distinct()
-                .forEach(pushManager::register);
+    public static boolean register(final Context context, final List<AccountWithCredentials> accounts) {
+        assertIsNotMainThread();
+        if (GoogleApiAvailabilityLight.getInstance().isGooglePlayServicesAvailable(context) == 0) {
+            final PushManager pushManager = new PushManager(context);
+            AppDatabase appDatabase = AppDatabase.getInstance(context);
+            accounts.stream().map(AccountWithCredentials::getId)
+                    .map(id -> appDatabase.accountDao().getCredentialsForAccount(id))
+                    .distinct()
+                    .forEach(pushManager::register);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private void register(final CredentialsEntity credentials) {
-        assertIsNotMainThread();
         final Task<String> task = FirebaseMessaging.getInstance().getToken();
         task.addOnSuccessListener(token -> {
             register(credentials, token);

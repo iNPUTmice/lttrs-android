@@ -46,6 +46,9 @@ public abstract class AccountDao {
     @Query("select account.id as id, username,password,sessionResource,accountId,name from credentials join account on credentialsId = credentials.id where account.id=:id limit 1")
     public abstract AccountWithCredentials getAccount(Long id);
 
+    @Query("select account.id as id, username,password,sessionResource,accountId,name from credentials join account on credentialsId = credentials.id where account.accountId=:accountId  and credentialsId=:cid limit 1")
+    public abstract AccountWithCredentials getAccount(Long cid, String accountId);
+
     @Query("select id,name from account where id=:id limit 1")
     public abstract LiveData<AccountName> getAccountNameLiveData(Long id);
 
