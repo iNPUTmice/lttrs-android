@@ -46,6 +46,7 @@ import rs.ltt.android.database.LttrsDatabase;
 import rs.ltt.android.entity.AccountName;
 import rs.ltt.android.entity.AccountWithCredentials;
 import rs.ltt.android.entity.SearchSuggestionEntity;
+import rs.ltt.android.push.PushManager;
 import rs.ltt.android.service.EventMonitorService;
 import rs.ltt.android.ui.notification.EmailNotification;
 import rs.ltt.android.worker.AbstractMuaWorker;
@@ -95,6 +96,8 @@ public class MainRepository {
 
                 EventMonitorService.startMonitoring(application, accountIdMap.values());
 
+                PushManager.register(application, credentials);
+
                 final Long internalIdForPrimary = accountIdMap.getOrDefault(
                         primaryAccountId,
                         accountIdMap.values().stream().findAny().get()
@@ -108,6 +111,7 @@ public class MainRepository {
                         MoreExecutors.directExecutor()
                 ));
             } catch (Exception e) {
+                LOGGER.info("foo", e);
                 settableFuture.setException(e);
             }
         });

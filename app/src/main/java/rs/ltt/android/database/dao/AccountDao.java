@@ -79,6 +79,9 @@ public abstract class AccountDao {
     @Insert
     abstract Long insert(CredentialsEntity entity);
 
+    @Query("select * from credentials where id=(select credentialsId from account where id=:accountId) limit 1")
+    public abstract CredentialsEntity getCredentialsForAccount(Long accountId);
+
     @Insert
     abstract Long insert(AccountEntity entity);
 

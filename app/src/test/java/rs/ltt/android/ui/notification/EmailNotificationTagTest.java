@@ -1,9 +1,7 @@
-package rs.ltt.android.util;
+package rs.ltt.android.ui.notification;
 
 import org.junit.Assert;
 import org.junit.Test;
-
-import rs.ltt.android.ui.notification.EmailNotification;
 
 public class EmailNotificationTagTest {
 
