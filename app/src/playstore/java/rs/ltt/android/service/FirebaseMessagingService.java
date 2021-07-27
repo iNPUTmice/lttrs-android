@@ -26,6 +26,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
     @Override
     public void onMessageReceived(@NonNull final RemoteMessage remoteMessage) {
+        LOGGER.info("onMessageReceived");
         final Map<String, String> data = remoteMessage.getData();
         final long cid;
         final PushMessage pushMessage;

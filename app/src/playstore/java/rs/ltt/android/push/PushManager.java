@@ -5,6 +5,7 @@ import android.os.Looper;
 
 import com.damnhandy.uri.template.UriTemplate;
 import com.google.android.gms.tasks.Task;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
@@ -29,8 +30,10 @@ import rs.ltt.jmap.client.JmapClient;
 import rs.ltt.jmap.client.MethodResponses;
 import rs.ltt.jmap.common.entity.PushMessage;
 import rs.ltt.jmap.common.entity.PushSubscription;
+import rs.ltt.jmap.common.entity.PushVerification;
+import rs.ltt.jmap.common.entity.StateChange;
 import rs.ltt.jmap.common.method.call.core.SetPushSubscriptionMethodCall;
-import rs.ltt.jmap.common.method.response.core.GetPushSubscriptionMethodResponse;
+import rs.ltt.jmap.common.method.response.core.SetPushSubscriptionMethodResponse;
 
 public class PushManager {
 
@@ -43,7 +46,52 @@ public class PushManager {
     }
 
     public void onMessageReceived(final long cid, final PushMessage pushMessage) {
+        if (pushMessage instanceof PushVerification) {
+            onPushVerificationReceived(cid, (PushVerification) pushMessage);
+        } else if (pushMessage instanceof StateChange) {
+            onStateChangeReceived(cid, (StateChange) pushMessage);
+        } else {
+            throw new IllegalArgumentException(
+                    String.format("Receiving %s messages not implemented", pushMessage.getClass().getSimpleName())
+            );
+        }
+    }
 
+    private void onPushVerificationReceived(final long cid, final PushVerification pushMessage) {
+        LOGGER.info("onPushVerificationReceived({},{})", cid, pushMessage);
+        final CredentialsEntity credentials = AppDatabase.getInstance(context).accountDao().getCredentials(cid);
+        onPushVerificationReceived(credentials, pushMessage);
+    }
+
+    private void onPushVerificationReceived(final CredentialsEntity credentials, final PushVerification pushMessage) {
+        final JmapClient jmapClient = JmapClients.of(context, credentials);
+        final SetPushSubscriptionMethodCall setPushSubscription = SetPushSubscriptionMethodCall.builder()
+                .update(ImmutableMap.of(
+                        pushMessage.getPushSubscriptionId(),
+                        ImmutableMap.of("verificationCode",pushMessage.getVerificationCode())
+                ))
+                .build();
+        final ListenableFuture<MethodResponses> methodResponsesFuture = jmapClient.call(setPushSubscription);
+        Futures.addCallback(methodResponsesFuture, new FutureCallback<MethodResponses>() {
+            @Override
+            public void onSuccess(@Nullable MethodResponses methodResponses) {
+                final SetPushSubscriptionMethodResponse setResponse = methodResponses.getMain(SetPushSubscriptionMethodResponse.class);
+                if (setResponse.getUpdated().size() == 1) {
+                    LOGGER.info("Successfully set verification code");
+                } else {
+                    LOGGER.error("Unable to set verification code. No updates?");
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull final Throwable throwable) {
+                LOGGER.warn("Unable to set verification code", throwable);
+            }
+        }, MoreExecutors.directExecutor());
+    }
+
+    private void onStateChangeReceived(final long cid, final StateChange pushMessage) {
+        LOGGER.info("onStateChangeReceived({},{})", cid, pushMessage);
     }
 
     public void onNewToken(final String token) {
@@ -59,7 +107,7 @@ public class PushManager {
                 .forEach(pushManager::register);
     }
 
-    public void register(final CredentialsEntity credentials) {
+    private void register(final CredentialsEntity credentials) {
         assertIsNotMainThread();
         final Task<String> task = FirebaseMessaging.getInstance().getToken();
         task.addOnSuccessListener(token -> {
@@ -70,11 +118,25 @@ public class PushManager {
     private void register(final CredentialsEntity credentials, final String token) {
         final Task<String> task = FirebaseInstallations.getInstance().getId();
         task.addOnSuccessListener(installationId -> {
-            register(credentials, token, installationId);
+            Futures.addCallback(
+                    register(credentials, token, installationId),
+                    new FutureCallback<Boolean>() {
+                        @Override
+                        public void onSuccess(@Nullable Boolean success) {
+                            LOGGER.info("Push Subscription created. Success={}", Boolean.TRUE.equals(success));
+                        }
+
+                        @Override
+                        public void onFailure(@NotNull final Throwable throwable) {
+                            LOGGER.info("Unable to create push subscription", throwable);
+                        }
+                    },
+                    MoreExecutors.directExecutor()
+            );
         });
     }
 
-    private void register(final CredentialsEntity credentials, final String token, final String installationId) {
+    private ListenableFuture<Boolean> register(final CredentialsEntity credentials, final String token, final String installationId) {
         final String url = getPushUriTemplate()
                 .set("token", token)
                 .set("cid", credentials.id)
@@ -84,23 +146,14 @@ public class PushManager {
                 .url(url)
                 .build();
         LOGGER.info("attempting push subscription {}", pushSubscription);
-        LOGGER.info("username {} password {} sr {}", credentials.username, credentials.password, credentials.sessionResource);
         final JmapClient jmapClient = JmapClients.of(context.getApplicationContext(), credentials);
         final SetPushSubscriptionMethodCall setPushSubscription = SetPushSubscriptionMethodCall.builder()
                 .create(ImmutableMap.of("ps0", pushSubscription))
                 .build();
         final ListenableFuture<MethodResponses> methodResponsesFuture = jmapClient.call(setPushSubscription);
-        Futures.addCallback(methodResponsesFuture, new FutureCallback<MethodResponses>() {
-            @Override
-            public void onSuccess(@Nullable MethodResponses methodResponses) {
-                final GetPushSubscriptionMethodResponse response = methodResponses.getMain(GetPushSubscriptionMethodResponse.class);
-                LOGGER.info("Push Subscription created");
-            }
-
-            @Override
-            public void onFailure(@NotNull final Throwable throwable) {
-                LOGGER.info("Unable to create push subscription", throwable);
-            }
+        return Futures.transform(methodResponsesFuture, methodResponses -> {
+            final SetPushSubscriptionMethodResponse response = methodResponses.getMain(SetPushSubscriptionMethodResponse.class);
+            return response.getCreated().size() >= 1;
         }, MoreExecutors.directExecutor());
     }
 
