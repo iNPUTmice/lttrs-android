@@ -48,13 +48,13 @@ import androidx.work.WorkInfo;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.ref.WeakReference;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -88,18 +88,18 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
     public static final String EXTRA_THREAD_ID = "thread";
     private static final Logger LOGGER = LoggerFactory.getLogger(LttrsActivity.class);
     private static final int NUM_TOOLBAR_ICON = 1;
-    private static final List<Integer> MAIN_DESTINATIONS = Arrays.asList(
+    private static final List<Integer> MAIN_DESTINATIONS = ImmutableList.of(
             R.id.inbox,
             R.id.mailbox,
             R.id.keyword
     );
-    private static final List<Integer> QUERY_DESTINATIONS = Arrays.asList(
+    private static final List<Integer> QUERY_DESTINATIONS = ImmutableList.of(
             R.id.inbox,
             R.id.mailbox,
             R.id.keyword,
             R.id.search
     );
-    private static final List<Integer> FULL_SCREEN_DIALOG = Arrays.asList(
+    private static final List<Integer> FULL_SCREEN_DIALOG = ImmutableList.of(
             R.id.label_as
     );
     final NavigationAdapter navigationAdapter = new NavigationAdapter();
@@ -397,6 +397,7 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
                 false
         );
         navController.navigate(action, navOptions);
+        this.closeDrawer(false);
         return true;
     }
 
