@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="push_url">https://push.ltt.rs/execute{?token,cid}</string>
+</resources>

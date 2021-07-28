@@ -13,4 +13,4 @@
 /captures
 .externalNativeBuild
 .idea
-app/src/playstore/res/values/push.xml
+app/src/playstore/res/values/firebase.xml
