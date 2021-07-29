@@ -148,6 +148,7 @@
     <string name="empty">Empty</string>
     <string name="open_account_selector">Hide account selector</string>
     <string name="close_account_selector">Close account selector</string>
+    <string name="attachment_download_failed_status_code_x">Failed to download attachment. (HTTP status code %d)</string>
     <plurals name="x_emails_in_trash">
         <item quantity="one">There is currently %d e-mail in the trash.</item>
         <item quantity="other">There are currently %d e-mails in the trash.</item>

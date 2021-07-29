@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import rs.ltt.android.R;
 import rs.ltt.android.cache.BlobStorage;
 import rs.ltt.android.ui.ViewIntent;
 import rs.ltt.android.util.Event;
@@ -101,10 +102,16 @@ public abstract class AbstractAttachmentViewModel extends AndroidViewModel {
                 LOGGER.warn("Unable to extract failure from failed worker", e);
                 return;
             }
-            if (failure.getException() == BlobTransferException.class) {
+            if (failure instanceof Failure.BlobTransferFailure) {
+                final Failure.BlobTransferFailure blobTransferFailure = (Failure.BlobTransferFailure) failure;
+                final String message = getApplication().getString(
+                        R.string.attachment_download_failed_status_code_x,
+                        blobTransferFailure.getStatusCode()
+                );
+                downloadFailure.postValue(new Event<>(message));
+            } else {
                 downloadFailure.postValue(new Event<>(failure.getMessage()));
             }
-            LOGGER.info("failure {}", failure);
         }
     }
 

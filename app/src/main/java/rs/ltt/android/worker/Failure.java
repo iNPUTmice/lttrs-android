@@ -5,6 +5,9 @@ import androidx.work.Data;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
 
+import org.jetbrains.annotations.NotNull;
+
+import rs.ltt.jmap.client.blob.BlobTransferException;
 import rs.ltt.jmap.client.blob.MaxUploadSizeExceededException;
 import rs.ltt.jmap.common.entity.IdentifiableMailboxWithRoleAndName;
 import rs.ltt.jmap.common.entity.Role;
@@ -17,6 +20,7 @@ public class Failure {
     private static final String PREEXISTING_MAILBOX_ID = "preexisting_mailbox_id";
     private static final String TARGET_ROLE = "role";
     private static final String MAX_UPLOAD_SIZE = "max_upload_size";
+    private static final String HTTP_STATUS_CODE = "status_code";
 
 
     private final Class<?> exception;
@@ -48,6 +52,12 @@ public class Failure {
                     data.getString(MESSAGE),
                     data.getLong(MAX_UPLOAD_SIZE, 0)
             );
+        } else if (clazz == BlobTransferException.class) {
+            return new BlobTransferFailure(
+                    clazz,
+                    data.getString(MESSAGE),
+                    data.getInt(HTTP_STATUS_CODE, 0)
+            );
         } else {
             return new Failure(
                     clazz,
@@ -76,9 +86,14 @@ public class Failure {
             final MaxUploadSizeExceededException exception = (MaxUploadSizeExceededException) cause;
             dataBuilder.putLong(MAX_UPLOAD_SIZE, exception.getMaxFileSize());
         }
+        if (cause instanceof BlobTransferException) {
+            final BlobTransferException exception = (BlobTransferException) cause;
+            dataBuilder.putInt(HTTP_STATUS_CODE, exception.getCode());
+        }
         return dataBuilder.build();
     }
 
+    @NotNull
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
@@ -126,6 +141,19 @@ public class Failure {
 
         public long getMaxUploadSize() {
             return maxUploadSize;
+        }
+    }
+
+    public static class BlobTransferFailure extends Failure {
+        private final int statusCode;
+
+        private BlobTransferFailure(Class<?> exception, String message, final int statusCode) {
+            super(exception, message);
+            this.statusCode = statusCode;
+        }
+
+        public int getStatusCode() {
+            return this.statusCode;
         }
     }
 }
