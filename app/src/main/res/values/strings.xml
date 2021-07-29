@@ -136,25 +136,25 @@
     <string name="remove_account_dialog_message">Removing this account deletes all its messages and other associated data from the device.</string>
     <string name="view_emails">View e-mails</string>
     <string name="attachments">Attachments</string>
-    <string name="no_application_to_open_x">No application found to view %s. Try downloading the attachment instead.</string>
+    <string name="no_application_to_open_x">No app could show %s. Try downloading the attachment instead.</string>
     <string name="download_complete">Download complete</string>
     <string name="the_file_exceeds_the_limit_of_x">The file exceeds the limit of %s</string>
-    <string name="failed_to_upload_attachment">Failed to upload attachment</string>
+    <string name="failed_to_upload_attachment">Could not upload attachment</string>
     <string name="upload_complete">Upload complete</string>
-    <string name="attachment_is_not_cached">Attachment is not cached</string>
+    <string name="attachment_is_not_cached">The attachment is not cached</string>
     <string name="combined_size_of_attachments_exceeds_the_limit_of_x">The combined size of all attachments exceeds the limit of %s</string>
     <string name="empty_trash">Empty trash</string>
     <string name="empty_trash_dialog_title">Empty trash?</string>
     <string name="empty">Empty</string>
     <string name="open_account_selector">Hide account selector</string>
     <string name="close_account_selector">Close account selector</string>
-    <string name="attachment_download_failed_status_code_x">Failed to download attachment. (HTTP status code %d)</string>
+    <string name="attachment_download_failed_status_code_x">Could not download attachment. (HTTP status-code %d)</string>
     <plurals name="x_emails_in_trash">
         <item quantity="one">There is currently %d e-mail in the trash.</item>
         <item quantity="other">There are currently %d e-mails in the trash.</item>
     </plurals>
     <plurals name="x_emails_will_permanently_deleted">
-        <item quantity="one">%d email will be permanently deleted.</item>
+        <item quantity="one">%d e-mail will be permanently deleted.</item>
         <item quantity="other">%d e-mails will be permanently deleted.</item>
     </plurals>
 </resources>
