@@ -2,6 +2,7 @@ package rs.ltt.android.worker;
 
 import androidx.work.Data;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
 
 import rs.ltt.jmap.client.blob.MaxUploadSizeExceededException;
@@ -25,7 +26,6 @@ public class Failure {
         this.exception = exception;
         this.message = message;
     }
-
 
     public static Failure of(final Data data) {
         final String exception = data.getString(EXCEPTION);
@@ -77,6 +77,14 @@ public class Failure {
             dataBuilder.putLong(MAX_UPLOAD_SIZE, exception.getMaxFileSize());
         }
         return dataBuilder.build();
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("exception", exception)
+                .add("message", message)
+                .toString();
     }
 
     public Class<?> getException() {

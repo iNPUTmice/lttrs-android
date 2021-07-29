@@ -5,7 +5,6 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.common.net.MediaType;
 
 import rs.ltt.android.R;
@@ -27,10 +26,10 @@ public class ViewIntent {
         try {
             activity.startActivity(intent);
         } catch (final ActivityNotFoundException e) {
-            new MaterialAlertDialogBuilder(activity)
-                    .setMessage(activity.getString(R.string.no_application_to_open_x, MediaTypes.toString(mediaType)))
-                    .setPositiveButton(R.string.ok, null)
-                    .show();
+            MaterialAlertDialogs.error(
+                    activity,
+                    activity.getString(R.string.no_application_to_open_x, MediaTypes.toString(mediaType))
+            );
         }
     }
 }

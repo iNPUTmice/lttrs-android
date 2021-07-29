@@ -91,9 +91,12 @@ public class BlobDownloadWorker extends AbstractMuaWorker {
         final Download download;
         try {
             download = this.downloadFuture.get();
-        } catch (final ExecutionException | InterruptedException e) {
-            LOGGER.warn("Unable to execute download request", e);
-            return Result.failure();
+        } catch (final ExecutionException e) {
+            final Throwable cause = e.getCause();
+            LOGGER.warn("Unable to execute download request", cause);
+            return Result.failure(Failure.of(cause));
+        } catch (final InterruptedException e) {
+            return Result.retry();
         }
         this.call = download.getCall();
         if (expectedSize != null && expectedSize != download.getContentLength()) {

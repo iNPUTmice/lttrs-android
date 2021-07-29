@@ -36,7 +36,6 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.common.base.Preconditions;
 import com.google.common.net.MediaType;
 
@@ -52,6 +51,7 @@ import rs.ltt.android.databinding.ActivityComposeBinding;
 import rs.ltt.android.databinding.ItemAttachmentBinding;
 import rs.ltt.android.ui.ChipDrawableSpan;
 import rs.ltt.android.ui.ComposeAction;
+import rs.ltt.android.ui.MaterialAlertDialogs;
 import rs.ltt.android.ui.ViewIntent;
 import rs.ltt.android.ui.model.ComposeViewModel;
 import rs.ltt.android.util.Event;
@@ -151,15 +151,10 @@ public class ComposeActivity extends AppCompatActivity {
         );
         composeViewModel = viewModelProvider.get(ComposeViewModel.class);
 
-        composeViewModel.getErrorMessage().observe(this, event -> {
-            if (event.isConsumable()) {
-                final String message = event.consume();
-                new MaterialAlertDialogBuilder(this)
-                        .setTitle(message)
-                        .setPositiveButton(R.string.ok, null)
-                        .show();
-            }
-        });
+        composeViewModel.getErrorMessage().observe(this, this::onErrorMessage);
+        composeViewModel.getDownloadErrorEvent().observe(this, this::onErrorMessage);
+        composeViewModel.getAttachments().observe(this, this::onAttachmentsUpdated);
+        composeViewModel.getViewIntentEvent().observe(this, this::onViewIntentEvent);
 
         binding.setComposeViewModel(composeViewModel);
         binding.setLifecycleOwner(this);
@@ -183,11 +178,11 @@ public class ComposeActivity extends AppCompatActivity {
         binding.ccLabel.setOnClickListener(v -> requestFocusAndOpenKeyboard(binding.cc));
         binding.placeholder.setOnClickListener(v -> requestFocusAndOpenKeyboard(binding.body));
 
-        composeViewModel.getAttachments().observe(this, this::onAttachmentsUpdated);
-
-        composeViewModel.getViewIntentEvent().observe(this, this::onViewIntentEvent);
-
         //TODO once we handle instance state ourselves we need to call ChipDrawableSpan.reset() on `to`
+    }
+
+    private void onErrorMessage(final Event<String> event) {
+        MaterialAlertDialogs.error(this, event);
     }
 
     private void onViewIntentEvent(final Event<ViewIntent> viewIntentEvent) {

@@ -52,6 +52,7 @@ import rs.ltt.android.entity.ExpandedPosition;
 import rs.ltt.android.entity.Seen;
 import rs.ltt.android.entity.SubjectWithImportance;
 import rs.ltt.android.ui.ItemAnimators;
+import rs.ltt.android.ui.MaterialAlertDialogs;
 import rs.ltt.android.ui.ViewIntent;
 import rs.ltt.android.ui.activity.ComposeActivity;
 import rs.ltt.android.ui.activity.result.CreateDocumentContract;
@@ -106,6 +107,7 @@ public class ThreadFragment extends AbstractLttrsFragment implements OnFlaggedTo
 
         threadViewModel.getSeenEvent().observe(getViewLifecycleOwner(), this::onSeenEvent);
         threadViewModel.getViewIntentEvent().observe(getViewLifecycleOwner(), this::onViewIntentEvent);
+        threadViewModel.getDownloadErrorEvent().observe(getViewLifecycleOwner(), this::onErrorMessage);
 
         //do we want a custom layout manager that does *NOT* remember scroll position when more
         //than one item is expanded. with variable sized items this might be annoying
@@ -135,6 +137,10 @@ public class ThreadFragment extends AbstractLttrsFragment implements OnFlaggedTo
         threadAdapter.setOnAttachmentActionTriggered(this);
         threadViewModel.getThreadViewRedirect().observe(getViewLifecycleOwner(), this::onThreadViewRedirect);
         return binding.getRoot();
+    }
+
+    private void onErrorMessage(final Event<String> event) {
+        MaterialAlertDialogs.error(requireActivity(), event);
     }
 
     @Override

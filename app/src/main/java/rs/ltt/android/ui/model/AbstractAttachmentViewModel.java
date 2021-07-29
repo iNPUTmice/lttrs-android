@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.work.ExistingWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkInfo;
@@ -20,17 +21,24 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rs.ltt.android.cache.BlobStorage;
 import rs.ltt.android.ui.ViewIntent;
 import rs.ltt.android.util.Event;
 import rs.ltt.android.util.MainThreadExecutor;
 import rs.ltt.android.worker.BlobDownloadWorker;
+import rs.ltt.android.worker.Failure;
+import rs.ltt.jmap.client.blob.BlobTransferException;
 import rs.ltt.jmap.common.entity.Attachment;
 
 public abstract class AbstractAttachmentViewModel extends AndroidViewModel {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractAttachmentViewModel.class);
+
     private final MediatorLiveData<Event<ViewIntent>> viewIntentEvent = new MediatorLiveData<>();
+    private final MutableLiveData<Event<String>> downloadFailure = new MutableLiveData<>();
 
     protected AbstractAttachmentViewModel(@NonNull @NotNull Application application) {
         super(application);
@@ -68,25 +76,44 @@ public abstract class AbstractAttachmentViewModel extends AndroidViewModel {
                 workRequest
         );
         final LiveData<WorkInfo> workInfo = workManager.getWorkInfoByIdLiveData(workRequest.getId());
-        waitForDownload(attachment.getMediaType(), workInfo);
+        waitForDownload(workInfo, attachment.getMediaType());
     }
 
-    private void waitForDownload(final MediaType mediaType, final LiveData<WorkInfo> workInfoLiveData) {
+    private void waitForDownload(final LiveData<WorkInfo> workInfoLiveData, final MediaType mediaType) {
         viewIntentEvent.addSource(workInfoLiveData, workInfo -> {
-            final WorkInfo.State state = workInfo.getState();
-            if (state.isFinished()) {
+            if (workInfo.getState().isFinished()) {
                 viewIntentEvent.removeSource(workInfoLiveData);
-                if (state == WorkInfo.State.SUCCEEDED) {
-                    final Uri uri = BlobDownloadWorker.getUri(workInfo);
-                    viewIntentEvent.postValue(new Event<>(new ViewIntent(uri, mediaType)));
-                }
-                //TODO show some form of error
+                processFinishedDownload(workInfo, mediaType);
             }
         });
     }
 
+    private void processFinishedDownload(final WorkInfo workInfo, final MediaType mediaType) {
+        final WorkInfo.State state = workInfo.getState();
+        if (state == WorkInfo.State.SUCCEEDED) {
+            final Uri uri = BlobDownloadWorker.getUri(workInfo);
+            viewIntentEvent.postValue(new Event<>(new ViewIntent(uri, mediaType)));
+        } else if (state == WorkInfo.State.FAILED) {
+            final Failure failure;
+            try {
+                failure = Failure.of(workInfo.getOutputData());
+            } catch (final IllegalArgumentException e) {
+                LOGGER.warn("Unable to extract failure from failed worker", e);
+                return;
+            }
+            if (failure.getException() == BlobTransferException.class) {
+                downloadFailure.postValue(new Event<>(failure.getMessage()));
+            }
+            LOGGER.info("failure {}", failure);
+        }
+    }
+
     public LiveData<Event<ViewIntent>> getViewIntentEvent() {
         return this.viewIntentEvent;
+    }
+
+    public LiveData<Event<String>> getDownloadErrorEvent() {
+        return this.downloadFailure;
     }
 
     private ListenableFuture<Uri> getFileProviderUri(final Attachment attachment) {
