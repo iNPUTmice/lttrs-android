@@ -121,4 +121,26 @@
     <string name="role_name_inbox">Innboks</string>
     <string name="foreground_service">Forgrunnstjeneste</string>
     <string name="foreground_service_notification_text">Ltt.rs fortsetter å kjøre for å varsle deg om mottatt e-post</string>
+    <string name="no_application_to_open_x">Ingen programmer kunne vise %s. Prøv å laste ned vedlegget istedenfor.</string>
+    <string name="attachment_is_not_cached">Vedlegget er ikke hurtiglagret</string>
+    <plurals name="x_emails_in_trash">
+        <item quantity="one">Det er for tiden %d e-post i papirkurven.</item>
+        <item quantity="other">Det er for tiden %d e-poster i papirkurven.</item>
+    </plurals>
+    <string name="attachment_download_failed_status_code_x">Kunne ikke laste ned vedlegg. (HTTP-statuskode %d)</string>
+    <string name="combined_size_of_attachments_exceeds_the_limit_of_x">Kombinert størrelse for alle vedlegg overstiger grensen for %s</string>
+    <string name="close_account_selector">Lukk kontovelger</string>
+    <string name="open_account_selector">Skjul kontovelger</string>
+    <string name="empty">Tøm</string>
+    <plurals name="x_emails_will_permanently_deleted">
+        <item quantity="one">%d e-post vil bli slettet for godt.</item>
+        <item quantity="other">%d e-poster vil bli slettet for godt.</item>
+    </plurals>
+    <string name="failed_to_upload_attachment">Klarte ikke å laste opp vedlegg</string>
+    <string name="empty_trash_dialog_title">Tøm papirkurven\?</string>
+    <string name="empty_trash">Tøm papirkurven</string>
+    <string name="upload_complete">Opplasting fullført</string>
+    <string name="the_file_exceeds_the_limit_of_x">Filen overstiger grensen for %s</string>
+    <string name="download_complete">Nedlasting fullført</string>
+    <string name="attachments">Vedlegg</string>
 </resources>
