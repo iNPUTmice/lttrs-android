@@ -140,6 +140,6 @@
     <string name="download_complete">Herunterladen abgeschlossen</string>
     <string name="no_application_to_open_x">Keine Anwendung gefunden, um %s anzuzeigen. Versuche stattdessen, den Anhang herunterzuladen.</string>
     <string name="attachments">Anhänge</string>
-    <string name="close_account_selector">Kontowähler schließen</string>
-    <string name="open_account_selector">Kontowähler ausblenden</string>
+    <string name="close_account_selector">Kontoauswahl schließen</string>
+    <string name="open_account_selector">Kontoauswahl ausblenden</string>
 </resources>
