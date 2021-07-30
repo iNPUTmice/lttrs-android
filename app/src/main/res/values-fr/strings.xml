@@ -121,7 +121,7 @@
     <string name="identities">Identités</string>
     <string name="remove_account">Retirer le compte</string>
     <string name="account">Compte</string>
-    <string name="no_application_to_open_x">Aucune application n’a été trouvée pour afficher %s. Essayez plutôt de télécharger la pièce jointe.</string>
+    <string name="no_application_to_open_x">Aucune application n’a pu afficher %s. Essayez plutôt de télécharger la pièce jointe.</string>
     <string name="attachments">Pièces jointes</string>
     <string name="failed_to_upload_attachment">Impossible de téléverser la pièce jointe</string>
     <plurals name="x_emails_will_permanently_deleted">
@@ -142,4 +142,5 @@
     <string name="upload_complete">Téléversement terminé</string>
     <string name="the_file_exceeds_the_limit_of_x">Le fichier dépasse la limite de %s</string>
     <string name="download_complete">Téléchargement terminé</string>
+    <string name="attachment_download_failed_status_code_x">Impossible de télécharger la pièce jointe. (code d’état HTTP %d)</string>
 </resources>
