@@ -135,11 +135,12 @@
     <string name="combined_size_of_attachments_exceeds_the_limit_of_x">Die Gesamtgröße aller Anhänge überschreitet das Limit von %s</string>
     <string name="attachment_is_not_cached">Anhang wird nicht zwischengespeichert</string>
     <string name="upload_complete">Hochladen abgeschlossen</string>
-    <string name="failed_to_upload_attachment">Hochladen des Anhangs fehlgeschlagen</string>
+    <string name="failed_to_upload_attachment">Anhang konnte nicht hochgeladen werden</string>
     <string name="the_file_exceeds_the_limit_of_x">Die Datei überschreitet das Limit von %s</string>
     <string name="download_complete">Herunterladen abgeschlossen</string>
-    <string name="no_application_to_open_x">Keine Anwendung gefunden, um %s anzuzeigen. Versuche stattdessen, den Anhang herunterzuladen.</string>
+    <string name="no_application_to_open_x">Keine Anwendung konnte %s anzeigen. Versuche stattdessen, den Anhang herunterzuladen.</string>
     <string name="attachments">Anhänge</string>
     <string name="close_account_selector">Kontoauswahl schließen</string>
     <string name="open_account_selector">Kontoauswahl ausblenden</string>
+    <string name="attachment_download_failed_status_code_x">Anhang konnte nicht heruntergeladen werden. (HTTP-Status-Code %d)</string>
 </resources>
