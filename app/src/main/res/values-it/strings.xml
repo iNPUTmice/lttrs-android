@@ -140,6 +140,7 @@
     <string name="failed_to_upload_attachment">Impossibile caricare l’allegato</string>
     <string name="the_file_exceeds_the_limit_of_x">Il file supera il limite di %s</string>
     <string name="download_complete">Scaricamento finito</string>
-    <string name="no_application_to_open_x">Nessuna applicazione trovata per visualizzare %s. Prova invece a scaricare l’allegato.</string>
+    <string name="no_application_to_open_x">Nessuna applicazione potrebbe visualizzare %s. Prova invece a scaricare l’allegato.</string>
     <string name="attachments">Allegati</string>
+    <string name="attachment_download_failed_status_code_x">Impossibile scaricare l’allegato. (Codice di stato HTTP %d)</string>
 </resources>
