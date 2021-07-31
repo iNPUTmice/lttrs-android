@@ -52,6 +52,10 @@ public class AccountFragment extends AbstractAccountManagerFragment {
         this.accountViewModel = viewModelProvider.get(AccountViewModel.class);
 
         this.accountViewModel.getAccountName().observe(getViewLifecycleOwner(), this::onAccountName);
+        this.accountViewModel.isEnabled().observe(
+                getViewLifecycleOwner(),
+                e -> binding.setEnabled(Boolean.TRUE.equals(e))
+        );
 
         this.binding.remove.setOnClickListener(this::onRemoveAccount);
         this.binding.identities.setOnClickListener(this::onIdentities);
@@ -113,6 +117,5 @@ public class AccountFragment extends AbstractAccountManagerFragment {
                 .show();
 
     }
-
 
 }

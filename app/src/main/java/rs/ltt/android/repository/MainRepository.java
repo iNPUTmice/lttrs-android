@@ -24,8 +24,8 @@ import androidx.work.WorkManager;
 import com.google.common.collect.Collections2;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
-import com.google.common.util.concurrent.SettableFuture;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +34,6 @@ import java.io.File;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
@@ -60,7 +59,9 @@ public class MainRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MainRepository.class);
 
-    private static final Executor IO_EXECUTOR = Executors.newSingleThreadExecutor();
+    private static final ListeningExecutorService IO_EXECUTOR = MoreExecutors.listeningDecorator(
+            Executors.newSingleThreadExecutor()
+    );
 
     private final AppDatabase appDatabase;
     private final Application application;
@@ -79,49 +80,47 @@ public class MainRepository {
                                                                  final HttpUrl sessionResource,
                                                                  final String primaryAccountId,
                                                                  final Map<String, Account> accounts) {
-        final SettableFuture<Long> settableFuture = SettableFuture.create();
-        IO_EXECUTOR.execute(() -> {
-            try {
-                final List<AccountWithCredentials> credentials = appDatabase.accountDao().insert(
-                        username,
-                        password,
-                        sessionResource,
-                        accounts
-                );
+        return Futures.transformAsync(insert(username, password, sessionResource, accounts), credentials -> {
+            final Map<String, Long> accountIdMap = credentials.stream()
+                    .collect(Collectors.toMap(
+                            AccountWithCredentials::getAccountId,
+                            AccountWithCredentials::getId
+                    ));
 
-                final Map<String, Long> accountIdMap = credentials.stream()
-                        .collect(Collectors.toMap(
-                                AccountWithCredentials::getAccountId,
-                                AccountWithCredentials::getId
-                        ));
+            EventMonitorService.startMonitoring(application, accountIdMap.values());
 
-                EventMonitorService.startMonitoring(application, accountIdMap.values());
-
-                if (PushManager.register(application, credentials)) {
-                    LOGGER.info("Attempting to register for Firebase Messaging");
-                } else {
-                    //TODO schedule recurring worker?
-                    LOGGER.info("Firebase Messaging (Push) is not available in flavor {}", BuildConfig.FLAVOR);
-                }
-
-                final Long internalIdForPrimary = accountIdMap.getOrDefault(
-                        primaryAccountId,
-                        accountIdMap.values().stream().findAny().get()
-                );
-                final Collection<ListenableFuture<Status>> mailboxRefreshes = Collections2.transform(
-                        credentials,
-                        this::retrieveMailboxes
-                );
-                settableFuture.setFuture(Futures.whenAllComplete(mailboxRefreshes).call(
-                        () -> internalIdForPrimary,
-                        MoreExecutors.directExecutor()
-                ));
-            } catch (Exception e) {
-                LOGGER.info("foo", e);
-                settableFuture.setException(e);
+            if (PushManager.register(application, credentials)) {
+                LOGGER.info("Attempting to register for Firebase Messaging");
+            } else {
+                //TODO schedule recurring worker?
+                LOGGER.info("Firebase Messaging (Push) is not available in flavor {}", BuildConfig.FLAVOR);
             }
-        });
-        return settableFuture;
+
+            final Long internalIdForPrimary = accountIdMap.getOrDefault(
+                    primaryAccountId,
+                    accountIdMap.values().stream().findFirst().get()
+            );
+            final Collection<ListenableFuture<Status>> mailboxRefreshes = Collections2.transform(
+                    credentials,
+                    this::retrieveMailboxes
+            );
+            return Futures.whenAllComplete(mailboxRefreshes).call(
+                    () -> internalIdForPrimary,
+                    MoreExecutors.directExecutor()
+            );
+        }, MoreExecutors.directExecutor());
+    }
+
+    private ListenableFuture<List<AccountWithCredentials>> insert(final String username,
+                                                                  final String password,
+                                                                  final HttpUrl sessionResource,
+                                                                  final Map<String, Account> accounts) {
+        return IO_EXECUTOR.submit(() -> appDatabase.accountDao().insert(
+                username,
+                password,
+                sessionResource,
+                accounts
+        ));
     }
 
     private ListenableFuture<Status> retrieveMailboxes(final AccountWithCredentials account) {
@@ -144,8 +143,11 @@ public class MainRepository {
         IO_EXECUTOR.execute(() -> this.appDatabase.accountDao().selectAccount(id));
     }
 
-    public void removeAccountAsync(final long accountId) {
-        IO_EXECUTOR.execute(() -> removeAccount(accountId));
+    public ListenableFuture<Void> removeAccountAsync(final long accountId) {
+        return IO_EXECUTOR.submit(() -> {
+            removeAccount(accountId);
+            return null;
+        });
     }
 
     private void removeAccount(final long accountId) {

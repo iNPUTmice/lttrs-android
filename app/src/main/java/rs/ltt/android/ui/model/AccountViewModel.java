@@ -5,8 +5,17 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
+
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.MoreExecutors;
+
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
@@ -18,6 +27,7 @@ public class AccountViewModel extends AndroidViewModel {
 
     private final MainRepository mainRepository;
     private final long accountId;
+    private final MutableLiveData<Boolean> enabled = new MutableLiveData<>(true);
 
     public AccountViewModel(@NonNull final Application application, final long accountId) {
         super(application);
@@ -29,8 +39,25 @@ public class AccountViewModel extends AndroidViewModel {
         return this.mainRepository.getAccountName(this.accountId);
     }
 
+    public LiveData<Boolean> isEnabled() {
+        return this.enabled;
+    }
+
     public void removeAccount() {
-        this.mainRepository.removeAccountAsync(this.accountId);
+        this.enabled.postValue(false);
+        final ListenableFuture<Void> future = this.mainRepository.removeAccountAsync(this.accountId);
+        Futures.addCallback(future, new FutureCallback<Void>() {
+            @Override
+            public void onSuccess(@Nullable Void unused) {
+                //DO nothing. wait for finish
+            }
+
+            @Override
+            public void onFailure(@NotNull Throwable throwable) {
+                //display warning
+                enabled.postValue(false);
+            }
+        }, MoreExecutors.directExecutor());
     }
 
     public long getAccountId() {

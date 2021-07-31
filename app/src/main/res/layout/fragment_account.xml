@@ -8,6 +8,9 @@
         <variable
             name="account"
             type="rs.ltt.android.entity.AccountName" />
+        <variable
+            name="enabled"
+            type="boolean" />
     </data>
 
     <ScrollView
@@ -177,6 +180,7 @@
                         android:id="@+id/remove"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:enabled="@{enabled}"
                         android:text="@string/remove_account" />
                 </LinearLayout>
             </LinearLayout>

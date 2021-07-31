@@ -31,7 +31,6 @@ import rs.ltt.android.util.Event;
 import rs.ltt.android.util.MainThreadExecutor;
 import rs.ltt.android.worker.BlobDownloadWorker;
 import rs.ltt.android.worker.Failure;
-import rs.ltt.jmap.client.blob.BlobTransferException;
 import rs.ltt.jmap.common.entity.Attachment;
 
 public abstract class AbstractAttachmentViewModel extends AndroidViewModel {
