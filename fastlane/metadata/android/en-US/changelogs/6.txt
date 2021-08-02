@@ -1,0 +1,12 @@
+Code name: Configured for Flight
+
+* Please clean data or uninstall the app first when migrating from 0.1.x
+* Support multiple accounts
+* Notify about incoming email
+* Use Firebase Messaging or scheduled background job to periodically check for email
+* Show labels in thread view
+* Add screen to modify labels for threads
+* Add 'Empty Trash' button to trash view
+* Add help button (?) when prompting for connection URL
+
+This project has received funding from the European Union’s Horizon 2020 research and innovation programme within the framework of the NGI-POINTER Project funded under grant agreement No 871528.
