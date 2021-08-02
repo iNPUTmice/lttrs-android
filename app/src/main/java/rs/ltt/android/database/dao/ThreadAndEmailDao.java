@@ -197,6 +197,9 @@ public abstract class ThreadAndEmailDao extends AbstractEntityDao {
     @Query("select id,receivedAt,preview,email.threadId from thread_item join email on thread_item.emailId=email.id where thread_item.threadId=:threadId order by position")
     public abstract DataSource.Factory<Integer, EmailWithBodies> getEmails(String threadId);
 
+    @Query("select emailId from thread_item where threadId in (:threadIds)")
+    public abstract ListenableFuture<List<String>> getEmailIds(final Collection<String> threadIds);
+
     @Transaction
     @Query("select id,receivedAt,preview,threadId,subject from email where id in (:emailIds)")
     public abstract List<EmailWithBodiesAndSubject> getEmails(Collection<String> emailIds);
@@ -323,4 +326,5 @@ public abstract class ThreadAndEmailDao extends AbstractEntityDao {
             LOGGER.info("Marked {} query item overwrites as executed", executed);
         }
     }
+
 }

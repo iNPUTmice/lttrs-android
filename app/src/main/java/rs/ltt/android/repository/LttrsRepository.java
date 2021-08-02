@@ -13,7 +13,9 @@ import androidx.work.WorkManager;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Collections2;
+import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.MoreExecutors;
 import com.google.common.util.concurrent.SettableFuture;
 
 import org.slf4j.Logger;
@@ -30,6 +32,7 @@ import rs.ltt.android.entity.MailboxOverviewItem;
 import rs.ltt.android.entity.MailboxOverwriteEntity;
 import rs.ltt.android.entity.MailboxWithRoleAndName;
 import rs.ltt.android.ui.EmptyMailboxAction;
+import rs.ltt.android.ui.notification.EmailNotification;
 import rs.ltt.android.util.Event;
 import rs.ltt.android.util.MainThreadExecutor;
 import rs.ltt.android.worker.AbstractMuaWorker;
@@ -267,6 +270,12 @@ public class LttrsRepository extends AbstractRepository {
     }
 
     public void markRead(final Collection<String> threadIds) {
+        final ListenableFuture<List<String>> emailIdsFuture = database.threadAndEmailDao().getEmailIds(threadIds);
+        Futures.transform(
+                emailIdsFuture,
+                ids -> EmailNotification.cancel(application, accountId, ids),
+                MoreExecutors.directExecutor()
+        );
         toggleKeyword(threadIds, Keyword.SEEN, true);
     }
 

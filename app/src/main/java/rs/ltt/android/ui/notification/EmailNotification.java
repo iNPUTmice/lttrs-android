@@ -180,6 +180,31 @@ public class EmailNotification {
         }
     }
 
+    public static Void cancel(final Context context, final long accountId, final List<String> emailIds) {
+        final NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+        final List<Tag> tags = emailIds
+                .stream().map(id -> new Tag(accountId, id))
+                .collect(Collectors.toList());
+        final List<Tag> activeTags = getActiveTags(context);
+        if (activeTags.isEmpty()) {
+            return null;
+        }
+        int dismissed = 0;
+        for (final Tag tag : tags) {
+            if (activeTags.contains(tag)) {
+                notificationManager.cancel(tag.toString(), ID);
+                dismissed++;
+            }
+        }
+        if (dismissed >= activeTags.size()) {
+            LOGGER.info("Dismissed {} notifications. cancelled summary", dismissed);
+            notificationManager.cancel(notificationTagSummary(accountId), SUMMARY_ID);
+        } else if (dismissed > 0) {
+            LOGGER.info("Dismissed {} notifications", dismissed);
+        }
+        return null;
+    }
+
     public void refresh() {
         LOGGER.info("added {}, dismissed {}, total {}", addedEmails.size(), dismissedEmails.size(), allEmails.size());
         for (final String id : dismissedEmails) {

@@ -61,6 +61,7 @@ import rs.ltt.jmap.common.entity.Account;
 import rs.ltt.jmap.common.entity.capability.MailAccountCapability;
 import rs.ltt.jmap.mua.util.EmailAddressUtil;
 
+//TODO hold on to most recent ListenableFuture and cancel on back press
 public class SetupViewModel extends AndroidViewModel {
 
 
