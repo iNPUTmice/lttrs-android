@@ -8,6 +8,7 @@
         <variable
             name="account"
             type="rs.ltt.android.entity.AccountName" />
+
         <variable
             name="enabled"
             type="boolean" />
@@ -53,7 +54,8 @@
                     android:id="@+id/identities"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
-                    android:background="?selectableItemBackground">
+                    android:background="?selectableItemBackground"
+                    android:clickable="@{enabled}">
 
                     <ImageView
                         android:id="@+id/identities_icon"
@@ -81,7 +83,8 @@
                     android:id="@+id/labels"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
-                    android:background="?selectableItemBackground">
+                    android:background="?selectableItemBackground"
+                    android:clickable="@{enabled}">
 
                     <ImageView
                         android:id="@+id/labels_icon"
@@ -109,7 +112,8 @@
                     android:id="@+id/vacation_response"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
-                    android:background="?selectableItemBackground">
+                    android:background="?selectableItemBackground"
+                    android:clickable="@{enabled}">
 
                     <ImageView
                         android:id="@+id/vacation_response_icon"
@@ -137,7 +141,8 @@
                     android:id="@+id/e2ee"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
-                    android:background="?selectableItemBackground">
+                    android:background="?selectableItemBackground"
+                    android:clickable="@{enabled}">
 
                     <ImageView
                         android:id="@+id/e2ee_icon"

@@ -71,7 +71,7 @@ public class MainRepository {
         this.appDatabase = AppDatabase.getInstance(application);
     }
 
-    public void insertSearchSuggestion(String term) {
+    public void insertSearchSuggestion(final String term) {
         IO_EXECUTOR.execute(() -> appDatabase.searchSuggestionDao().insert(SearchSuggestionEntity.of(term)));
     }
 
