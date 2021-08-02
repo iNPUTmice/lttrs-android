@@ -15,6 +15,8 @@
 
 package rs.ltt.android.database.dao;
 
+import static androidx.room.OnConflictStrategy.REPLACE;
+
 import android.app.SearchManager;
 import android.database.Cursor;
 import android.provider.BaseColumns;
@@ -27,8 +29,6 @@ import java.util.List;
 
 import rs.ltt.android.R;
 import rs.ltt.android.entity.SearchSuggestionEntity;
-
-import static androidx.room.OnConflictStrategy.REPLACE;
 
 @Dao
 public abstract class SearchSuggestionDao {

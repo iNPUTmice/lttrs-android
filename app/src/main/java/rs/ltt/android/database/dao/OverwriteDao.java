@@ -15,6 +15,8 @@
 
 package rs.ltt.android.database.dao;
 
+import static androidx.room.OnConflictStrategy.REPLACE;
+
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
@@ -33,8 +35,6 @@ import java.util.List;
 import rs.ltt.android.entity.KeywordOverwriteEntity;
 import rs.ltt.android.entity.MailboxOverwriteEntity;
 import rs.ltt.android.entity.QueryItemOverwriteEntity;
-
-import static androidx.room.OnConflictStrategy.REPLACE;
 
 @Dao
 public abstract class OverwriteDao {

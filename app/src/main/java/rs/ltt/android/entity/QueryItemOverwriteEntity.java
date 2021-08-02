@@ -15,12 +15,12 @@
 
 package rs.ltt.android.entity;
 
+import static androidx.room.ForeignKey.CASCADE;
+
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.Index;
-
-import static androidx.room.ForeignKey.CASCADE;
 
 @Entity(tableName = "query_item_overwrite",
         primaryKeys = {"queryId", "threadId"},

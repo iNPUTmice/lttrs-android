@@ -15,13 +15,13 @@
 
 package rs.ltt.android.entity;
 
+import static androidx.room.ForeignKey.CASCADE;
+
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 
 import java.util.Collection;
-
-import static androidx.room.ForeignKey.CASCADE;
 
 @Entity(tableName = "keyword_overwrite",
         primaryKeys = {"threadId", "keyword"},

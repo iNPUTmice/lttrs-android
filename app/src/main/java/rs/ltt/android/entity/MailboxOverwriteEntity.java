@@ -15,6 +15,8 @@
 
 package rs.ltt.android.entity;
 
+import static androidx.room.ForeignKey.CASCADE;
+
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
@@ -28,8 +30,6 @@ import java.util.List;
 import rs.ltt.android.util.CharSequences;
 import rs.ltt.jmap.common.entity.IdentifiableMailboxWithRoleAndName;
 import rs.ltt.jmap.common.entity.Role;
-
-import static androidx.room.ForeignKey.CASCADE;
 
 @Entity(tableName = "mailbox_overwrite",
         primaryKeys = {"threadId", "name", "role"},

@@ -15,6 +15,8 @@
 
 package rs.ltt.android.entity;
 
+import static androidx.room.ForeignKey.CASCADE;
+
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
@@ -23,8 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rs.ltt.jmap.common.entity.Thread;
-
-import static androidx.room.ForeignKey.CASCADE;
 
 @Entity(tableName = "thread_item",
         primaryKeys = {"threadId", "emailId"},

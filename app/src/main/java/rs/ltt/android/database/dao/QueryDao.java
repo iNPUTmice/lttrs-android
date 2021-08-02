@@ -15,6 +15,8 @@
 
 package rs.ltt.android.database.dao;
 
+import static androidx.room.OnConflictStrategy.REPLACE;
+
 import androidx.paging.DataSource;
 import androidx.room.Dao;
 import androidx.room.Insert;
@@ -38,8 +40,6 @@ import rs.ltt.jmap.mua.cache.exception.CacheConflictException;
 import rs.ltt.jmap.mua.cache.exception.CorruptCacheException;
 import rs.ltt.jmap.mua.util.QueryResult;
 import rs.ltt.jmap.mua.util.QueryResultItem;
-
-import static androidx.room.OnConflictStrategy.REPLACE;
 
 @Dao
 public abstract class QueryDao extends AbstractEntityDao {

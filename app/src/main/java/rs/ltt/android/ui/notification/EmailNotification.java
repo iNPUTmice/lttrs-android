@@ -13,6 +13,7 @@ import android.service.notification.StatusBarNotification;
 
 import androidx.core.app.NotificationCompat;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
@@ -170,6 +171,15 @@ public class EmailNotification {
         notificationManager.cancel(notificationTagSummary(accountId), SUMMARY_ID);
     }
 
+    public static void cancel(final Context context, final Tag tag) {
+        LOGGER.info("Dismissing {}", tag.emailId);
+        final NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+        notificationManager.cancel(tag.toString(), ID);
+        if (getActiveTags(context).isEmpty()) {
+            notificationManager.cancel(notificationTagSummary(tag.getAccountId()), SUMMARY_ID);
+        }
+    }
+
     public void refresh() {
         LOGGER.info("added {}, dismissed {}, total {}", addedEmails.size(), dismissedEmails.size(), allEmails.size());
         for (final String id : dismissedEmails) {
@@ -322,7 +332,11 @@ public class EmailNotification {
 
         public static Tag parse(final Uri uri) {
             if (SCHEME.equals(uri.getScheme())) {
-                return parse(uri.getAuthority(), uri.getPath());
+                final String path = uri.getPath();
+                if (path.length() < 1) {
+                    throw new IllegalArgumentException("Path not long enough to contain ID");
+                }
+                return parse(uri.getAuthority(), path.substring(1));
             }
             throw new IllegalArgumentException("Unknown scheme");
         }
@@ -367,6 +381,19 @@ public class EmailNotification {
                     .authority(String.valueOf(accountId))
                     .path(emailId)
                     .build();
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Tag tag = (Tag) o;
+            return Objects.equal(accountId, tag.accountId) && Objects.equal(emailId, tag.emailId);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hashCode(accountId, emailId);
         }
     }
 

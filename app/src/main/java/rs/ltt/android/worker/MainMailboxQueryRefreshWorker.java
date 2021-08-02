@@ -48,6 +48,10 @@ public class MainMailboxQueryRefreshWorker extends QueryRefreshWorker {
                 .build();
     }
 
+    public static String uniquePeriodicName(final Long accountId) {
+        return String.format(Locale.ENGLISH, "account-%d-periodic-refresh", accountId);
+    }
+
     @NonNull
     @Override
     protected Result refresh(final EmailQuery emailQuery) throws ExecutionException, InterruptedException {
@@ -87,10 +91,6 @@ public class MainMailboxQueryRefreshWorker extends QueryRefreshWorker {
         } else {
             return StandardQueries.mailbox(inbox);
         }
-    }
-
-    public static String uniquePeriodicName(final Long accountId) {
-        return String.format(Locale.ENGLISH, "account-%d-periodic-refresh", accountId);
     }
 
 }

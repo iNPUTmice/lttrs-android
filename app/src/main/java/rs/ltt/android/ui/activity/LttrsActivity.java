@@ -398,6 +398,7 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
         );
         navController.navigate(action, navOptions);
         this.closeDrawer(false);
+        EmailNotification.cancel(this, tag);
         return true;
     }
 
