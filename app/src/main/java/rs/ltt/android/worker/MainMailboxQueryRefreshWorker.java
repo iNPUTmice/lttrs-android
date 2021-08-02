@@ -10,6 +10,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
@@ -86,6 +87,10 @@ public class MainMailboxQueryRefreshWorker extends QueryRefreshWorker {
         } else {
             return StandardQueries.mailbox(inbox);
         }
+    }
+
+    public static String uniquePeriodicName(final Long accountId) {
+        return String.format(Locale.ENGLISH, "account-%d-periodic-refresh", accountId);
     }
 
 }

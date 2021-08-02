@@ -19,6 +19,10 @@ import android.app.Application;
 import android.database.sqlite.SQLiteDatabase;
 
 import androidx.lifecycle.LiveData;
+import androidx.work.Constraints;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.NetworkType;
+import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
 import com.google.common.collect.Collections2;
@@ -35,6 +39,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import okhttp3.HttpUrl;
@@ -50,6 +55,7 @@ import rs.ltt.android.push.PushManager;
 import rs.ltt.android.service.EventMonitorService;
 import rs.ltt.android.ui.notification.EmailNotification;
 import rs.ltt.android.worker.AbstractMuaWorker;
+import rs.ltt.android.worker.MainMailboxQueryRefreshWorker;
 import rs.ltt.android.worker.QueryRefreshWorker;
 import rs.ltt.jmap.common.entity.Account;
 import rs.ltt.jmap.mua.Mua;
@@ -94,6 +100,7 @@ public class MainRepository {
             } else {
                 //TODO schedule recurring worker?
                 LOGGER.info("Firebase Messaging (Push) is not available in flavor {}", BuildConfig.FLAVOR);
+                scheduleRecurringMainQueryWorkers(accountIdMap.values());
             }
 
             final Long internalIdForPrimary = accountIdMap.getOrDefault(
@@ -108,7 +115,24 @@ public class MainRepository {
                     () -> internalIdForPrimary,
                     MoreExecutors.directExecutor()
             );
-        }, MoreExecutors.directExecutor());
+        }, IO_EXECUTOR);
+    }
+
+    private void scheduleRecurringMainQueryWorkers(final Collection<Long> accountIds) {
+        final WorkManager workManager = WorkManager.getInstance(application);
+        for (final Long accountId : accountIds) {
+            final PeriodicWorkRequest periodicWorkRequest = new PeriodicWorkRequest.Builder(MainMailboxQueryRefreshWorker.class, 15, TimeUnit.MINUTES, 20, TimeUnit.MINUTES)
+                    .setInputData(MainMailboxQueryRefreshWorker.data(accountId, true))
+                    .setConstraints(new Constraints.Builder()
+                            .setRequiredNetworkType(NetworkType.CONNECTED)
+                            .build())
+                    .build();
+            workManager.enqueueUniquePeriodicWork(
+                    MainMailboxQueryRefreshWorker.uniquePeriodicName(accountId),
+                    ExistingPeriodicWorkPolicy.REPLACE,
+                    periodicWorkRequest
+            );
+        }
     }
 
     private ListenableFuture<List<AccountWithCredentials>> insert(final String username,
@@ -168,5 +192,6 @@ public class MainRepository {
         final WorkManager workManager = WorkManager.getInstance(application);
         workManager.cancelUniqueWork(AbstractMuaWorker.uniqueName(accountId));
         workManager.cancelUniqueWork(QueryRefreshWorker.uniqueName(accountId));
+        workManager.cancelUniqueWork(MainMailboxQueryRefreshWorker.uniquePeriodicName(accountId));
     }
 }
