@@ -87,14 +87,14 @@
     <string name="change_labels">Modificare etichete</string>
     <string name="create">Creere</string>
     <string name="new_label">Etichetă nouă</string>
-    <string name="reserved_mailbox_name">Nume rezervat. Încearcați un alt nume.</string>
+    <string name="reserved_mailbox_name">Alegeți un nume care nu este rezervat.</string>
     <string name="no_name_specified">Nici un nume specificat. Încearcați din nou.</string>
     <string name="enter_a_label_name">Introduceți un nou nume de etichetă</string>
     <string name="add_another_account">Adăugarea altui cont</string>
     <string name="manage_accounts">Gestionare conturilor</string>
-    <string name="session_resource_help_dialog_message">Ltt.rs utilizează un protocol relativ nou numit JMAP pentru a sincroniza e-mailurile. Există posibilitatea ca furnizorul dvs. de e-mail să nu suporte încă acest protocol.
+    <string name="session_resource_help_dialog_message">Ltt.rs utilizează un protocol relativ nou numit JMAP pentru a sincroniza e-mailurile, dar s-ar putea ca furnizorul dvs. de e-mail să îl nu suporte încă.
 \n
-\nAr trebui să contactați furnizorul dumneavoastră și să întrebați despre JMAP și despre adresa de conexiune JMAP.
+\nContactați-vă furnizorul și întrebați despre JMAP și despre adresa de conexiune JMAP.
 \n
 \nPe un server configurat corespunzător, Ltt.rs va putea să descopere automat adresa de conexiune.</string>
     <string name="session_resource_help_dialog_title">Ce este o adresă de conexiune\?</string>
@@ -105,7 +105,7 @@
     <string name="role_name_flagged">Cu stea</string>
     <string name="role_name_drafts">Ciorne</string>
     <string name="role_name_archive">Arhivă</string>
-    <string name="role_name_all">Toate emailurile</string>
+    <string name="role_name_all">Toate e-mail-urile</string>
     <string name="role_name_sent">Trimise</string>
     <string name="role_name_inbox">Primite</string>
     <string name="foreground_service">Serviciul în prim-plan</string>
@@ -116,4 +116,37 @@
         <item quantity="other">%d de e-mailuri noi</item>
     </plurals>
     <string name="notification_channel_name_email">E-mail</string>
+    <plurals name="x_emails_will_permanently_deleted">
+        <item quantity="one">%d e-mail va fi șters definitiv.</item>
+        <item quantity="few">%d e-mail-uri vor fi șterse definitiv.</item>
+        <item quantity="other">%d de e-mail-uri vor fi șterse definitiv.</item>
+    </plurals>
+    <plurals name="x_emails_in_trash">
+        <item quantity="one">Există în prezent %d e-mail în coșul de gunoi.</item>
+        <item quantity="few">Există în prezent %d e-mail-uri în coșul de gunoi.</item>
+        <item quantity="other">Există în prezent %d de e-mail-uri în coșul de gunoi.</item>
+    </plurals>
+    <string name="attachment_download_failed_status_code_x">Nu s-a putut descărca fișierul atașat. (Cod de stare HTTP %d)</string>
+    <string name="close_account_selector">Închidere selector de cont</string>
+    <string name="open_account_selector">Ascundere selector de cont</string>
+    <string name="empty_trash">Golire coș de gunoi</string>
+    <string name="empty">Gol</string>
+    <string name="empty_trash_dialog_title">Goliți gunoiul\?</string>
+    <string name="combined_size_of_attachments_exceeds_the_limit_of_x">Dimensiunea combinată a tuturor atașamentelor depășește limita de %s</string>
+    <string name="upload_complete">Încărcare finalizată</string>
+    <string name="failed_to_upload_attachment">Nu s-a putut încărca atașamentul</string>
+    <string name="the_file_exceeds_the_limit_of_x">Fișierul depășește limita de %s</string>
+    <string name="download_complete">Descărcare completă</string>
+    <string name="no_application_to_open_x">Nicio aplicație nu a putut afișa %s. Încercați să descărcați în schimb fișierul atașat.</string>
+    <string name="attachments">Atașamente</string>
+    <string name="view_emails">Vizualizare e-mail-uri</string>
+    <string name="remove_account_dialog_message">Eliminarea acestui cont șterge toate mesajele și alte date asociate acestuia din dispozitiv.</string>
+    <string name="remove_account_dialog_title">Eliminați contul\?</string>
+    <string name="end_to_end_encryption">Criptare de la un cap la altul</string>
+    <string name="vacation_response">Răspuns de vacanță</string>
+    <string name="manage_labels">Gestionare etichete</string>
+    <string name="identities">Identităţi</string>
+    <string name="remove_account">Eliminare cont</string>
+    <string name="account">Cont</string>
+    <string name="accounts">Conturi</string>
 </resources>
