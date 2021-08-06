@@ -1,0 +1,1 @@
+* Fikset at Ltt.rs ikke oppdateres etter lengre lediggang

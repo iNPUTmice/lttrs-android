@@ -1,0 +1,9 @@
+* Tøm data eller avinstaller fra 0.1.x
+* Støtte for flere kontoer
+* Merknader for ny e-post
+* Firebase-meldingstjeneste eller planlagt bakgrunnsjobb for å se etter e-post
+* Etiketter vist i trådmodus
+* Skjerm for endring av trådetiketter
+* Knapp for «Tøm papirkurv»
+* Hjelpeknapp (?) lagt til
+Mottatt støtte fra EUs Horizon 2020-stipend, i rammeverket NGI-POINTER, etter avtale nr. 871528.
