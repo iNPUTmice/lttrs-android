@@ -5,6 +5,8 @@
 
     <data>
 
+        <import type="android.view.View" />
+
         <variable
             name="account"
             type="rs.ltt.android.entity.AccountName" />
@@ -30,6 +32,7 @@
                 android:layout_marginTop="24dp"
                 android:layout_marginBottom="8dp"
                 android:src="@drawable/ic_baseline_account_box_24"
+                android:visibility="@{account == null ? View.INVISIBLE : View.VISIBLE}"
                 app:tint="@{account.name}" />
 
             <TextView

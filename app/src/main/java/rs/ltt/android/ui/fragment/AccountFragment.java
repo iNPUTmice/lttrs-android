@@ -20,6 +20,7 @@ import rs.ltt.android.entity.AccountName;
 import rs.ltt.android.ui.activity.AccountManagerActivity;
 import rs.ltt.android.ui.activity.LttrsActivity;
 import rs.ltt.android.ui.model.AccountViewModel;
+import rs.ltt.android.util.Event;
 
 public class AccountFragment extends AbstractAccountManagerFragment {
 
@@ -51,7 +52,8 @@ public class AccountFragment extends AbstractAccountManagerFragment {
         );
         this.accountViewModel = viewModelProvider.get(AccountViewModel.class);
 
-        this.accountViewModel.getAccountName().observe(getViewLifecycleOwner(), this::onAccountName);
+        this.accountViewModel.getAccountName().observe(getViewLifecycleOwner(), binding::setAccount);
+        this.accountViewModel.getOnFinishEvent().observe(getViewLifecycleOwner(), this::onFinishEvent);
         this.accountViewModel.isEnabled().observe(
                 getViewLifecycleOwner(),
                 e -> binding.setEnabled(Boolean.TRUE.equals(e))
@@ -64,6 +66,13 @@ public class AccountFragment extends AbstractAccountManagerFragment {
         this.binding.e2ee.setOnClickListener(this::onE2ee);
 
         return this.binding.getRoot();
+    }
+
+    private void onFinishEvent(final Event<Void> event) {
+        if (event.isConsumable()) {
+            event.consume();
+            AccountManagerActivity.relaunch(requireActivity());
+        }
     }
 
     @Override
@@ -79,14 +88,6 @@ public class AccountFragment extends AbstractAccountManagerFragment {
             LttrsActivity.launch(getActivity(), accountViewModel.getAccountId());
         }
         return super.onOptionsItemSelected(menuItem);
-    }
-
-    private void onAccountName(final AccountName account) {
-        if (account != null) {
-            this.binding.setAccount(account);
-        } else {
-            AccountManagerActivity.relaunch(requireActivity());
-        }
     }
 
     private void onE2ee(final View view) {

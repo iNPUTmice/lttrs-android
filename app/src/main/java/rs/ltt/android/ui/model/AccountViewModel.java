@@ -21,6 +21,7 @@ import java.util.Objects;
 
 import rs.ltt.android.entity.AccountName;
 import rs.ltt.android.repository.MainRepository;
+import rs.ltt.android.util.Event;
 
 
 public class AccountViewModel extends AndroidViewModel {
@@ -28,6 +29,7 @@ public class AccountViewModel extends AndroidViewModel {
     private final MainRepository mainRepository;
     private final long accountId;
     private final MutableLiveData<Boolean> enabled = new MutableLiveData<>(true);
+    private final MutableLiveData<Event<Void>> onFinishEvent = new MutableLiveData<>();
 
     public AccountViewModel(@NonNull final Application application, final long accountId) {
         super(application);
@@ -49,7 +51,7 @@ public class AccountViewModel extends AndroidViewModel {
         Futures.addCallback(future, new FutureCallback<Void>() {
             @Override
             public void onSuccess(@Nullable Void unused) {
-                //DO nothing. wait for finish
+                onFinishEvent.postValue(new Event<>(unused));
             }
 
             @Override
@@ -58,6 +60,10 @@ public class AccountViewModel extends AndroidViewModel {
                 enabled.postValue(false);
             }
         }, MoreExecutors.directExecutor());
+    }
+
+    public LiveData<Event<Void>> getOnFinishEvent() {
+        return this.onFinishEvent;
     }
 
     public long getAccountId() {
