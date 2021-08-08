@@ -97,7 +97,7 @@
     <string name="apply_changes">Apply changes</string>
     <string name="enter_a_label_name">Type in a new label name</string>
     <string name="no_name_specified">No name specified. Try again.</string>
-    <string name="reserved_mailbox_name">Pick a name that isn\'t reserved.</string>
+    <string name="reserved_mailbox_name">Pick a name that isn’t reserved.</string>
     <string name="new_label">New label</string>
     <string name="create">Create</string>
     <string name="manage_accounts">Manage accounts</string>
