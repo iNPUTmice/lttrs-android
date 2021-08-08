@@ -16,7 +16,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import rs.ltt.android.R;
 import rs.ltt.android.databinding.FragmentAccountBinding;
-import rs.ltt.android.entity.AccountName;
 import rs.ltt.android.ui.activity.AccountManagerActivity;
 import rs.ltt.android.ui.activity.LttrsActivity;
 import rs.ltt.android.ui.model.AccountViewModel;

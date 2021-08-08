@@ -72,6 +72,8 @@ public class MainRepository {
     private final AppDatabase appDatabase;
     private final Application application;
 
+    private ListenableFuture<?> networkFuture = null;
+
     public MainRepository(final Application application) {
         this.application = application;
         this.appDatabase = AppDatabase.getInstance(application);
@@ -98,7 +100,6 @@ public class MainRepository {
             if (PushManager.register(application, credentials)) {
                 LOGGER.info("Attempting to register for Firebase Messaging");
             } else {
-                //TODO schedule recurring worker?
                 LOGGER.info("Firebase Messaging (Push) is not available in flavor {}", BuildConfig.FLAVOR);
                 scheduleRecurringMainQueryWorkers(accountIdMap.values());
             }
@@ -111,10 +112,12 @@ public class MainRepository {
                     credentials,
                     this::retrieveMailboxes
             );
-            return Futures.whenAllComplete(mailboxRefreshes).call(
+            final ListenableFuture<Long> future = Futures.whenAllComplete(mailboxRefreshes).call(
                     () -> internalIdForPrimary,
                     MoreExecutors.directExecutor()
             );
+            this.networkFuture = future;
+            return future;
         }, IO_EXECUTOR);
     }
 
@@ -186,6 +189,14 @@ public class MainRepository {
         }
         EmailNotification.cancel(application, accountId);
         EmailNotification.deleteChannel(application, accountId);
+    }
+
+    public boolean cancelNetworkFuture() {
+        final ListenableFuture<?> currentNetworkFuture = this.networkFuture;
+        if (currentNetworkFuture == null || currentNetworkFuture.isDone()) {
+            return false;
+        }
+        return currentNetworkFuture.cancel(true);
     }
 
     private void cancelAllWork(final Long accountId) {

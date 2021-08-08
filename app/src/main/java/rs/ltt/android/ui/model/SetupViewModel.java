@@ -42,6 +42,7 @@ import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.Map;
+import java.util.concurrent.CancellationException;
 
 import javax.net.ssl.SSLHandshakeException;
 import javax.net.ssl.SSLPeerUnverifiedException;
@@ -77,8 +78,8 @@ public class SetupViewModel extends AndroidViewModel {
     private final MutableLiveData<Event<Target>> redirection = new MutableLiveData<>();
     private final MutableLiveData<Event<Long>> setupComplete = new MutableLiveData<>();
     private final MutableLiveData<Event<String>> warningMessage = new MutableLiveData<>();
-
     private final MainRepository mainRepository;
+    private ListenableFuture<?> networkFuture = null;
 
     public SetupViewModel(@NonNull Application application) {
         super(application);
@@ -99,6 +100,10 @@ public class SetupViewModel extends AndroidViewModel {
 
     private static boolean secure(final HttpUrl url) {
         return url.scheme().equals("https") || (BuildConfig.DEBUG && url.host().equals("localhost"));
+    }
+
+    private static boolean interruptedOrCancelled(final Throwable t) {
+        return t instanceof InterruptedException || t instanceof CancellationException;
     }
 
     public LiveData<Boolean> isLoading() {
@@ -276,13 +281,29 @@ public class SetupViewModel extends AndroidViewModel {
         return true;
     }
 
+    public boolean cancel() {
+        final boolean cancelledModelFuture = cancelNetworkFuture();
+        final boolean cancelledRepositoryFuture = this.mainRepository.cancelNetworkFuture();
+        return cancelledRepositoryFuture || cancelledModelFuture;
+    }
+
+    private boolean cancelNetworkFuture() {
+        final ListenableFuture<?> currentNetworkFuture = this.networkFuture;
+        if (currentNetworkFuture == null || currentNetworkFuture.isDone()) {
+            return false;
+        }
+        return currentNetworkFuture.cancel(true);
+    }
+
     private ListenableFuture<Session> getSession() {
         final JmapClient jmapClient = new JmapClient(
                 Strings.nullToEmpty(emailAddress.getValue()),
                 Strings.nullToEmpty(password.getValue()),
                 getHttpSessionResource()
         );
-        return jmapClient.getSession();
+        final ListenableFuture<Session> sessionFuture = jmapClient.getSession();
+        this.networkFuture = sessionFuture;
+        return sessionFuture;
     }
 
     private void processAccounts(final Session session) {
@@ -321,7 +342,7 @@ public class SetupViewModel extends AndroidViewModel {
     }
 
     private void reportUnableToFetchSession(final Throwable throwable) {
-        if (throwable instanceof InterruptedException) {
+        if (interruptedOrCancelled(throwable)) {
             return;
         }
         LOGGER.error("Unexpected problem fetching session object", throwable);

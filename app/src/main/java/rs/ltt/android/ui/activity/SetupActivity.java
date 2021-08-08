@@ -25,11 +25,10 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 
-import com.google.android.material.snackbar.Snackbar;
-
 import rs.ltt.android.R;
 import rs.ltt.android.SetupNavigationDirections;
 import rs.ltt.android.databinding.ActivitySetupBinding;
+import rs.ltt.android.ui.MaterialAlertDialogs;
 import rs.ltt.android.ui.model.SetupViewModel;
 import rs.ltt.android.util.NavControllers;
 import rs.ltt.jmap.mua.util.MailToUri;
@@ -37,6 +36,7 @@ import rs.ltt.jmap.mua.util.MailToUri;
 public class SetupActivity extends AppCompatActivity {
 
     public static String EXTRA_NEXT_ACTION = "rs.ltt.android.extras.next-action";
+    private SetupViewModel setupViewModel;
 
     public static void launch(final ComponentActivity activity) {
         final Intent intent = new Intent(activity, SetupActivity.class);
@@ -52,8 +52,8 @@ public class SetupActivity extends AppCompatActivity {
                 this,
                 getDefaultViewModelProviderFactory()
         );
-        final SetupViewModel setupViewModel = viewModelProvider.get(SetupViewModel.class);
-        setupViewModel.getRedirection().observe(this, targetEvent -> {
+        this.setupViewModel = viewModelProvider.get(SetupViewModel.class);
+        this.setupViewModel.getRedirection().observe(this, targetEvent -> {
             if (targetEvent.isConsumable()) {
                 final SetupViewModel.Target target = targetEvent.consume();
                 switch (target) {
@@ -69,17 +69,24 @@ public class SetupActivity extends AppCompatActivity {
                 }
             }
         });
-        setupViewModel.getSetupComplete().observe(this, event -> {
+        this.setupViewModel.getSetupComplete().observe(this, event -> {
             if (event.isConsumable()) {
                 redirectToLttrs(event.consume());
             }
         });
-        setupViewModel.getWarningMessage().observe(this, event -> {
+        this.setupViewModel.getWarningMessage().observe(this, event -> {
             if (event.isConsumable()) {
-                //TODO: Should we make this a dialog? ComposeActivity uses dialogs too
-                Snackbar.make(binding.getRoot(), event.consume(), Snackbar.LENGTH_LONG).show();
+                MaterialAlertDialogs.error(this, event.consume());
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (this.setupViewModel.cancel()) {
+            return;
+        }
+        super.onBackPressed();
     }
 
     private NavController getNavController() {
