@@ -15,7 +15,6 @@
 
 package rs.ltt.android.ui.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -55,7 +54,8 @@ import rs.ltt.android.ui.ItemAnimators;
 import rs.ltt.android.ui.MaterialAlertDialogs;
 import rs.ltt.android.ui.ViewIntent;
 import rs.ltt.android.ui.activity.ComposeActivity;
-import rs.ltt.android.ui.activity.result.CreateDocumentContract;
+import rs.ltt.android.ui.activity.result.contract.ComposeContract;
+import rs.ltt.android.ui.activity.result.contract.CreateDocumentContract;
 import rs.ltt.android.ui.adapter.OnAttachmentActionTriggered;
 import rs.ltt.android.ui.adapter.OnComposeActionTriggered;
 import rs.ltt.android.ui.adapter.OnFlaggedToggled;
@@ -73,6 +73,7 @@ public class ThreadFragment extends AbstractLttrsFragment implements OnFlaggedTo
     private ThreadViewModel threadViewModel;
     private ThreadAdapter threadAdapter;
     private ActivityResultLauncher<Attachment> createDocumentLauncher;
+    private ActivityResultLauncher<Bundle> composeLauncher;
 
     private ThreadViewModel.MenuConfiguration menuConfiguration = ThreadViewModel.MenuConfiguration.none();
 
@@ -84,6 +85,7 @@ public class ThreadFragment extends AbstractLttrsFragment implements OnFlaggedTo
                 new CreateDocumentContract(),
                 uri -> threadViewModel.storeAttachment(uri)
         );
+        this.composeLauncher = registerForActivityResult(new ComposeContract(), this::onComposeResult);
     }
 
     @Override
@@ -228,21 +230,14 @@ public class ThreadFragment extends AbstractLttrsFragment implements OnFlaggedTo
         );
     }
 
-    //TODO migrate to contracts
-    @Override
-    public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-        LOGGER.info("on activity result code={}, result={}, intent={}", requestCode, resultCode, data);
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == ComposeActivity.REQUEST_EDIT_DRAFT &&
-                resultCode == ComposeActivity.RESULT_OK) {
-            final UUID uuid = (UUID) data.getSerializableExtra(ComposeActivity.EDITING_TASK_ID_EXTRA);
-            final boolean threadDiscarded = data.getBooleanExtra(ComposeActivity.DISCARDED_THREAD_EXTRA, false);
-            if (uuid != null) {
-                getLttrsViewModel().observeForFailure(uuid);
-                threadViewModel.waitForEdit(uuid);
-            } else if (threadDiscarded) {
-                getNavController().popBackStack();
-            }
+    private void onComposeResult(final Bundle data) {
+        final UUID uuid = (UUID) data.getSerializable(ComposeActivity.EDITING_TASK_ID_EXTRA);
+        final boolean threadDiscarded = data.getBoolean(ComposeActivity.DISCARDED_THREAD_EXTRA, false);
+        if (uuid != null) {
+            getLttrsViewModel().observeForFailure(uuid);
+            threadViewModel.waitForEdit(uuid);
+        } else if (threadDiscarded) {
+            getNavController().popBackStack();
         }
     }
 
@@ -324,20 +319,18 @@ public class ThreadFragment extends AbstractLttrsFragment implements OnFlaggedTo
 
     @Override
     public void onEditDraft(String emailId) {
-        ComposeActivity.editDraft(
-                this,
+        this.composeLauncher.launch(ComposeActivity.editDraft(
                 getLttrsViewModel().getAccountId(),
                 emailId
-        );
+        ));
     }
 
     @Override
     public void onReplyAll(String emailId) {
-        ComposeActivity.replyAll(
-                this,
+        this.composeLauncher.launch(ComposeActivity.replyAll(
                 getLttrsViewModel().getAccountId(),
                 emailId
-        );
+        ));
     }
 
     @Override

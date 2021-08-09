@@ -33,7 +33,6 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.databinding.DataBindingUtil;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.common.base.Preconditions;
@@ -62,7 +61,6 @@ import rs.ltt.jmap.mua.util.MailToUri;
 //TODO handle save instance state
 public class ComposeActivity extends AppCompatActivity {
 
-    public static final int REQUEST_EDIT_DRAFT = 0x100;
     public static final String EDITING_TASK_ID_EXTRA = "work_request_id";
     public static final String DISCARDED_THREAD_EXTRA = "discarded_thread";
     private static final Logger LOGGER = LoggerFactory.getLogger(ComposeActivity.class);
@@ -73,38 +71,37 @@ public class ComposeActivity extends AppCompatActivity {
     private ComposeViewModel composeViewModel;
     private ActivityResultLauncher<String> getAttachmentLauncher;
 
-    public static void compose(final Fragment fragment) {
-        launch(fragment, null, null, ComposeAction.NEW);
+    public static Bundle compose() {
+        return launch(null, null, ComposeAction.NEW);
     }
 
-    public static void editDraft(final Fragment fragment, Long account, final String emailId) {
-        launch(fragment, account, emailId, ComposeAction.EDIT_DRAFT);
+    public static Bundle editDraft(Long account, final String emailId) {
+        return launch(account, emailId, ComposeAction.EDIT_DRAFT);
     }
 
-    public static void replyAll(final Fragment fragment, Long account, final String emailId) {
-        launch(fragment, account, emailId, ComposeAction.REPLY_ALL);
+    public static Bundle replyAll(Long account, final String emailId) {
+        return launch(account, emailId, ComposeAction.REPLY_ALL);
     }
 
-    private static void launch(final Fragment fragment,
-                               final Long account,
-                               final String emailId,
-                               final ComposeAction action) {
+    public static Bundle launch(final Long account,
+                                final String emailId,
+                                final ComposeAction action) {
         Preconditions.checkNotNull(action);
-        final Intent intent = new Intent(fragment.getContext(), ComposeActivity.class);
+        final Bundle extras = new Bundle();
         if (account != null) {
             LOGGER.info("launching for account {} with {}", account, action);
-            intent.putExtra(ACCOUNT_EXTRA, account);
+            extras.putLong(ACCOUNT_EXTRA, account);
         } else {
             LOGGER.info("launching with {}", action);
         }
-        intent.putExtra(COMPOSE_ACTION_EXTRA, action.toString());
+        extras.putString(COMPOSE_ACTION_EXTRA, action.toString());
         if (emailId != null) {
-            intent.putExtra(EMAIL_ID_EXTRA, emailId);
+            extras.putString(EMAIL_ID_EXTRA, emailId);
         }
-        fragment.startActivityForResult(intent, REQUEST_EDIT_DRAFT);
+        return extras;
     }
 
-    public static void launch(AppCompatActivity activity, final Uri uri) {
+    public static void launch(final AppCompatActivity activity, final Uri uri) {
         final Intent nextIntent = new Intent(activity, ComposeActivity.class);
         nextIntent.setAction(Intent.ACTION_VIEW);
         nextIntent.setData(uri);

@@ -16,7 +16,6 @@
 package rs.ltt.android.ui.fragment;
 
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -24,6 +23,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.appcompat.view.ActionMode;
 import androidx.core.content.ContextCompat;
@@ -61,6 +61,7 @@ import rs.ltt.android.ui.QueryItemTouchHelper;
 import rs.ltt.android.ui.SelectionTracker;
 import rs.ltt.android.ui.Translations;
 import rs.ltt.android.ui.activity.ComposeActivity;
+import rs.ltt.android.ui.activity.result.contract.ComposeContract;
 import rs.ltt.android.ui.adapter.OnFlaggedToggled;
 import rs.ltt.android.ui.adapter.OnSelectionToggled;
 import rs.ltt.android.ui.adapter.ThreadOverviewAdapter;
@@ -77,6 +78,13 @@ public abstract class AbstractQueryFragment extends AbstractLttrsFragment implem
     private ItemTouchHelper itemTouchHelper;
     private ActionMode actionMode;
     private SelectionTracker tracker;
+    private ActivityResultLauncher<Bundle> composeLauncher;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        this.composeLauncher = registerForActivityResult(new ComposeContract(), this::onComposeResult);
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -90,7 +98,7 @@ public abstract class AbstractQueryFragment extends AbstractLttrsFragment implem
 
         binding.setViewModel(viewModel);
         binding.setLifecycleOwner(getViewLifecycleOwner());
-        binding.compose.setOnClickListener((v) -> ComposeActivity.compose(this));
+        binding.compose.setOnClickListener((v) -> composeLauncher.launch(ComposeActivity.compose()));
         if (showComposeButton() && actionMode == null) {
             binding.compose.show();
         }
@@ -119,15 +127,10 @@ public abstract class AbstractQueryFragment extends AbstractLttrsFragment implem
         threadOverviewAdapter.setEmptyMailboxAction(emptyMailboxAction);
     }
 
-    @Override
-    public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-        LOGGER.info("on activity result code={}, result={}, intent={}", requestCode, resultCode, data);
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == ComposeActivity.REQUEST_EDIT_DRAFT && resultCode == ComposeActivity.RESULT_OK) {
-            final UUID uuid = (UUID) data.getSerializableExtra(ComposeActivity.EDITING_TASK_ID_EXTRA);
-            if (uuid != null) {
-                getLttrsViewModel().observeForFailure(uuid);
-            }
+    private void onComposeResult(final Bundle data) {
+        final UUID uuid = (UUID) data.getSerializable(ComposeActivity.EDITING_TASK_ID_EXTRA);
+        if (uuid != null) {
+            getLttrsViewModel().observeForFailure(uuid);
         }
     }
 

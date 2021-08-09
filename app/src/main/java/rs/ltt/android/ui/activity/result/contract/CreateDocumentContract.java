@@ -1,4 +1,4 @@
-package rs.ltt.android.ui.activity.result;
+package rs.ltt.android.ui.activity.result.contract;
 
 import android.app.Activity;
 import android.content.Context;
