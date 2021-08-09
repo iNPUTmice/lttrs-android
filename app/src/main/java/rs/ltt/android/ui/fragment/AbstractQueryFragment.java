@@ -128,6 +128,9 @@ public abstract class AbstractQueryFragment extends AbstractLttrsFragment implem
     }
 
     private void onComposeResult(final Bundle data) {
+        if (data == null) {
+            return;
+        }
         final UUID uuid = (UUID) data.getSerializable(ComposeActivity.EDITING_TASK_ID_EXTRA);
         if (uuid != null) {
             getLttrsViewModel().observeForFailure(uuid);

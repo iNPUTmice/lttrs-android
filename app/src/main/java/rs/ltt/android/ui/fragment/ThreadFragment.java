@@ -231,6 +231,9 @@ public class ThreadFragment extends AbstractLttrsFragment implements OnFlaggedTo
     }
 
     private void onComposeResult(final Bundle data) {
+        if (data == null) {
+            return;
+        }
         final UUID uuid = (UUID) data.getSerializable(ComposeActivity.EDITING_TASK_ID_EXTRA);
         final boolean threadDiscarded = data.getBoolean(ComposeActivity.DISCARDED_THREAD_EXTRA, false);
         if (uuid != null) {
