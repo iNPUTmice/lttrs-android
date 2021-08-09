@@ -1,0 +1,1 @@
+* Fixed connectivity issues when using WebSockets

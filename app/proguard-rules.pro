@@ -10,7 +10,7 @@
 -keep class org.slf4j.** {*;}
 -keep class ch.qos.** {*;}
 
--dontwarn javax.mail.Authenticator
+-dontwarn javax.mail.**
 -dontwarn com.fasterxml.jackson.**
 -dontwarn java.lang.ClassValue
 
