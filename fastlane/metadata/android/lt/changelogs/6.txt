@@ -1,0 +1,12 @@
+Kodinis pavadinimas: Sukonfigūruota skrydžiui
+
+* Perkeldami iš 0.1.x pirmiausia išvalykite duomenis arba pašalinkite programą
+* Kelios paskyros
+* Pranešimai apie gautus el. laiškus
+* „Firebase Messaging“ arba foninė užduotis, el. laiškų tikrinimui
+* Etiketes temos rodinyje
+* Skiltis, temų etikečių keitimui
+* Įtrauktas mygtukas „Išvalyti šiukšlinę“
+* Pagalbos mygtukas(?), prašant prisijungimo URL
+
+Finansuojama iš EU „Horizontas 2020“. Projektas „NGI-POINTER“. Dotacijos sutartis Nr. 871528.

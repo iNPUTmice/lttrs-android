@@ -1,0 +1,3 @@
+* Labai elementarios el. laiškų skaitymo galimybės (tik paprastas tekstas, be priedų)
+* Archyvavimas, vėliavėlės, žymėjimas kaip perskaitytus ir neperskaitytus
+* Elektroninių laiškų rengimas (be citavimo)
