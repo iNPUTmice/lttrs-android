@@ -1,2 +1,152 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="empty">Tuščia</string>
+    <string name="foreground_service">Priekiniame plane veikianti paslauga</string>
+    <string name="unknown_host">Nepavyko išspręsti %s</string>
+    <string name="to_x">į %s</string>
+    <plurals name="x_emails_will_permanently_deleted">
+        <item quantity="one">%d laiškas bus visam laikui ištrintas.</item>
+        <item quantity="few">%d laiškai bus visam laikui ištrinti.</item>
+        <item quantity="other">%d laiškų bus visam laikui ištrinti.</item>
+    </plurals>
+    <plurals name="x_emails_in_trash">
+        <item quantity="one">Šiuo metu šiukšlinėje yra %d el. laiškas.</item>
+        <item quantity="few">Šiuo metu šiukšlinėje yra %d el. laiškai.</item>
+        <item quantity="other">Šiuo metu šiukšlinėje yra %d el. laiškų.</item>
+    </plurals>
+    <string name="attachment_download_failed_status_code_x">Nepavyko atsisiųsti priedo. (HTTP būsenos kodas %d)</string>
+    <string name="close_account_selector">Uždaryti paskyros parinkiklį</string>
+    <string name="open_account_selector">Slėpti paskyros parinkiklį</string>
+    <string name="empty_trash_dialog_title">Išvalyti šiukšlinę\?</string>
+    <string name="empty_trash">Išvalyti šiukšlinę</string>
+    <string name="combined_size_of_attachments_exceeds_the_limit_of_x">Bendras visų priedų dydis viršija %s</string>
+    <string name="upload_complete">Įkėlimas baigtas</string>
+    <string name="failed_to_upload_attachment">Nepavyko įkelti priedo</string>
+    <string name="the_file_exceeds_the_limit_of_x">Failas viršija %s ribą</string>
+    <string name="download_complete">Atsisiuntimas baigtas</string>
+    <string name="no_application_to_open_x">Jokia programa negalėjo parodyti %s. Vietoj to pabandykite priedą atsisiųsti.</string>
+    <string name="attachments">Priedai</string>
+    <string name="view_emails">Peržiūrėti el. laiškus</string>
+    <string name="remove_account_dialog_message">Pašalinus šią paskyrą iš prietaiso ištrinami visi jos pranešimai ir kiti susiję duomenys.</string>
+    <string name="remove_account_dialog_title">Pašalinti paskyrą\?</string>
+    <string name="end_to_end_encryption">Šifravimas nuo-iki</string>
+    <string name="vacation_response">Atsakymas atostogaujant</string>
+    <string name="manage_labels">Tvarkyti etiketes</string>
+    <string name="identities">Tapatybės</string>
+    <string name="remove_account">Pašalinti paskyrą</string>
+    <string name="account">Paskyra</string>
+    <string name="accounts">Paskyros</string>
+    <string name="notification_channel_name_email">El. laiškas</string>
+    <plurals name="x_new_emails">
+        <item quantity="one">%d naujas el. laiškas</item>
+        <item quantity="few">%d nauji el. laiškai</item>
+        <item quantity="other">%d naujų el. laiškų</item>
+    </plurals>
+    <string name="session_resource_help_dialog_message">Ltt.rs naudoja palyginti naują JMAP protokolą el. paštui sinchronizuoti, tačiau jūsų el. pašto paslaugų teikėjas gali jo dar nepalaikyti.
+\n
+\nKreipkitės į paslaugų teikėją ir teiraukitės apie JMAP bei JMAP ryšio URL.
+\n
+\nTinkamai sukonfigūruotame serveryje Ltt.rs automatiškai atras ryšio URL.</string>
+    <string name="session_resource_help_dialog_title">Kas yra ryšio URL\?</string>
+    <string name="role_name_subscribed">Prenumeruojama</string>
+    <string name="role_name_junk">Šlamštas</string>
+    <string name="role_name_trash">Šiukšlinė</string>
+    <string name="role_name_important">Svarbūs</string>
+    <string name="role_name_flagged">Pažymėti žvaigždute</string>
+    <string name="role_name_drafts">Juodraščiai</string>
+    <string name="role_name_archive">Archyvas</string>
+    <string name="role_name_all">Visi el. laiškai</string>
+    <string name="role_name_sent">Išsiųsti</string>
+    <string name="role_name_inbox">Gautieji</string>
+    <string name="foreground_service_notification_text">Ltt.rs nuolat veikia, kad praneštų apie gaunamus el. laiškus</string>
+    <string name="add_another_account">Pridėti kitą paskyrą</string>
+    <string name="manage_accounts">Tvarkyti paskyras</string>
+    <string name="create">Kurti</string>
+    <string name="new_label">Nauja etiketė</string>
+    <string name="reserved_mailbox_name">Pasirinkite pavadinimą, kuris dar nėra rezervuotas.</string>
+    <string name="no_name_specified">Nenurodytas pavadinimas. Bandykite dar kartą.</string>
+    <string name="enter_a_label_name">Įveskite naują etiketės pavadinimą</string>
+    <string name="apply_changes">Taikyti pakeitimus</string>
+    <string name="label_as">Žymėti kaip</string>
+    <string name="change_labels">Keisti etiketes</string>
+    <string name="cancel">Atšaukti</string>
+    <string name="confirm">Patvirtinti</string>
+    <string name="assign_role_detailed_explanation">Kad Ltt.rs veiktų teisingai, reikia etiketės (pašto dėžutės) su role %1$s. Jei šiam tikslui nenorite naudoti etiketės, pavadintos %2$s, galite bakstelėti atšaukti ir naudodami darbalaukį arba žiniatinklio klientą sukurti kitą etiketę su role %1$s.</string>
+    <string name="assign_role_question">Jau turite etiketę %1$s. Ar norėtumėte jai priskirti rolę %2$s\?</string>
+    <string name="reassign_role_question">Jau turite etiketę %1$s, kurios rolė yra %2$s. Ar norėtumėte jai iš naujo priskirti rolė %3$s\?</string>
+    <string name="assign_role">Priskirti rolę</string>
+    <string name="reassign_role">Iš naujo priskirti rolę</string>
+    <string name="could_not_store_account_credentials">Nepavyko išsaugoti paskyros kredencialų</string>
+    <string name="compose_cc">Kopija</string>
+    <string name="draft">Juodraštis</string>
+    <string name="select_sender">Pasirinkite siuntėją.</string>
+    <string name="the_address_x_is_invalid">Kažkas negerai su adresu &lt;%s&gt;</string>
+    <string name="add_at_least_one_recipient">Pridėti gavėją.</string>
+    <string name="ok">Gerai</string>
+    <string name="compose_from">Nuo</string>
+    <string name="compose_subject">Tema</string>
+    <string name="compose_compose_email">Rašyti el. laišką</string>
+    <string name="compose_to">Kam</string>
+    <string name="schedule_send">Suplanuoti siuntimą</string>
+    <string name="discard">Išmesti</string>
+    <string name="send">Siųsti</string>
+    <string name="attach_file">Pridėti failą</string>
+    <string name="compose">Rašyti</string>
+    <string name="unable_to_fetch_session">Nepavyko iškviesti sesijos: %s</string>
+    <string name="no_network_connection">Prisijunkite prie interneto</string>
+    <string name="unable_to_verify_service_identity">Nepavyko patvirtinti tapatybės</string>
+    <string name="unable_to_establish_secure_connection">Nepavyko užmegzti saugaus ryšio</string>
+    <string name="timeout_reached">Bandant prisijungti prie el. pašto paslaugos baigėsi skirtasis laikas</string>
+    <string name="endpoint_not_found">Šiuo adresu el. pašto paslauga nerasta</string>
+    <string name="unable_to_connect">Nepavyko prisijungti prie el. pašto paslaugos</string>
+    <string name="invalid_session_resource">Šiuo adresu nėra galiojančios el. pašto paslaugos</string>
+    <string name="enter_a_secure_url">Įveskite saugų URL adresą</string>
+    <string name="enter_a_valid_url">Įveskite galiojantį prisijungimo URL adresą</string>
+    <string name="enter_your_connection_url">Įveskite savo prisijungimo URL adresą</string>
+    <string name="information_required">Būtina informacija</string>
+    <string name="wrong_password">Neteisingas slaptažodis. Bandykite dar kartą.</string>
+    <string name="enter_a_password">Įveskite slaptažodį</string>
+    <string name="enter_your_password">Įveskite savo slaptažodį</string>
+    <string name="welcome">Sveiki</string>
+    <string name="enter_a_valid_email_address">Įveskite galiojantį el. pašto adresą</string>
+    <string name="enter_an_email_address">Įveskite el. pašto adresą</string>
+    <string name="next">Toliau</string>
+    <string name="sign_in_instruction">su savo el. pašto paskyra.</string>
+    <string name="email_address">El. pašto adresas</string>
+    <string name="sign_in">Prisijungti</string>
+    <string name="deleted">Ištrinta</string>
+    <plurals name="n_deleted">
+        <item quantity="one">%d ištrintas</item>
+        <item quantity="few">%d ištrinti</item>
+        <item quantity="other">%d ištrinti</item>
+    </plurals>
+    <string name="undo">Atstatyti</string>
+    <plurals name="n_archived">
+        <item quantity="one">%d suarchyvuotas</item>
+        <item quantity="few">%d suarchyvuoti</item>
+        <item quantity="other">%d suarchyvuoti</item>
+    </plurals>
+    <plurals name="n_removed_from_x">
+        <item quantity="one">%d pašalintas iš %s</item>
+        <item quantity="few">%d pašalinti iš %s</item>
+        <item quantity="other">%d pašalinti iš %s</item>
+    </plurals>
+    <string name="mark_not_important">Pažymėti kaip nesvarbų</string>
+    <string name="search_hint">Ieškoti el. laiške</string>
+    <string name="remove_label">Pašalinti etiketę</string>
+    <string name="remove_label_x">Pašalinti etiketę %s</string>
+    <plurals name="n_moved_to_inbox">
+        <item quantity="one">%d perkeltas į gautuosius</item>
+        <item quantity="few">%d perkelti į gautuosius</item>
+        <item quantity="other">%d perkelti į gautuosius</item>
+    </plurals>
+    <string name="move_to_inbox">Perkelti į gautuosius</string>
+    <string name="archive">Archyvuoti</string>
+    <string name="search">Ieškoti</string>
+    <string name="remove_flag">Šalinti vėliavėlę</string>
+    <string name="add_flag">Pridėti vėliavėlę</string>
+    <string name="mark_important">Pažymėti kaip svarbų</string>
+    <string name="delete">Ištrinti</string>
+    <string name="mark_read">Žymėti kaip skaitytą</string>
+    <string name="mark_unread">Žymėti kaip neskaitytą</string>
+</resources>
