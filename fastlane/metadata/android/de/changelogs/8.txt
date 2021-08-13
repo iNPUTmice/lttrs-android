@@ -1,0 +1,1 @@
+* Verbindungsprobleme bei der Verwendung von WebSockets behoben
