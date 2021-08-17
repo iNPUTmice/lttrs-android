@@ -1,0 +1,1 @@
+* Corretti problemi di connessione usando i WebSocket
