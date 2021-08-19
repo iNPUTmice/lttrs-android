@@ -17,9 +17,12 @@ buildscript {
     repositories {
         google()
         mavenCentral()
+        maven {
+            url 'https://storage.googleapis.com/r8-releases/raw'
+        }
     }
     dependencies {
-        classpath 'com.android.tools:r8:2.2.64' // must be before com.android.tools.build:gradle
+        classpath 'com.android.tools:r8:3.1.16-dev'
         classpath 'com.android.tools.build:gradle:7.0.0'
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$navVersion"
     }
