@@ -19,5 +19,5 @@ jobs:
       run: find . -name '*.apk' | xargs sha256sum
     - uses: actions/upload-artifact@v2
       with:
-        name: Ltt.rs APK
-        path: ./app/build/outputs/apk/**/Ltt.rs-*.apk
+        name: Ltt.rs all-flavors (debug)
+        path: ./app/build/outputs/apk/**/debug/Ltt.rs-*.apk
