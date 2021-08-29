@@ -75,4 +75,31 @@
         <item quantity="one">%d nova mensagem</item>
         <item quantity="other">%d novas mensagens</item>
     </plurals>
+    <string name="notification_channel_name_email">E-mail</string>
+    <string name="session_resource_help_dialog_title">O que é um URL de conexão\?</string>
+    <string name="role_name_junk">Spam</string>
+    <string name="role_name_trash">Lixo</string>
+    <string name="role_name_important">Importante</string>
+    <string name="role_name_flagged">Estrelado</string>
+    <string name="role_name_drafts">Rascunhos</string>
+    <string name="role_name_archive">Arquivo</string>
+    <string name="role_name_sent">Enviados</string>
+    <string name="role_name_inbox">Caixa de entrada</string>
+    <string name="foreground_service">Serviço de primeiro plano</string>
+    <string name="foreground_service_notification_text">Ltt.rs continua em execução para notificar sobre correios eletrônicos recebidos</string>
+    <string name="add_another_account">Adicionar outra conta</string>
+    <string name="manage_accounts">Gerir contas</string>
+    <string name="create">Criar</string>
+    <string name="new_label">Nova etiqueta</string>
+    <string name="no_name_specified">Nenhum nome especificado. Tente novamente.</string>
+    <string name="enter_a_label_name">Digite um novo nome de etiqueta</string>
+    <string name="apply_changes">Aplicar alterações</string>
+    <string name="change_labels">Mudar etiquetas</string>
+    <string name="cancel">Cancelar</string>
+    <string name="confirm">Confirmar</string>
+    <string name="assign_role_detailed_explanation">Ltt.rs precisa de uma etiqueta (caixa de correio) com a função de %1$s para funcionar corretamente. Se não quiser usar a etiqueta chamada %2$s para esse fim, pode tocar em cancelar e usar o seu cliente desktop ou web para criar uma função diferente com a função de %1$s.</string>
+    <string name="assign_role_question">Já tem uma etiqueta chamada %1$s. Gostaria de atribui-la com a função de %2$s\?</string>
+    <string name="reassign_role_question">Já tem uma etiqueta chamada %1$s com a função de %2$s. Gostaria de reatribuí-la com a função de %3$s\?</string>
+    <string name="assign_role">Atribuir função</string>
+    <string name="reassign_role">Reatribuir função</string>
 </resources>
