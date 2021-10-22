@@ -1,0 +1,12 @@
+Nome in codice: Configurato per il volo
+
+* Pulire i dati o disinstallare l'app prima di migrare dalla 0.1.x
+* Account multipli
+* Notifica email
+* Firebase Messaging o processo in background per controllare le email
+* Etichette nelle discussioni
+* Modifica etichette nelle discussioni
+* Pulsante 'Svuota cestino'
+* Pulsante aiuto (?) alla richiesta URL di connessione
+
+Questo progetto ha ricevuto un finanziamento da Horizon 2020 dell'UE nell'ambito del progetto NGI-POINTER (sovvenzione n. 871528).
