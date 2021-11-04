@@ -3,12 +3,11 @@ apply plugin: "androidx.navigation.safeargs"
 
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion '30.0.2'
+    compileSdkVersion 31
     defaultConfig {
         applicationId "rs.ltt.android"
         minSdkVersion 23
-        targetSdkVersion 30
+        targetSdkVersion 31
         versionCode 8
         versionName "0.2.2"
 
@@ -113,7 +112,7 @@ dependencies {
     implementation "com.google.android.material:material:$rootProject.ext.material"
 
     //Google - Firebase Messaging
-    playstoreImplementation('com.google.firebase:firebase-messaging:22.0.0') {
+    playstoreImplementation('com.google.firebase:firebase-messaging:23.0.0') {
         exclude group: 'com.google.firebase', module: 'firebase-core'
         exclude group: 'com.google.firebase', module: 'firebase-analytics'
         exclude group: 'com.google.firebase', module: 'firebase-measurement-connector'

@@ -78,6 +78,6 @@ public class ForegroundServiceNotification {
 
     private static PendingIntent launchLttrs(final Context context) {
         final Intent main = new Intent(context, MainActivity.class);
-        return PendingIntent.getActivity(context, 0, main, PendingIntent.FLAG_UPDATE_CURRENT);
+        return PendingIntent.getActivity(context, 0, main, PendingIntent.FLAG_IMMUTABLE);
     }
 }

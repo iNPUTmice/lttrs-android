@@ -52,6 +52,7 @@
 
         <activity
             android:name=".ui.activity.MainActivity"
+            android:exported="true"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -66,6 +67,7 @@
          of creating a new activity. -->
         <activity
             android:name=".ui.activity.LttrsActivity"
+            android:exported="false"
             android:launchMode="singleTask"
             android:theme="@style/LttrsTheme">
             <intent-filter>
@@ -89,6 +91,7 @@
 
         <activity
             android:name=".ui.activity.ComposeActivity"
+            android:exported="true"
             android:label="@string/compose"
             android:parentActivityName=".ui.activity.LttrsActivity">
             <intent-filter>

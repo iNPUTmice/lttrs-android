@@ -8,7 +8,7 @@ buildscript {
         recyclerViewVersion = "1.2.1"
         swipeRefreshLayoutVersion = "1.1.0"
         roomVersion = "2.3.0"
-        workVersion = "2.6.0-beta02"
+        workVersion = "2.7.0"
         muaVersion = "0.7.4"
         espressoVersion = "3.4.0"
         material = "1.4.0"
@@ -23,7 +23,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools:r8:3.1.16-dev'
-        classpath 'com.android.tools.build:gradle:7.0.1'
+        classpath 'com.android.tools.build:gradle:7.0.3'
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$navVersion"
     }
 }
