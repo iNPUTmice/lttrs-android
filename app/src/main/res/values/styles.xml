@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright 2019 Daniel Gultsch
+  ~ Copyright 2019-2021 Daniel Gultsch
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
   ~ You may obtain a copy of the License at
@@ -15,12 +15,20 @@
 
 <resources>
 
-    <style name="BaseTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <!-- The DayNightTheme themes attributes that differ between Dark and Light mode -->
+    <style name="DayNightTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="highlightOpacity">0.12</item>
+    </style>
+
+    <!-- The BaseTheme themes attributes that are shared between Dark and Light mode -->
+    <style name="BaseTheme" parent="DayNightTheme">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <!-- The MainTheme themes attributes that differ between < API 27 and API 27+
+      (see values-v27/styles.xml -->
     <style name="MainTheme" parent="BaseTheme" />
 
     <style name="LttrsTheme" parent="MainTheme">

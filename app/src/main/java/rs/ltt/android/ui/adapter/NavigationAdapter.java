@@ -223,7 +223,7 @@ public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.Ab
             }
         });
         if (same(label, this.selectedLabel)) {
-            viewHolder.binding.item.setBackgroundColor(ContextCompat.getColor(context, R.color.primary12));
+            viewHolder.binding.item.setBackgroundColor(ContextCompat.getColor(context, R.color.primary_highlight));
             ImageViewCompat.setImageTintList(viewHolder.binding.icon, ColorStateList.valueOf(ContextCompat.getColor(context, R.color.colorPrimary)));
         } else {
             final TypedValue outValue = new TypedValue();

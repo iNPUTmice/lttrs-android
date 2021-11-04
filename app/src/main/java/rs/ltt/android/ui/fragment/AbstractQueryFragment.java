@@ -37,6 +37,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.color.MaterialColors;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
@@ -105,7 +106,7 @@ public abstract class AbstractQueryFragment extends AbstractLttrsFragment implem
 
         getViewLifecycleOwner().getLifecycle().addObserver(this);
 
-        binding.swipeToRefresh.setColorSchemeResources(R.color.colorAccent);
+        binding.swipeToRefresh.setColorSchemeColors(MaterialColors.getColor(binding.swipeToRefresh, R.attr.colorAccent));
         binding.swipeToRefresh.setProgressBackgroundColorSchemeColor(
                 ContextCompat.getColor(requireContext(), R.color.colorSurface)
         );
