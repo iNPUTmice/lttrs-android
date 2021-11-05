@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <attr name="highlightOpacity" format="float" />
+    <attr name="opacityHighlight" format="float" />
     <attr name="colorIndicator" format="color|reference" />
 </resources>

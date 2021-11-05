@@ -1,7 +1,7 @@
 <resources>
 
     <style name="DayNightTheme" parent="Theme.MaterialComponents.NoActionBar">
-        <item name="highlightOpacity">0.26</item>
+        <item name="opacityHighlight">0.26</item>
         <item name="colorAccent">@color/material_pink_accent_200</item>
         <item name="colorIndicator">@color/material_amber_300</item>
     </style>
