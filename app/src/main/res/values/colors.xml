@@ -16,8 +16,9 @@
 <resources>
     <color name="material_teal_600">#00897B</color>
     <color name="material_teal_900">#004D40</color>
+    <color name="material_pink_accent_200">#FFFF4081</color>
+    <color name="material_pink_accent_700">#FFC51162</color>
     <color name="colorActionModeBackground">#ff424242</color> <!-- gray 800 -->
-    <color name="colorAccent">#FFC51162</color> <!-- pink a700 -->
     <color name="colorOnSurface">#de000000</color> <!-- black 87 -->
     <color name="colorSecondaryOnSurface">#8a000000</color> <!-- black 54 -->
     <color name="colorShadowOnPrimary">#1f000000</color> <!-- black 12, might be increased to black 20 -->

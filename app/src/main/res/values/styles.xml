@@ -18,13 +18,13 @@
     <!-- The DayNightTheme themes attributes that differ between Dark and Light mode -->
     <style name="DayNightTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="highlightOpacity">0.12</item>
+        <item name="colorAccent">@color/material_pink_accent_700</item>
     </style>
 
     <!-- The BaseTheme themes attributes that are shared between Dark and Light mode -->
     <style name="BaseTheme" parent="DayNightTheme">
         <item name="colorPrimary">@color/material_teal_600</item>
         <item name="colorPrimaryDark">@color/material_teal_900</item>
-        <item name="colorAccent">@color/colorAccent</item>
     </style>
 
     <!-- The MainTheme themes attributes that differ between < API 27 and API 27+

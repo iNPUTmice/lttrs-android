@@ -2,5 +2,6 @@
 
     <style name="DayNightTheme" parent="Theme.MaterialComponents.NoActionBar">
         <item name="highlightOpacity">0.26</item>
+        <item name="colorAccent">@color/material_pink_accent_200</item>
     </style>
 </resources>
