@@ -19,6 +19,7 @@
     <style name="DayNightTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="highlightOpacity">0.12</item>
         <item name="colorAccent">@color/material_pink_accent_700</item>
+        <item name="colorIndicator">@color/material_amber_500</item>
     </style>
 
     <!-- The BaseTheme themes attributes that are shared between Dark and Light mode -->

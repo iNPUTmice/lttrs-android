@@ -18,6 +18,8 @@
     <color name="material_teal_900">#004D40</color>
     <color name="material_pink_accent_200">#FFFF4081</color>
     <color name="material_pink_accent_700">#FFC51162</color>
+    <color name="material_amber_300">#FFFFD54F</color>
+    <color name="material_amber_500">#FFFFC107</color>
     <color name="colorActionModeBackground">#ff424242</color> <!-- gray 800 -->
     <color name="colorOnSurface">#de000000</color> <!-- black 87 -->
     <color name="colorSecondaryOnSurface">#8a000000</color> <!-- black 54 -->
@@ -27,7 +29,6 @@
     <color name="colorSurface">#ffffffff</color> <!-- white -->
     <color name="colorDivider">#1f000000</color> <!-- black 12 -->
     <color name="colorOnPrimary">#ffffffff</color> <!-- white -->
-    <color name="indicator">#FFFFC107</color> <!-- amber 500 -->
     <color name="colorSurfaceWarning">#ffE57373</color> <!-- red 300 -->
     <color name="colorStatusBarSearch">#ff757575</color>
     <color name="navigationBarDivider">#1f000000</color> <!-- black 12 -->

@@ -24,5 +24,4 @@
     <color name="colorSurfaceWarning">#ffB71C1C</color> <!-- red 900 -->
     <color name="colorStatusBarSearch">#ff212121</color>
     <color name="navigationBarDivider">#47000000</color> <!-- black 28 -->
-    <color name="indicator">#FFFFD54F</color> <!-- amber 300 -->
 </resources>

@@ -230,7 +230,7 @@ public class BindingAdapters {
     public static void setIsFlagged(final ImageView imageView, final boolean isFlagged) {
         if (isFlagged) {
             imageView.setImageResource(R.drawable.ic_star_black_no_padding_24dp);
-            ImageViewCompat.setImageTintList(imageView, ColorStateList.valueOf(ContextCompat.getColor(imageView.getContext(), R.color.indicator)));
+            ImageViewCompat.setImageTintList(imageView, ColorStateList.valueOf(MaterialColors.getColor(imageView, R.attr.colorIndicator)));
         } else {
             imageView.setImageResource(R.drawable.ic_star_border_no_padding_black_24dp);
             ImageViewCompat.setImageTintList(imageView, ColorStateList.valueOf(ContextCompat.getColor(imageView.getContext(), R.color.colorSecondaryOnSurface)));
@@ -269,7 +269,7 @@ public class BindingAdapters {
                     .append(NARROW_NON_BREAKING_SPACE)
                     .append(RIGHT_POINTING_DOUBLE_ANGLE_QUOTATION_MARK);
             header.setSpan(
-                    new ImageSpan(text.getContext(), R.drawable.ic_important_amber_22sp, ImageSpan.ALIGN_BASELINE),
+                    new ImageSpan(text.getContext(), R.drawable.ic_important_indicator_22sp, ImageSpan.ALIGN_BASELINE),
                     header.length() - 1,
                     header.length(),
                     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
