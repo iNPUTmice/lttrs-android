@@ -46,6 +46,7 @@ import androidx.navigation.NavDestination;
 import androidx.navigation.NavOptions;
 import androidx.work.WorkInfo;
 
+import com.google.android.material.color.MaterialColors;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
@@ -627,8 +628,8 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
 
     private void resetToolbar() {
         setDisplayShowTitleEnable(true);
-        binding.toolbar.setBackgroundColor(Theme.getColor(LttrsActivity.this, R.attr.colorPrimary));
-        binding.drawerLayout.setStatusBarBackgroundColor(Theme.getColor(LttrsActivity.this, R.attr.colorPrimaryDark));
+        binding.toolbar.setBackgroundColor(MaterialColors.getColor(binding.toolbar, R.attr.colorPrimary));
+        binding.drawerLayout.setStatusBarBackgroundColor(MaterialColors.getColor(binding.drawerLayout, R.attr.colorPrimaryDark));
     }
 
     private void prepareToolbarForSearch() {

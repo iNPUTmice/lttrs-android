@@ -22,8 +22,8 @@
 
     <!-- The BaseTheme themes attributes that are shared between Dark and Light mode -->
     <style name="BaseTheme" parent="DayNightTheme">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimary">@color/material_teal_600</item>
+        <item name="colorPrimaryDark">@color/material_teal_900</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
@@ -44,7 +44,7 @@
     </style>
 
     <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
-        <item name="colorPrimaryDark">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/material_teal_600</item>
         <item name="android:windowBackground">@drawable/splash_background</item>
     </style>
 
@@ -83,7 +83,7 @@
 
     <style name="AppNameTheme" parent="TextAppearance.AppCompat.Title">
         <item name="android:fontFamily">serif</item>
-        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:textColor">@color/material_teal_600</item>
     </style>
 
 </resources>

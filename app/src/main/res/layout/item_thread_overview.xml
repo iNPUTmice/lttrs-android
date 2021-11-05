@@ -39,7 +39,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/colorPrimaryDark">
+            android:background="@color/material_teal_900">
 
             <ImageView
                 android:id="@+id/start_swipe_action_indicator"

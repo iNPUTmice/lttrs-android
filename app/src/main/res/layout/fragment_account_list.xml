@@ -37,7 +37,7 @@
             android:layout_margin="16dp"
             android:src="@drawable/ic_baseline_add_account_24"
             android:visibility="visible"
-            app:backgroundTint="@color/colorPrimary"
+            app:backgroundTint="?attr/colorPrimary"
             app:tint="@color/colorOnPrimary" />
 
     </FrameLayout>

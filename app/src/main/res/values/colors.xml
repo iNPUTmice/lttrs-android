@@ -14,9 +14,8 @@
   -->
 
 <resources>
-    <color name="colorPrimary">#00897B</color> <!-- teal 600 -->
-    <color name="colorPrimaryDark">#004D40</color> <!-- teal 900 -->
-    <color name="colorPrimaryOnSurface">#00796B</color> <!-- teal 700 -->
+    <color name="material_teal_600">#00897B</color>
+    <color name="material_teal_900">#004D40</color>
     <color name="colorActionModeBackground">#ff424242</color> <!-- gray 800 -->
     <color name="colorAccent">#FFC51162</color> <!-- pink a700 -->
     <color name="colorOnSurface">#de000000</color> <!-- black 87 -->

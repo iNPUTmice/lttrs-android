@@ -33,6 +33,9 @@ import androidx.recyclerview.widget.AsyncListDiffer;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.color.MaterialColors;
+import com.google.android.material.resources.MaterialResources;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +49,7 @@ import rs.ltt.android.databinding.ItemNavigationLabelBinding;
 import rs.ltt.android.entity.AccountName;
 import rs.ltt.android.entity.MailboxOverviewItem;
 import rs.ltt.android.ui.AdditionalNavigationItem;
+import rs.ltt.android.ui.MaterialBackgrounds;
 import rs.ltt.android.util.ConsistentColorGeneration;
 import rs.ltt.jmap.mua.util.AccountUtil;
 import rs.ltt.jmap.mua.util.KeywordLabel;
@@ -224,11 +228,11 @@ public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.Ab
         });
         if (same(label, this.selectedLabel)) {
             viewHolder.binding.item.setBackgroundColor(ContextCompat.getColor(context, R.color.primary_highlight));
-            ImageViewCompat.setImageTintList(viewHolder.binding.icon, ColorStateList.valueOf(ContextCompat.getColor(context, R.color.colorPrimary)));
+            ImageViewCompat.setImageTintList(viewHolder.binding.icon, ColorStateList.valueOf(MaterialColors.getColor(viewHolder.binding.item, R.attr.colorPrimary)));
         } else {
-            final TypedValue outValue = new TypedValue();
-            context.getTheme().resolveAttribute(android.R.attr.selectableItemBackground, outValue, true);
-            viewHolder.binding.item.setBackgroundResource(outValue.resourceId);
+            viewHolder.binding.item.setBackgroundResource(
+                    MaterialBackgrounds.getBackgroundResource(context, android.R.attr.selectableItemBackground)
+            );
             ImageViewCompat.setImageTintList(viewHolder.binding.icon, ColorStateList.valueOf(ContextCompat.getColor(context, R.color.colorSecondaryOnSurface)));
         }
     }

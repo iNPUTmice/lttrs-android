@@ -15,7 +15,7 @@ import rs.ltt.android.R;
 import rs.ltt.android.ui.activity.MainActivity;
 import rs.ltt.jmap.client.event.State;
 
-public class ForegroundServiceNotification {
+public class ForegroundServiceNotification extends AbstractNotification {
 
     public static final int ID = 1;
 
@@ -56,7 +56,7 @@ public class ForegroundServiceNotification {
         notificationBuilder.setContentText(context.getString(R.string.foreground_service_notification_text));
         notificationBuilder.setSmallIcon(drawable(state));
         notificationBuilder.setShowWhen(false);
-        notificationBuilder.setColor(context.getColor(R.color.colorPrimary));
+        notificationBuilder.setColor(getColor(context, R.attr.colorPrimary));
         notificationBuilder.setContentIntent(launchLttrs(context));
         return notificationBuilder.build();
     }

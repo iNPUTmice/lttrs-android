@@ -36,7 +36,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="32dp"
                 app:role="@{mailbox.getRole()}"
-                app:tint="@color/colorPrimary"
+                app:tint="?attr/colorPrimary"
                 tools:src="@drawable/ic_label_black_24dp" />
 
             <TextView
@@ -65,7 +65,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="32dp"
-                app:tint="@color/colorPrimary"
+                app:tint="?attr/colorPrimary"
                 app:role="@{role}"
                 tools:src="@drawable/ic_archive_black_24dp" />
 

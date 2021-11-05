@@ -41,7 +41,7 @@
                 android:layout_gravity="bottom|end"
                 android:layout_margin="16dp"
                 android:src="@drawable/ic_baseline_add_24"
-                app:backgroundTint="@color/colorPrimary"
+                app:backgroundTint="?attr/colorPrimary"
                 app:tint="@color/colorOnPrimary" />
         </FrameLayout>
 

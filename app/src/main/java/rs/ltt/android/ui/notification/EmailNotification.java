@@ -36,7 +36,7 @@ import rs.ltt.android.ui.AvatarDrawable;
 import rs.ltt.android.ui.activity.LttrsActivity;
 import rs.ltt.jmap.mua.util.KeywordUtil;
 
-public class EmailNotification {
+public class EmailNotification extends AbstractNotification {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EmailNotification.class);
 
@@ -242,7 +242,7 @@ public class EmailNotification {
                 .setLargeIcon(avatar.toBitmap())
                 .setWhen(email.receivedAt.toEpochMilli())
                 .setStyle(bigTextStyle)
-                .setColor(context.getColor(R.color.colorPrimary))
+                .setColor(getColor(context, R.attr.colorPrimary))
                 .setGroup(getGroupKey(account))
                 .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_CHILDREN)
                 .setContentIntent(getPendingIntent(email))
@@ -271,7 +271,7 @@ public class EmailNotification {
                         context.getResources().getQuantityString(R.plurals.x_new_emails, emails.size(), emails.size())
                 )
                 .setStyle(inboxStyle)
-                .setColor(context.getColor(R.color.colorPrimary))
+                .setColor(getColor(context, R.attr.colorPrimary))
                 .setGroup(getGroupKey(account))
                 .setGroupSummary(true)
                 .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_CHILDREN)

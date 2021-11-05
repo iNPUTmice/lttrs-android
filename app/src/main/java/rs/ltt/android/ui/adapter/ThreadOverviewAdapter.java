@@ -31,6 +31,8 @@ import androidx.recyclerview.widget.AsyncDifferConfig;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.color.MaterialColors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,6 +49,7 @@ import rs.ltt.android.entity.MailboxWithRoleAndName;
 import rs.ltt.android.entity.ThreadOverviewItem;
 import rs.ltt.android.ui.BindingAdapters;
 import rs.ltt.android.ui.EmptyMailboxAction;
+import rs.ltt.android.ui.MaterialBackgrounds;
 import rs.ltt.android.util.Touch;
 
 public class ThreadOverviewAdapter extends RecyclerView.Adapter<ThreadOverviewAdapter.AbstractThreadOverviewViewHolder> {
@@ -171,9 +174,9 @@ public class ThreadOverviewAdapter extends RecyclerView.Adapter<ThreadOverviewAd
         if (selected) {
             threadOverviewHolder.binding.threadLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.selected_background));
         } else {
-            final TypedValue outValue = new TypedValue();
-            context.getTheme().resolveAttribute(android.R.attr.selectableItemBackground, outValue, true);
-            threadOverviewHolder.binding.threadLayout.setBackgroundResource(outValue.resourceId);
+            threadOverviewHolder.binding.threadLayout.setBackgroundResource(
+                    MaterialBackgrounds.getBackgroundResource(context, android.R.attr.selectableItemBackground)
+            );
         }
     }
 

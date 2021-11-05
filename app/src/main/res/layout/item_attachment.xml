@@ -30,7 +30,7 @@
                 android:layout_centerVertical="true"
                 android:layout_margin="12dp"
                 android:src="@{attachment.mediaType}"
-                app:tint="@color/colorPrimary"
+                app:tint="?attr/colorPrimary"
                 tools:src="@drawable/ic_archive_black_24dp" />
 
             <TextView

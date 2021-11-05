@@ -37,6 +37,7 @@ import androidx.core.widget.ImageViewCompat;
 import androidx.databinding.BindingAdapter;
 import androidx.lifecycle.LiveData;
 
+import com.google.android.material.color.MaterialColors;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.common.base.Strings;
@@ -154,7 +155,7 @@ public class BindingAdapters {
             final Context context = textView.getContext();
             final SpannableString spannable = new SpannableString(context.getString(R.string.draft));
             spannable.setSpan(
-                    new ForegroundColorSpan(ContextCompat.getColor(context, R.color.colorPrimary)),
+                    new ForegroundColorSpan(MaterialColors.getColor(textView, R.attr.colorPrimary)),
                     0,
                     spannable.length(),
                     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -178,7 +179,7 @@ public class BindingAdapters {
                     final Context context = textView.getContext();
                     builder.append(context.getString(R.string.draft));
                     builder.setSpan(
-                            new ForegroundColorSpan(ContextCompat.getColor(context, R.color.colorPrimary)),
+                            new ForegroundColorSpan(MaterialColors.getColor(textView, R.attr.colorPrimary)),
                             start,
                             builder.length(),
                             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE

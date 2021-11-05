@@ -22,15 +22,7 @@ import android.view.View;
 
 public final class Theme {
 
-    public static boolean isRtl(Context context) {
+    public static boolean isRtl(final Context context) {
         return context.getResources().getConfiguration().getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
-    }
-
-    public static int getColor(Context context, int id) {
-        Resources.Theme theme = context.getTheme();
-        TypedArray a = theme.obtainStyledAttributes(new int[]{id});
-        int result = a.getColor(0, 0);
-        a.recycle();
-        return result;
     }
 }
