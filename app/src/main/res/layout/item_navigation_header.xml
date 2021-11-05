@@ -27,6 +27,8 @@
             android:layout_height="192dp"
             android:scaleType="centerCrop"
             android:src="@drawable/cover"
+            android:tintMode="multiply"
+            app:tint="?attr/colorPrimary"
             tools:ignore="ContentDescription" />
 
         <RelativeLayout
