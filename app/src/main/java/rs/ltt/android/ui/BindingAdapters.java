@@ -32,7 +32,6 @@ import android.widget.TextView;
 
 import androidx.annotation.DrawableRes;
 import androidx.appcompat.widget.AppCompatSpinner;
-import androidx.core.content.ContextCompat;
 import androidx.core.widget.ImageViewCompat;
 import androidx.databinding.BindingAdapter;
 import androidx.lifecycle.LiveData;
@@ -233,7 +232,7 @@ public class BindingAdapters {
             ImageViewCompat.setImageTintList(imageView, ColorStateList.valueOf(MaterialColors.getColor(imageView, R.attr.colorIndicator)));
         } else {
             imageView.setImageResource(R.drawable.ic_star_border_no_padding_black_24dp);
-            ImageViewCompat.setImageTintList(imageView, ColorStateList.valueOf(ContextCompat.getColor(imageView.getContext(), R.color.colorSecondaryOnSurface)));
+            ImageViewCompat.setImageTintList(imageView, ColorStateList.valueOf(MaterialColors.getColor(imageView, R.attr.colorControlNormal)));
         }
     }
 

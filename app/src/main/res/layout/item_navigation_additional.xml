@@ -32,7 +32,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginEnd="32dp"
             tools:src="@drawable/ic_baseline_manage_accounts_24"
-            app:tint="@color/colorSecondaryOnSurface" />
+            app:tint="?attr/colorControlNormal" />
 
         <TextView
             android:id="@+id/label"

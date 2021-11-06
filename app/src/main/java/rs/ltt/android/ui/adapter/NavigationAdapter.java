@@ -17,7 +17,6 @@ package rs.ltt.android.ui.adapter;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,7 +33,6 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.color.MaterialColors;
-import com.google.android.material.resources.MaterialResources;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -233,7 +231,7 @@ public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.Ab
             viewHolder.binding.item.setBackgroundResource(
                     MaterialBackgrounds.getBackgroundResource(context, android.R.attr.selectableItemBackground)
             );
-            ImageViewCompat.setImageTintList(viewHolder.binding.icon, ColorStateList.valueOf(ContextCompat.getColor(context, R.color.colorSecondaryOnSurface)));
+            ImageViewCompat.setImageTintList(viewHolder.binding.icon, ColorStateList.valueOf(MaterialColors.getColor(viewHolder.binding.item, R.attr.colorControlNormal)));
         }
     }
 

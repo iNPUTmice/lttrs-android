@@ -4,6 +4,7 @@
         <item name="opacityHighlight">0.26</item>
         <item name="colorAccent">@color/material_pink_accent_200</item>
         <item name="colorIndicator">@color/material_amber_300</item>
+        <item name="colorControlNormal">@color/material_white_70</item>
     </style>
 
     <style name="SearchViewTheme" parent="Widget.AppCompat.SearchView.ActionBar">
@@ -17,6 +18,10 @@
         <item name="android:textColorPrimary">@android:color/white</item>
         <item name="android:textColorSecondary">@color/material_white_70</item>
         <item name="android:textColorHint">@color/material_white_70</item>
+    </style>
+
+    <style name="ToolbarTheme.DayNight" parent="ToolbarTheme">
+        <item name="colorControlNormal">@color/material_white_70</item>
     </style>
 
 </resources>

@@ -20,6 +20,7 @@
         <item name="opacityHighlight">0.12</item>
         <item name="colorAccent">@color/material_pink_accent_700</item>
         <item name="colorIndicator">@color/material_amber_500</item>
+        <item name="colorControlNormal">@color/material_black_60</item>
     </style>
 
     <!-- The BaseTheme themes attributes that are shared between Dark and Light mode -->
@@ -38,7 +39,7 @@
         <item name="android:windowTranslucentStatus">true</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="actionModeBackground">@drawable/action_mode_background</item>
-        <item name="actionModeCloseDrawable">@drawable/ic_arrow_back_white_24dp</item>
+        <item name="actionModeCloseDrawable">@drawable/ic_arrow_back_24dp</item>
     </style>
 
     <style name="SetupTheme" parent="MainTheme">
@@ -73,10 +74,19 @@
         <item name="searchViewStyle">@style/SearchViewTheme</item>
         <item name="android:actionOverflowButtonStyle">@style/ActionButton.Overflow</item>
         <item name="actionModeStyle">@style/ActionMode</item>
+        <item name="actionModeCloseButtonStyle">@style/ActionModeCloseButtonStyle</item>
+    </style>
+
+    <style name="ToolbarTheme.DayNight" parent="ToolbarTheme">
+        <item name="colorControlNormal">@color/material_black_60</item>
     </style>
 
     <style name="ActionMode" parent="@style/Widget.AppCompat.ActionMode">
         <item name="titleTextStyle">@style/ActionMode.Title</item>
+    </style>
+
+    <style name="ActionModeCloseButtonStyle" parent="Widget.AppCompat.ActionButton.CloseMode">
+        <item name="android:tint">@android:color/white</item>
     </style>
 
     <style name="ActionMode.Title" parent="@style/TextAppearance.AppCompat.Widget.ActionMode.Title">

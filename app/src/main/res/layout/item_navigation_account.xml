@@ -39,7 +39,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginEnd="32dp"
             android:src="@drawable/ic_baseline_account_box_24"
-            app:tint="@color/colorSecondaryOnSurface" />
+            app:tint="?attr/colorControlNormal" />
 
         <TextView
             android:layout_width="wrap_content"

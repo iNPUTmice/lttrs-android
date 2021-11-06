@@ -28,7 +28,6 @@
 
 
     <color name="colorActionModeBackground">#ff424242</color> <!-- gray 800 -->
-    <color name="colorSecondaryOnSurface">#8a000000</color> <!-- black 54 -->
     <color name="colorBackground">#ffffffff</color> <!-- white -->
     <color name="colorBackgroundSecondary">#eeeeee</color> <!-- gray 200 -->
     <color name="colorSurface">#ffffffff</color> <!-- white -->

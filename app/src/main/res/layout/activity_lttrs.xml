@@ -40,7 +40,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
                     android:background="?attr/colorPrimary"
-                    android:theme="@style/ToolbarTheme"
+                    android:theme="@style/ToolbarTheme.DayNight"
                     app:collapseIcon="@drawable/ic_arrow_back_24dp"
                     app:popupTheme="@style/ThemeOverlay.AppCompat.DayNight"/>
                 <View
