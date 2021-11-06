@@ -38,7 +38,7 @@
             android:src="@drawable/ic_baseline_add_account_24"
             android:visibility="visible"
             app:backgroundTint="?attr/colorPrimary"
-            app:tint="@color/colorOnPrimary" />
+            app:tint="?attr/colorOnPrimary" />
 
     </FrameLayout>
 </layout>

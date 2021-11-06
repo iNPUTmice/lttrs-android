@@ -26,6 +26,8 @@
     <style name="BaseTheme" parent="DayNightTheme">
         <item name="colorPrimary">@color/material_teal_600</item>
         <item name="colorPrimaryDark">@color/material_teal_900</item>
+        <item name="colorOnPrimary">@android:color/white</item>
+        <item name="colorShadowOnPrimary">@color/material_black_12</item>
     </style>
 
     <!-- The MainTheme themes attributes that differ between < API 27 and API 27+

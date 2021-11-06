@@ -36,7 +36,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:background="@color/colorShadowOnPrimary"
+            android:background="?attr/colorShadowOnPrimary"
             android:minHeight="56dp">
 
             <LinearLayout
@@ -56,7 +56,7 @@
                     android:clickable="false"
                     android:fontFamily="sans-serif-medium"
                     android:textAppearance="?textAppearanceBody1"
-                    android:textColor="@color/colorOnPrimary"
+                    android:textColor="?attr/colorOnPrimary"
                     tools:text="Sam Miller" />
 
                 <TextView
@@ -65,7 +65,7 @@
                     android:layout_height="wrap_content"
                     android:clickable="false"
                     android:textAppearance="?textAppearanceBody2"
-                    android:textColor="@color/colorOnPrimary"
+                    android:textColor="?attr/colorOnPrimary"
                     tools:text="sam.miller@example.com" />
             </LinearLayout>
 
@@ -79,7 +79,7 @@
                 android:contentDescription="@string/open_account_selector"
                 android:padding="12dp"
                 android:src="@drawable/ic_keyboard_arrow_down_black_24dp"
-                app:tint="@color/colorOnPrimary" />
+                app:tint="?attr/colorOnPrimary" />
         </RelativeLayout>
 
     </FrameLayout>

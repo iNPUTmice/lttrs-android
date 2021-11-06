@@ -55,7 +55,7 @@
             android:src="@drawable/ic_edit_white_24dp"
             android:visibility="gone"
             app:backgroundTint="?attr/colorPrimary"
-            app:tint="@color/colorOnPrimary" />
+            app:tint="?attr/colorOnPrimary" />
 
     </FrameLayout>
 </layout>
