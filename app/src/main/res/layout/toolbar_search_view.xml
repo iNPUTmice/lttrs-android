@@ -83,8 +83,8 @@
                 android:imeOptions="actionSearch"
                 android:inputType="text|textAutoComplete|textNoSuggestions"
                 android:maxLines="1"
-                android:textColor="@color/colorOnSurface"
-                android:textColorHint="@color/colorSecondaryOnSurface"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textColorHint="?android:attr/textColorHint"
                 android:textSize="18sp" />
 
             <ImageView

@@ -52,11 +52,14 @@
     <style name="SearchViewTheme" parent="Widget.AppCompat.SearchView.ActionBar">
         <item name="layout">@layout/toolbar_search_view</item>
         <item name="commitIcon">@drawable/ic_search_commit_back_24dp</item>
-        <item name="colorControlNormal">@color/colorSecondaryOnSurface</item>
-        <item name="colorControlHighlight">@color/colorDivider</item>
+        <item name="colorControlNormal">@color/material_black_60</item>
+        <item name="colorControlHighlight">@color/material_black_12</item>
         <item name="autoCompleteTextViewStyle">@style/AutoCompleteTextViewStyle</item>
         <item name="suggestionRowLayout">@layout/item_search_suggestion</item>
         <item name="android:maxWidth">9999dp</item>
+        <item name="android:textColorPrimary">@color/material_black_87</item>
+        <item name="android:textColorSecondary">@color/material_black_60</item>
+        <item name="android:textColorHint">@color/material_black_60</item>
     </style>
 
     <style name="AutoCompleteTextViewStyle" parent="Widget.AppCompat.Light.AutoCompleteTextView">

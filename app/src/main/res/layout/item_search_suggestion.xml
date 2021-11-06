@@ -62,7 +62,7 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:scrollHorizontally="false"
-        android:textColor="@color/colorSecondaryOnSurface"
+        android:textColor="?android:attr/textColorSecondary"
         android:textSize="16sp" />
 
     <View

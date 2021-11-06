@@ -79,7 +79,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/compose_from"
-                            android:textColor="@color/colorSecondaryOnSurface" />
+                            android:textColor="?android:attr/textColorSecondary" />
                     </LinearLayout>
 
                     <androidx.appcompat.widget.AppCompatSpinner
@@ -121,7 +121,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/compose_to"
-                            android:textColor="@color/colorSecondaryOnSurface" />
+                            android:textColor="?android:attr/textColorSecondary" />
                     </LinearLayout>
 
                     <rs.ltt.android.ui.widget.EmailAddressEditText
@@ -191,7 +191,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/compose_cc"
-                            android:textColor="@color/colorSecondaryOnSurface" />
+                            android:textColor="?android:attr/textColorSecondary" />
                     </LinearLayout>
 
                     <rs.ltt.android.ui.widget.EmailAddressEditText
