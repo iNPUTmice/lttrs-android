@@ -17,7 +17,6 @@ package rs.ltt.android.ui.adapter;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,8 +29,6 @@ import androidx.paging.PagedList;
 import androidx.recyclerview.widget.AsyncDifferConfig;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.google.android.material.color.MaterialColors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

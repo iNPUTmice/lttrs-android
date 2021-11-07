@@ -16,6 +16,7 @@
 package rs.ltt.android.ui;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -26,9 +27,11 @@ import android.text.TextUtils;
 import android.text.style.ImageSpan;
 import android.widget.EditText;
 
+import androidx.annotation.AttrRes;
 import androidx.annotation.NonNull;
 
 import com.google.android.material.chip.ChipDrawable;
+import com.google.android.material.color.MaterialColors;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -58,12 +61,12 @@ public class ChipDrawableSpan extends ImageSpan {
             }
             editable.removeSpan(span);
         }
-        for (EmailAddressToken token : tokens) {
+        for (final EmailAddressToken token : tokens) {
             final ChipDrawable chip = ChipDrawable.createFromResource(context, R.xml.address);
             if (EmailAddressUtil.isValid(token.getEmailAddress())) {
-                chip.setChipBackgroundColorResource(R.color.colorSurface);
+                chip.setChipBackgroundColor(getBackgroundColor(context, R.attr.colorSurface));
             } else {
-                chip.setChipBackgroundColorResource(R.color.colorSurfaceWarning);
+                chip.setChipBackgroundColor(getBackgroundColor(context, R.attr.colorSurfaceWarning));
             }
             final EmailAddress emailAddress = token.getEmailAddress();
             if (TextUtils.isEmpty(emailAddress.getName())) {
@@ -75,6 +78,10 @@ public class ChipDrawableSpan extends ImageSpan {
             ChipDrawableSpan span = new ChipDrawableSpan(chip, token);
             editable.setSpan(span, token.getStart(), token.getEnd() + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
+    }
+
+    private static ColorStateList getBackgroundColor(final Context context, final @AttrRes int attrRes) {
+        return ColorStateList.valueOf(MaterialColors.getColor(context, attrRes, ChipDrawableSpan.class.getCanonicalName()));
     }
 
     public static void reset(EditText editText) {

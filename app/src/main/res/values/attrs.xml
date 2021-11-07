@@ -3,4 +3,5 @@
     <attr name="opacityHighlight" format="float" />
     <attr name="colorIndicator" format="color|reference" />
     <attr name="colorShadowOnPrimary" format="color|reference" />
+    <attr name="colorSurfaceWarning" format="color|reference" />
 </resources>

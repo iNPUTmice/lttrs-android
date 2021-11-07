@@ -21,6 +21,7 @@
         <item name="colorAccent">@color/material_pink_accent_700</item>
         <item name="colorIndicator">@color/material_amber_500</item>
         <item name="colorControlNormal">@color/material_black_60</item>
+        <item name="colorSurfaceWarning">@color/material_red_200</item>
     </style>
 
     <!-- The BaseTheme themes attributes that are shared between Dark and Light mode -->
@@ -56,7 +57,7 @@
         <item name="layout">@layout/toolbar_search_view</item>
         <item name="commitIcon">@drawable/ic_search_commit_back_24dp</item>
         <item name="colorControlNormal">@color/material_black_60</item>
-        <item name="colorControlHighlight">@color/material_black_12</item>
+        <item name="colorControlHighlight">@color/material_black_12</item> <!--- TODO use color state list? -->
         <item name="autoCompleteTextViewStyle">@style/AutoCompleteTextViewStyle</item>
         <item name="suggestionRowLayout">@layout/item_search_suggestion</item>
         <item name="android:maxWidth">9999dp</item>

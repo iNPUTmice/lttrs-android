@@ -20,6 +20,8 @@
     <color name="material_pink_accent_700">#FFC51162</color>
     <color name="material_amber_300">#FFFFD54F</color>
     <color name="material_amber_500">#FFFFC107</color>
+    <color name="material_red_200">#FFAB91</color>
+    <color name="material_red_900">#BF360C</color>
     <color name="material_black_87">#de000000</color>
     <color name="material_black_60">#99000000</color>
     <color name="material_black_12">#1f000000</color>
@@ -30,9 +32,7 @@
     <color name="colorActionModeBackground">#ff424242</color> <!-- gray 800 -->
     <color name="colorBackground">#ffffffff</color> <!-- white -->
     <color name="colorBackgroundSecondary">#eeeeee</color> <!-- gray 200 -->
-    <color name="colorSurface">#ffffffff</color> <!-- white -->
     <color name="colorDivider">#1f000000</color> <!-- black 12 -->
-    <color name="colorSurfaceWarning">#ffE57373</color> <!-- red 300 -->
     <color name="colorStatusBarSearch">#ff757575</color>
     <color name="navigationBarDivider">#1f000000</color> <!-- black 12 -->
 </resources>

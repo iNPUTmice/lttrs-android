@@ -17,9 +17,7 @@
     <color name="colorActionModeBackground">#ff212121</color> <!-- gray 900 -->
     <color name="colorBackground">#ff121212</color> <!-- gray 900 -->
     <color name="colorBackgroundSecondary">#ff424242</color> <!-- gray 800 -->
-    <color name="colorSurface">#ff303030</color>
     <color name="colorDivider">#1fffffff</color> <!-- white12 but this has been replaced by white_26 -->
-    <color name="colorSurfaceWarning">#ffB71C1C</color> <!-- red 900 -->
     <color name="colorStatusBarSearch">#ff212121</color>
     <color name="navigationBarDivider">#47000000</color> <!-- black 28 -->
 </resources>

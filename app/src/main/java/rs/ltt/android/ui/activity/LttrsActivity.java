@@ -634,7 +634,7 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
 
     private void prepareToolbarForSearch() {
         setDisplayShowTitleEnable(false);
-        binding.toolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.colorSurface));
+        binding.toolbar.setBackgroundColor(MaterialColors.getColor(binding.toolbar,R.attr.colorSurface));
         binding.drawerLayout.setStatusBarBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusBarSearch));
     }
 

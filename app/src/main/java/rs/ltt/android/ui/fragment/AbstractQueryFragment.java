@@ -26,7 +26,6 @@ import android.view.ViewGroup;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.appcompat.view.ActionMode;
-import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
@@ -108,7 +107,7 @@ public abstract class AbstractQueryFragment extends AbstractLttrsFragment implem
 
         binding.swipeToRefresh.setColorSchemeColors(MaterialColors.getColor(binding.swipeToRefresh, R.attr.colorAccent));
         binding.swipeToRefresh.setProgressBackgroundColorSchemeColor(
-                ContextCompat.getColor(requireContext(), R.color.colorSurface)
+                MaterialColors.getColor(binding.swipeToRefresh, R.attr.colorSurface)
         );
 
 

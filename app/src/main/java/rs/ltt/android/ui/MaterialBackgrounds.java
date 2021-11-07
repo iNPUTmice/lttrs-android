@@ -6,8 +6,6 @@ import android.util.TypedValue;
 import androidx.annotation.AnyRes;
 import androidx.annotation.AttrRes;
 
-import com.google.android.material.resources.MaterialAttributes;
-
 public class MaterialBackgrounds {
 
     public static @AnyRes
