@@ -5,7 +5,7 @@
             <padding android:top="0.5dp" />
             <stroke
                 android:width="0.5dp"
-                android:color="@color/colorDivider" />
+                android:color="@color/surface_highlight" />
         </shape>
     </item>
     <item>

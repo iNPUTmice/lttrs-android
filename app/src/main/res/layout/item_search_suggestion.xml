@@ -69,6 +69,6 @@
         android:id="@+id/suggestion_divider"
         android:layout_width="match_parent"
         android:layout_height="@dimen/divider_height"
-        android:background="@color/colorDivider"
+        android:background="@color/surface_highlight"
         android:visibility="gone" />
 </RelativeLayout>

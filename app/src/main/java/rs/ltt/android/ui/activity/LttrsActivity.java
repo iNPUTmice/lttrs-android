@@ -332,7 +332,7 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
         actionbar.setDisplayHomeAsUpEnabled(true);
         @DrawableRes final int upIndicator;
         if (MAIN_DESTINATIONS.contains(destinationId)) {
-            upIndicator = R.drawable.ic_menu_black_24dp;
+            upIndicator = R.drawable.ic_menu_white_24dp;
         } else if (FULL_SCREEN_DIALOG.contains(destinationId)) {
             upIndicator = R.drawable.ic_baseline_close_24;
         } else {

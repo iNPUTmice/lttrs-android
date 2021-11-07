@@ -18,5 +18,5 @@
     style="@style/Widget.MaterialComponents.Chip.Entry"
     app:closeIconEnabled="false"
     android:textAppearance="?textAppearanceBody1"
-    app:chipStrokeColor="@color/colorDivider"
-    app:chipStrokeWidth="1dp"/>
+    app:chipStrokeColor="@color/surface_highlight"
+    app:chipStrokeWidth="@dimen/divider_height"/>

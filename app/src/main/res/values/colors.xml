@@ -31,8 +31,6 @@
 
     <color name="colorActionModeBackground">#ff424242</color> <!-- gray 800 -->
     <color name="colorBackground">#ffffffff</color> <!-- white -->
-    <color name="colorBackgroundSecondary">#eeeeee</color> <!-- gray 200 -->
-    <color name="colorDivider">#1f000000</color> <!-- black 12 -->
     <color name="colorStatusBarSearch">#ff757575</color>
     <color name="navigationBarDivider">#1f000000</color> <!-- black 12 -->
 </resources>

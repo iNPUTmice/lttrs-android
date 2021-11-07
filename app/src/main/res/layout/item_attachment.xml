@@ -53,6 +53,7 @@
                 android:layout_centerVertical="true"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:padding="12dp"
+                app:tint="?attr/colorControlNormal"
                 android:src="@drawable/ic_baseline_save_alt_24" />
 
         </RelativeLayout>
