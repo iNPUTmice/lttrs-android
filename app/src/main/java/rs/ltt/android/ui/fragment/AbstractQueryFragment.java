@@ -33,7 +33,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.OnLifecycleEvent;
 import androidx.paging.PagedList;
 import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.color.MaterialColors;
@@ -56,6 +55,7 @@ import rs.ltt.android.entity.ThreadOverviewItem;
 import rs.ltt.android.service.EventMonitorService;
 import rs.ltt.android.ui.ActionModeMenuConfiguration;
 import rs.ltt.android.ui.EmptyMailboxAction;
+import rs.ltt.android.ui.ExtendedFabSizeChanger;
 import rs.ltt.android.ui.ItemAnimators;
 import rs.ltt.android.ui.QueryItemTouchHelper;
 import rs.ltt.android.ui.SelectionTracker;
@@ -66,6 +66,7 @@ import rs.ltt.android.ui.adapter.OnFlaggedToggled;
 import rs.ltt.android.ui.adapter.OnSelectionToggled;
 import rs.ltt.android.ui.adapter.ThreadOverviewAdapter;
 import rs.ltt.android.ui.model.AbstractQueryViewModel;
+import rs.ltt.android.ui.RecyclerViews;
 import rs.ltt.jmap.mua.util.LabelWithCount;
 
 
@@ -102,6 +103,8 @@ public abstract class AbstractQueryFragment extends AbstractLttrsFragment implem
         if (showComposeButton() && actionMode == null) {
             binding.compose.show();
         }
+
+        binding.threadList.addOnScrollListener(ExtendedFabSizeChanger.of(binding.compose));
 
         getViewLifecycleOwner().getLifecycle().addObserver(this);
 
@@ -162,14 +165,7 @@ public abstract class AbstractQueryFragment extends AbstractLttrsFragment implem
     private void observeThreadOverviewItems(final LiveData<PagedList<ThreadOverviewItem>> liveData) {
         final AtomicBoolean actionModeRefreshed = new AtomicBoolean(false);
         liveData.observe(getViewLifecycleOwner(), threadOverviewItems -> {
-            //TODO externalize this to be reused for MailboxAction thing
-            final RecyclerView.LayoutManager layoutManager = binding.threadList.getLayoutManager();
-            final boolean atTop;
-            if (layoutManager instanceof LinearLayoutManager) {
-                atTop = ((LinearLayoutManager) layoutManager).findFirstCompletelyVisibleItemPosition() == 0;
-            } else {
-                atTop = false;
-            }
+            final boolean atTop = RecyclerViews.scrolledToTop(binding.threadList);
             configureItemAnimator();
             threadOverviewAdapter.submitList(threadOverviewItems, () -> {
                 if (atTop && binding != null) {

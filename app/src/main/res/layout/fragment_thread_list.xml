@@ -46,16 +46,19 @@
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/compose"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:layout_margin="16dp"
-            android:src="@drawable/ic_edit_white_24dp"
+            android:text="@string/compose"
+            android:textColor="?attr/colorOnPrimary"
             android:visibility="gone"
-            app:backgroundTint="?attr/colorPrimary"
-            app:tint="?attr/colorOnPrimary" />
+            app:backgroundTint="?colorPrimary"
+            app:icon="@drawable/ic_edit_white_24dp"
+            app:iconTint="?attr/colorOnPrimary"
+            tools:visibility="visible" />
 
     </FrameLayout>
 </layout>
