@@ -66,7 +66,6 @@ android {
                 storePassword props['keystore.password']
                 keyAlias props['keystore.alias']
                 keyPassword props['keystore.password']
-                v2SigningEnabled true
             }
         }
         buildTypes.release.signingConfig = signingConfigs.release
