@@ -16,7 +16,7 @@
 <resources>
 
     <!-- The DayNightTheme themes attributes that differ between Dark and Light mode -->
-    <style name="DayNightTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <style name="DayNightTheme" parent="Theme.Material3.Light.NoActionBar">
         <item name="opacityHighlight">0.12</item>
         <item name="opacityButtonBackground">0.08</item>
         <item name="colorAccent">@color/material_pink_accent_700</item>

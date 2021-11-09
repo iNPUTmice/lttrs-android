@@ -11,7 +11,7 @@ buildscript {
         workVersion = "2.7.0"
         muaVersion = "0.7.4"
         espressoVersion = "3.4.0"
-        material = "1.4.0"
+        material = "1.5.0-alpha04"
     }
 
     repositories {
