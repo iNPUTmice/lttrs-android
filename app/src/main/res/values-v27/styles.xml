@@ -16,8 +16,8 @@
 <resources>
 
     <style name="MainTheme" parent="BaseTheme">
-        <item name="android:navigationBarColor">@color/colorBackground</item>
-        <item name="android:navigationBarDividerColor">@color/navigationBarDivider</item>
+        <item name="android:navigationBarColor">?attr/colorSurface</item>
+        <item name="android:navigationBarDividerColor">@color/component_background</item>
         <item name="android:windowLightNavigationBar">@bool/window_light_navigation_bar</item>
     </style>
 </resources>

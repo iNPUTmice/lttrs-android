@@ -30,8 +30,5 @@
     <color name="material_white_70">#83ffffff</color> <!-- in material 3 this has been lowered to 60% -->
     <color name="material_white_26">#42ffffff</color>
 
-
-    <color name="colorBackground">#ffffffff</color> <!-- white -->
     <color name="colorStatusBarSearch">#ff757575</color>
-    <color name="navigationBarDivider">#1f000000</color> <!-- black 12 -->
 </resources>
