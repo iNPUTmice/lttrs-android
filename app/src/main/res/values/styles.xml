@@ -24,6 +24,7 @@
         <item name="colorControlNormal">@color/material_black_60</item>
         <item name="colorSurfaceWarning">@color/material_red_200</item>
         <item name="colorActionModeBackground">@color/material_gray_800</item>
+        <item name="colorStatusBarSearch">@color/material_gray_600</item>
     </style>
 
     <!-- The BaseTheme themes attributes that are shared between Dark and Light mode -->

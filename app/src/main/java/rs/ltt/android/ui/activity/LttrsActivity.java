@@ -34,7 +34,6 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ActionMode;
 import androidx.appcompat.widget.SearchView;
-import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -634,8 +633,8 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
 
     private void prepareToolbarForSearch() {
         setDisplayShowTitleEnable(false);
-        binding.toolbar.setBackgroundColor(MaterialColors.getColor(binding.toolbar,R.attr.colorSurface));
-        binding.drawerLayout.setStatusBarBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusBarSearch));
+        binding.toolbar.setBackgroundColor(MaterialColors.getColor(binding.toolbar, R.attr.colorSurface));
+        binding.drawerLayout.setStatusBarBackgroundColor(MaterialColors.getColor(binding.toolbar, R.attr.colorStatusBarSearch));
     }
 
 

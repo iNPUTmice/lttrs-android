@@ -22,6 +22,7 @@
     <color name="material_amber_500">#FFFFC107</color>
     <color name="material_red_200">#FFAB91</color>
     <color name="material_red_900">#BF360C</color>
+    <color name="material_gray_600">#ff757575</color>
     <color name="material_gray_800">#ff424242</color>
     <color name="material_gray_900">#ff212121</color>
     <color name="material_black_87">#de000000</color>
@@ -29,6 +30,4 @@
     <color name="material_black_12">#1f000000</color>
     <color name="material_white_70">#83ffffff</color> <!-- in material 3 this has been lowered to 60% -->
     <color name="material_white_26">#42ffffff</color>
-
-    <color name="colorStatusBarSearch">#ff757575</color>
 </resources>
