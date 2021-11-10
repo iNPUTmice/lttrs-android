@@ -7,6 +7,7 @@
         <item name="colorIndicator">@color/material_amber_300</item>
         <item name="colorControlNormal">@color/material_white_70</item>
         <item name="colorSurfaceWarning">@color/material_red_900</item>
+        <item name="colorActionModeBackground">@color/material_gray_900</item>
     </style>
 
     <style name="SearchViewTheme" parent="Widget.AppCompat.SearchView.ActionBar">

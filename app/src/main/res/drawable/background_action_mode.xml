@@ -20,7 +20,7 @@
     android:insetBottom="0dp">
 
     <shape>
-        <solid android:color="@color/colorActionModeBackground" />
+        <solid android:color="?attr/colorActionModeBackground" />
 
         <stroke
             android:width="2dp"

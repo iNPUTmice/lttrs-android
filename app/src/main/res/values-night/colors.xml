@@ -14,7 +14,6 @@
   -->
 
 <resources>
-    <color name="colorActionModeBackground">#ff212121</color> <!-- gray 900 -->
     <color name="colorBackground">#ff121212</color> <!-- gray 900 -->
     <color name="colorStatusBarSearch">#ff212121</color>
     <color name="navigationBarDivider">#47000000</color> <!-- black 28 -->

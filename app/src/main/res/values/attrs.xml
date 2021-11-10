@@ -5,4 +5,5 @@
     <attr name="colorIndicator" format="color|reference" />
     <attr name="colorShadowOnPrimary" format="color|reference" />
     <attr name="colorSurfaceWarning" format="color|reference" />
+    <attr name="colorActionModeBackground" format="color|reference" />
 </resources>

@@ -23,6 +23,7 @@
         <item name="colorIndicator">@color/material_amber_500</item>
         <item name="colorControlNormal">@color/material_black_60</item>
         <item name="colorSurfaceWarning">@color/material_red_200</item>
+        <item name="colorActionModeBackground">@color/material_gray_800</item>
     </style>
 
     <!-- The BaseTheme themes attributes that are shared between Dark and Light mode -->
@@ -46,7 +47,7 @@
 
     <style name="SetupTheme" parent="MainTheme">
         <item name="android:windowLightStatusBar">@bool/window_light_status_bar</item>
-        <item name="android:statusBarColor">@color/colorBackground</item>
+        <item name="android:statusBarColor">?attr/colorSurface</item>
     </style>
 
     <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
