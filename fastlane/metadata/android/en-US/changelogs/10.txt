@@ -1,0 +1,2 @@
+* Refactoring to allow for easier theming
+* Use Material 3 design elements
