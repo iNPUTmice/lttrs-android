@@ -97,7 +97,7 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/divider_height"
-                    android:background="@color/surface_highlight" />
+                    android:background="@drawable/background_divider" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -166,7 +166,7 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/divider_height"
-                    android:background="@color/surface_highlight" />
+                    android:background="@drawable/background_divider" />
 
                 <RelativeLayout
                     android:visibility="@{composeViewModel.extendedAddresses ? View.VISIBLE : View.GONE}"
@@ -215,7 +215,7 @@
                     android:visibility="@{composeViewModel.extendedAddresses ? View.VISIBLE : View.GONE}"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/divider_height"
-                    android:background="@color/surface_highlight" />
+                    android:background="@drawable/background_divider" />
 
 
                 <RelativeLayout
@@ -243,7 +243,7 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/divider_height"
-                    android:background="@color/surface_highlight" />
+                    android:background="@drawable/background_divider" />
 
 
                 <androidx.appcompat.widget.AppCompatEditText
