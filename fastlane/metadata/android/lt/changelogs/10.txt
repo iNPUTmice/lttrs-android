@@ -1,0 +1,2 @@
+* Pertvarkymas, kad būtų lengviau sukurti temas
+* Naudokite 3 medžiagos dizaino elementus
