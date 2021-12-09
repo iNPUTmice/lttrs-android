@@ -1,0 +1,2 @@
+* Riprogettazione per permettere una scelta di temi più facile
+* Utilizza elementi di design Material 3
