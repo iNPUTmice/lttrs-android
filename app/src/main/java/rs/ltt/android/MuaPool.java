@@ -6,6 +6,7 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 
+import org.checkerframework.checker.units.qual.A;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +18,8 @@ import rs.ltt.android.cache.DatabaseCache;
 import rs.ltt.android.database.AppDatabase;
 import rs.ltt.android.database.LttrsDatabase;
 import rs.ltt.android.entity.AccountWithCredentials;
+import rs.ltt.autocrypt.client.storage.InMemoryStorage;
+import rs.ltt.autocrypt.jmap.AutocryptPlugin;
 import rs.ltt.jmap.client.session.FileSessionCache;
 import rs.ltt.jmap.mua.Mua;
 
@@ -51,6 +54,7 @@ public final class MuaPool {
             LOGGER.info("Building Mua for account id {}", account.getId());
             final Context application = context.getApplicationContext();
             final LttrsDatabase database = LttrsDatabase.getInstance(context, account.getId());
+            final AutocryptPlugin autocryptPlugin = new AutocryptPlugin(account.getName(), new InMemoryStorage());
             final Mua mua = Mua.builder()
                     .username(account.getUsername())
                     .password(account.getPassword())
@@ -59,6 +63,7 @@ public final class MuaPool {
                     .useWebSocket(true)
                     .cache(new DatabaseCache(database))
                     .sessionCache(new FileSessionCache(application.getCacheDir()))
+                    .plugin(AutocryptPlugin.class, autocryptPlugin)
                     .queryPageSize(20L)
                     .build();
             INSTANCES.put(account, mua);
