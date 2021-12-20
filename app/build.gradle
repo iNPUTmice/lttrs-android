@@ -78,6 +78,10 @@ android {
     lintOptions {
         disable 'MissingTranslation'
     }
+
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+    }
 }
 
 dependencies {
@@ -131,6 +135,10 @@ dependencies {
         changing = true
     }
 
+    implementation("rs.ltt.autocrypt:autocrypt-jmap:$rootProject.ext.autocryptJmapVersion") {
+        changing = true
+    }
+
 
     //Testing
     testImplementation 'junit:junit:4.13.2'
@@ -142,5 +150,5 @@ dependencies {
         changing = true
     }
     androidTestImplementation 'androidx.test:runner:1.4.0'
-    androidTestUtil 'androidx.test:orchestrator:1.4.0'
+    androidTestUtil 'androidx.test:orchestrator:1.4.1'
 }

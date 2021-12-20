@@ -33,8 +33,8 @@ import rs.ltt.android.cache.BlobStorage;
 import rs.ltt.android.entity.Attachment;
 import rs.ltt.android.ui.notification.AttachmentNotification;
 import rs.ltt.jmap.client.blob.Progress;
-import rs.ltt.jmap.client.blob.Upload;
 import rs.ltt.jmap.client.blob.Uploadable;
+import rs.ltt.jmap.common.entity.Upload;
 import rs.ltt.jmap.mua.Mua;
 
 public class BlobUploadWorker extends AbstractMuaWorker implements Progress {
