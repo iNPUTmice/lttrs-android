@@ -18,6 +18,7 @@ package rs.ltt.android.database;
 import android.annotation.SuppressLint;
 import android.content.Context;
 
+import androidx.room.AutoMigration;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
@@ -33,12 +34,14 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import rs.ltt.android.database.dao.AutocryptDao;
 import rs.ltt.android.database.dao.IdentityDao;
 import rs.ltt.android.database.dao.MailboxDao;
 import rs.ltt.android.database.dao.OverwriteDao;
 import rs.ltt.android.database.dao.QueryDao;
 import rs.ltt.android.database.dao.StateDao;
 import rs.ltt.android.database.dao.ThreadAndEmailDao;
+import rs.ltt.android.entity.AccountStateEntity;
 import rs.ltt.android.entity.EmailBodyPartEntity;
 import rs.ltt.android.entity.EmailBodyValueEntity;
 import rs.ltt.android.entity.EmailEmailAddressEntity;
@@ -53,6 +56,7 @@ import rs.ltt.android.entity.IdentityEntity;
 import rs.ltt.android.entity.KeywordOverwriteEntity;
 import rs.ltt.android.entity.MailboxEntity;
 import rs.ltt.android.entity.MailboxOverwriteEntity;
+import rs.ltt.android.entity.PeerStateEntity;
 import rs.ltt.android.entity.QueryEntity;
 import rs.ltt.android.entity.QueryItemEntity;
 import rs.ltt.android.entity.QueryItemOverwriteEntity;
@@ -79,7 +83,9 @@ import rs.ltt.android.entity.ThreadItemEntity;
                 QueryItemEntity.class,
                 KeywordOverwriteEntity.class,
                 MailboxOverwriteEntity.class,
-                QueryItemOverwriteEntity.class
+                QueryItemOverwriteEntity.class,
+                AccountStateEntity.class,
+                PeerStateEntity.class
         },
         version = 1,
         exportSchema = false
@@ -148,4 +154,6 @@ public abstract class LttrsDatabase extends RoomDatabase {
     public abstract QueryDao queryDao();
 
     public abstract OverwriteDao overwriteDao();
+
+    public abstract AutocryptDao autocryptDao();
 }
