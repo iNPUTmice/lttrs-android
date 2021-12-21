@@ -137,6 +137,7 @@ public abstract class LttrsDatabase extends RoomDatabase {
             final Context application = context.getApplicationContext();
             final String filename = String.format("lttrs-%x", account);
             final LttrsDatabase lttrsDatabase = Room.databaseBuilder(application, LttrsDatabase.class, filename)
+                    .fallbackToDestructiveMigration()
                     .build();
             INSTANCES.put(account, lttrsDatabase);
             return lttrsDatabase;
