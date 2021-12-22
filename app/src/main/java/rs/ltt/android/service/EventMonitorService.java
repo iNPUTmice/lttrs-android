@@ -3,7 +3,6 @@ package rs.ltt.android.service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Lifecycle;
@@ -12,16 +11,10 @@ import androidx.lifecycle.ProcessLifecycleOwner;
 import androidx.work.ExistingWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
-
 import com.google.common.base.Strings;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-
-import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -32,7 +25,9 @@ import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
-
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rs.ltt.android.BuildConfig;
 import rs.ltt.android.MuaPool;
 import rs.ltt.android.database.AppDatabase;
@@ -97,26 +92,26 @@ public class EventMonitorService extends LifecycleService {
     @Override
     public void onCreate() {
         super.onCreate();
-        final ListenableFuture<List<AccountWithCredentials>> accounts = AppDatabase.getInstance(this)
-                .accountDao()
-                .getAccounts();
-        Futures.addCallback(accounts, new FutureCallback<List<AccountWithCredentials>>() {
-            @Override
-            public void onSuccess(final List<AccountWithCredentials> accounts) {
-                onAccountsLoaded(accounts);
-            }
+        final ListenableFuture<List<AccountWithCredentials>> accounts =
+                AppDatabase.getInstance(this).accountDao().getAccounts();
+        Futures.addCallback(
+                accounts,
+                new FutureCallback<List<AccountWithCredentials>>() {
+                    @Override
+                    public void onSuccess(final List<AccountWithCredentials> accounts) {
+                        onAccountsLoaded(accounts);
+                    }
 
-            @Override
-            public void onFailure(@NonNull final Throwable throwable) {
-                LOGGER.warn("Unable to load accounts from database", throwable);
-            }
-        }, PUSH_SERVICE_BACKGROUND_EXECUTOR);
+                    @Override
+                    public void onFailure(@NonNull final Throwable throwable) {
+                        LOGGER.warn("Unable to load accounts from database", throwable);
+                    }
+                },
+                PUSH_SERVICE_BACKGROUND_EXECUTOR);
 
         if (BuildConfig.USE_FOREGROUND_SERVICE) {
             startForeground(
-                    ForegroundServiceNotification.ID,
-                    ForegroundServiceNotification.get(this)
-            );
+                    ForegroundServiceNotification.ID, ForegroundServiceNotification.get(this));
         }
     }
 
@@ -124,7 +119,8 @@ public class EventMonitorService extends LifecycleService {
     public void onDestroy() {
         LOGGER.debug("Destroying service. Removing listeners");
         synchronized (this.eventMonitorRegistrations) {
-            final Iterator<EventMonitorRegistration> iterator = this.eventMonitorRegistrations.values().iterator();
+            final Iterator<EventMonitorRegistration> iterator =
+                    this.eventMonitorRegistrations.values().iterator();
             while (iterator.hasNext()) {
                 final EventMonitorRegistration registration = iterator.next();
                 registration.stopListening();
@@ -150,28 +146,31 @@ public class EventMonitorService extends LifecycleService {
     }
 
     private void startMonitoring(final long accountId) {
-        final ListenableFuture<AccountWithCredentials> accountFuture = AppDatabase.getInstance(this)
-                .accountDao()
-                .getAccountFuture(accountId);
-        Futures.addCallback(accountFuture, new FutureCallback<AccountWithCredentials>() {
-            @Override
-            public void onSuccess(final AccountWithCredentials account) {
-                if (account == null) {
-                    return;
-                }
-                onAccountLoaded(account);
-            }
+        final ListenableFuture<AccountWithCredentials> accountFuture =
+                AppDatabase.getInstance(this).accountDao().getAccountFuture(accountId);
+        Futures.addCallback(
+                accountFuture,
+                new FutureCallback<AccountWithCredentials>() {
+                    @Override
+                    public void onSuccess(final AccountWithCredentials account) {
+                        if (account == null) {
+                            return;
+                        }
+                        onAccountLoaded(account);
+                    }
 
-            @Override
-            public void onFailure(@NotNull final Throwable throwable) {
-                LOGGER.warn("Unable to load account from database", throwable);
-            }
-        }, PUSH_SERVICE_BACKGROUND_EXECUTOR);
+                    @Override
+                    public void onFailure(@NotNull final Throwable throwable) {
+                        LOGGER.warn("Unable to load account from database", throwable);
+                    }
+                },
+                PUSH_SERVICE_BACKGROUND_EXECUTOR);
     }
 
     private void stopMonitoring(final long accountId) {
         synchronized (this.eventMonitorRegistrations) {
-            final EventMonitorRegistration registration = this.eventMonitorRegistrations.remove(accountId);
+            final EventMonitorRegistration registration =
+                    this.eventMonitorRegistrations.remove(accountId);
             if (registration != null) {
                 registration.stopListening();
             }
@@ -193,39 +192,42 @@ public class EventMonitorService extends LifecycleService {
             }
             final Mua mua = MuaPool.getInstance(this, account);
             eventMonitor = new EventMonitor(account);
-            eventMonitorRegistrations.put(account.getId(), new EventMonitorRegistration(eventMonitor));
+            eventMonitorRegistrations.put(
+                    account.getId(), new EventMonitorRegistration(eventMonitor));
             pushServiceFuture = mua.getJmapClient().monitorEvents();
         }
-        Futures.addCallback(pushServiceFuture, new FutureCallback<PushService>() {
+        Futures.addCallback(
+                pushServiceFuture,
+                new FutureCallback<PushService>() {
 
-            @Override
-            public void onSuccess(@Nullable PushService pushService) {
-                if (pushService == null) {
-                    return;
-                }
-                final Lifecycle.State currentState = getLifecycle().getCurrentState();
-                if (currentState.isAtLeast(Lifecycle.State.INITIALIZED)) {
-                    final EventMonitorRegistration registration = new EventMonitorRegistration(
-                            pushService,
-                            eventMonitor
-                    );
-                    pushService.addOnStateChangeListener(eventMonitor);
-                    pushService.addOnConnectionStateListener(eventMonitor);
-                    synchronized (eventMonitorRegistrations) {
-                        eventMonitorRegistrations.put(account.getId(), registration);
+                    @Override
+                    public void onSuccess(@Nullable PushService pushService) {
+                        if (pushService == null) {
+                            return;
+                        }
+                        final Lifecycle.State currentState = getLifecycle().getCurrentState();
+                        if (currentState.isAtLeast(Lifecycle.State.INITIALIZED)) {
+                            final EventMonitorRegistration registration =
+                                    new EventMonitorRegistration(pushService, eventMonitor);
+                            pushService.addOnStateChangeListener(eventMonitor);
+                            pushService.addOnConnectionStateListener(eventMonitor);
+                            synchronized (eventMonitorRegistrations) {
+                                eventMonitorRegistrations.put(account.getId(), registration);
+                            }
+                            onConnectionStateChange();
+                        } else {
+                            LOGGER.debug(
+                                    "Not going to listen for StateChanges. Service is {}",
+                                    currentState);
+                        }
                     }
-                    onConnectionStateChange();
-                } else {
-                    LOGGER.debug("Not going to listen for StateChanges. Service is {}", currentState);
-                }
-            }
 
-            @Override
-            public void onFailure(@NonNull final Throwable throwable) {
-                LOGGER.warn("Unable to instantiate push service", throwable);
-
-            }
-        }, PUSH_SERVICE_BACKGROUND_EXECUTOR);
+                    @Override
+                    public void onFailure(@NonNull final Throwable throwable) {
+                        LOGGER.warn("Unable to instantiate push service", throwable);
+                    }
+                },
+                PUSH_SERVICE_BACKGROUND_EXECUTOR);
     }
 
     @Override
@@ -234,19 +236,15 @@ public class EventMonitorService extends LifecycleService {
         final String action = Strings.nullToEmpty(intent == null ? null : intent.getAction());
         switch (action) {
             case ACTION_WATCH_QUERY:
-                final QueryInfo queryInfo = Objects.requireNonNull(intent)
-                        .getParcelableExtra(EXTRA_QUERY_INFO);
+                final QueryInfo queryInfo =
+                        Objects.requireNonNull(intent).getParcelableExtra(EXTRA_QUERY_INFO);
                 watchQuery(queryInfo);
                 break;
             case ACTION_START_MONITORING:
-                startMonitoring(
-                        Objects.requireNonNull(intent).getLongExtra(EXTRA_ACCOUNT_ID, -1)
-                );
+                startMonitoring(Objects.requireNonNull(intent).getLongExtra(EXTRA_ACCOUNT_ID, -1));
                 break;
             case ACTION_STOP_MONITORING:
-                stopMonitoring(
-                        Objects.requireNonNull(intent).getLongExtra(EXTRA_ACCOUNT_ID, -1)
-                );
+                stopMonitoring(Objects.requireNonNull(intent).getLongExtra(EXTRA_ACCOUNT_ID, -1));
                 break;
             default:
                 LOGGER.warn("Unknown action {}", action);
@@ -263,12 +261,16 @@ public class EventMonitorService extends LifecycleService {
         workManager.enqueueUniqueWork(
                 QueryRefreshWorker.uniqueName(queryInfo.accountId),
                 ExistingWorkPolicy.REPLACE,
-                workRequest
-        );
+                workRequest);
     }
 
-    private boolean onStateChange(final AccountWithCredentials account, final StateChange stateChange) {
-        final boolean activityStarted = ProcessLifecycleOwner.get().getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED);
+    private boolean onStateChange(
+            final AccountWithCredentials account, final StateChange stateChange) {
+        final boolean activityStarted =
+                ProcessLifecycleOwner.get()
+                        .getLifecycle()
+                        .getCurrentState()
+                        .isAtLeast(Lifecycle.State.STARTED);
         LOGGER.debug("Account {} received {}", account.getId(), stateChange);
         final QueryInfo queryInfo = this.currentlyWatchedQuery;
         final OneTimeWorkRequest workRequest;
@@ -283,8 +285,7 @@ public class EventMonitorService extends LifecycleService {
         workManager.enqueueUniqueWork(
                 QueryRefreshWorker.uniqueName(queryInfo.accountId),
                 ExistingWorkPolicy.REPLACE,
-                workRequest
-        );
+                workRequest);
         return true;
     }
 
@@ -305,9 +306,10 @@ public class EventMonitorService extends LifecycleService {
 
     private Optional<State> getCombinedState() {
         synchronized (eventMonitorRegistrations) {
-            final List<State> states = eventMonitorRegistrations.values().stream()
-                    .map(EventMonitorRegistration::getConnectionState)
-                    .collect(Collectors.toList());
+            final List<State> states =
+                    eventMonitorRegistrations.values().stream()
+                            .map(EventMonitorRegistration::getConnectionState)
+                            .collect(Collectors.toList());
             if (states.isEmpty()) {
                 return Optional.empty();
             }
@@ -359,5 +361,4 @@ public class EventMonitorService extends LifecycleService {
             EventMonitorService.this.onConnectionStateChange();
         }
     }
-
 }

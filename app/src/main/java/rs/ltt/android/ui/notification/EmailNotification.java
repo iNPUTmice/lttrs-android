@@ -10,22 +10,17 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.service.notification.StatusBarNotification;
-
 import androidx.core.app.NotificationCompat;
-
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-
-import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
-
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rs.ltt.android.R;
 import rs.ltt.android.database.LttrsDatabase;
 import rs.ltt.android.entity.AccountName;
@@ -53,11 +48,12 @@ public class EmailNotification extends AbstractNotification {
     private final List<String> dismissedEmails;
     private final List<EmailWithBodiesAndSubject> allEmails;
 
-    private EmailNotification(final Context context,
-                              final AccountName account,
-                              final List<EmailWithBodiesAndSubject> addedEmails,
-                              final List<String> dismissedEmails,
-                              final List<EmailWithBodiesAndSubject> allEmails) {
+    private EmailNotification(
+            final Context context,
+            final AccountName account,
+            final List<EmailWithBodiesAndSubject> addedEmails,
+            final List<String> dismissedEmails,
+            final List<EmailWithBodiesAndSubject> allEmails) {
         this.context = context;
         this.notificationManager = context.getSystemService(NotificationManager.class);
         this.account = account;
@@ -70,30 +66,29 @@ public class EmailNotification extends AbstractNotification {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             return;
         }
-        final NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+        final NotificationManager notificationManager =
+                context.getSystemService(NotificationManager.class);
 
-        final NotificationChannelGroup notificationChannelGroup = new NotificationChannelGroup(
-                notificationChannelGroup(account),
-                account.getName()
-        );
+        final NotificationChannelGroup notificationChannelGroup =
+                new NotificationChannelGroup(notificationChannelGroup(account), account.getName());
         notificationManager.createNotificationChannelGroup(notificationChannelGroup);
 
-        final NotificationChannel notificationChannel = new NotificationChannel(
-                notificationChannelId(account),
-                context.getString(R.string.notification_channel_name_email),
-                NotificationManager.IMPORTANCE_DEFAULT
-        );
+        final NotificationChannel notificationChannel =
+                new NotificationChannel(
+                        notificationChannelId(account),
+                        context.getString(R.string.notification_channel_name_email),
+                        NotificationManager.IMPORTANCE_DEFAULT);
         notificationChannel.setGroup(notificationChannelGroup(account));
         notificationChannel.setShowBadge(true);
         notificationManager.createNotificationChannel(notificationChannel);
-
     }
 
     public static void deleteChannel(final Context context, final Long accountId) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             return;
         }
-        final NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+        final NotificationManager notificationManager =
+                context.getSystemService(NotificationManager.class);
         notificationManager.deleteNotificationChannel(notificationChannelId(accountId));
         notificationManager.deleteNotificationChannelGroup(notificationChannelGroup(accountId));
     }
@@ -131,8 +126,10 @@ public class EmailNotification extends AbstractNotification {
     }
 
     private static List<Tag> getActiveTags(final Context context) {
-        final NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
-        final StatusBarNotification[] activeNotifications = notificationManager.getActiveNotifications();
+        final NotificationManager notificationManager =
+                context.getSystemService(NotificationManager.class);
+        final StatusBarNotification[] activeNotifications =
+                notificationManager.getActiveNotifications();
         final ImmutableList.Builder<Tag> tagsBuilder = new ImmutableList.Builder<>();
         for (final StatusBarNotification notification : activeNotifications) {
             if (notification.getId() != ID) {
@@ -141,7 +138,7 @@ public class EmailNotification extends AbstractNotification {
             try {
                 tagsBuilder.add(Tag.parse(notification.getTag()));
             } catch (final Exception e) {
-                //ignored
+                // ignored
             }
         }
         return tagsBuilder.build();
@@ -162,9 +159,9 @@ public class EmailNotification extends AbstractNotification {
         return new EmailNotification.Builder();
     }
 
-
     public static void cancel(final Context context, final long accountId) {
-        final NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+        final NotificationManager notificationManager =
+                context.getSystemService(NotificationManager.class);
         getActiveTags(context).stream()
                 .filter(tag -> tag.accountId.equals(accountId))
                 .forEach(tag -> notificationManager.cancel(tag.toString(), ID));
@@ -173,18 +170,20 @@ public class EmailNotification extends AbstractNotification {
 
     public static void cancel(final Context context, final Tag tag) {
         LOGGER.info("Dismissing {}", tag.emailId);
-        final NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+        final NotificationManager notificationManager =
+                context.getSystemService(NotificationManager.class);
         notificationManager.cancel(tag.toString(), ID);
         if (getActiveTags(context).isEmpty()) {
             notificationManager.cancel(notificationTagSummary(tag.getAccountId()), SUMMARY_ID);
         }
     }
 
-    public static Void cancel(final Context context, final long accountId, final List<String> emailIds) {
-        final NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
-        final List<Tag> tags = emailIds
-                .stream().map(id -> new Tag(accountId, id))
-                .collect(Collectors.toList());
+    public static Void cancel(
+            final Context context, final long accountId, final List<String> emailIds) {
+        final NotificationManager notificationManager =
+                context.getSystemService(NotificationManager.class);
+        final List<Tag> tags =
+                emailIds.stream().map(id -> new Tag(accountId, id)).collect(Collectors.toList());
         final List<Tag> activeTags = getActiveTags(context);
         if (activeTags.isEmpty()) {
             return null;
@@ -206,7 +205,11 @@ public class EmailNotification extends AbstractNotification {
     }
 
     public void refresh() {
-        LOGGER.info("added {}, dismissed {}, total {}", addedEmails.size(), dismissedEmails.size(), allEmails.size());
+        LOGGER.info(
+                "added {}, dismissed {}, total {}",
+                addedEmails.size(),
+                dismissedEmails.size(),
+                allEmails.size());
         for (final String id : dismissedEmails) {
             dismiss(id);
         }
@@ -222,18 +225,16 @@ public class EmailNotification extends AbstractNotification {
         if (addedEmails.size() > 0 || dismissedEmails.size() > 0) {
             final Notification summaryNotification = getSummary(allEmails);
             notificationManager.notify(
-                    notificationTagSummary(account.getId()),
-                    SUMMARY_ID,
-                    summaryNotification
-            );
+                    notificationTagSummary(account.getId()), SUMMARY_ID, summaryNotification);
         }
     }
 
     private Notification get(final EmailWithBodiesAndSubject email) {
         final From from = email.getFirstFrom();
         final AvatarDrawable avatar = new AvatarDrawable(context, from);
-        final NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle()
-                .bigText(String.format("%s\n%s", email.subject, email.getPreview()));
+        final NotificationCompat.BigTextStyle bigTextStyle =
+                new NotificationCompat.BigTextStyle()
+                        .bigText(String.format("%s\n%s", email.subject, email.getPreview()));
         return new NotificationCompat.Builder(context, notificationChannelId(account.getId()))
                 .setSmallIcon(R.drawable.ic_email_outline_24dp)
                 .setContentTitle(getFromAsString(context, from))
@@ -258,18 +259,18 @@ public class EmailNotification extends AbstractNotification {
     private Notification getSummary(final List<EmailWithBodiesAndSubject> emails) {
         final NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
         for (final EmailWithBodiesAndSubject email : emails) {
-            inboxStyle.addLine(String.format(
-                    "<b>%s</b> %s",
-                    getFromAsString(context, email.getFirstFrom()),
-                    email.subject
-            ));
+            inboxStyle.addLine(
+                    String.format(
+                            "<b>%s</b> %s",
+                            getFromAsString(context, email.getFirstFrom()), email.subject));
         }
         return new NotificationCompat.Builder(context, notificationChannelId(account.getId()))
                 .setSmallIcon(R.drawable.ic_email_outline_24dp)
                 .setSubText(account.getName())
                 .setContentTitle(
-                        context.getResources().getQuantityString(R.plurals.x_new_emails, emails.size(), emails.size())
-                )
+                        context.getResources()
+                                .getQuantityString(
+                                        R.plurals.x_new_emails, emails.size(), emails.size()))
                 .setStyle(inboxStyle)
                 .setColor(getColor(context, R.attr.colorPrimary))
                 .setGroup(getGroupKey(account))
@@ -280,7 +281,8 @@ public class EmailNotification extends AbstractNotification {
 
     private void dismiss(final String id) {
         final Tag tag = new Tag(account.getId(), id);
-        final NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+        final NotificationManager notificationManager =
+                context.getSystemService(NotificationManager.class);
         notificationManager.cancel(tag.toString(), ID);
     }
 
@@ -307,20 +309,21 @@ public class EmailNotification extends AbstractNotification {
         public EmailNotification build() {
             Preconditions.checkNotNull(context, "Supplied context must not be null");
             Preconditions.checkNotNull(account, "Supplied account must not be null");
-            final List<String> activeEmailNotifications = getActiveEmailIds(
-                    context,
-                    account.getId()
-            );
+            final List<String> activeEmailNotifications =
+                    getActiveEmailIds(context, account.getId());
             final LttrsDatabase database = LttrsDatabase.getInstance(context, account.getId());
-            final List<EmailWithBodiesAndSubject> emails = database.threadAndEmailDao().getEmails(
-                    combine(freshlyAddedEmailIds, activeEmailNotifications)
-            );
+            final List<EmailWithBodiesAndSubject> emails =
+                    database.threadAndEmailDao()
+                            .getEmails(combine(freshlyAddedEmailIds, activeEmailNotifications));
 
-            final ImmutableList.Builder<EmailWithBodiesAndSubject> allNotificationBuilder = ImmutableList.builder();
-            final ImmutableList.Builder<EmailWithBodiesAndSubject> addedNotificationBuilder = ImmutableList.builder();
-            final ImmutableList.Builder<String> dismissedNotificationBuilder = ImmutableList.builder();
+            final ImmutableList.Builder<EmailWithBodiesAndSubject> allNotificationBuilder =
+                    ImmutableList.builder();
+            final ImmutableList.Builder<EmailWithBodiesAndSubject> addedNotificationBuilder =
+                    ImmutableList.builder();
+            final ImmutableList.Builder<String> dismissedNotificationBuilder =
+                    ImmutableList.builder();
             for (final EmailWithBodiesAndSubject email : emails) {
-                //TODO Take keyword overwrite into account
+                // TODO Take keyword overwrite into account
                 if (KeywordUtil.seen(email)) {
                     if (activeEmailNotifications.contains(email.getId())) {
                         dismissedNotificationBuilder.add(email.getId());
@@ -332,12 +335,12 @@ public class EmailNotification extends AbstractNotification {
                     }
                 }
             }
-            return new EmailNotification(context,
+            return new EmailNotification(
+                    context,
                     account,
                     addedNotificationBuilder.build(),
                     dismissedNotificationBuilder.build(),
-                    allNotificationBuilder.build()
-            );
+                    allNotificationBuilder.build());
         }
     }
 
@@ -421,5 +424,4 @@ public class EmailNotification extends AbstractNotification {
             return Objects.hashCode(accountId, emailId);
         }
     }
-
 }

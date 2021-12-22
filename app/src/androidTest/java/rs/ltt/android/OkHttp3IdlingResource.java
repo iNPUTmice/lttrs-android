@@ -17,9 +17,7 @@ package rs.ltt.android;
 
 import androidx.annotation.NonNull;
 import androidx.test.espresso.IdlingResource;
-
 import com.google.common.base.Preconditions;
-
 import okhttp3.Dispatcher;
 import okhttp3.OkHttpClient;
 
@@ -28,15 +26,17 @@ public final class OkHttp3IdlingResource implements IdlingResource {
     private final String name;
     private final Dispatcher dispatcher;
     volatile ResourceCallback callback;
+
     private OkHttp3IdlingResource(final String name, final Dispatcher dispatcher) {
         this.name = name;
         this.dispatcher = dispatcher;
-        dispatcher.setIdleCallback(() -> {
-            final ResourceCallback callback = this.callback;
-            if (callback != null) {
-                callback.onTransitionToIdle();
-            }
-        });
+        dispatcher.setIdleCallback(
+                () -> {
+                    final ResourceCallback callback = this.callback;
+                    if (callback != null) {
+                        callback.onTransitionToIdle();
+                    }
+                });
     }
 
     @NonNull

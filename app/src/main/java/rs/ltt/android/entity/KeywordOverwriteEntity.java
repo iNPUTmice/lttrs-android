@@ -20,33 +20,32 @@ import static androidx.room.ForeignKey.CASCADE;
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
-
 import java.util.Collection;
 
-@Entity(tableName = "keyword_overwrite",
+@Entity(
+        tableName = "keyword_overwrite",
         primaryKeys = {"threadId", "keyword"},
-        foreignKeys = @ForeignKey(entity = ThreadEntity.class,
-                parentColumns = {"threadId"},
-                childColumns = {"threadId"},
-                onDelete = CASCADE
-        )
-)
+        foreignKeys =
+                @ForeignKey(
+                        entity = ThreadEntity.class,
+                        parentColumns = {"threadId"},
+                        childColumns = {"threadId"},
+                        onDelete = CASCADE))
 public class KeywordOverwriteEntity {
 
-    @NonNull
-    public String threadId;
-    @NonNull
-    public String keyword;
+    @NonNull public String threadId;
+    @NonNull public String keyword;
     public boolean value;
 
-    public KeywordOverwriteEntity(@NonNull String threadId, @NonNull String keyword, boolean value) {
+    public KeywordOverwriteEntity(
+            @NonNull String threadId, @NonNull String keyword, boolean value) {
         this.threadId = threadId;
         this.keyword = keyword;
         this.value = value;
     }
 
-
-    public static KeywordOverwriteEntity getKeywordOverwrite(Collection<KeywordOverwriteEntity> keywordOverwriteEntities, String keyword) {
+    public static KeywordOverwriteEntity getKeywordOverwrite(
+            Collection<KeywordOverwriteEntity> keywordOverwriteEntities, String keyword) {
         for (KeywordOverwriteEntity keywordOverwriteEntity : keywordOverwriteEntities) {
             if (keyword.equals(keywordOverwriteEntity.keyword)) {
                 return keywordOverwriteEntity;

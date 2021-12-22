@@ -16,16 +16,12 @@
 package rs.ltt.android.worker;
 
 import android.content.Context;
-
 import androidx.annotation.NonNull;
 import androidx.work.Data;
 import androidx.work.WorkerParameters;
-
+import java.util.concurrent.ExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.concurrent.ExecutionException;
-
 import rs.ltt.android.entity.IdentityWithNameAndEmail;
 
 public class SubmitEmailWorker extends AbstractMuaWorker {
@@ -56,7 +52,8 @@ public class SubmitEmailWorker extends AbstractMuaWorker {
     @NonNull
     @Override
     public Result doWork() {
-        IdentityWithNameAndEmail identity = getDatabase().identityDao().get(this.account, this.identity);
+        IdentityWithNameAndEmail identity =
+                getDatabase().identityDao().get(this.account, this.identity);
         try {
             final boolean madeChanges = getMua().submit(this.emailId, identity).get();
             if (madeChanges) {

@@ -15,15 +15,12 @@
 
 package rs.ltt.android.ui.fragment;
 
-
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProvider;
-
 import rs.ltt.android.entity.MailboxOverviewItem;
 import rs.ltt.android.entity.ThreadOverviewItem;
 import rs.ltt.android.ui.ActionModeMenuConfiguration;
@@ -32,21 +29,20 @@ import rs.ltt.android.ui.model.AbstractQueryViewModel;
 import rs.ltt.android.ui.model.MailboxQueryViewModel;
 import rs.ltt.jmap.common.entity.Role;
 
-
 public abstract class AbstractMailboxQueryFragment extends AbstractQueryFragment {
 
     MailboxQueryViewModel mailboxQueryViewModel;
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final ViewModelProvider viewModelProvider = new ViewModelProvider(
-                getViewModelStore(),
-                new MailboxQueryViewModel.Factory(
-                        requireActivity().getApplication(),
-                        getLttrsViewModel().getAccountId(),
-                        getMailboxId()
-                )
-        );
+    public View onCreateView(
+            @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        final ViewModelProvider viewModelProvider =
+                new ViewModelProvider(
+                        getViewModelStore(),
+                        new MailboxQueryViewModel.Factory(
+                                requireActivity().getApplication(),
+                                getLttrsViewModel().getAccountId(),
+                                getMailboxId()));
         this.mailboxQueryViewModel = viewModelProvider.get(MailboxQueryViewModel.class);
         return super.onCreateView(inflater, container, savedInstanceState);
     }
@@ -59,17 +55,24 @@ public abstract class AbstractMailboxQueryFragment extends AbstractQueryFragment
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mailboxQueryViewModel.getMailbox().observe(getViewLifecycleOwner(), mailboxOverviewItem -> {
-            if (mailboxOverviewItem == null) {
-                return;
-            }
-            onLabelOpened(mailboxOverviewItem);
-        });
+        mailboxQueryViewModel
+                .getMailbox()
+                .observe(
+                        getViewLifecycleOwner(),
+                        mailboxOverviewItem -> {
+                            if (mailboxOverviewItem == null) {
+                                return;
+                            }
+                            onLabelOpened(mailboxOverviewItem);
+                        });
     }
 
     @Override
     protected QueryItemTouchHelper.Swipable onQueryItemSwipe(ThreadOverviewItem item) {
-        final MailboxOverviewItem mailbox = mailboxQueryViewModel != null ? mailboxQueryViewModel.getMailbox().getValue() : null;
+        final MailboxOverviewItem mailbox =
+                mailboxQueryViewModel != null
+                        ? mailboxQueryViewModel.getMailbox().getValue()
+                        : null;
         if (mailbox == null) {
             return QueryItemTouchHelper.Swipable.NO;
         } else if (mailbox.role == Role.INBOX) {
@@ -97,7 +100,10 @@ public abstract class AbstractMailboxQueryFragment extends AbstractQueryFragment
 
     @Override
     protected ActionModeMenuConfiguration.QueryType getQueryType() {
-        final MailboxOverviewItem mailbox = mailboxQueryViewModel != null ? mailboxQueryViewModel.getMailbox().getValue() : null;
+        final MailboxOverviewItem mailbox =
+                mailboxQueryViewModel != null
+                        ? mailboxQueryViewModel.getMailbox().getValue()
+                        : null;
         if (mailbox == null) {
             return ActionModeMenuConfiguration.QueryType.SPECIAL;
         } else if (mailbox.role == Role.INBOX) {
@@ -114,5 +120,4 @@ public abstract class AbstractMailboxQueryFragment extends AbstractQueryFragment
             return ActionModeMenuConfiguration.QueryType.SPECIAL;
         }
     }
-
 }

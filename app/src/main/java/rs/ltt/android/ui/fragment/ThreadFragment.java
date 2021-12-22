@@ -22,27 +22,22 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.paging.PagedList;
-
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.MoreExecutors;
-
+import java.util.List;
+import java.util.UUID;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
-import java.util.UUID;
-
 import rs.ltt.android.LttrsNavigationDirections;
 import rs.ltt.android.R;
 import rs.ltt.android.databinding.FragmentThreadBinding;
@@ -65,7 +60,8 @@ import rs.ltt.android.util.Event;
 import rs.ltt.android.util.MediaTypes;
 import rs.ltt.jmap.common.entity.Attachment;
 
-public class ThreadFragment extends AbstractLttrsFragment implements OnFlaggedToggled, OnComposeActionTriggered, OnAttachmentActionTriggered {
+public class ThreadFragment extends AbstractLttrsFragment
+        implements OnFlaggedToggled, OnComposeActionTriggered, OnAttachmentActionTriggered {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ThreadFragment.class);
 
@@ -75,69 +71,82 @@ public class ThreadFragment extends AbstractLttrsFragment implements OnFlaggedTo
     private ActivityResultLauncher<Attachment> createDocumentLauncher;
     private ActivityResultLauncher<Bundle> composeLauncher;
 
-    private ThreadViewModel.MenuConfiguration menuConfiguration = ThreadViewModel.MenuConfiguration.none();
+    private ThreadViewModel.MenuConfiguration menuConfiguration =
+            ThreadViewModel.MenuConfiguration.none();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        this.createDocumentLauncher = registerForActivityResult(
-                new CreateDocumentContract(),
-                uri -> threadViewModel.storeAttachment(uri)
-        );
-        this.composeLauncher = registerForActivityResult(new ComposeContract(), this::onComposeResult);
+        this.createDocumentLauncher =
+                registerForActivityResult(
+                        new CreateDocumentContract(), uri -> threadViewModel.storeAttachment(uri));
+        this.composeLauncher =
+                registerForActivityResult(new ComposeContract(), this::onComposeResult);
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(
+            @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         final ThreadFragmentArgs arguments = ThreadFragmentArgs.fromBundle(requireArguments());
         final String threadId = arguments.getThread();
         final String label = arguments.getLabel();
-        final ViewModelProvider viewModelProvider = new ViewModelProvider(
-                getViewModelStore(),
-                new ThreadViewModel.Factory(
-                        requireActivity().getApplication(),
-                        getLttrsViewModel().getAccountId(),
-                        threadId,
-                        label
-                )
-        );
+        final ViewModelProvider viewModelProvider =
+                new ViewModelProvider(
+                        getViewModelStore(),
+                        new ThreadViewModel.Factory(
+                                requireActivity().getApplication(),
+                                getLttrsViewModel().getAccountId(),
+                                threadId,
+                                label));
         getLttrsViewModel().clearActivityTitle();
         threadViewModel = viewModelProvider.get(ThreadViewModel.class);
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_thread, container, false);
 
         threadViewModel.getSeenEvent().observe(getViewLifecycleOwner(), this::onSeenEvent);
-        threadViewModel.getViewIntentEvent().observe(getViewLifecycleOwner(), this::onViewIntentEvent);
-        threadViewModel.getDownloadErrorEvent().observe(getViewLifecycleOwner(), this::onErrorMessage);
+        threadViewModel
+                .getViewIntentEvent()
+                .observe(getViewLifecycleOwner(), this::onViewIntentEvent);
+        threadViewModel
+                .getDownloadErrorEvent()
+                .observe(getViewLifecycleOwner(), this::onErrorMessage);
 
-        //do we want a custom layout manager that does *NOT* remember scroll position when more
-        //than one item is expanded. with variable sized items this might be annoying
+        // do we want a custom layout manager that does *NOT* remember scroll position when more
+        // than one item is expanded. with variable sized items this might be annoying
 
         threadAdapter = new ThreadAdapter(threadViewModel.expandedItems);
-        threadAdapter.setSubjectWithImportance(SubjectWithImportance.of(
-                threadId,
-                Strings.emptyToNull(arguments.getSubject()),
-                arguments.getImportant()
-        ));
+        threadAdapter.setSubjectWithImportance(
+                SubjectWithImportance.of(
+                        threadId,
+                        Strings.emptyToNull(arguments.getSubject()),
+                        arguments.getImportant()));
 
-        //the default change animation causes UI glitches when expanding or collapsing item
-        //for now it's better to just disable it. In the future we may write our own animator
+        // the default change animation causes UI glitches when expanding or collapsing item
+        // for now it's better to just disable it. In the future we may write our own animator
         ItemAnimators.disableChangeAnimation(binding.list.getItemAnimator());
 
         binding.list.setAdapter(threadAdapter);
         threadViewModel.getEmails().observe(getViewLifecycleOwner(), this::onEmailsChanged);
-        threadViewModel.getSubjectWithImportance().observe(getViewLifecycleOwner(), threadAdapter::setSubjectWithImportance);
+        threadViewModel
+                .getSubjectWithImportance()
+                .observe(getViewLifecycleOwner(), threadAdapter::setSubjectWithImportance);
         threadViewModel.getFlagged().observe(getViewLifecycleOwner(), threadAdapter::setFlagged);
         threadViewModel.getLabels().observe(getViewLifecycleOwner(), threadAdapter::setLabels);
-        threadViewModel.getMenuConfiguration().observe(getViewLifecycleOwner(), menuConfiguration -> {
-            this.menuConfiguration = menuConfiguration;
-            requireActivity().invalidateOptionsMenu();
-        });
+        threadViewModel
+                .getMenuConfiguration()
+                .observe(
+                        getViewLifecycleOwner(),
+                        menuConfiguration -> {
+                            this.menuConfiguration = menuConfiguration;
+                            requireActivity().invalidateOptionsMenu();
+                        });
         threadAdapter.setOnFlaggedToggledListener(this);
         threadAdapter.setOnComposeActionTriggeredListener(this);
         threadAdapter.setOnAttachmentActionTriggered(this);
-        threadViewModel.getThreadViewRedirect().observe(getViewLifecycleOwner(), this::onThreadViewRedirect);
+        threadViewModel
+                .getThreadViewRedirect()
+                .observe(getViewLifecycleOwner(), this::onThreadViewRedirect);
         return binding.getRoot();
     }
 
@@ -160,10 +169,8 @@ public class ThreadFragment extends AbstractLttrsFragment implements OnFlaggedTo
         if (seenEvent.isConsumable()) {
             final Seen seen = seenEvent.consume();
             if (seen.isUnread()) {
-                //TODO dismiss notification w/o waiting for round-trip
-                getThreadModifier().markRead(
-                        ImmutableList.of(threadViewModel.getThreadId())
-                );
+                // TODO dismiss notification w/o waiting for round-trip
+                getThreadModifier().markRead(ImmutableList.of(threadViewModel.getThreadId()));
             }
         }
     }
@@ -177,13 +184,11 @@ public class ThreadFragment extends AbstractLttrsFragment implements OnFlaggedTo
     private void onThreadViewRedirect(final Event<String> event) {
         if (event.isConsumable()) {
             final String threadId = event.consume();
-            //TODO once draft worker copies over flags and mailboxes we might want to put them in here as well
-            getNavController().navigate(LttrsNavigationDirections.actionToThread(
-                    threadId,
-                    null,
-                    null,
-                    false
-            ));
+            // TODO once draft worker copies over flags and mailboxes we might want to put them in
+            // here as well
+            getNavController()
+                    .navigate(
+                            LttrsNavigationDirections.actionToThread(threadId, null, null, false));
         }
     }
 
@@ -195,10 +200,12 @@ public class ThreadFragment extends AbstractLttrsFragment implements OnFlaggedTo
                         @Override
                         public void onSuccess(final List<ExpandedPosition> expandedPositions) {
                             threadAdapter.expand(expandedPositions);
-                            submitList(fullEmails, () -> {
-                                final int pos = expandedPositions.get(0).position;
-                                binding.list.scrollToPosition(pos == 0 ? 0 : pos + 1);
-                            });
+                            submitList(
+                                    fullEmails,
+                                    () -> {
+                                        final int pos = expandedPositions.get(0).position;
+                                        binding.list.scrollToPosition(pos == 0 ? 0 : pos + 1);
+                                    });
                         }
 
                         @Override
@@ -207,8 +214,7 @@ public class ThreadFragment extends AbstractLttrsFragment implements OnFlaggedTo
                             submitList(fullEmails);
                         }
                     },
-                    MoreExecutors.directExecutor()
-            );
+                    MoreExecutors.directExecutor());
         } else {
             submitList(fullEmails);
         }
@@ -224,10 +230,7 @@ public class ThreadFragment extends AbstractLttrsFragment implements OnFlaggedTo
     }
 
     private void configureItemAnimator() {
-        ItemAnimators.configureItemAnimator(
-                this.binding.list,
-                this.threadAdapter.isInitialLoad()
-        );
+        ItemAnimators.configureItemAnimator(this.binding.list, this.threadAdapter.isInitialLoad());
     }
 
     private void onComposeResult(final Bundle data) {
@@ -235,7 +238,8 @@ public class ThreadFragment extends AbstractLttrsFragment implements OnFlaggedTo
             return;
         }
         final UUID uuid = (UUID) data.getSerializable(ComposeActivity.EDITING_TASK_ID_EXTRA);
-        final boolean threadDiscarded = data.getBoolean(ComposeActivity.DISCARDED_THREAD_EXTRA, false);
+        final boolean threadDiscarded =
+                data.getBoolean(ComposeActivity.DISCARDED_THREAD_EXTRA, false);
         if (uuid != null) {
             getLttrsViewModel().observeForFailure(uuid);
             threadViewModel.waitForEdit(uuid);
@@ -245,7 +249,8 @@ public class ThreadFragment extends AbstractLttrsFragment implements OnFlaggedTo
     }
 
     @Override
-    public void onCreateOptionsMenu(@NonNull final Menu menu, @NonNull final MenuInflater inflater) {
+    public void onCreateOptionsMenu(
+            @NonNull final Menu menu, @NonNull final MenuInflater inflater) {
         inflater.inflate(R.menu.fragment_thread, menu);
         menu.findItem(R.id.action_archive).setVisible(menuConfiguration.archive);
         final MenuItem removeLabelItem = menu.findItem(R.id.action_remove_label);
@@ -254,7 +259,8 @@ public class ThreadFragment extends AbstractLttrsFragment implements OnFlaggedTo
         menu.findItem(R.id.action_move_to_inbox).setVisible(menuConfiguration.moveToInbox);
         menu.findItem(R.id.action_move_to_trash).setVisible(menuConfiguration.moveToTrash);
         menu.findItem(R.id.action_mark_important).setVisible(menuConfiguration.markImportant);
-        menu.findItem(R.id.action_mark_not_important).setVisible(menuConfiguration.markNotImportant);
+        menu.findItem(R.id.action_mark_not_important)
+                .setVisible(menuConfiguration.markNotImportant);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -263,51 +269,39 @@ public class ThreadFragment extends AbstractLttrsFragment implements OnFlaggedTo
         final NavController navController = getNavController();
         final int itemId = menuItem.getItemId();
         if (itemId == R.id.action_mark_unread) {
-            getThreadModifier().markUnread(
-                    ImmutableList.of(threadViewModel.getThreadId())
-            );
+            getThreadModifier().markUnread(ImmutableList.of(threadViewModel.getThreadId()));
             navController.popBackStack();
             return true;
         } else if (itemId == R.id.action_archive) {
-            getThreadModifier().archive(
-                    ImmutableList.of(threadViewModel.getThreadId())
-            );
+            getThreadModifier().archive(ImmutableList.of(threadViewModel.getThreadId()));
             navController.popBackStack();
             return true;
         } else if (itemId == R.id.action_remove_label) {
-            getThreadModifier().removeFromMailbox(
-                    ImmutableList.of(threadViewModel.getThreadId()),
-                    threadViewModel.getMailbox()
-            );
+            getThreadModifier()
+                    .removeFromMailbox(
+                            ImmutableList.of(threadViewModel.getThreadId()),
+                            threadViewModel.getMailbox());
             navController.popBackStack();
             return true;
         } else if (itemId == R.id.action_move_to_inbox) {
-            getThreadModifier().moveToInbox(
-                    ImmutableList.of(threadViewModel.getThreadId())
-            );
+            getThreadModifier().moveToInbox(ImmutableList.of(threadViewModel.getThreadId()));
             navController.popBackStack();
             return true;
         } else if (itemId == R.id.action_move_to_trash) {
-            getThreadModifier().moveToTrash(
-                    ImmutableList.of(threadViewModel.getThreadId())
-            );
+            getThreadModifier().moveToTrash(ImmutableList.of(threadViewModel.getThreadId()));
             navController.popBackStack();
             return true;
         } else if (itemId == R.id.action_change_labels) {
-            navController.navigate(LttrsNavigationDirections.actionChangeLabels(
-                    new String[]{threadViewModel.getThreadId()}
-            ));
+            navController.navigate(
+                    LttrsNavigationDirections.actionChangeLabels(
+                            new String[] {threadViewModel.getThreadId()}));
             return true;
         } else if (itemId == R.id.action_mark_important) {
-            getThreadModifier().markImportant(
-                    ImmutableList.of(threadViewModel.getThreadId())
-            );
+            getThreadModifier().markImportant(ImmutableList.of(threadViewModel.getThreadId()));
             return true;
         } else if (itemId == R.id.action_mark_not_important) {
-            //TODO if label == important (coming from important view); pop back stack
-            getThreadModifier().markNotImportant(
-                    ImmutableList.of(threadViewModel.getThreadId())
-            );
+            // TODO if label == important (coming from important view); pop back stack
+            getThreadModifier().markNotImportant(ImmutableList.of(threadViewModel.getThreadId()));
             return true;
         } else {
             return super.onOptionsItemSelected(menuItem);
@@ -319,21 +313,16 @@ public class ThreadFragment extends AbstractLttrsFragment implements OnFlaggedTo
         getThreadModifier().toggleFlagged(threadId, target);
     }
 
-
     @Override
     public void onEditDraft(String emailId) {
-        this.composeLauncher.launch(ComposeActivity.editDraft(
-                getLttrsViewModel().getAccountId(),
-                emailId
-        ));
+        this.composeLauncher.launch(
+                ComposeActivity.editDraft(getLttrsViewModel().getAccountId(), emailId));
     }
 
     @Override
     public void onReplyAll(String emailId) {
-        this.composeLauncher.launch(ComposeActivity.replyAll(
-                getLttrsViewModel().getAccountId(),
-                emailId
-        ));
+        this.composeLauncher.launch(
+                ComposeActivity.replyAll(getLttrsViewModel().getAccountId(), emailId));
     }
 
     @Override

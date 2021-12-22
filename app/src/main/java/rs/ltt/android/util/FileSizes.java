@@ -2,9 +2,7 @@ package rs.ltt.android.util;
 
 public final class FileSizes {
 
-    private FileSizes() {
-
-    }
+    private FileSizes() {}
 
     public static String toString(final long size) {
         if (size >= (1024 * 1024 * 1024)) {
@@ -17,5 +15,4 @@ public final class FileSizes {
             return size + " B";
         }
     }
-
 }

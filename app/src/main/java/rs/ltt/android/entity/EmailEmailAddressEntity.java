@@ -18,35 +18,31 @@ package rs.ltt.android.entity;
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
-
 import com.google.common.collect.ImmutableList;
-
 import java.util.List;
-
 import rs.ltt.jmap.common.entity.Email;
 import rs.ltt.jmap.common.entity.EmailAddress;
 
-@Entity(tableName = "email_email_address",
+@Entity(
+        tableName = "email_email_address",
         primaryKeys = {"emailId", "position", "type"},
-        foreignKeys = @ForeignKey(entity = EmailEntity.class,
-                parentColumns = {"id"},
-                childColumns = {"emailId"},
-                onDelete = ForeignKey.CASCADE
-        )
-)
+        foreignKeys =
+                @ForeignKey(
+                        entity = EmailEntity.class,
+                        parentColumns = {"id"},
+                        childColumns = {"emailId"},
+                        onDelete = ForeignKey.CASCADE))
 public class EmailEmailAddressEntity {
 
-    @NonNull
-    public String emailId;
-    @NonNull
-    public Integer position;
-    @NonNull
-    public EmailAddressType type;
+    @NonNull public String emailId;
+    @NonNull public Integer position;
+    @NonNull public EmailAddressType type;
 
     public String name;
     public String email;
 
-    private static EmailEmailAddressEntity of(String emailId, Integer position, EmailAddressType type, EmailAddress address) {
+    private static EmailEmailAddressEntity of(
+            String emailId, Integer position, EmailAddressType type, EmailAddress address) {
         final EmailEmailAddressEntity entity = new EmailEmailAddressEntity();
         entity.emailId = emailId;
         entity.position = position;
@@ -56,7 +52,11 @@ public class EmailEmailAddressEntity {
         return entity;
     }
 
-    private static void addToBuilder(ImmutableList.Builder<EmailEmailAddressEntity> builder, String emailId, EmailAddressType type, List<EmailAddress> addresses) {
+    private static void addToBuilder(
+            ImmutableList.Builder<EmailEmailAddressEntity> builder,
+            String emailId,
+            EmailAddressType type,
+            List<EmailAddress> addresses) {
         if (addresses == null) {
             return;
         }
@@ -75,5 +75,4 @@ public class EmailEmailAddressEntity {
         addToBuilder(builder, email.getId(), EmailAddressType.REPLY_TO, email.getReplyTo());
         return builder.build();
     }
-
 }

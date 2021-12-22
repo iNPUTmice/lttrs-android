@@ -4,12 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-
 import androidx.activity.result.contract.ActivityResultContract;
 import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import rs.ltt.android.util.MediaTypes;
 import rs.ltt.jmap.common.entity.Attachment;
 
@@ -26,8 +24,8 @@ public class CreateDocumentContract extends ActivityResultContract<Attachment, U
 
     @Nullable
     @Override
-    public final SynchronousResult<Uri> getSynchronousResult(@NonNull Context context,
-                                                             @NonNull Attachment attachment) {
+    public final SynchronousResult<Uri> getSynchronousResult(
+            @NonNull Context context, @NonNull Attachment attachment) {
         return null;
     }
 

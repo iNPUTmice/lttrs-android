@@ -20,13 +20,10 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Transaction;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Collection;
 import java.util.List;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rs.ltt.android.entity.EntityStateEntity;
 import rs.ltt.android.entity.IdentityEmailAddressEntity;
 import rs.ltt.android.entity.IdentityEntity;
@@ -59,7 +56,8 @@ public abstract class IdentityDao extends AbstractEntityDao {
     abstract void delete(String id);
 
     @Query("select :accountId as accountId,id,name,email from identity")
-    public abstract LiveData<List<IdentityWithNameAndEmail>> getIdentitiesLiveData(final Long accountId);
+    public abstract LiveData<List<IdentityWithNameAndEmail>> getIdentitiesLiveData(
+            final Long accountId);
 
     @Query("select :accountId as accountId,id,name,email from identity where id=:id limit 1")
     public abstract IdentityWithNameAndEmail get(final Long accountId, final String id);

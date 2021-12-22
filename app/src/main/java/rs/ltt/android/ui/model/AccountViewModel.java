@@ -1,28 +1,22 @@
 package rs.ltt.android.ui.model;
 
 import android.app.Application;
-
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
-
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
-
+import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Objects;
-
 import rs.ltt.android.entity.AccountName;
 import rs.ltt.android.repository.MainRepository;
 import rs.ltt.android.util.Event;
-
 
 public class AccountViewModel extends AndroidViewModel {
 
@@ -47,19 +41,23 @@ public class AccountViewModel extends AndroidViewModel {
 
     public void removeAccount() {
         this.enabled.postValue(false);
-        final ListenableFuture<Void> future = this.mainRepository.removeAccountAsync(this.accountId);
-        Futures.addCallback(future, new FutureCallback<Void>() {
-            @Override
-            public void onSuccess(@Nullable Void unused) {
-                onFinishEvent.postValue(new Event<>(unused));
-            }
+        final ListenableFuture<Void> future =
+                this.mainRepository.removeAccountAsync(this.accountId);
+        Futures.addCallback(
+                future,
+                new FutureCallback<Void>() {
+                    @Override
+                    public void onSuccess(@Nullable Void unused) {
+                        onFinishEvent.postValue(new Event<>(unused));
+                    }
 
-            @Override
-            public void onFailure(@NotNull Throwable throwable) {
-                //display warning
-                enabled.postValue(false);
-            }
-        }, MoreExecutors.directExecutor());
+                    @Override
+                    public void onFailure(@NotNull Throwable throwable) {
+                        // display warning
+                        enabled.postValue(false);
+                    }
+                },
+                MoreExecutors.directExecutor());
     }
 
     public LiveData<Event<Void>> getOnFinishEvent() {
@@ -83,7 +81,8 @@ public class AccountViewModel extends AndroidViewModel {
         @NonNull
         @Override
         public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-            return Objects.requireNonNull(modelClass.cast(new AccountViewModel(application, accountId)));
+            return Objects.requireNonNull(
+                    modelClass.cast(new AccountViewModel(application, accountId)));
         }
     }
 }

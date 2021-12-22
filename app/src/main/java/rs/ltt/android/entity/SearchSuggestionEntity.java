@@ -19,11 +19,16 @@ import androidx.room.Entity;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "search_suggestion", indices = {@Index(value = {"query"}, unique = true)})
+@Entity(
+        tableName = "search_suggestion",
+        indices = {
+            @Index(
+                    value = {"query"},
+                    unique = true)
+        })
 public class SearchSuggestionEntity {
 
-    @PrimaryKey
-    public Long id;
+    @PrimaryKey public Long id;
 
     public String query;
 
@@ -32,5 +37,4 @@ public class SearchSuggestionEntity {
         entity.query = query;
         return entity;
     }
-
 }

@@ -1,7 +1,6 @@
 package rs.ltt.android.cache;
 
 import java.time.Instant;
-
 import rs.ltt.android.database.LttrsDatabase;
 import rs.ltt.android.entity.AccountStateEntity;
 import rs.ltt.autocrypt.client.header.EncryptionPreference;
@@ -47,12 +46,17 @@ public class AutocryptDatabaseStorage implements Storage {
      * @param preference The prefer-encrypt value of the Autocrypt header
      */
     @Override
-    public void updateAutocrypt(final String address, final Instant effectiveDate, byte[] publicKey, final EncryptionPreference preference) {
+    public void updateAutocrypt(
+            final String address,
+            final Instant effectiveDate,
+            byte[] publicKey,
+            final EncryptionPreference preference) {
         this.database.autocryptDao().updateAutocrypt(address, effectiveDate, publicKey, preference);
     }
 
     @Override
-    public boolean updateGossip(final String address, final Instant effectiveData, final byte[] publicKey) {
+    public boolean updateGossip(
+            final String address, final Instant effectiveData, final byte[] publicKey) {
         return false;
     }
 

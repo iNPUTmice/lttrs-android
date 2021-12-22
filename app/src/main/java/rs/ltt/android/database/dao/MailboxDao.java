@@ -20,16 +20,12 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Transaction;
-
 import com.google.common.util.concurrent.ListenableFuture;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rs.ltt.android.entity.EntityStateEntity;
 import rs.ltt.android.entity.MailboxEntity;
 import rs.ltt.android.entity.MailboxOverviewItem;
@@ -73,10 +69,14 @@ public abstract class MailboxDao extends AbstractEntityDao {
     @Query("select id,parentId,name,sortOrder,unreadThreads,totalEmails,role from mailbox")
     public abstract LiveData<List<MailboxOverviewItem>> getMailboxes();
 
-    @Query("select id,parentId,name,sortOrder,unreadThreads,totalEmails,role from mailbox where role=:role limit 1")
+    @Query(
+            "select id,parentId,name,sortOrder,unreadThreads,totalEmails,role from mailbox where"
+                    + " role=:role limit 1")
     public abstract LiveData<MailboxOverviewItem> getMailboxOverviewItemLiveData(Role role);
 
-    @Query("select id,parentid,name,sortOrder,unreadThreads,totalEmails,role from mailbox where id=:id")
+    @Query(
+            "select id,parentid,name,sortOrder,unreadThreads,totalEmails,role from mailbox where"
+                    + " id=:id")
     public abstract LiveData<MailboxOverviewItem> getMailboxOverviewItemLiveData(String id);
 
     @Query("select id,role,name from mailbox where role=:role limit 1")
@@ -89,28 +89,47 @@ public abstract class MailboxDao extends AbstractEntityDao {
     public abstract LiveData<MailboxWithRoleAndName> getMailboxLiveData(String id);
 
     @Query("select id,role,name from mailbox where role is null or role in (:roles)")
-    protected abstract LiveData<List<MailboxWithRoleAndName>> getMailboxesWithRoleEqualsNullOrIn(Role... roles);
+    protected abstract LiveData<List<MailboxWithRoleAndName>> getMailboxesWithRoleEqualsNullOrIn(
+            Role... roles);
 
     public LiveData<List<MailboxWithRoleAndName>> getLabels() {
         return getMailboxesWithRoleEqualsNullOrIn(Role.INBOX);
     }
 
-    @Query("select id,parentid,name,sortOrder,unreadThreads,totalEmails,role from mailbox where id=:id")
+    @Query(
+            "select id,parentid,name,sortOrder,unreadThreads,totalEmails,role from mailbox where"
+                    + " id=:id")
     public abstract MailboxOverviewItem getMailbox(String id);
 
-    @Query("select id,parentId,name,sortOrder,unreadThreads,totalEmails,role from mailbox where role=:role limit 1")
+    @Query(
+            "select id,parentId,name,sortOrder,unreadThreads,totalEmails,role from mailbox where"
+                    + " role=:role limit 1")
     public abstract MailboxOverviewItem getMailboxOverviewItem(Role role);
 
-    @Query("select distinct mailbox.id,role,name from email join email_mailbox on email_mailbox.emailId=email.id join mailbox on email_mailbox.mailboxId=mailbox.id where threadId=:threadId")
-    public abstract LiveData<List<MailboxWithRoleAndName>> getMailboxesForThreadLiveData(String threadId);
+    @Query(
+            "select distinct mailbox.id,role,name from email join email_mailbox on"
+                    + " email_mailbox.emailId=email.id join mailbox on"
+                    + " email_mailbox.mailboxId=mailbox.id where threadId=:threadId")
+    public abstract LiveData<List<MailboxWithRoleAndName>> getMailboxesForThreadLiveData(
+            String threadId);
 
-    @Query("select distinct mailbox.id,role,name from email join email_mailbox on email_mailbox.emailId=email.id join mailbox on email_mailbox.mailboxId=mailbox.id where threadId in (:threadIds)")
-    public abstract List<MailboxWithRoleAndName> getMailboxesForThreads(Collection<String> threadIds);
+    @Query(
+            "select distinct mailbox.id,role,name from email join email_mailbox on"
+                    + " email_mailbox.emailId=email.id join mailbox on"
+                    + " email_mailbox.mailboxId=mailbox.id where threadId in (:threadIds)")
+    public abstract List<MailboxWithRoleAndName> getMailboxesForThreads(
+            Collection<String> threadIds);
 
-    @Query("select distinct mailbox.id from email join email_mailbox on email_mailbox.emailId=email.id join mailbox on email_mailbox.mailboxId=mailbox.id where threadId in (:threadIds)")
+    @Query(
+            "select distinct mailbox.id from email join email_mailbox on"
+                    + " email_mailbox.emailId=email.id join mailbox on"
+                    + " email_mailbox.mailboxId=mailbox.id where threadId in (:threadIds)")
     public abstract LiveData<List<String>> getMailboxIdsForThreadsLiveData(String[] threadIds);
 
-    @Query("select count((select 1 where not exists(select * from email_mailbox join mailbox on email_mailbox.mailboxId=mailbox.id where mailbox.role=:role and email_mailbox.emailId=email.id))) > 0 from email where threadId=:threadId")
+    @Query(
+            "select count((select 1 where not exists(select * from email_mailbox join mailbox on"
+                    + " email_mailbox.mailboxId=mailbox.id where mailbox.role=:role and"
+                    + " email_mailbox.emailId=email.id))) > 0 from email where threadId=:threadId")
     public abstract LiveData<Boolean> isAnyNotIn(String threadId, Role role);
 
     @Query("update mailbox set totalEmails=:value where id=:id")
@@ -177,7 +196,8 @@ public abstract class MailboxDao extends AbstractEntityDao {
                             updateUnreadThreads(mailbox.getId(), mailbox.getUnreadThreads());
                             break;
                         default:
-                            throw new IllegalArgumentException("Unable to update property '" + property + "'");
+                            throw new IllegalArgumentException(
+                                    "Unable to update property '" + property + "'");
                     }
                 }
             }

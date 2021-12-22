@@ -16,19 +16,15 @@
 package rs.ltt.android.worker;
 
 import android.content.Context;
-
 import androidx.annotation.NonNull;
 import androidx.work.Data;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
-
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
-
 import javax.net.ssl.SSLException;
-
 import rs.ltt.android.MuaPool;
 import rs.ltt.android.database.AppDatabase;
 import rs.ltt.android.database.LttrsDatabase;
@@ -59,7 +55,8 @@ public abstract class AbstractMuaWorker extends Worker {
     static boolean shouldRetry(final ExecutionException e) {
         final Throwable cause = e.getCause();
         if (cause instanceof MethodErrorResponseException) {
-            final MethodErrorResponse methodError = ((MethodErrorResponseException) cause).getMethodErrorResponse();
+            final MethodErrorResponse methodError =
+                    ((MethodErrorResponseException) cause).getMethodErrorResponse();
             return methodError instanceof StateMismatchMethodErrorResponse;
         }
         return isNetworkIssue(cause);
@@ -80,7 +77,10 @@ public abstract class AbstractMuaWorker extends Worker {
     }
 
     protected Mua getMua() {
-        final AccountWithCredentials account = AppDatabase.getInstance(getApplicationContext()).accountDao().getAccount(this.account);
+        final AccountWithCredentials account =
+                AppDatabase.getInstance(getApplicationContext())
+                        .accountDao()
+                        .getAccount(this.account);
         return MuaPool.getInstance(getApplicationContext(), account);
     }
 }

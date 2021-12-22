@@ -18,13 +18,11 @@ package rs.ltt.android.ui.activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-
 import androidx.activity.ComponentActivity;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
-
 import rs.ltt.android.R;
 import rs.ltt.android.SetupNavigationDirections;
 import rs.ltt.android.databinding.ActivitySetupBinding;
@@ -46,39 +44,53 @@ public class SetupActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        final ActivitySetupBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_setup);
+        final ActivitySetupBinding binding =
+                DataBindingUtil.setContentView(this, R.layout.activity_setup);
         final NavController navController = getNavController();
-        final ViewModelProvider viewModelProvider = new ViewModelProvider(
-                this,
-                getDefaultViewModelProviderFactory()
-        );
+        final ViewModelProvider viewModelProvider =
+                new ViewModelProvider(this, getDefaultViewModelProviderFactory());
         this.setupViewModel = viewModelProvider.get(SetupViewModel.class);
-        this.setupViewModel.getRedirection().observe(this, targetEvent -> {
-            if (targetEvent.isConsumable()) {
-                final SetupViewModel.Target target = targetEvent.consume();
-                switch (target) {
-                    case ENTER_PASSWORD:
-                        navController.navigate(SetupNavigationDirections.enterPassword());
-                        break;
-                    case ENTER_URL:
-                        navController.navigate(SetupNavigationDirections.enterSessionResource());
-                        break;
-                    default:
-                        throw new IllegalStateException(String.format("Unable to navigate to target %s", target));
-
-                }
-            }
-        });
-        this.setupViewModel.getSetupComplete().observe(this, event -> {
-            if (event.isConsumable()) {
-                redirectToLttrs(event.consume());
-            }
-        });
-        this.setupViewModel.getWarningMessage().observe(this, event -> {
-            if (event.isConsumable()) {
-                MaterialAlertDialogs.error(this, event.consume());
-            }
-        });
+        this.setupViewModel
+                .getRedirection()
+                .observe(
+                        this,
+                        targetEvent -> {
+                            if (targetEvent.isConsumable()) {
+                                final SetupViewModel.Target target = targetEvent.consume();
+                                switch (target) {
+                                    case ENTER_PASSWORD:
+                                        navController.navigate(
+                                                SetupNavigationDirections.enterPassword());
+                                        break;
+                                    case ENTER_URL:
+                                        navController.navigate(
+                                                SetupNavigationDirections.enterSessionResource());
+                                        break;
+                                    default:
+                                        throw new IllegalStateException(
+                                                String.format(
+                                                        "Unable to navigate to target %s", target));
+                                }
+                            }
+                        });
+        this.setupViewModel
+                .getSetupComplete()
+                .observe(
+                        this,
+                        event -> {
+                            if (event.isConsumable()) {
+                                redirectToLttrs(event.consume());
+                            }
+                        });
+        this.setupViewModel
+                .getWarningMessage()
+                .observe(
+                        this,
+                        event -> {
+                            if (event.isConsumable()) {
+                                MaterialAlertDialogs.error(this, event.consume());
+                            }
+                        });
     }
 
     @Override
@@ -93,10 +105,10 @@ public class SetupActivity extends AppCompatActivity {
         return NavControllers.findNavController(this, R.id.nav_host_fragment);
     }
 
-
     private void redirectToLttrs(final Long accountId) {
         final Intent currentIntent = getIntent();
-        final String uri = currentIntent == null ? null : currentIntent.getStringExtra(EXTRA_NEXT_ACTION);
+        final String uri =
+                currentIntent == null ? null : currentIntent.getStringExtra(EXTRA_NEXT_ACTION);
         final MailToUri mailToUri = uri == null ? null : MailToUri.parse(uri);
         if (mailToUri != null) {
             ComposeActivity.launch(this, Uri.parse(uri));

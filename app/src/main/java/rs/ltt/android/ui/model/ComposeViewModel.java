@@ -17,7 +17,6 @@ package rs.ltt.android.ui.model;
 
 import android.app.Application;
 import android.net.Uri;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
@@ -32,7 +31,6 @@ import androidx.work.ExistingWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
-
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
@@ -40,11 +38,6 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
-
-import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -53,7 +46,9 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CancellationException;
 import java.util.stream.Collectors;
-
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rs.ltt.android.MuaPool;
 import rs.ltt.android.R;
 import rs.ltt.android.database.AppDatabase;
@@ -90,7 +85,8 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
     private final MutableLiveData<String> cc = new MutableLiveData<>();
     private final MutableLiveData<String> subject = new MutableLiveData<>();
     private final MutableLiveData<String> body = new MutableLiveData<>();
-    private final MediatorLiveData<List<? extends Attachment>> attachments = new MediatorLiveData<>();
+    private final MediatorLiveData<List<? extends Attachment>> attachments =
+            new MediatorLiveData<>();
     private final LiveData<List<IdentityWithNameAndEmail>> identities;
 
     private boolean draftHasBeenHandled = false;
@@ -99,35 +95,40 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
         super(application);
         this.composeAction = parameter.composeAction;
         this.uri = parameter.uri;
-        //TODO accountIds needs to be a mutable LiveData property that can be changed as soon as we have one attachment
-        //in case ComposeAction.NEW it starts will a list of all accountIds or else it starts with a a singleton list
-        final LiveData<List<Long>> accountIds = AppDatabase.getInstance(application).accountDao().getAccountIds();
+        // TODO accountIds needs to be a mutable LiveData property that can be changed as soon as we
+        // have one attachment
+        // in case ComposeAction.NEW it starts will a list of all accountIds or else it starts with
+        // a a singleton list
+        final LiveData<List<Long>> accountIds =
+                AppDatabase.getInstance(application).accountDao().getAccountIds();
         if (composeAction == ComposeAction.NEW) {
             Preconditions.checkState(
                     parameter.accountId == null,
-                    "Account ID should be null when invoking with ComposeAction.NEW"
-            );
+                    "Account ID should be null when invoking with ComposeAction.NEW");
             this.email = null;
-            this.identities = Transformations.switchMap(
-                    accountIds,
-                    ids -> new MergedListsLiveData<>(ids.stream()
-                            .map(id -> getRepository(id).getIdentities())
-                            .collect(Collectors.toList())
-                    )
-            );
+            this.identities =
+                    Transformations.switchMap(
+                            accountIds,
+                            ids ->
+                                    new MergedListsLiveData<>(
+                                            ids.stream()
+                                                    .map(id -> getRepository(id).getIdentities())
+                                                    .collect(Collectors.toList())));
             initializeWithEmail(null);
         } else {
             Preconditions.checkNotNull(parameter.emailId);
             Preconditions.checkNotNull(parameter.accountId);
             this.identities = getRepository(parameter.accountId).getIdentities();
-            this.email = getRepository(parameter.accountId).getEmailWithReferences(parameter.emailId);
+            this.email =
+                    getRepository(parameter.accountId).getEmailWithReferences(parameter.emailId);
             if (parameter.freshStart) {
                 initializeWithEmail();
             }
         }
     }
 
-    private static Collection<String> inReplyTo(@Nullable EmailWithReferences editableEmail, ComposeAction action) {
+    private static Collection<String> inReplyTo(
+            @Nullable EmailWithReferences editableEmail, ComposeAction action) {
         if (editableEmail == null) {
             return Collections.emptyList();
         }
@@ -197,7 +198,8 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
 
     public boolean discard() {
         final EmailWithReferences email = getEmail();
-        final boolean isOnlyEmailInThread = email == null || getRepository(email.accountId).discard(email);
+        final boolean isOnlyEmailInThread =
+                email == null || getRepository(email.accountId).discard(email);
         this.draftHasBeenHandled = true;
         return isOnlyEmailInThread;
     }
@@ -266,12 +268,15 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
         final EmailWithReferences discard;
         if (this.composeAction == ComposeAction.EDIT_DRAFT) {
             discard = editableEmail;
-            LOGGER.info("Requesting to delete previous draft={}", discard == null ? null : discard.id);
+            LOGGER.info(
+                    "Requesting to delete previous draft={}", discard == null ? null : discard.id);
         } else {
             discard = null;
         }
         final Collection<String> inReplyTo = inReplyTo(editableEmail, composeAction);
-        final UUID uuid = getRepository(identity.accountId).saveDraft(identity, currentDraft, inReplyTo, discard);
+        final UUID uuid =
+                getRepository(identity.accountId)
+                        .saveDraft(identity, currentDraft, inReplyTo, discard);
         this.draftHasBeenHandled = true;
         return uuid;
     }
@@ -279,7 +284,9 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
     private IdentityWithNameAndEmail getIdentity() {
         final List<IdentityWithNameAndEmail> identities = this.identities.getValue();
         final Integer selectedIdentity = this.selectedIdentityPosition.getValue();
-        if (identities != null && selectedIdentity != null && selectedIdentity < identities.size()) {
+        if (identities != null
+                && selectedIdentity != null
+                && selectedIdentity < identities.size()) {
             return identities.get(selectedIdentity);
         }
         return null;
@@ -305,17 +312,20 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
     }
 
     private void initializeWithEmail() {
-        Futures.addCallback(this.email, new FutureCallback<EmailWithReferences>() {
-            @Override
-            public void onSuccess(@Nullable final EmailWithReferences result) {
-                initializeWithEmail(result);
-            }
+        Futures.addCallback(
+                this.email,
+                new FutureCallback<EmailWithReferences>() {
+                    @Override
+                    public void onSuccess(@Nullable final EmailWithReferences result) {
+                        initializeWithEmail(result);
+                    }
 
-            @Override
-            public void onFailure(@NonNull final Throwable throwable) {
-                //TODO print warning and exit view?
-            }
-        }, MoreExecutors.directExecutor());
+                    @Override
+                    public void onFailure(@NonNull final Throwable throwable) {
+                        // TODO print warning and exit view?
+                    }
+                },
+                MoreExecutors.directExecutor());
     }
 
     private void initializeWithEmail(final EmailWithReferences email) {
@@ -344,22 +354,24 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
             return;
         }
         final LiveData<WorkInfo> workInfoLiveData = uploadAttachment(identity, uri);
-        //TODO do we want to create StubAttachment while waiting for Worker?
+        // TODO do we want to create StubAttachment while waiting for Worker?
         waitForUpload(workInfoLiveData);
     }
 
     private void waitForUpload(final LiveData<WorkInfo> workInfoLiveData) {
-        attachments.addSource(workInfoLiveData, workInfo -> {
-            final WorkInfo.State state = workInfo.getState();
-            if (state.isFinished()) {
-                attachments.removeSource(workInfoLiveData);
-                if (state == WorkInfo.State.SUCCEEDED) {
-                    addAttachment(BlobUploadWorker.getAttachment(workInfo));
-                } else if (state == WorkInfo.State.FAILED) {
-                    postAttachmentFailure(workInfo.getOutputData());
-                }
-            }
-        });
+        attachments.addSource(
+                workInfoLiveData,
+                workInfo -> {
+                    final WorkInfo.State state = workInfo.getState();
+                    if (state.isFinished()) {
+                        attachments.removeSource(workInfoLiveData);
+                        if (state == WorkInfo.State.SUCCEEDED) {
+                            addAttachment(BlobUploadWorker.getAttachment(workInfo));
+                        } else if (state == WorkInfo.State.FAILED) {
+                            postAttachmentFailure(workInfo.getOutputData());
+                        }
+                    }
+                });
     }
 
     private void postAttachmentFailure(final Data data) {
@@ -389,21 +401,21 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
         refreshAttachments(attachmentBuilder.build());
     }
 
-    private LiveData<WorkInfo> uploadAttachment(final IdentityWithNameAndEmail identity, final Uri uri) {
+    private LiveData<WorkInfo> uploadAttachment(
+            final IdentityWithNameAndEmail identity, final Uri uri) {
         final WorkManager workManager = WorkManager.getInstance(getApplication());
-        final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(BlobUploadWorker.class)
-                .setInputData(BlobUploadWorker.data(identity.getAccountId(), uri))
-                .build();
+        final OneTimeWorkRequest workRequest =
+                new OneTimeWorkRequest.Builder(BlobUploadWorker.class)
+                        .setInputData(BlobUploadWorker.data(identity.getAccountId(), uri))
+                        .build();
         workManager.enqueueUniqueWork(
-                BlobUploadWorker.uniqueName(),
-                ExistingWorkPolicy.APPEND_OR_REPLACE,
-                workRequest
-        );
+                BlobUploadWorker.uniqueName(), ExistingWorkPolicy.APPEND_OR_REPLACE, workRequest);
         return workManager.getWorkInfoByIdLiveData(workRequest.getId());
     }
 
     public void deleteAttachment(final Attachment attachment) {
-        final List<? extends Attachment> current = new ArrayList<>(nullToEmpty(this.attachments.getValue()));
+        final List<? extends Attachment> current =
+                new ArrayList<>(nullToEmpty(this.attachments.getValue()));
         if (current.remove(attachment)) {
             refreshAttachments(ImmutableList.copyOf(current));
         }
@@ -417,26 +429,33 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
         }
     }
 
-    private void verifyAttachmentsDoNotExceedLimit(final long accountId, final List<Attachment> attachments) {
-        final ListenableFuture<Void> verificationFuture = Futures.transformAsync(
-                MuaPool.getInstance(getApplication(), accountId),
-                mua -> mua.verifyAttachmentsDoNotExceedLimit(attachments),
-                MoreExecutors.directExecutor()
-        );
-        Futures.addCallback(verificationFuture, new FutureCallback<Void>() {
-            @Override
-            public void onSuccess(final Void unused) {
-                LOGGER.debug("Attachments passed size check");
-            }
+    private void verifyAttachmentsDoNotExceedLimit(
+            final long accountId, final List<Attachment> attachments) {
+        final ListenableFuture<Void> verificationFuture =
+                Futures.transformAsync(
+                        MuaPool.getInstance(getApplication(), accountId),
+                        mua -> mua.verifyAttachmentsDoNotExceedLimit(attachments),
+                        MoreExecutors.directExecutor());
+        Futures.addCallback(
+                verificationFuture,
+                new FutureCallback<Void>() {
+                    @Override
+                    public void onSuccess(final Void unused) {
+                        LOGGER.debug("Attachments passed size check");
+                    }
 
-            @Override
-            public void onFailure(@NotNull final Throwable throwable) {
-                if (throwable instanceof CombinedAttachmentSizeExceedsLimitException) {
-                    CombinedAttachmentSizeExceedsLimitException exception = (CombinedAttachmentSizeExceedsLimitException) throwable;
-                    postErrorMessage(R.string.combined_size_of_attachments_exceeds_the_limit_of_x, FileSizes.toString(exception.getLimit()));
-                }
-            }
-        }, MoreExecutors.directExecutor());
+                    @Override
+                    public void onFailure(@NotNull final Throwable throwable) {
+                        if (throwable instanceof CombinedAttachmentSizeExceedsLimitException) {
+                            CombinedAttachmentSizeExceedsLimitException exception =
+                                    (CombinedAttachmentSizeExceedsLimitException) throwable;
+                            postErrorMessage(
+                                    R.string.combined_size_of_attachments_exceeds_the_limit_of_x,
+                                    FileSizes.toString(exception.getLimit()));
+                        }
+                    }
+                },
+                MoreExecutors.directExecutor());
     }
 
     @Override
@@ -470,7 +489,8 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
         public final String emailId;
         public final MailToUri uri;
 
-        public Parameter(Long accountId, boolean freshStart, ComposeAction composeAction, String emailId) {
+        public Parameter(
+                Long accountId, boolean freshStart, ComposeAction composeAction, String emailId) {
             this.accountId = accountId;
             this.freshStart = freshStart;
             this.composeAction = composeAction;
@@ -494,7 +514,12 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
         private final String body;
         private final List<? extends Attachment> attachments;
 
-        private Draft(Collection<EmailAddress> to, Collection<EmailAddress> cc, String subject, String body, List<? extends Attachment> attachments) {
+        private Draft(
+                Collection<EmailAddress> to,
+                Collection<EmailAddress> cc,
+                String subject,
+                String body,
+                List<? extends Attachment> attachments) {
             this.to = to;
             this.cc = cc;
             this.subject = subject;
@@ -502,14 +527,18 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
             this.attachments = attachments;
         }
 
-        public static Draft of(LiveData<String> to, LiveData<String> cc, LiveData<String> subject, LiveData<String> body, LiveData<List<? extends Attachment>> attachments) {
+        public static Draft of(
+                LiveData<String> to,
+                LiveData<String> cc,
+                LiveData<String> subject,
+                LiveData<String> body,
+                LiveData<List<? extends Attachment>> attachments) {
             return new Draft(
                     EmailAddressUtil.parse(Strings.nullToEmpty(to.getValue())),
                     EmailAddressUtil.parse(Strings.nullToEmpty(cc.getValue())),
                     Strings.nullToEmpty(subject.getValue()),
                     Strings.nullToEmpty(body.getValue()),
-                    nullToEmpty(attachments.getValue())
-            );
+                    nullToEmpty(attachments.getValue()));
         }
 
         private static Draft newEmail(final MailToUri uri) {
@@ -521,8 +550,7 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
                     uri.getCc(),
                     Strings.nullToEmpty(uri.getSubject()),
                     Strings.nullToEmpty(uri.getBody()),
-                    Collections.emptyList()
-            );
+                    Collections.emptyList());
         }
 
         private static Draft edit(EmailWithReferences email) {
@@ -531,8 +559,7 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
                     email.getCc(),
                     email.subject,
                     email.getText(),
-                    email.getAttachments()
-            );
+                    email.getAttachments());
         }
 
         private static Draft replyAll(EmailWithReferences email) {
@@ -543,10 +570,13 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
                     EmailUtil.getResponseSubject(email),
                     "",
                     Collections.emptyList() // TODO replace with email.getAttachments
-            );
+                    );
         }
 
-        public static Draft with(final ComposeAction action, final MailToUri uri, EmailWithReferences editableEmail) {
+        public static Draft with(
+                final ComposeAction action,
+                final MailToUri uri,
+                EmailWithReferences editableEmail) {
             switch (action) {
                 case NEW:
                     return newEmail(uri);
@@ -560,7 +590,10 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
         }
 
         public boolean isEmpty() {
-            return to.isEmpty() && subject.trim().isEmpty() && body.trim().isEmpty() && attachments.isEmpty();
+            return to.isEmpty()
+                    && subject.trim().isEmpty()
+                    && body.trim().isEmpty()
+                    && attachments.isEmpty();
         }
 
         public Collection<EmailAddress> getTo() {
@@ -598,7 +631,8 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
         private final Application application;
         private final ComposeViewModel.Parameter parameter;
 
-        public Factory(@NonNull Application application, @NonNull ComposeViewModel.Parameter parameter) {
+        public Factory(
+                @NonNull Application application, @NonNull ComposeViewModel.Parameter parameter) {
             this.application = application;
             this.parameter = parameter;
         }
@@ -606,7 +640,8 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
         @NonNull
         @Override
         public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-            return Objects.requireNonNull(modelClass.cast(new ComposeViewModel(application, parameter)));
+            return Objects.requireNonNull(
+                    modelClass.cast(new ComposeViewModel(application, parameter)));
         }
     }
 }

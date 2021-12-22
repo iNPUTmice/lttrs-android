@@ -19,7 +19,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.helper.widget.Flow;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -30,13 +29,11 @@ import androidx.paging.PagedList;
 import androidx.recyclerview.widget.AsyncDifferConfig;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-
 import rs.ltt.android.R;
 import rs.ltt.android.databinding.ItemAttachmentBinding;
 import rs.ltt.android.databinding.ItemEmailBinding;
@@ -51,35 +48,43 @@ import rs.ltt.android.ui.BindingAdapters;
 import rs.ltt.android.util.Touch;
 import rs.ltt.jmap.mua.util.Label;
 
-public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.AbstractThreadItemViewHolder> {
+public class ThreadAdapter
+        extends RecyclerView.Adapter<ThreadAdapter.AbstractThreadItemViewHolder> {
 
-    private static final DiffUtil.ItemCallback<EmailWithBodies> ITEM_CALLBACK = new DiffUtil.ItemCallback<EmailWithBodies>() {
+    private static final DiffUtil.ItemCallback<EmailWithBodies> ITEM_CALLBACK =
+            new DiffUtil.ItemCallback<EmailWithBodies>() {
 
-        @Override
-        public boolean areItemsTheSame(@NonNull EmailWithBodies oldItem, @NonNull EmailWithBodies newItem) {
-            return oldItem.id.equals(newItem.id);
-        }
+                @Override
+                public boolean areItemsTheSame(
+                        @NonNull EmailWithBodies oldItem, @NonNull EmailWithBodies newItem) {
+                    return oldItem.id.equals(newItem.id);
+                }
 
-        @Override
-        public boolean areContentsTheSame(@NonNull EmailWithBodies oldItem, @NonNull EmailWithBodies newItem) {
-            //TODO this can probably be reduced to check if id and isDraft equals. Because isDraft(()
-            //is the only (displayed) thing that is realistically going to change in an otherwise immutable email
-            return oldItem.equals(newItem);
-        }
-    };
+                @Override
+                public boolean areContentsTheSame(
+                        @NonNull EmailWithBodies oldItem, @NonNull EmailWithBodies newItem) {
+                    // TODO this can probably be reduced to check if id and isDraft equals. Because
+                    // isDraft(()
+                    // is the only (displayed) thing that is realistically going to change in an
+                    // otherwise immutable email
+                    return oldItem.equals(newItem);
+                }
+            };
 
     private static final int ITEM_VIEW_TYPE = 1;
     private static final int HEADER_VIEW_TYPE = 2;
     private final Set<String> expandedItems;
-    //we need this rather inconvenient setup instead of simply using PagedListAdapter to allow for
-    //a header view. If we were to use the PagedListAdapter the item update callbacks wouldn't work.
-    //The problem and the solution is described in this github issue: https://github.com/googlesamples/android-architecture-components/issues/375
-    //additional documentation on how to implement a AsyncPagedListDiffer can be found here:
-    //https://developer.android.com/reference/android/arch/paging/AsyncPagedListDiffer
-    private final AsyncPagedListDiffer<EmailWithBodies> mDiffer = new AsyncPagedListDiffer<>(
-            new OffsetListUpdateCallback<>(this, 1),
-            new AsyncDifferConfig.Builder<>(ITEM_CALLBACK).build()
-    );
+    // we need this rather inconvenient setup instead of simply using PagedListAdapter to allow for
+    // a header view. If we were to use the PagedListAdapter the item update callbacks wouldn't
+    // work.
+    // The problem and the solution is described in this github issue:
+    // https://github.com/googlesamples/android-architecture-components/issues/375
+    // additional documentation on how to implement a AsyncPagedListDiffer can be found here:
+    // https://developer.android.com/reference/android/arch/paging/AsyncPagedListDiffer
+    private final AsyncPagedListDiffer<EmailWithBodies> mDiffer =
+            new AsyncPagedListDiffer<>(
+                    new OffsetListUpdateCallback<>(this, 1),
+                    new AsyncDifferConfig.Builder<>(ITEM_CALLBACK).build());
     private SubjectWithImportance subjectWithImportance;
     private List<MailboxWithRoleAndName> labels = Collections.emptyList();
     private Boolean flagged;
@@ -91,7 +96,8 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.AbstractTh
         this.expandedItems = expandedItems;
     }
 
-    private static boolean skip(final LinearLayout attachments, final List<EmailBodyPartEntity> emailAttachments) {
+    private static boolean skip(
+            final LinearLayout attachments, final List<EmailBodyPartEntity> emailAttachments) {
         final Object tag = attachments.getTag();
         if (tag instanceof Integer) {
             final int hashCode = (Integer) tag;
@@ -102,14 +108,16 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.AbstractTh
 
     @NonNull
     @Override
-    public AbstractThreadItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public AbstractThreadItemViewHolder onCreateViewHolder(
+            @NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         if (viewType == ITEM_VIEW_TYPE) {
-            return new ThreadItemViewHolder(DataBindingUtil.inflate(inflater, R.layout.item_email, parent, false));
+            return new ThreadItemViewHolder(
+                    DataBindingUtil.inflate(inflater, R.layout.item_email, parent, false));
         } else {
-            return new ThreadHeaderViewHolder(DataBindingUtil.inflate(inflater, R.layout.item_email_header, parent, false));
+            return new ThreadHeaderViewHolder(
+                    DataBindingUtil.inflate(inflater, R.layout.item_email_header, parent, false));
         }
-
     }
 
     @Override
@@ -124,13 +132,14 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.AbstractTh
     private void onBindViewHolder(@NonNull final ThreadHeaderViewHolder headerViewHolder) {
         headerViewHolder.binding.setSubject(subjectWithImportance);
         headerViewHolder.binding.setFlagged(flagged);
-        headerViewHolder.binding.starToggle.setOnClickListener(v -> {
-            if (onFlaggedToggled != null && subjectWithImportance != null) {
-                final boolean target = !flagged;
-                BindingAdapters.setIsFlagged(headerViewHolder.binding.starToggle, target);
-                onFlaggedToggled.onFlaggedToggled(subjectWithImportance.threadId, target);
-            }
-        });
+        headerViewHolder.binding.starToggle.setOnClickListener(
+                v -> {
+                    if (onFlaggedToggled != null && subjectWithImportance != null) {
+                        final boolean target = !flagged;
+                        BindingAdapters.setIsFlagged(headerViewHolder.binding.starToggle, target);
+                        onFlaggedToggled.onFlaggedToggled(subjectWithImportance.threadId, target);
+                    }
+                });
         if (this.labels.isEmpty()) {
             headerViewHolder.binding.labels.setVisibility(View.GONE);
         } else {
@@ -149,12 +158,8 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.AbstractTh
         final int[] ids = new int[this.labels.size()];
         int i = 0;
         for (final Label label : this.labels) {
-            final ItemLabelBinding itemLabelBinding = DataBindingUtil.inflate(
-                    inflater,
-                    R.layout.item_label,
-                    labels,
-                    false
-            );
+            final ItemLabelBinding itemLabelBinding =
+                    DataBindingUtil.inflate(inflater, R.layout.item_label, labels, false);
             itemLabelBinding.setLabel(label);
             final int id = ViewCompat.generateViewId();
             itemLabelBinding.getRoot().setId(id);
@@ -175,7 +180,8 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.AbstractTh
         return false;
     }
 
-    private void onBindViewHolder(@NonNull final ThreadItemViewHolder itemViewHolder, final int position) {
+    private void onBindViewHolder(
+            @NonNull final ThreadItemViewHolder itemViewHolder, final int position) {
         final EmailWithBodies email = mDiffer.getItem(position - 1);
         final boolean lastEmail = mDiffer.getItemCount() == position;
         final boolean expanded = email != null && expandedItems.contains(email.id);
@@ -187,20 +193,24 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.AbstractTh
         } else {
             itemViewHolder.binding.header.setTouchDelegate(null);
         }
-        itemViewHolder.binding.header.setOnClickListener(v -> {
-            if (expandedItems.contains(email.id)) {
-                expandedItems.remove(email.id);
-            } else {
-                expandedItems.add(email.id);
-            }
-            notifyItemChanged(position);
-        });
-        itemViewHolder.binding.edit.setOnClickListener(v -> onComposeActionTriggered.onEditDraft(email.id));
-        itemViewHolder.binding.replyAll.setOnClickListener(v -> onComposeActionTriggered.onReplyAll(email.id));
+        itemViewHolder.binding.header.setOnClickListener(
+                v -> {
+                    if (expandedItems.contains(email.id)) {
+                        expandedItems.remove(email.id);
+                    } else {
+                        expandedItems.add(email.id);
+                    }
+                    notifyItemChanged(position);
+                });
+        itemViewHolder.binding.edit.setOnClickListener(
+                v -> onComposeActionTriggered.onEditDraft(email.id));
+        itemViewHolder.binding.replyAll.setOnClickListener(
+                v -> onComposeActionTriggered.onReplyAll(email.id));
         updateAttachments(itemViewHolder.binding.attachments, email.getAttachments());
     }
 
-    private void updateAttachments(final LinearLayout attachments, final List<EmailBodyPartEntity> emailAttachments) {
+    private void updateAttachments(
+            final LinearLayout attachments, final List<EmailBodyPartEntity> emailAttachments) {
         if (skip(attachments, emailAttachments)) {
             return;
         }
@@ -212,22 +222,27 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.AbstractTh
         attachments.setTag(emailAttachments.hashCode());
     }
 
-    private View getAttachmentView(final LayoutInflater layoutInflater, final LinearLayout attachments, final EmailBodyPartEntity attachment) {
-        final ItemAttachmentBinding binding = DataBindingUtil.inflate(
-                layoutInflater,
-                R.layout.item_attachment,
-                attachments,
-                false
-        );
+    private View getAttachmentView(
+            final LayoutInflater layoutInflater,
+            final LinearLayout attachments,
+            final EmailBodyPartEntity attachment) {
+        final ItemAttachmentBinding binding =
+                DataBindingUtil.inflate(
+                        layoutInflater, R.layout.item_attachment, attachments, false);
         binding.setAttachment(attachment);
-        binding.getRoot().setOnClickListener(
-                v -> Objects.requireNonNull(onAttachmentActionTriggered, "Attachment Action listener not set")
-                        .onOpenTriggered(attachment.emailId, attachment)
-        );
+        binding.getRoot()
+                .setOnClickListener(
+                        v ->
+                                Objects.requireNonNull(
+                                                onAttachmentActionTriggered,
+                                                "Attachment Action listener not set")
+                                        .onOpenTriggered(attachment.emailId, attachment));
         binding.action.setOnClickListener(
-                v -> Objects.requireNonNull(onAttachmentActionTriggered, "Attachment Action listener not set")
-                        .onActionTriggered(attachment.emailId, attachment)
-        );
+                v ->
+                        Objects.requireNonNull(
+                                        onAttachmentActionTriggered,
+                                        "Attachment Action listener not set")
+                                .onActionTriggered(attachment.emailId, attachment));
         binding.getRoot().setId(ViewCompat.generateViewId());
         return binding.getRoot();
     }
@@ -244,7 +259,7 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.AbstractTh
 
     public void setSubjectWithImportance(SubjectWithImportance subjectWithImportance) {
         this.subjectWithImportance = subjectWithImportance;
-        //TODO notify only if actually changed
+        // TODO notify only if actually changed
         notifyItemChanged(0);
     }
 
@@ -287,11 +302,9 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.AbstractTh
     public boolean isInitialLoad() {
         final PagedList<EmailWithBodies> currentList = mDiffer.getCurrentList();
         return currentList == null || currentList.isEmpty();
-
     }
 
     static class AbstractThreadItemViewHolder extends RecyclerView.ViewHolder {
-
 
         AbstractThreadItemViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -317,6 +330,4 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.AbstractTh
             this.binding = binding;
         }
     }
-
-
 }

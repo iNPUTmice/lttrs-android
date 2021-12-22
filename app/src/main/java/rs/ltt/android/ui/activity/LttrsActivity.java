@@ -26,7 +26,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewAnimationUtils;
-
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -44,21 +43,17 @@ import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
 import androidx.navigation.NavOptions;
 import androidx.work.WorkInfo;
-
 import com.google.android.material.color.MaterialColors;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.ListenableFuture;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rs.ltt.android.LttrsApplication;
 import rs.ltt.android.LttrsNavigationDirections;
 import rs.ltt.android.R;
@@ -82,26 +77,21 @@ import rs.ltt.jmap.common.entity.Role;
 import rs.ltt.jmap.mua.util.KeywordLabel;
 import rs.ltt.jmap.mua.util.Label;
 
-public class LttrsActivity extends AppCompatActivity implements ThreadModifier, NavController.OnDestinationChangedListener, MenuItem.OnActionExpandListener, DrawerLayout.DrawerListener {
+public class LttrsActivity extends AppCompatActivity
+        implements ThreadModifier,
+                NavController.OnDestinationChangedListener,
+                MenuItem.OnActionExpandListener,
+                DrawerLayout.DrawerListener {
 
     public static final String EXTRA_ACCOUNT_ID = "account";
     public static final String EXTRA_THREAD_ID = "thread";
     private static final Logger LOGGER = LoggerFactory.getLogger(LttrsActivity.class);
     private static final int NUM_TOOLBAR_ICON = 1;
-    private static final List<Integer> MAIN_DESTINATIONS = ImmutableList.of(
-            R.id.inbox,
-            R.id.mailbox,
-            R.id.keyword
-    );
-    private static final List<Integer> QUERY_DESTINATIONS = ImmutableList.of(
-            R.id.inbox,
-            R.id.mailbox,
-            R.id.keyword,
-            R.id.search
-    );
-    private static final List<Integer> FULL_SCREEN_DIALOG = ImmutableList.of(
-            R.id.label_as
-    );
+    private static final List<Integer> MAIN_DESTINATIONS =
+            ImmutableList.of(R.id.inbox, R.id.mailbox, R.id.keyword);
+    private static final List<Integer> QUERY_DESTINATIONS =
+            ImmutableList.of(R.id.inbox, R.id.mailbox, R.id.keyword, R.id.search);
+    private static final List<Integer> FULL_SCREEN_DIALOG = ImmutableList.of(R.id.label_as);
     final NavigationAdapter navigationAdapter = new NavigationAdapter();
     private ActivityLttrsBinding binding;
     private LttrsViewModel lttrsViewModel;
@@ -114,7 +104,8 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
         launch(activity, accountId, true);
     }
 
-    public static void launch(final FragmentActivity activity, final long accountId, final boolean skipAnimation) {
+    public static void launch(
+            final FragmentActivity activity, final long accountId, final boolean skipAnimation) {
         final Intent intent = getLaunchIntent(activity, accountId);
         activity.startActivity(intent);
         if (skipAnimation) {
@@ -126,25 +117,26 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
         final Intent intent = new Intent(activity, LttrsActivity.class);
         intent.setAction(Intent.ACTION_MAIN);
         intent.putExtra(LttrsActivity.EXTRA_ACCOUNT_ID, accountId);
-        //the default launch mode of the this activity is set to 'singleTask'
-        //to view a new account we want to force recreate the activity
-        //the accountId is essentially a final variable and should not be changed during a lifetime
-        //of an activity
+        // the default launch mode of the this activity is set to 'singleTask'
+        // to view a new account we want to force recreate the activity
+        // the accountId is essentially a final variable and should not be changed during a lifetime
+        // of an activity
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         return intent;
     }
 
-    public static void view(final AppCompatActivity activity, final EmailNotification.Tag tag, final String threadId) {
+    public static void view(
+            final AppCompatActivity activity,
+            final EmailNotification.Tag tag,
+            final String threadId) {
         final Intent intent = viewIntent(activity, tag, threadId);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         activity.startActivity(intent);
         activity.overridePendingTransition(0, 0);
     }
 
-
-    public static Intent viewIntent(final Context context,
-                                    final EmailNotification.Tag tag,
-                                    final String threadId) {
+    public static Intent viewIntent(
+            final Context context, final EmailNotification.Tag tag, final String threadId) {
         final Intent intent = new Intent(context, LttrsActivity.class);
         intent.setAction(Intent.ACTION_VIEW);
         intent.setData(tag.toUri());
@@ -165,79 +157,87 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
         } else {
             final long start = SystemClock.elapsedRealtime();
             accountId = LttrsApplication.get(this).getMostRecentlySelectedAccountId();
-            LOGGER.warn("Got most recently selected account id from database in {}ms. This should not be happening", (SystemClock.elapsedRealtime() - start));
+            LOGGER.warn(
+                    "Got most recently selected account id from database in {}ms. This should not"
+                            + " be happening",
+                    (SystemClock.elapsedRealtime() - start));
         }
 
-
-        final ViewModelProvider viewModelProvider = new ViewModelProvider(
-                getViewModelStore(),
-                new LttrsViewModel.Factory(
-                        getApplication(),
-                        accountId
-                )
-        );
+        final ViewModelProvider viewModelProvider =
+                new ViewModelProvider(
+                        getViewModelStore(),
+                        new LttrsViewModel.Factory(getApplication(), accountId));
         lttrsViewModel = viewModelProvider.get(LttrsViewModel.class);
         setSupportActionBar(binding.toolbar);
 
-
         binding.drawerLayout.addDrawerListener(this);
 
-        navigationAdapter.setOnLabelSelectedListener((label, currentlySelected) -> {
-            binding.drawerLayout.closeDrawer(GravityCompat.START);
-            if (currentlySelected && MAIN_DESTINATIONS.contains(getCurrentDestinationId())) {
-                return;
-            }
-            final NavController navController = getNavController();
-            final boolean navigateToInbox = label.getRole() == Role.INBOX;
-            if (navigateToInbox) {
-                navController.navigate(LttrsNavigationDirections.actionToInbox());
-            } else if (label instanceof MailboxOverviewItem) {
-                final MailboxOverviewItem mailbox = (MailboxOverviewItem) label;
-                navController.navigate(LttrsNavigationDirections.actionToMailbox(mailbox.id));
-            } else if (label instanceof KeywordLabel) {
-                final KeywordLabel keyword = (KeywordLabel) label;
-                navController.navigate(LttrsNavigationDirections.actionToKeyword(keyword));
-            } else {
-                throw new IllegalStateException(String.format("%s is an unsupported label", label.getClass()));
-            }
-            if (mSearchItem != null) {
-                mSearchItem.collapseActionView();
-            }
-            //currently unused should remain here in case we bring scrollable toolbar back
-            binding.appBarLayout.setExpanded(true, false);
-        });
-        navigationAdapter.setOnAccountViewToggledListener(() -> {
-            lttrsViewModel.toggleAccountSelectionVisibility();
-        });
-        navigationAdapter.setOnAccountSelected((id -> {
-            if (id == lttrsViewModel.getAccountId()) {
-                closeDrawer(true);
-            } else {
-                closeDrawer(false);
-                lttrsViewModel.setSelectedAccount(id);
-                launch(this, id);
-            }
-        }));
-        navigationAdapter.setOnAdditionalNavigationItemSelected((type -> {
-            switch (type) {
-                case ADD_ACCOUNT:
-                    closeDrawer(false);
-                    SetupActivity.launch(this);
-                    break;
-                case MANAGE_ACCOUNT:
-                    closeDrawer(false);
-                    AccountManagerActivity.launch(this);
-                    break;
-                default:
-                    throw new IllegalStateException(String.format("Not set up to handle %s", type));
-            }
-        }));
+        navigationAdapter.setOnLabelSelectedListener(
+                (label, currentlySelected) -> {
+                    binding.drawerLayout.closeDrawer(GravityCompat.START);
+                    if (currentlySelected
+                            && MAIN_DESTINATIONS.contains(getCurrentDestinationId())) {
+                        return;
+                    }
+                    final NavController navController = getNavController();
+                    final boolean navigateToInbox = label.getRole() == Role.INBOX;
+                    if (navigateToInbox) {
+                        navController.navigate(LttrsNavigationDirections.actionToInbox());
+                    } else if (label instanceof MailboxOverviewItem) {
+                        final MailboxOverviewItem mailbox = (MailboxOverviewItem) label;
+                        navController.navigate(
+                                LttrsNavigationDirections.actionToMailbox(mailbox.id));
+                    } else if (label instanceof KeywordLabel) {
+                        final KeywordLabel keyword = (KeywordLabel) label;
+                        navController.navigate(LttrsNavigationDirections.actionToKeyword(keyword));
+                    } else {
+                        throw new IllegalStateException(
+                                String.format("%s is an unsupported label", label.getClass()));
+                    }
+                    if (mSearchItem != null) {
+                        mSearchItem.collapseActionView();
+                    }
+                    // currently unused should remain here in case we bring scrollable toolbar back
+                    binding.appBarLayout.setExpanded(true, false);
+                });
+        navigationAdapter.setOnAccountViewToggledListener(
+                () -> {
+                    lttrsViewModel.toggleAccountSelectionVisibility();
+                });
+        navigationAdapter.setOnAccountSelected(
+                (id -> {
+                    if (id == lttrsViewModel.getAccountId()) {
+                        closeDrawer(true);
+                    } else {
+                        closeDrawer(false);
+                        lttrsViewModel.setSelectedAccount(id);
+                        launch(this, id);
+                    }
+                }));
+        navigationAdapter.setOnAdditionalNavigationItemSelected(
+                (type -> {
+                    switch (type) {
+                        case ADD_ACCOUNT:
+                            closeDrawer(false);
+                            SetupActivity.launch(this);
+                            break;
+                        case MANAGE_ACCOUNT:
+                            closeDrawer(false);
+                            AccountManagerActivity.launch(this);
+                            break;
+                        default:
+                            throw new IllegalStateException(
+                                    String.format("Not set up to handle %s", type));
+                    }
+                }));
         binding.navigation.setAdapter(navigationAdapter);
         ItemAnimators.disableChangeAnimation(binding.navigation.getItemAnimator());
         lttrsViewModel.getNavigableItems().observe(this, navigationAdapter::submitList);
         lttrsViewModel.getFailureEvent().observe(this, this::onFailureEvent);
         lttrsViewModel.getSelectedLabel().observe(this, navigationAdapter::setSelectedLabel);
-        lttrsViewModel.isAccountSelectionVisible().observe(this, navigationAdapter::setAccountSelectionVisible);
+        lttrsViewModel
+                .isAccountSelectionVisible()
+                .observe(this, navigationAdapter::setAccountSelectionVisible);
         lttrsViewModel.getAccountName().observe(this, navigationAdapter::setAccountInformation);
         lttrsViewModel.getActivityTitle().observe(this, this::setTitle);
     }
@@ -253,11 +253,13 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
             LOGGER.info("processing failure event {}", failure.getException());
             if (failure instanceof Failure.PreExistingMailbox) {
                 dismissSnackbar();
-                final Failure.PreExistingMailbox preExistingMailbox = (Failure.PreExistingMailbox) failure;
-                getNavController().navigate(LttrsNavigationDirections.actionToReassignRole(
-                        preExistingMailbox.getMailboxId(),
-                        preExistingMailbox.getRole().toString()
-                ));
+                final Failure.PreExistingMailbox preExistingMailbox =
+                        (Failure.PreExistingMailbox) failure;
+                getNavController()
+                        .navigate(
+                                LttrsNavigationDirections.actionToReassignRole(
+                                        preExistingMailbox.getMailboxId(),
+                                        preExistingMailbox.getRole().toString()));
             }
         }
     }
@@ -345,8 +347,10 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                final NavDestination currentDestination = getNavController().getCurrentDestination();
-                if (currentDestination != null && MAIN_DESTINATIONS.contains(currentDestination.getId())) {
+                final NavDestination currentDestination =
+                        getNavController().getCurrentDestination();
+                if (currentDestination != null
+                        && MAIN_DESTINATIONS.contains(currentDestination.getId())) {
                     binding.drawerLayout.openDrawer(GravityCompat.START);
                     return true;
                 } else {
@@ -354,7 +358,6 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
                 }
         }
         return super.onOptionsItemSelected(item);
-
     }
 
     public void onNewIntent(final Intent intent) {
@@ -385,17 +388,14 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
             return false;
         }
         final NavController navController = getNavController();
-        final NavOptions navOptions = new NavOptions.Builder()
-                .setPopUpTo(R.id.inbox, false)
-                .setEnterAnim(0)
-                .setExitAnim(0)
-                .build();
-        final LttrsNavigationDirections.ActionToThread action = LttrsNavigationDirections.actionToThread(
-                threadId,
-                null,
-                null,
-                false
-        );
+        final NavOptions navOptions =
+                new NavOptions.Builder()
+                        .setPopUpTo(R.id.inbox, false)
+                        .setEnterAnim(0)
+                        .setExitAnim(0)
+                        .build();
+        final LttrsNavigationDirections.ActionToThread action =
+                LttrsNavigationDirections.actionToThread(threadId, null, null, false);
         navController.navigate(action, navOptions);
         this.closeDrawer(false);
         EmailNotification.cancel(this, tag);
@@ -406,7 +406,8 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
         final String query = Strings.nullToEmpty(intent.getStringExtra(SearchManager.QUERY));
         if (mSearchView != null) {
             mSearchView.setQuery(query, false);
-            //this does not work on all phones / android versions; therefor we have this followed by a requestFocus() on the list
+            // this does not work on all phones / android versions; therefor we have this followed
+            // by a requestFocus() on the list
             mSearchView.clearFocus();
         }
         binding.navigation.requestFocus();
@@ -420,23 +421,23 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
     }
 
     private void dismissSnackbar() {
-        final Snackbar snackbar = this.mostRecentSnackbar != null ? this.mostRecentSnackbar.get() : null;
+        final Snackbar snackbar =
+                this.mostRecentSnackbar != null ? this.mostRecentSnackbar.get() : null;
         if (snackbar != null && snackbar.isShown()) {
             LOGGER.info("Dismissing snackbar");
             snackbar.dismiss();
         }
     }
 
-
     @Override
     public void archive(Collection<String> threadIds) {
         final int count = threadIds.size();
         lttrsViewModel.archive(threadIds);
-        final Snackbar snackbar = Snackbar.make(
-                this.binding.getRoot(),
-                getResources().getQuantityString(R.plurals.n_archived, count, count),
-                Snackbar.LENGTH_LONG
-        );
+        final Snackbar snackbar =
+                Snackbar.make(
+                        this.binding.getRoot(),
+                        getResources().getQuantityString(R.plurals.n_archived, count, count),
+                        Snackbar.LENGTH_LONG);
         snackbar.setAction(R.string.undo, v -> lttrsViewModel.moveToInbox(threadIds));
         showSnackbar(snackbar);
     }
@@ -444,11 +445,11 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
     @Override
     public void moveToInbox(final Collection<String> threadIds) {
         final int count = threadIds.size();
-        final Snackbar snackbar = Snackbar.make(
-                binding.getRoot(),
-                getResources().getQuantityString(R.plurals.n_moved_to_inbox, count, count),
-                Snackbar.LENGTH_LONG
-        );
+        final Snackbar snackbar =
+                Snackbar.make(
+                        binding.getRoot(),
+                        getResources().getQuantityString(R.plurals.n_moved_to_inbox, count, count),
+                        Snackbar.LENGTH_LONG);
         snackbar.setAction(R.string.undo, v -> lttrsViewModel.archive(threadIds));
         showSnackbar(snackbar);
         lttrsViewModel.moveToInbox(threadIds);
@@ -457,47 +458,59 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
     @Override
     public void moveToTrash(final Collection<String> threadIds) {
         final int count = threadIds.size();
-        final Snackbar snackbar = Snackbar.make(
-                binding.getRoot(),
-                getResources().getQuantityString(R.plurals.n_deleted, count, count),
-                Snackbar.LENGTH_LONG
-        );
+        final Snackbar snackbar =
+                Snackbar.make(
+                        binding.getRoot(),
+                        getResources().getQuantityString(R.plurals.n_deleted, count, count),
+                        Snackbar.LENGTH_LONG);
         final ListenableFuture<LiveData<WorkInfo>> future = lttrsViewModel.moveToTrash(threadIds);
-        snackbar.setAction(R.string.undo, v -> {
-            try {
-                final LiveData<WorkInfo> workInfoLiveData = future.get();
-                final WorkInfo workInfo = workInfoLiveData.getValue();
-                lttrsViewModel.cancelMoveToTrash(workInfo, threadIds);
-            } catch (Exception e) {
-                LOGGER.warn("Unable to cancel moveToTrash operation", e);
-            }
-        });
-        showSnackbar(snackbar);
-        future.addListener(() -> {
-            try {
-                future.get().observe(this, workInfo -> {
-                    if (workInfo != null && workInfo.getState().isFinished() && snackbar.isShown()) {
-                        LOGGER.info(
-                                "Dismissing Move To Trash undo snackbar prematurely because WorkInfo went into state {}",
-                                workInfo.getState()
-                        );
-                        snackbar.dismiss();
+        snackbar.setAction(
+                R.string.undo,
+                v -> {
+                    try {
+                        final LiveData<WorkInfo> workInfoLiveData = future.get();
+                        final WorkInfo workInfo = workInfoLiveData.getValue();
+                        lttrsViewModel.cancelMoveToTrash(workInfo, threadIds);
+                    } catch (Exception e) {
+                        LOGGER.warn("Unable to cancel moveToTrash operation", e);
                     }
                 });
-            } catch (Exception e) {
-                LOGGER.warn("Unable to observe moveToTrash operation", e);
-            }
-        }, MainThreadExecutor.getInstance());
+        showSnackbar(snackbar);
+        future.addListener(
+                () -> {
+                    try {
+                        future.get()
+                                .observe(
+                                        this,
+                                        workInfo -> {
+                                            if (workInfo != null
+                                                    && workInfo.getState().isFinished()
+                                                    && snackbar.isShown()) {
+                                                LOGGER.info(
+                                                        "Dismissing Move To Trash undo snackbar"
+                                                            + " prematurely because WorkInfo went"
+                                                            + " into state {}",
+                                                        workInfo.getState());
+                                                snackbar.dismiss();
+                                            }
+                                        });
+                    } catch (Exception e) {
+                        LOGGER.warn("Unable to observe moveToTrash operation", e);
+                    }
+                },
+                MainThreadExecutor.getInstance());
     }
 
     @Override
     public void removeFromMailbox(Collection<String> threadIds, MailboxWithRoleAndName mailbox) {
         final int count = threadIds.size();
-        final Snackbar snackbar = Snackbar.make(
-                binding.getRoot(),
-                getResources().getQuantityString(R.plurals.n_removed_from_x, count, count, mailbox.name),
-                Snackbar.LENGTH_LONG
-        );
+        final Snackbar snackbar =
+                Snackbar.make(
+                        binding.getRoot(),
+                        getResources()
+                                .getQuantityString(
+                                        R.plurals.n_removed_from_x, count, count, mailbox.name),
+                        Snackbar.LENGTH_LONG);
         snackbar.setAction(R.string.undo, v -> lttrsViewModel.copyToMailbox(threadIds, mailbox));
         showSnackbar(snackbar);
         lttrsViewModel.removeFromMailbox(threadIds, mailbox);
@@ -542,16 +555,16 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
     public void removeFromKeyword(Collection<String> threadIds, final String keyword) {
         final int count = threadIds.size();
         final Label label = KeywordLabel.of(keyword);
-        final Snackbar snackbar = Snackbar.make(
-                binding.getRoot(),
-                getResources().getQuantityString(
-                        R.plurals.n_removed_from_x,
-                        count,
-                        count,
-                        Translations.asHumanReadableName(this, label)
-                ),
-                Snackbar.LENGTH_LONG
-        );
+        final Snackbar snackbar =
+                Snackbar.make(
+                        binding.getRoot(),
+                        getResources()
+                                .getQuantityString(
+                                        R.plurals.n_removed_from_x,
+                                        count,
+                                        count,
+                                        Translations.asHumanReadableName(this, label)),
+                        Snackbar.LENGTH_LONG);
         snackbar.setAction(R.string.undo, v -> lttrsViewModel.addKeyword(threadIds, keyword));
         showSnackbar(snackbar);
         lttrsViewModel.removeKeyword(threadIds, keyword);
@@ -576,7 +589,10 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
     }
 
     @Override
-    public void onDestinationChanged(@NonNull NavController controller, @NonNull NavDestination destination, @Nullable Bundle arguments) {
+    public void onDestinationChanged(
+            @NonNull NavController controller,
+            @NonNull NavDestination destination,
+            @Nullable Bundle arguments) {
         LOGGER.debug("onDestinationChanged({})", destination.getLabel());
         if (!QUERY_DESTINATIONS.contains(destination.getId())) {
             endActionMode();
@@ -603,40 +619,58 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
 
     public void animateShowSearchToolbar() {
         prepareToolbarForSearch();
-        final int toolbarIconWidth = getResources().getDimensionPixelSize(R.dimen.toolbar_icon_width);
+        final int toolbarIconWidth =
+                getResources().getDimensionPixelSize(R.dimen.toolbar_icon_width);
         final int width = binding.toolbar.getWidth() - ((toolbarIconWidth * NUM_TOOLBAR_ICON) / 2);
-        Animator createCircularReveal = ViewAnimationUtils.createCircularReveal(binding.toolbar, Theme.isRtl(this) ? binding.toolbar.getWidth() - width : width, binding.toolbar.getHeight() / 2, 0.0f, (float) width);
+        Animator createCircularReveal =
+                ViewAnimationUtils.createCircularReveal(
+                        binding.toolbar,
+                        Theme.isRtl(this) ? binding.toolbar.getWidth() - width : width,
+                        binding.toolbar.getHeight() / 2,
+                        0.0f,
+                        (float) width);
         createCircularReveal.setDuration(250);
         createCircularReveal.start();
     }
 
     public void animateCloseSearchToolbar() {
-        final int toolbarIconWidth = getResources().getDimensionPixelSize(R.dimen.toolbar_icon_width);
+        final int toolbarIconWidth =
+                getResources().getDimensionPixelSize(R.dimen.toolbar_icon_width);
         final int width = binding.toolbar.getWidth() - ((toolbarIconWidth * NUM_TOOLBAR_ICON) / 2);
-        Animator createCircularReveal = ViewAnimationUtils.createCircularReveal(binding.toolbar, Theme.isRtl(this) ? binding.toolbar.getWidth() - width : width, binding.toolbar.getHeight() / 2, (float) width, 0.0f);
+        Animator createCircularReveal =
+                ViewAnimationUtils.createCircularReveal(
+                        binding.toolbar,
+                        Theme.isRtl(this) ? binding.toolbar.getWidth() - width : width,
+                        binding.toolbar.getHeight() / 2,
+                        (float) width,
+                        0.0f);
         createCircularReveal.setDuration(250);
-        createCircularReveal.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                resetToolbar();
-            }
-        });
+        createCircularReveal.addListener(
+                new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        resetToolbar();
+                    }
+                });
         createCircularReveal.start();
     }
 
     private void resetToolbar() {
         setDisplayShowTitleEnable(true);
-        binding.toolbar.setBackgroundColor(MaterialColors.getColor(binding.toolbar, R.attr.colorPrimary));
-        binding.drawerLayout.setStatusBarBackgroundColor(MaterialColors.getColor(binding.drawerLayout, R.attr.colorPrimaryDark));
+        binding.toolbar.setBackgroundColor(
+                MaterialColors.getColor(binding.toolbar, R.attr.colorPrimary));
+        binding.drawerLayout.setStatusBarBackgroundColor(
+                MaterialColors.getColor(binding.drawerLayout, R.attr.colorPrimaryDark));
     }
 
     private void prepareToolbarForSearch() {
         setDisplayShowTitleEnable(false);
-        binding.toolbar.setBackgroundColor(MaterialColors.getColor(binding.toolbar, R.attr.colorSurface));
-        binding.drawerLayout.setStatusBarBackgroundColor(MaterialColors.getColor(binding.toolbar, R.attr.colorStatusBarSearch));
+        binding.toolbar.setBackgroundColor(
+                MaterialColors.getColor(binding.toolbar, R.attr.colorSurface));
+        binding.drawerLayout.setStatusBarBackgroundColor(
+                MaterialColors.getColor(binding.toolbar, R.attr.colorStatusBarSearch));
     }
-
 
     private void setDisplayShowTitleEnable(final boolean enabled) {
         final ActionBar actionBar = getSupportActionBar();
@@ -664,9 +698,7 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
     }
 
     @Override
-    public void onDrawerOpened(@NonNull View drawerView) {
-
-    }
+    public void onDrawerOpened(@NonNull View drawerView) {}
 
     @Override
     public void onDrawerClosed(@NonNull View drawerView) {
@@ -674,7 +706,5 @@ public class LttrsActivity extends AppCompatActivity implements ThreadModifier, 
     }
 
     @Override
-    public void onDrawerStateChanged(int newState) {
-
-    }
+    public void onDrawerStateChanged(int newState) {}
 }

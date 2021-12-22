@@ -15,22 +15,19 @@
 
 package rs.ltt.android.entity;
 
-
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
-
 import rs.ltt.jmap.common.entity.AbstractIdentifiableEntity;
 
 @Entity(tableName = "entity_state")
 public class EntityStateEntity {
 
-    @NonNull
-    @PrimaryKey
-    public Class<? extends AbstractIdentifiableEntity> type;
+    @NonNull @PrimaryKey public Class<? extends AbstractIdentifiableEntity> type;
     public String state;
 
-    public EntityStateEntity(@NonNull Class<? extends AbstractIdentifiableEntity> type, String state) {
+    public EntityStateEntity(
+            @NonNull Class<? extends AbstractIdentifiableEntity> type, String state) {
         this.type = type;
         this.state = state;
     }

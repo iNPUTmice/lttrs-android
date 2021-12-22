@@ -1,12 +1,9 @@
 package rs.ltt.android.worker;
 
 import androidx.work.Data;
-
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
-
 import org.jetbrains.annotations.NotNull;
-
 import rs.ltt.jmap.client.blob.BlobTransferException;
 import rs.ltt.jmap.client.blob.MaxUploadSizeExceededException;
 import rs.ltt.jmap.common.entity.IdentifiableMailboxWithRoleAndName;
@@ -21,7 +18,6 @@ public class Failure {
     private static final String TARGET_ROLE = "role";
     private static final String MAX_UPLOAD_SIZE = "max_upload_size";
     private static final String HTTP_STATUS_CODE = "status_code";
-
 
     private final Class<?> exception;
     private final String message;
@@ -44,25 +40,15 @@ public class Failure {
                     clazz,
                     data.getString(MESSAGE),
                     data.getString(PREEXISTING_MAILBOX_ID),
-                    Role.valueOf(data.getString(TARGET_ROLE))
-            );
+                    Role.valueOf(data.getString(TARGET_ROLE)));
         } else if (clazz == MaxUploadSizeExceededException.class) {
             return new MaxUploadSizeExceeded(
-                    clazz,
-                    data.getString(MESSAGE),
-                    data.getLong(MAX_UPLOAD_SIZE, 0)
-            );
+                    clazz, data.getString(MESSAGE), data.getLong(MAX_UPLOAD_SIZE, 0));
         } else if (clazz == BlobTransferException.class) {
             return new BlobTransferFailure(
-                    clazz,
-                    data.getString(MESSAGE),
-                    data.getInt(HTTP_STATUS_CODE, 0)
-            );
+                    clazz, data.getString(MESSAGE), data.getInt(HTTP_STATUS_CODE, 0));
         } else {
-            return new Failure(
-                    clazz,
-                    data.getString(MESSAGE)
-            );
+            return new Failure(clazz, data.getString(MESSAGE));
         }
     }
 
@@ -77,7 +63,8 @@ public class Failure {
             dataBuilder.putString(MESSAGE, message);
         }
         if (cause instanceof PreexistingMailboxException) {
-            final IdentifiableMailboxWithRoleAndName preexistingMailbox = ((PreexistingMailboxException) cause).getPreexistingMailbox();
+            final IdentifiableMailboxWithRoleAndName preexistingMailbox =
+                    ((PreexistingMailboxException) cause).getPreexistingMailbox();
             final Role targetRole = ((PreexistingMailboxException) cause).getTargetRole();
             dataBuilder.putString(PREEXISTING_MAILBOX_ID, preexistingMailbox.getId());
             dataBuilder.putString(TARGET_ROLE, targetRole.toString());
@@ -112,11 +99,11 @@ public class Failure {
 
     public static class PreExistingMailbox extends Failure {
 
-
         private final String mailboxId;
         private final Role role;
 
-        private PreExistingMailbox(Class<?> exception, String message, final String mailboxId, final Role role) {
+        private PreExistingMailbox(
+                Class<?> exception, String message, final String mailboxId, final Role role) {
             super(exception, message);
             this.mailboxId = mailboxId;
             this.role = role;
@@ -134,7 +121,8 @@ public class Failure {
     public static class MaxUploadSizeExceeded extends Failure {
         private final long maxUploadSize;
 
-        private MaxUploadSizeExceeded(Class<?> exception, String message, final long maxUploadSize) {
+        private MaxUploadSizeExceeded(
+                Class<?> exception, String message, final long maxUploadSize) {
             super(exception, message);
             this.maxUploadSize = maxUploadSize;
         }

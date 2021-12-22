@@ -16,18 +16,14 @@
 package rs.ltt.android.worker;
 
 import android.content.Context;
-
 import androidx.annotation.NonNull;
 import androidx.work.Data;
 import androidx.work.WorkerParameters;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rs.ltt.android.database.LttrsDatabase;
 import rs.ltt.android.entity.EmailWithKeywords;
 import rs.ltt.jmap.mua.Mua;
@@ -51,7 +47,11 @@ public class ModifyKeywordWorker extends AbstractMuaWorker {
         this.target = data.getBoolean(TARGET_STATE_KEY, false);
     }
 
-    public static Data data(final Long account, final String threadId, final String keyword, final boolean targetState) {
+    public static Data data(
+            final Long account,
+            final String threadId,
+            final String keyword,
+            final boolean targetState) {
         return new Data.Builder()
                 .putLong(ACCOUNT_KEY, account)
                 .putString(THREAD_ID_KEY, threadId)
@@ -64,11 +64,22 @@ public class ModifyKeywordWorker extends AbstractMuaWorker {
     @Override
     public Result doWork() {
         final LttrsDatabase database = getDatabase();
-        List<EmailWithKeywords> emails = threadId == null ? Collections.emptyList() : database.threadAndEmailDao().getEmailsWithKeywords(threadId);
+        List<EmailWithKeywords> emails =
+                threadId == null
+                        ? Collections.emptyList()
+                        : database.threadAndEmailDao().getEmailsWithKeywords(threadId);
         if (target) {
-            LOGGER.info("Setting keyword {} for {} emails in thread {}", keyword, emails.size(), threadId);
+            LOGGER.info(
+                    "Setting keyword {} for {} emails in thread {}",
+                    keyword,
+                    emails.size(),
+                    threadId);
         } else {
-            LOGGER.info("Removing keyword {} for {} emails in thread {}", keyword, emails.size(), threadId);
+            LOGGER.info(
+                    "Removing keyword {} for {} emails in thread {}",
+                    keyword,
+                    emails.size(),
+                    threadId);
         }
         try {
             final Mua mua = getMua();

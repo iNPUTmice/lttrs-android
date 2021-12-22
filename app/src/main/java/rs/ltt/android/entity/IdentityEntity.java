@@ -18,17 +18,12 @@ package rs.ltt.android.entity;
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
-
 import rs.ltt.jmap.common.entity.Identity;
 
-@Entity(
-        tableName = "identity"
-)
+@Entity(tableName = "identity")
 public class IdentityEntity {
 
-    @NonNull
-    @PrimaryKey
-    public String id;
+    @NonNull @PrimaryKey public String id;
 
     public String name;
 
@@ -39,7 +34,6 @@ public class IdentityEntity {
     public String htmlSignature;
 
     public Boolean mayDelete;
-
 
     public static IdentityEntity of(Identity identity) {
         final IdentityEntity entity = new IdentityEntity();

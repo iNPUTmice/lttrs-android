@@ -16,7 +16,6 @@
 package rs.ltt.android.entity;
 
 import com.google.common.base.Objects;
-
 import okhttp3.HttpUrl;
 
 public class AccountWithCredentials {
@@ -28,7 +27,13 @@ public class AccountWithCredentials {
     private final String password;
     private final HttpUrl sessionResource;
 
-    public AccountWithCredentials(Long id, String accountId, final String name, String username, String password, HttpUrl sessionResource) {
+    public AccountWithCredentials(
+            Long id,
+            String accountId,
+            final String name,
+            String username,
+            String password,
+            HttpUrl sessionResource) {
         this.id = id;
         this.accountId = accountId;
         this.name = name;
@@ -37,43 +42,37 @@ public class AccountWithCredentials {
         this.sessionResource = sessionResource;
     }
 
-    /**
-     * @return The internal database ID
-     */
+    /** @return The internal database ID */
     public Long getId() {
         return id;
     }
 
-    /**
-     * @return The JMAP account ID as found in the session resource
-     */
+    /** @return The JMAP account ID as found in the session resource */
     public String getAccountId() {
         return accountId;
     }
 
     /**
-     * @return The display name ('user-friendly string') of the account as found in the account object in the session resource
+     * @return The display name ('user-friendly string') of the account as found in the account
+     *     object in the session resource
      */
     public String getName() {
         return name;
     }
 
-    /**
-     * @return The login username (credentials) used to authenticate
-     */
+    /** @return The login username (credentials) used to authenticate */
     public String getUsername() {
         return username;
     }
 
-    /**
-     * @return The login password (credentials) used to authenticate
-     */
+    /** @return The login password (credentials) used to authenticate */
     public String getPassword() {
         return password;
     }
 
     /**
-     * @return The URL of the session resource when different from the .well-known/jmap or null otherwise
+     * @return The URL of the session resource when different from the .well-known/jmap or null
+     *     otherwise
      */
     public HttpUrl getSessionResource() {
         return sessionResource;
@@ -84,12 +83,12 @@ public class AccountWithCredentials {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AccountWithCredentials that = (AccountWithCredentials) o;
-        return Objects.equal(id, that.id) &&
-                Objects.equal(accountId, that.accountId) &&
-                Objects.equal(name, that.name) &&
-                Objects.equal(username, that.username) &&
-                Objects.equal(password, that.password) &&
-                Objects.equal(sessionResource, that.sessionResource);
+        return Objects.equal(id, that.id)
+                && Objects.equal(accountId, that.accountId)
+                && Objects.equal(name, that.name)
+                && Objects.equal(username, that.username)
+                && Objects.equal(password, that.password)
+                && Objects.equal(sessionResource, that.sessionResource);
     }
 
     @Override

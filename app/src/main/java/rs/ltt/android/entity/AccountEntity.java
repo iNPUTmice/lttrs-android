@@ -21,20 +21,22 @@ import androidx.room.ForeignKey;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "account",
-        foreignKeys = {@ForeignKey(entity = CredentialsEntity.class,
-                parentColumns = {"id"},
-                childColumns = {"credentialsId"},
-                onDelete = ForeignKey.CASCADE)},
-        indices = {@Index(value = "credentialsId")}
-)
+@Entity(
+        tableName = "account",
+        foreignKeys = {
+            @ForeignKey(
+                    entity = CredentialsEntity.class,
+                    parentColumns = {"id"},
+                    childColumns = {"credentialsId"},
+                    onDelete = ForeignKey.CASCADE)
+        },
+        indices = {@Index(value = "credentialsId")})
 public class AccountEntity {
 
     @PrimaryKey(autoGenerate = true)
     public Long id;
 
-    @NonNull
-    public long credentialsId;
+    @NonNull public long credentialsId;
 
     public String accountId;
 

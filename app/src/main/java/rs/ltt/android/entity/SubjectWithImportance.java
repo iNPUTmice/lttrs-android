@@ -27,7 +27,6 @@ public class SubjectWithImportance {
         this.important = important;
     }
 
-
     public static SubjectWithImportance of(ThreadHeader header, Boolean important) {
         final String threadId = header == null ? null : header.threadId;
         final String subject = header == null ? null : header.subject;

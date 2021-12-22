@@ -1,7 +1,6 @@
 package rs.ltt.android.repository;
 
 import android.app.Application;
-
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
@@ -10,22 +9,18 @@ import androidx.work.ExistingWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Collections2;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.common.util.concurrent.SettableFuture;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rs.ltt.android.database.AppDatabase;
 import rs.ltt.android.entity.KeywordOverwriteEntity;
 import rs.ltt.android.entity.MailboxOverviewItem;
@@ -68,165 +63,196 @@ public class LttrsRepository extends AbstractRepository {
         return this.failureEventMediator;
     }
 
-    public void removeFromMailbox(final Collection<String> threadIds, final IdentifiableMailboxWithRole mailbox) {
-        IO_EXECUTOR.execute(() -> {
-            if (mailbox.getRole() == Role.IMPORTANT) {
-                markNotImportant(threadIds, mailbox);
-                return;
-            }
-            insertQueryItemOverwrite(threadIds, mailbox);
-            for (final String threadId : threadIds) {
-                final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(RemoveFromMailboxWorker.class)
-                        .setConstraints(CONNECTED_CONSTRAINT)
-                        .setInputData(RemoveFromMailboxWorker.data(accountId, threadId, mailbox))
-                        .addTag(AbstractMuaWorker.TAG_EMAIL_MODIFICATION)
-                        .build();
-                dispatchWorkRequest(workRequest);
-            }
-        });
+    public void removeFromMailbox(
+            final Collection<String> threadIds, final IdentifiableMailboxWithRole mailbox) {
+        IO_EXECUTOR.execute(
+                () -> {
+                    if (mailbox.getRole() == Role.IMPORTANT) {
+                        markNotImportant(threadIds, mailbox);
+                        return;
+                    }
+                    insertQueryItemOverwrite(threadIds, mailbox);
+                    for (final String threadId : threadIds) {
+                        final OneTimeWorkRequest workRequest =
+                                new OneTimeWorkRequest.Builder(RemoveFromMailboxWorker.class)
+                                        .setConstraints(CONNECTED_CONSTRAINT)
+                                        .setInputData(
+                                                RemoveFromMailboxWorker.data(
+                                                        accountId, threadId, mailbox))
+                                        .addTag(AbstractMuaWorker.TAG_EMAIL_MODIFICATION)
+                                        .build();
+                        dispatchWorkRequest(workRequest);
+                    }
+                });
     }
 
-    public void copyToMailbox(@NonNull final Collection<String> threadIds, @NonNull final IdentifiableMailboxWithRole mailbox) {
+    public void copyToMailbox(
+            @NonNull final Collection<String> threadIds,
+            @NonNull final IdentifiableMailboxWithRole mailbox) {
         if (mailbox.getRole() == Role.IMPORTANT) {
             markImportant(threadIds);
             return;
         }
-        IO_EXECUTOR.execute(() -> {
-            deleteQueryItemOverwrite(threadIds, mailbox);
-            for (final String threadId : threadIds) {
-                final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(CopyToMailboxWorker.class)
-                        .setConstraints(CONNECTED_CONSTRAINT)
-                        .setInputData(CopyToMailboxWorker.data(accountId, threadId, mailbox))
-                        .addTag(AbstractMuaWorker.TAG_EMAIL_MODIFICATION)
-                        .build();
-                dispatchWorkRequest(workRequest);
-            }
-        });
+        IO_EXECUTOR.execute(
+                () -> {
+                    deleteQueryItemOverwrite(threadIds, mailbox);
+                    for (final String threadId : threadIds) {
+                        final OneTimeWorkRequest workRequest =
+                                new OneTimeWorkRequest.Builder(CopyToMailboxWorker.class)
+                                        .setConstraints(CONNECTED_CONSTRAINT)
+                                        .setInputData(
+                                                CopyToMailboxWorker.data(
+                                                        accountId, threadId, mailbox))
+                                        .addTag(AbstractMuaWorker.TAG_EMAIL_MODIFICATION)
+                                        .build();
+                        dispatchWorkRequest(workRequest);
+                    }
+                });
     }
 
     public void archive(final Collection<String> threadIds) {
-        IO_EXECUTOR.execute(() -> {
-            insertQueryItemOverwrite(threadIds, Role.INBOX);
-            deleteQueryItemOverwrite(threadIds, Role.ARCHIVE);
-            database.overwriteDao().insertMailboxOverwrites(MailboxOverwriteEntity.of(threadIds, Role.INBOX, false));
-            database.overwriteDao().insertMailboxOverwrites(MailboxOverwriteEntity.of(threadIds, Role.ARCHIVE, true));
-            for (final String threadId : threadIds) {
-                final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(ArchiveWorker.class)
-                        .setConstraints(CONNECTED_CONSTRAINT)
-                        .setInputData(ArchiveWorker.data(accountId, threadId))
-                        .addTag(AbstractMuaWorker.TAG_EMAIL_MODIFICATION)
-                        .build();
-                dispatchWorkRequest(workRequest);
-            }
-        });
+        IO_EXECUTOR.execute(
+                () -> {
+                    insertQueryItemOverwrite(threadIds, Role.INBOX);
+                    deleteQueryItemOverwrite(threadIds, Role.ARCHIVE);
+                    database.overwriteDao()
+                            .insertMailboxOverwrites(
+                                    MailboxOverwriteEntity.of(threadIds, Role.INBOX, false));
+                    database.overwriteDao()
+                            .insertMailboxOverwrites(
+                                    MailboxOverwriteEntity.of(threadIds, Role.ARCHIVE, true));
+                    for (final String threadId : threadIds) {
+                        final OneTimeWorkRequest workRequest =
+                                new OneTimeWorkRequest.Builder(ArchiveWorker.class)
+                                        .setConstraints(CONNECTED_CONSTRAINT)
+                                        .setInputData(ArchiveWorker.data(accountId, threadId))
+                                        .addTag(AbstractMuaWorker.TAG_EMAIL_MODIFICATION)
+                                        .build();
+                        dispatchWorkRequest(workRequest);
+                    }
+                });
     }
 
     public void moveToInbox(final Collection<String> threadIds) {
-        IO_EXECUTOR.execute(() -> {
-            insertQueryItemOverwrite(threadIds, Role.ARCHIVE);
-            insertQueryItemOverwrite(threadIds, Role.TRASH);
-            deleteQueryItemOverwrite(threadIds, Role.INBOX);
+        IO_EXECUTOR.execute(
+                () -> {
+                    insertQueryItemOverwrite(threadIds, Role.ARCHIVE);
+                    insertQueryItemOverwrite(threadIds, Role.TRASH);
+                    deleteQueryItemOverwrite(threadIds, Role.INBOX);
 
-            database.overwriteDao().insertMailboxOverwrites(
-                    MailboxOverwriteEntity.of(threadIds, Role.INBOX, true)
-            );
-            database.overwriteDao().insertMailboxOverwrites(
-                    MailboxOverwriteEntity.of(threadIds, Role.ARCHIVE, false)
-            );
-            database.overwriteDao().insertMailboxOverwrites(
-                    MailboxOverwriteEntity.of(threadIds, Role.TRASH, false)
-            );
-            for (final String threadId : threadIds) {
-                final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(MoveToInboxWorker.class)
-                        .setConstraints(CONNECTED_CONSTRAINT)
-                        .setInputData(MoveToInboxWorker.data(accountId, threadId))
-                        .addTag(AbstractMuaWorker.TAG_EMAIL_MODIFICATION)
-                        .build();
-                dispatchWorkRequest(workRequest);
-            }
-        });
+                    database.overwriteDao()
+                            .insertMailboxOverwrites(
+                                    MailboxOverwriteEntity.of(threadIds, Role.INBOX, true));
+                    database.overwriteDao()
+                            .insertMailboxOverwrites(
+                                    MailboxOverwriteEntity.of(threadIds, Role.ARCHIVE, false));
+                    database.overwriteDao()
+                            .insertMailboxOverwrites(
+                                    MailboxOverwriteEntity.of(threadIds, Role.TRASH, false));
+                    for (final String threadId : threadIds) {
+                        final OneTimeWorkRequest workRequest =
+                                new OneTimeWorkRequest.Builder(MoveToInboxWorker.class)
+                                        .setConstraints(CONNECTED_CONSTRAINT)
+                                        .setInputData(MoveToInboxWorker.data(accountId, threadId))
+                                        .addTag(AbstractMuaWorker.TAG_EMAIL_MODIFICATION)
+                                        .build();
+                        dispatchWorkRequest(workRequest);
+                    }
+                });
     }
 
-    //TODO check if we can return LiveData<WorkInfo> directly by constructing the workRequest before the executor
+    // TODO check if we can return LiveData<WorkInfo> directly by constructing the workRequest
+    // before the executor
     public ListenableFuture<LiveData<WorkInfo>> moveToTrash(final Collection<String> threadIds) {
         final SettableFuture<LiveData<WorkInfo>> future = SettableFuture.create();
-        IO_EXECUTOR.execute(() -> {
-            for (MailboxWithRoleAndName mailbox : database.mailboxDao().getMailboxesForThreads(threadIds)) {
-                if (mailbox.role != Role.TRASH) {
-                    insertQueryItemOverwrite(threadIds, mailbox);
-                }
-            }
-            for (String keyword : KeywordUtil.KEYWORD_ROLE.keySet()) {
-                insertQueryItemOverwrite(threadIds, keyword);
-            }
-            final AppDatabase appDatabase = AppDatabase.getInstance(application);
-            for (final String searchQuery : appDatabase.searchSuggestionDao().getSearchQueries()) {
-                insertSearchQueryItemOverwrite(threadIds, searchQuery);
-            }
-            database.overwriteDao().insertMailboxOverwrites(
-                    MailboxOverwriteEntity.of(threadIds, Role.INBOX, false)
-            );
-            database.overwriteDao().insertMailboxOverwrites(
-                    MailboxOverwriteEntity.of(threadIds, Role.TRASH, true)
-            );
-            final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(MoveToTrashWorker.class)
-                    .setConstraints(CONNECTED_CONSTRAINT)
-                    .setInputData(MoveToTrashWorker.data(accountId, threadIds))
-                    .setInitialDelay(5, TimeUnit.SECONDS)
-                    .addTag(AbstractMuaWorker.TAG_EMAIL_MODIFICATION)
-                    .build();
-            future.set(dispatchWorkRequest(workRequest));
-        });
+        IO_EXECUTOR.execute(
+                () -> {
+                    for (MailboxWithRoleAndName mailbox :
+                            database.mailboxDao().getMailboxesForThreads(threadIds)) {
+                        if (mailbox.role != Role.TRASH) {
+                            insertQueryItemOverwrite(threadIds, mailbox);
+                        }
+                    }
+                    for (String keyword : KeywordUtil.KEYWORD_ROLE.keySet()) {
+                        insertQueryItemOverwrite(threadIds, keyword);
+                    }
+                    final AppDatabase appDatabase = AppDatabase.getInstance(application);
+                    for (final String searchQuery :
+                            appDatabase.searchSuggestionDao().getSearchQueries()) {
+                        insertSearchQueryItemOverwrite(threadIds, searchQuery);
+                    }
+                    database.overwriteDao()
+                            .insertMailboxOverwrites(
+                                    MailboxOverwriteEntity.of(threadIds, Role.INBOX, false));
+                    database.overwriteDao()
+                            .insertMailboxOverwrites(
+                                    MailboxOverwriteEntity.of(threadIds, Role.TRASH, true));
+                    final OneTimeWorkRequest workRequest =
+                            new OneTimeWorkRequest.Builder(MoveToTrashWorker.class)
+                                    .setConstraints(CONNECTED_CONSTRAINT)
+                                    .setInputData(MoveToTrashWorker.data(accountId, threadIds))
+                                    .setInitialDelay(5, TimeUnit.SECONDS)
+                                    .addTag(AbstractMuaWorker.TAG_EMAIL_MODIFICATION)
+                                    .build();
+                    future.set(dispatchWorkRequest(workRequest));
+                });
         return future;
     }
 
     public void cancelMoveToTrash(final WorkInfo workInfo, final Collection<String> threadIds) {
         Preconditions.checkNotNull(workInfo, "Unable to cancel moveToTrash operation.");
         WorkManager.getInstance(application).cancelWorkById(workInfo.getId());
-        IO_EXECUTOR.execute(() -> {
-            database.overwriteDao().revertMoveToTrashOverwrites(threadIds);
-        });
+        IO_EXECUTOR.execute(
+                () -> {
+                    database.overwriteDao().revertMoveToTrashOverwrites(threadIds);
+                });
     }
 
     public void markImportant(final Collection<String> threadIds) {
-        IO_EXECUTOR.execute(() -> {
-            database.overwriteDao().insertMailboxOverwrites(
-                    MailboxOverwriteEntity.of(threadIds, Role.IMPORTANT, true)
-            );
-            deleteQueryItemOverwrite(threadIds, Role.IMPORTANT);
-            for (final String threadId : threadIds) {
-                final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(MarkImportantWorker.class)
-                        .setConstraints(CONNECTED_CONSTRAINT)
-                        .setInputData(MarkImportantWorker.data(accountId, threadId))
-                        .addTag(AbstractMuaWorker.TAG_EMAIL_MODIFICATION)
-                        .build();
-                dispatchWorkRequest(workRequest);
-            }
-        });
+        IO_EXECUTOR.execute(
+                () -> {
+                    database.overwriteDao()
+                            .insertMailboxOverwrites(
+                                    MailboxOverwriteEntity.of(threadIds, Role.IMPORTANT, true));
+                    deleteQueryItemOverwrite(threadIds, Role.IMPORTANT);
+                    for (final String threadId : threadIds) {
+                        final OneTimeWorkRequest workRequest =
+                                new OneTimeWorkRequest.Builder(MarkImportantWorker.class)
+                                        .setConstraints(CONNECTED_CONSTRAINT)
+                                        .setInputData(MarkImportantWorker.data(accountId, threadId))
+                                        .addTag(AbstractMuaWorker.TAG_EMAIL_MODIFICATION)
+                                        .build();
+                        dispatchWorkRequest(workRequest);
+                    }
+                });
     }
 
     public void markNotImportant(final Collection<String> threadIds) {
-        IO_EXECUTOR.execute(() -> {
-            final MailboxWithRoleAndName mailbox = Preconditions.checkNotNull(
-                    database.mailboxDao().getMailbox(Role.IMPORTANT),
-                    "No mailbox with role=IMPORTANT found in cache"
-            );
-            markNotImportant(threadIds, mailbox);
-        });
+        IO_EXECUTOR.execute(
+                () -> {
+                    final MailboxWithRoleAndName mailbox =
+                            Preconditions.checkNotNull(
+                                    database.mailboxDao().getMailbox(Role.IMPORTANT),
+                                    "No mailbox with role=IMPORTANT found in cache");
+                    markNotImportant(threadIds, mailbox);
+                });
     }
 
-    private void markNotImportant(final Collection<String> threadIds, final IdentifiableMailboxWithRole mailbox) {
+    private void markNotImportant(
+            final Collection<String> threadIds, final IdentifiableMailboxWithRole mailbox) {
         Preconditions.checkArgument(mailbox.getRole() == Role.IMPORTANT);
         insertQueryItemOverwrite(threadIds, mailbox);
-        database.overwriteDao().insertMailboxOverwrites(
-                MailboxOverwriteEntity.of(threadIds, Role.IMPORTANT, false)
-        );
+        database.overwriteDao()
+                .insertMailboxOverwrites(
+                        MailboxOverwriteEntity.of(threadIds, Role.IMPORTANT, false));
         for (final String threadId : threadIds) {
-            final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(RemoveFromMailboxWorker.class)
-                    .setConstraints(CONNECTED_CONSTRAINT)
-                    .setInputData(RemoveFromMailboxWorker.data(accountId, threadId, mailbox))
-                    .addTag(AbstractMuaWorker.TAG_EMAIL_MODIFICATION)
-                    .build();
+            final OneTimeWorkRequest workRequest =
+                    new OneTimeWorkRequest.Builder(RemoveFromMailboxWorker.class)
+                            .setConstraints(CONNECTED_CONSTRAINT)
+                            .setInputData(
+                                    RemoveFromMailboxWorker.data(accountId, threadId, mailbox))
+                            .addTag(AbstractMuaWorker.TAG_EMAIL_MODIFICATION)
+                            .build();
             dispatchWorkRequest(workRequest);
         }
     }
@@ -243,39 +269,46 @@ public class LttrsRepository extends AbstractRepository {
         toggleKeyword(threadIds, keyword, true);
     }
 
-    private void toggleKeyword(final Collection<String> threadIds, final String keyword, final boolean targetState) {
+    private void toggleKeyword(
+            final Collection<String> threadIds, final String keyword, final boolean targetState) {
         Preconditions.checkNotNull(threadIds);
         Preconditions.checkNotNull(keyword);
         LOGGER.info("toggle keyword {} for threads {}", keyword, threadIds);
-        IO_EXECUTOR.execute(() -> {
-            final Collection<KeywordOverwriteEntity> entities = Collections2.transform(
-                    threadIds,
-                    threadId -> new KeywordOverwriteEntity(threadId, keyword, targetState)
-            );
-            insert(entities);
-            if (targetState) {
-                deleteQueryItemOverwrite(threadIds, keyword);
-            } else {
-                insertQueryItemOverwrite(threadIds, keyword);
-            }
-            for (final String threadId : threadIds) {
-                final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(ModifyKeywordWorker.class)
-                        .setConstraints(CONNECTED_CONSTRAINT)
-                        .setInputData(ModifyKeywordWorker.data(accountId, threadId, keyword, targetState))
-                        .addTag(AbstractMuaWorker.TAG_EMAIL_MODIFICATION)
-                        .build();
-                dispatchWorkRequest(workRequest);
-            }
-        });
+        IO_EXECUTOR.execute(
+                () -> {
+                    final Collection<KeywordOverwriteEntity> entities =
+                            Collections2.transform(
+                                    threadIds,
+                                    threadId ->
+                                            new KeywordOverwriteEntity(
+                                                    threadId, keyword, targetState));
+                    insert(entities);
+                    if (targetState) {
+                        deleteQueryItemOverwrite(threadIds, keyword);
+                    } else {
+                        insertQueryItemOverwrite(threadIds, keyword);
+                    }
+                    for (final String threadId : threadIds) {
+                        final OneTimeWorkRequest workRequest =
+                                new OneTimeWorkRequest.Builder(ModifyKeywordWorker.class)
+                                        .setConstraints(CONNECTED_CONSTRAINT)
+                                        .setInputData(
+                                                ModifyKeywordWorker.data(
+                                                        accountId, threadId, keyword, targetState))
+                                        .addTag(AbstractMuaWorker.TAG_EMAIL_MODIFICATION)
+                                        .build();
+                        dispatchWorkRequest(workRequest);
+                    }
+                });
     }
 
     public void markRead(final Collection<String> threadIds) {
-        final ListenableFuture<List<String>> emailIdsFuture = database.threadAndEmailDao().getEmailIds(threadIds);
+        final ListenableFuture<List<String>> emailIdsFuture =
+                database.threadAndEmailDao().getEmailIds(threadIds);
         Futures.transform(
                 emailIdsFuture,
                 ids -> EmailNotification.cancel(application, accountId, ids),
-                MoreExecutors.directExecutor()
-        );
+                MoreExecutors.directExecutor());
         toggleKeyword(threadIds, Keyword.SEEN, true);
     }
 
@@ -288,8 +321,7 @@ public class LttrsRepository extends AbstractRepository {
         workManager.enqueueUniqueWork(
                 AbstractMuaWorker.uniqueName(accountId),
                 ExistingWorkPolicy.APPEND_OR_REPLACE,
-                workRequest
-        );
+                workRequest);
         return observeForFailure(workRequest);
     }
 
@@ -298,15 +330,17 @@ public class LttrsRepository extends AbstractRepository {
         if (role == Role.TRASH) {
             emptyTrash();
         } else {
-            throw new IllegalStateException(String.format("Emptying %s has not been implemented", role));
+            throw new IllegalStateException(
+                    String.format("Emptying %s has not been implemented", role));
         }
     }
 
     private void emptyTrash() {
-        final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(EmptyTrashWorker.class)
-                .setConstraints(CONNECTED_CONSTRAINT)
-                .setInputData(EmptyTrashWorker.data(accountId))
-                .build();
+        final OneTimeWorkRequest workRequest =
+                new OneTimeWorkRequest.Builder(EmptyTrashWorker.class)
+                        .setConstraints(CONNECTED_CONSTRAINT)
+                        .setInputData(EmptyTrashWorker.data(accountId))
+                        .build();
         dispatchWorkRequest(workRequest);
     }
 
@@ -323,19 +357,27 @@ public class LttrsRepository extends AbstractRepository {
     public LiveData<WorkInfo> observeForFailure(final UUID id) {
         final WorkManager workManager = WorkManager.getInstance(application);
         final LiveData<WorkInfo> workInfoLiveData = workManager.getWorkInfoByIdLiveData(id);
-        MainThreadExecutor.getInstance().execute(() -> failureEventMediator.addSource(workInfoLiveData, workInfo -> {
-            if (workInfo.getState().isFinished()) {
-                failureEventMediator.removeSource(workInfoLiveData);
-            }
-            if (workInfo.getState() == WorkInfo.State.FAILED) {
-                final Data data = workInfo.getOutputData();
-                try {
-                    failureEventMediator.postValue(new Event<>(Failure.of(data)));
-                } catch (final IllegalArgumentException e) {
-                    LOGGER.warn("Work info failure not recognized {}", data);
-                }
-            }
-        }));
+        MainThreadExecutor.getInstance()
+                .execute(
+                        () ->
+                                failureEventMediator.addSource(
+                                        workInfoLiveData,
+                                        workInfo -> {
+                                            if (workInfo.getState().isFinished()) {
+                                                failureEventMediator.removeSource(workInfoLiveData);
+                                            }
+                                            if (workInfo.getState() == WorkInfo.State.FAILED) {
+                                                final Data data = workInfo.getOutputData();
+                                                try {
+                                                    failureEventMediator.postValue(
+                                                            new Event<>(Failure.of(data)));
+                                                } catch (final IllegalArgumentException e) {
+                                                    LOGGER.warn(
+                                                            "Work info failure not recognized {}",
+                                                            data);
+                                                }
+                                            }
+                                        }));
         return workInfoLiveData;
     }
 }

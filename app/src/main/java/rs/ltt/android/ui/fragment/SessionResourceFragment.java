@@ -19,12 +19,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
-
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-
 import rs.ltt.android.R;
 import rs.ltt.android.databinding.FragmentSessionResourceBinding;
 import rs.ltt.android.util.Touch;
@@ -32,14 +29,12 @@ import rs.ltt.android.util.Touch;
 public class SessionResourceFragment extends AbstractSetupFragment {
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(
+            @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        final FragmentSessionResourceBinding binding = DataBindingUtil.inflate(
-                inflater,
-                R.layout.fragment_session_resource,
-                container,
-                false
-        );
+        final FragmentSessionResourceBinding binding =
+                DataBindingUtil.inflate(
+                        inflater, R.layout.fragment_session_resource, container, false);
         binding.setSetupViewModel(setupViewModel);
         binding.setLifecycleOwner(getViewLifecycleOwner());
         Touch.expandTouchArea(binding.requestHelp, 16);

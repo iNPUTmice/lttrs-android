@@ -12,7 +12,8 @@ public final class RecyclerViews {
     public static boolean scrolledToTop(final RecyclerView recyclerView) {
         final RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
         if (layoutManager instanceof LinearLayoutManager) {
-            return ((LinearLayoutManager) layoutManager).findFirstCompletelyVisibleItemPosition() == 0;
+            return ((LinearLayoutManager) layoutManager).findFirstCompletelyVisibleItemPosition()
+                    == 0;
         } else {
             return false;
         }

@@ -16,20 +16,15 @@
 package rs.ltt.android.worker;
 
 import android.content.Context;
-
 import androidx.annotation.NonNull;
 import androidx.work.Data;
 import androidx.work.WorkerParameters;
-
 import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.ListenableFuture;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rs.ltt.android.entity.EmailWithMailboxes;
 import rs.ltt.jmap.common.entity.IdentifiableMailboxWithRole;
 
@@ -54,11 +49,12 @@ public class CopyToMailboxWorker extends AbstractMailboxModificationWorker {
     }
 
     @Override
-    protected ListenableFuture<Boolean> modify(List<EmailWithMailboxes> emails) throws ExecutionException {
-        final IdentifiableMailboxWithRole mailbox = Preconditions.checkNotNull(
-                getDatabase().mailboxDao().getMailbox(this.mailboxId),
-                String.format("Unable to find cached mailbox with id %s", this.mailboxId)
-        );
+    protected ListenableFuture<Boolean> modify(List<EmailWithMailboxes> emails)
+            throws ExecutionException {
+        final IdentifiableMailboxWithRole mailbox =
+                Preconditions.checkNotNull(
+                        getDatabase().mailboxDao().getMailbox(this.mailboxId),
+                        String.format("Unable to find cached mailbox with id %s", this.mailboxId));
         LOGGER.info("Modifying {} emails in thread {}", emails.size(), threadId);
         return getMua().copyToMailbox(emails, mailbox);
     }

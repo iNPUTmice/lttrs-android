@@ -2,21 +2,21 @@ package rs.ltt.android.entity;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-
 import com.google.common.base.MoreObjects;
 
 public class QueryInfo implements Parcelable {
-    public static final Creator<QueryInfo> CREATOR = new Creator<QueryInfo>() {
-        @Override
-        public QueryInfo createFromParcel(Parcel in) {
-            return new QueryInfo(in);
-        }
+    public static final Creator<QueryInfo> CREATOR =
+            new Creator<QueryInfo>() {
+                @Override
+                public QueryInfo createFromParcel(Parcel in) {
+                    return new QueryInfo(in);
+                }
 
-        @Override
-        public QueryInfo[] newArray(int size) {
-            return new QueryInfo[size];
-        }
-    };
+                @Override
+                public QueryInfo[] newArray(int size) {
+                    return new QueryInfo[size];
+                }
+            };
     public final long accountId;
     public final Type type;
     public final String value;
@@ -55,6 +55,9 @@ public class QueryInfo implements Parcelable {
     }
 
     public enum Type {
-        MAIN, MAILBOX, KEYWORD, SEARCH
+        MAIN,
+        MAILBOX,
+        KEYWORD,
+        SEARCH
     }
 }

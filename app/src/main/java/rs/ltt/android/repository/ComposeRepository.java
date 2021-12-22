@@ -16,19 +16,15 @@
 package rs.ltt.android.repository;
 
 import android.app.Application;
-
 import androidx.lifecycle.LiveData;
 import androidx.work.ExistingWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkContinuation;
 import androidx.work.WorkManager;
-
 import com.google.common.util.concurrent.ListenableFuture;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
-
 import rs.ltt.android.entity.EmailWithReferences;
 import rs.ltt.android.entity.IdentityWithNameAndEmail;
 import rs.ltt.android.ui.model.ComposeViewModel;
@@ -55,30 +51,37 @@ public class ComposeRepository extends AbstractRepository {
         return database.threadAndEmailDao().getEmailWithReferences(accountId, id);
     }
 
-    public UUID sendEmail(IdentifiableIdentity identity, ComposeViewModel.Draft draft, final Collection<String> inReplyTo, EmailWithReferences discard) {
-        final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(SendEmailWorker.class)
-                .setConstraints(CONNECTED_CONSTRAINT)
-                .setInputData(SendEmailWorker.data(
-                        accountId,
-                        identity.getId(),
-                        inReplyTo,
-                        draft.getTo(),
-                        draft.getCc(),
-                        draft.getSubject(),
-                        draft.getBody(),
-                        draft.getAttachments()
-                ))
-                .build();
+    public UUID sendEmail(
+            IdentifiableIdentity identity,
+            ComposeViewModel.Draft draft,
+            final Collection<String> inReplyTo,
+            EmailWithReferences discard) {
+        final OneTimeWorkRequest workRequest =
+                new OneTimeWorkRequest.Builder(SendEmailWorker.class)
+                        .setConstraints(CONNECTED_CONSTRAINT)
+                        .setInputData(
+                                SendEmailWorker.data(
+                                        accountId,
+                                        identity.getId(),
+                                        inReplyTo,
+                                        draft.getTo(),
+                                        draft.getCc(),
+                                        draft.getSubject(),
+                                        draft.getBody(),
+                                        draft.getAttachments()))
+                        .build();
         final WorkManager workManager = WorkManager.getInstance(application);
-        final WorkContinuation continuation = workManager.beginUniqueWork(
-                AbstractMuaWorker.uniqueName(accountId),
-                ExistingWorkPolicy.APPEND_OR_REPLACE,
-                workRequest);
+        final WorkContinuation continuation =
+                workManager.beginUniqueWork(
+                        AbstractMuaWorker.uniqueName(accountId),
+                        ExistingWorkPolicy.APPEND_OR_REPLACE,
+                        workRequest);
         if (discard != null) {
-            final OneTimeWorkRequest discardPreviousDraft = new OneTimeWorkRequest.Builder(DiscardDraftWorker.class)
-                    .setConstraints(CONNECTED_CONSTRAINT)
-                    .setInputData(DiscardDraftWorker.data(accountId, discard.id))
-                    .build();
+            final OneTimeWorkRequest discardPreviousDraft =
+                    new OneTimeWorkRequest.Builder(DiscardDraftWorker.class)
+                            .setConstraints(CONNECTED_CONSTRAINT)
+                            .setInputData(DiscardDraftWorker.data(accountId, discard.id))
+                            .build();
             continuation.then(discardPreviousDraft).enqueue();
         } else {
             continuation.enqueue();
@@ -88,47 +91,49 @@ public class ComposeRepository extends AbstractRepository {
     }
 
     public UUID submitEmail(IdentityWithNameAndEmail identity, EmailWithReferences editableEmail) {
-        final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(SubmitEmailWorker.class)
-                .setConstraints(CONNECTED_CONSTRAINT)
-                .setInputData(SubmitEmailWorker.data(
-                        accountId,
-                        identity.getId(),
-                        editableEmail.id
-                ))
-                .build();
+        final OneTimeWorkRequest workRequest =
+                new OneTimeWorkRequest.Builder(SubmitEmailWorker.class)
+                        .setConstraints(CONNECTED_CONSTRAINT)
+                        .setInputData(
+                                SubmitEmailWorker.data(
+                                        accountId, identity.getId(), editableEmail.id))
+                        .build();
         final WorkManager workManager = WorkManager.getInstance(application);
         workManager.enqueue(workRequest);
         return workRequest.getId();
     }
 
-    public UUID saveDraft(final IdentifiableIdentity identity,
-                          final ComposeViewModel.Draft draft,
-                          final Collection<String> inReplyTo,
-                          final EmailWithReferences discard) {
-        final OneTimeWorkRequest saveDraftRequest = new OneTimeWorkRequest.Builder(SaveDraftWorker.class)
-                .setConstraints(CONNECTED_CONSTRAINT)
-                .setInputData(SendEmailWorker.data(
-                        accountId,
-                        identity.getId(),
-                        inReplyTo,
-                        draft.getTo(),
-                        draft.getCc(),
-                        draft.getSubject(),
-                        draft.getBody(),
-                        draft.getAttachments()
-                ))
-                .build();
+    public UUID saveDraft(
+            final IdentifiableIdentity identity,
+            final ComposeViewModel.Draft draft,
+            final Collection<String> inReplyTo,
+            final EmailWithReferences discard) {
+        final OneTimeWorkRequest saveDraftRequest =
+                new OneTimeWorkRequest.Builder(SaveDraftWorker.class)
+                        .setConstraints(CONNECTED_CONSTRAINT)
+                        .setInputData(
+                                SendEmailWorker.data(
+                                        accountId,
+                                        identity.getId(),
+                                        inReplyTo,
+                                        draft.getTo(),
+                                        draft.getCc(),
+                                        draft.getSubject(),
+                                        draft.getBody(),
+                                        draft.getAttachments()))
+                        .build();
         final WorkManager workManager = WorkManager.getInstance(application);
-        final WorkContinuation continuation = workManager.beginUniqueWork(
-                AbstractMuaWorker.uniqueName(accountId),
-                ExistingWorkPolicy.APPEND_OR_REPLACE,
-                saveDraftRequest
-        );
+        final WorkContinuation continuation =
+                workManager.beginUniqueWork(
+                        AbstractMuaWorker.uniqueName(accountId),
+                        ExistingWorkPolicy.APPEND_OR_REPLACE,
+                        saveDraftRequest);
         if (discard != null) {
-            final OneTimeWorkRequest discardPreviousDraft = new OneTimeWorkRequest.Builder(DiscardDraftWorker.class)
-                    .setConstraints(CONNECTED_CONSTRAINT)
-                    .setInputData(DiscardDraftWorker.data(accountId, discard.id))
-                    .build();
+            final OneTimeWorkRequest discardPreviousDraft =
+                    new OneTimeWorkRequest.Builder(DiscardDraftWorker.class)
+                            .setConstraints(CONNECTED_CONSTRAINT)
+                            .setInputData(DiscardDraftWorker.data(accountId, discard.id))
+                            .build();
             continuation.then(discardPreviousDraft).enqueue();
         } else {
             continuation.enqueue();
@@ -137,10 +142,11 @@ public class ComposeRepository extends AbstractRepository {
     }
 
     public boolean discard(EmailWithReferences editableEmail) {
-        final OneTimeWorkRequest discardDraft = new OneTimeWorkRequest.Builder(DiscardDraftWorker.class)
-                .setConstraints(CONNECTED_CONSTRAINT)
-                .setInputData(DiscardDraftWorker.data(accountId, editableEmail.id))
-                .build();
+        final OneTimeWorkRequest discardDraft =
+                new OneTimeWorkRequest.Builder(DiscardDraftWorker.class)
+                        .setConstraints(CONNECTED_CONSTRAINT)
+                        .setInputData(DiscardDraftWorker.data(accountId, editableEmail.id))
+                        .build();
         final WorkManager workManager = WorkManager.getInstance(application);
         final boolean isOnlyEmailInThread = editableEmail.isOnlyEmailInThread();
         if (isOnlyEmailInThread) {
@@ -151,10 +157,10 @@ public class ComposeRepository extends AbstractRepository {
     }
 
     private void insertQueryItemOverwrite(final String threadId) {
-        IO_EXECUTOR.execute(() -> {
-            insertQueryItemOverwrite(threadId, Role.DRAFTS);
-            insertQueryItemOverwrite(threadId, Keyword.DRAFT);
-        });
+        IO_EXECUTOR.execute(
+                () -> {
+                    insertQueryItemOverwrite(threadId, Role.DRAFTS);
+                    insertQueryItemOverwrite(threadId, Keyword.DRAFT);
+                });
     }
-
 }

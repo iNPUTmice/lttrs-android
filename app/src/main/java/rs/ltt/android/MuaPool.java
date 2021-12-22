@@ -1,18 +1,14 @@
 package rs.ltt.android;
 
 import android.content.Context;
-
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rs.ltt.android.cache.AutocryptDatabaseStorage;
 import rs.ltt.android.cache.DatabaseCache;
 import rs.ltt.android.database.AppDatabase;
@@ -29,16 +25,13 @@ public final class MuaPool {
 
     private static final Map<AccountWithCredentials, Mua> INSTANCES = new HashMap<>();
 
-    private MuaPool() {
-
-    }
+    private MuaPool() {}
 
     public static ListenableFuture<Mua> getInstance(final Context context, final long accountId) {
         return Futures.transform(
                 AppDatabase.getInstance(context).accountDao().getAccountFuture(accountId),
                 account -> getInstance(context, account),
-                MoreExecutors.directExecutor()
-        );
+                MoreExecutors.directExecutor());
     }
 
     public static Mua getInstance(final Context context, final AccountWithCredentials account) {
@@ -56,17 +49,18 @@ public final class MuaPool {
             final LttrsDatabase database = LttrsDatabase.getInstance(context, account.getId());
             final Storage storage = new AutocryptDatabaseStorage(database);
             final AutocryptPlugin autocryptPlugin = new AutocryptPlugin(account.getName(), storage);
-            final Mua mua = Mua.builder()
-                    .username(account.getUsername())
-                    .password(account.getPassword())
-                    .accountId(account.getAccountId())
-                    .sessionResource(account.getSessionResource())
-                    .useWebSocket(true)
-                    .cache(new DatabaseCache(database))
-                    .sessionCache(new FileSessionCache(application.getCacheDir()))
-                    .plugin(AutocryptPlugin.class, autocryptPlugin)
-                    .queryPageSize(20L)
-                    .build();
+            final Mua mua =
+                    Mua.builder()
+                            .username(account.getUsername())
+                            .password(account.getPassword())
+                            .accountId(account.getAccountId())
+                            .sessionResource(account.getSessionResource())
+                            .useWebSocket(true)
+                            .cache(new DatabaseCache(database))
+                            .sessionCache(new FileSessionCache(application.getCacheDir()))
+                            .plugin(AutocryptPlugin.class, autocryptPlugin)
+                            .queryPageSize(20L)
+                            .build();
             INSTANCES.put(account, mua);
             return mua;
         }
@@ -74,7 +68,8 @@ public final class MuaPool {
 
     public static void evict(long id) {
         synchronized (MuaPool.class) {
-            final Iterator<Map.Entry<AccountWithCredentials, Mua>> iterator = INSTANCES.entrySet().iterator();
+            final Iterator<Map.Entry<AccountWithCredentials, Mua>> iterator =
+                    INSTANCES.entrySet().iterator();
             while (iterator.hasNext()) {
                 final Map.Entry<AccountWithCredentials, Mua> entry = iterator.next();
                 final AccountWithCredentials account = entry.getKey();

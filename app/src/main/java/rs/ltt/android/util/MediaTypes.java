@@ -14,9 +14,7 @@ public final class MediaTypes {
     private static final MediaType PLAIN = MediaType.create("text", "plain");
     private static final MediaType GPX_XML = MediaType.create("application", "gpx+xml");
 
-    private MediaTypes() {
-
-    }
+    private MediaTypes() {}
 
     public static boolean isCalendar(final MediaType mediaType) {
         return mediaType.is(X_VCALENDAR) || mediaType.is(CALENDAR);
@@ -49,7 +47,8 @@ public final class MediaTypes {
     }
 
     public static String toString(final MediaType mediaType) {
-        return mediaType == null ? "*/*" : String.format("%s/%s", mediaType.type(), mediaType.subtype());
+        return mediaType == null
+                ? "*/*"
+                : String.format("%s/%s", mediaType.type(), mediaType.subtype());
     }
-
 }

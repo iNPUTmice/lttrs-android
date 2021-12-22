@@ -16,12 +16,9 @@
 package rs.ltt.android.entity;
 
 import androidx.room.Ignore;
-
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
-
 import java.util.Collection;
-
 import rs.ltt.jmap.common.entity.IdentifiableMailboxWithRoleAndName;
 import rs.ltt.jmap.common.entity.Role;
 import rs.ltt.jmap.mua.util.Label;
@@ -32,9 +29,7 @@ public class MailboxWithRoleAndName implements IdentifiableMailboxWithRoleAndNam
     public Role role;
     public String name;
 
-    public MailboxWithRoleAndName() {
-
-    }
+    public MailboxWithRoleAndName() {}
 
     @Ignore
     public MailboxWithRoleAndName(Role role, String name) {
@@ -79,7 +74,8 @@ public class MailboxWithRoleAndName implements IdentifiableMailboxWithRoleAndNam
         return true;
     }
 
-    public static MailboxWithRoleAndName findByLabel(Collection<MailboxWithRoleAndName> mailboxes, String label) {
+    public static MailboxWithRoleAndName findByLabel(
+            Collection<MailboxWithRoleAndName> mailboxes, String label) {
         for (MailboxWithRoleAndName mailbox : mailboxes) {
             if (mailbox.role == null && mailbox.name != null && mailbox.name.equals(label)) {
                 return mailbox;
@@ -117,9 +113,9 @@ public class MailboxWithRoleAndName implements IdentifiableMailboxWithRoleAndNam
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MailboxWithRoleAndName mailbox = (MailboxWithRoleAndName) o;
-        return Objects.equal(id, mailbox.id) &&
-                role == mailbox.role &&
-                Objects.equal(name, mailbox.name);
+        return Objects.equal(id, mailbox.id)
+                && role == mailbox.role
+                && Objects.equal(name, mailbox.name);
     }
 
     @Override

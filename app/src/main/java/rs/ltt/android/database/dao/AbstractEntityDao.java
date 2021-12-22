@@ -18,7 +18,6 @@ package rs.ltt.android.database.dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
-
 import rs.ltt.android.entity.EntityStateEntity;
 import rs.ltt.jmap.common.entity.AbstractIdentifiableEntity;
 import rs.ltt.jmap.common.entity.TypedState;
@@ -33,21 +32,34 @@ public abstract class AbstractEntityDao {
     public abstract String getState(Class<? extends AbstractIdentifiableEntity> type);
 
     @Query("update entity_state set state=:newState where type=:type and state=:oldState")
-    protected abstract int updateState(Class<? extends AbstractIdentifiableEntity> type, String oldState, String newState);
+    protected abstract int updateState(
+            Class<? extends AbstractIdentifiableEntity> type, String oldState, String newState);
 
-    void throwOnCacheConflict(final Class<? extends AbstractIdentifiableEntity> type, TypedState<?> expectedTypedState) {
+    void throwOnCacheConflict(
+            final Class<? extends AbstractIdentifiableEntity> type,
+            TypedState<?> expectedTypedState) {
         final String expectedState = expectedTypedState.getState();
         final String currentState = getState(type);
         if (expectedState == null || !expectedState.equals(currentState)) {
-            throw new CacheConflictException(type.toString() + " state was '" + currentState + "'. Expected '" + expectedState + "'");
+            throw new CacheConflictException(
+                    type.toString()
+                            + " state was '"
+                            + currentState
+                            + "'. Expected '"
+                            + expectedState
+                            + "'");
         }
     }
 
-    void throwOnUpdateConflict(final Class<? extends AbstractIdentifiableEntity> type, final TypedState<?> oldTypedState, final TypedState<?> newTypedState) {
+    void throwOnUpdateConflict(
+            final Class<? extends AbstractIdentifiableEntity> type,
+            final TypedState<?> oldTypedState,
+            final TypedState<?> newTypedState) {
         final String oldState = oldTypedState.getState();
         final String newState = newTypedState.getState();
         if (updateState(type, oldState, newState) != 1) {
-            throw new CacheConflictException("Unable to update from oldState=" + oldState + " to newState=" + newState);
+            throw new CacheConflictException(
+                    "Unable to update from oldState=" + oldState + " to newState=" + newState);
         }
     }
 }

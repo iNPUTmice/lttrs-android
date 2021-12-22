@@ -86,8 +86,7 @@ android {
 
 spotless {
     java {
-        // Use the default importOrder configuration
-        importOrder()
+        target '**/*.java'
         googleJavaFormat('1.8').aosp().reflowLongStrings()
     }
 }

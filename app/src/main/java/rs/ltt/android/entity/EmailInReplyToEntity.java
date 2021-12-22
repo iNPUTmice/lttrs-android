@@ -18,28 +18,24 @@ package rs.ltt.android.entity;
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
-
 import com.google.common.collect.ImmutableList;
-
 import java.util.Collections;
 import java.util.List;
-
 import rs.ltt.jmap.common.entity.Email;
 
-@Entity(tableName = "email_in_reply_to",
+@Entity(
+        tableName = "email_in_reply_to",
         primaryKeys = {"emailId", "id"},
-        foreignKeys = @ForeignKey(entity = EmailEntity.class,
-                parentColumns = {"id"},
-                childColumns = {"emailId"},
-                onDelete = ForeignKey.CASCADE
-        )
-)
+        foreignKeys =
+                @ForeignKey(
+                        entity = EmailEntity.class,
+                        parentColumns = {"id"},
+                        childColumns = {"emailId"},
+                        onDelete = ForeignKey.CASCADE))
 public class EmailInReplyToEntity {
 
-    @NonNull
-    public String emailId;
-    @NonNull
-    public String id;
+    @NonNull public String emailId;
+    @NonNull public String id;
 
     public EmailInReplyToEntity(@NonNull String emailId, @NonNull String id) {
         this.emailId = emailId;
@@ -57,5 +53,4 @@ public class EmailInReplyToEntity {
         }
         return builder.build();
     }
-
 }

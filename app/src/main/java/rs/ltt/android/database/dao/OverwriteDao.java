@@ -23,15 +23,11 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Transaction;
-
 import com.google.common.util.concurrent.ListenableFuture;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Collection;
 import java.util.List;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rs.ltt.android.entity.KeywordOverwriteEntity;
 import rs.ltt.android.entity.MailboxOverwriteEntity;
 import rs.ltt.android.entity.QueryItemOverwriteEntity;
@@ -42,19 +38,24 @@ public abstract class OverwriteDao {
     private static final Logger LOGGER = LoggerFactory.getLogger(OverwriteDao.class);
 
     @Insert(onConflict = REPLACE)
-    public abstract void insertKeywordOverwrites(Collection<KeywordOverwriteEntity> keywordOverwriteEntities);
+    public abstract void insertKeywordOverwrites(
+            Collection<KeywordOverwriteEntity> keywordOverwriteEntities);
 
     @Insert(onConflict = REPLACE)
-    public abstract void insertMailboxOverwrites(Collection<MailboxOverwriteEntity> mailboxOverwriteEntities);
+    public abstract void insertMailboxOverwrites(
+            Collection<MailboxOverwriteEntity> mailboxOverwriteEntities);
 
     @Insert(onConflict = REPLACE)
-    public abstract void insertQueryOverwrites(Collection<QueryItemOverwriteEntity> queryItemOverwriteEntities);
+    public abstract void insertQueryOverwrites(
+            Collection<QueryItemOverwriteEntity> queryItemOverwriteEntities);
 
     @Delete
-    public abstract void deleteQueryOverwrites(Collection<QueryItemOverwriteEntity> queryItemOverwriteEntity);
+    public abstract void deleteQueryOverwrites(
+            Collection<QueryItemOverwriteEntity> queryItemOverwriteEntity);
 
     @Query("delete from query_item_overwrite where threadId=:threadId and type=:type")
-    public abstract int deleteQueryOverwritesByThread(String threadId, QueryItemOverwriteEntity.Type type);
+    public abstract int deleteQueryOverwritesByThread(
+            String threadId, QueryItemOverwriteEntity.Type type);
 
     @Query("delete from query_item_overwrite where threadId in (:threadIds)")
     public abstract int deleteQueryOverwritesByThread(Collection<String> threadIds);
@@ -71,18 +72,28 @@ public abstract class OverwriteDao {
     @Transaction
     public void revertKeywordOverwrites(final String threadId) {
         final int keywordOverwrites = deleteKeywordOverwritesByThread(threadId);
-        final int queryOverwrites = deleteQueryOverwritesByThread(threadId, QueryItemOverwriteEntity.Type.KEYWORD);
+        final int queryOverwrites =
+                deleteQueryOverwritesByThread(threadId, QueryItemOverwriteEntity.Type.KEYWORD);
         if (keywordOverwrites > 0 || queryOverwrites > 0) {
-            LOGGER.info("Deleted {} keyword overwrites and {} query overwrites for thread {}", keywordOverwrites, queryOverwrites, threadId);
+            LOGGER.info(
+                    "Deleted {} keyword overwrites and {} query overwrites for thread {}",
+                    keywordOverwrites,
+                    queryOverwrites,
+                    threadId);
         }
     }
 
     @Transaction
     public void revertMailboxOverwrites(final String threadId) {
         final int mailboxOverwrites = deleteMailboxOverwritesByThread(threadId);
-        final int queryOverwrites = deleteQueryOverwritesByThread(threadId, QueryItemOverwriteEntity.Type.MAILBOX);
+        final int queryOverwrites =
+                deleteQueryOverwritesByThread(threadId, QueryItemOverwriteEntity.Type.MAILBOX);
         if (mailboxOverwrites > 0 || queryOverwrites > 0) {
-            LOGGER.info("Deleted {} mailbox overwrites and {} query overwrites for thread {}", mailboxOverwrites, queryOverwrites, threadId);
+            LOGGER.info(
+                    "Deleted {} mailbox overwrites and {} query overwrites for thread {}",
+                    mailboxOverwrites,
+                    queryOverwrites,
+                    threadId);
         }
     }
 
@@ -91,7 +102,11 @@ public abstract class OverwriteDao {
         final int mailboxOverwrites = deleteMailboxOverwritesByThread(threadIds);
         final int queryOverwrites = deleteQueryOverwritesByThread(threadIds);
         if (mailboxOverwrites > 0 || queryOverwrites > 0) {
-            LOGGER.info("Deleted {} mailbox overwrites and {} query overwrites for threads {}", mailboxOverwrites, queryOverwrites, threadIds);
+            LOGGER.info(
+                    "Deleted {} mailbox overwrites and {} query overwrites for threads {}",
+                    mailboxOverwrites,
+                    queryOverwrites,
+                    threadIds);
         }
     }
 

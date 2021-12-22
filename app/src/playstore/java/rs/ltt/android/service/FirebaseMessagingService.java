@@ -1,19 +1,16 @@
 package rs.ltt.android.service;
 
 import androidx.annotation.NonNull;
-
 import com.google.firebase.messaging.RemoteMessage;
-
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Map;
-
 import rs.ltt.android.push.PushManager;
 import rs.ltt.android.util.PushMessages;
 import rs.ltt.jmap.common.entity.PushMessage;
 
-public class FirebaseMessagingService extends com.google.firebase.messaging.FirebaseMessagingService {
+public class FirebaseMessagingService
+        extends com.google.firebase.messaging.FirebaseMessagingService {
 
     private final PushManager pushManager = new PushManager(this);
 
@@ -39,6 +36,4 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
         }
         this.pushManager.onMessageReceived(cid, pushMessage);
     }
-
-
 }

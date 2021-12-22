@@ -7,7 +7,8 @@ import rs.ltt.jmap.common.entity.IdentifiableEmailWithSubject;
  * their own subject (the subject is loaded once for all e-mails), e-mails in the notification are
  * displayed individually and thus need their own subject
  */
-public class EmailWithBodiesAndSubject extends EmailWithBodies implements IdentifiableEmailWithSubject {
+public class EmailWithBodiesAndSubject extends EmailWithBodies
+        implements IdentifiableEmailWithSubject {
 
     public String subject;
 

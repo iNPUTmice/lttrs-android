@@ -36,5 +36,4 @@ public class Event<T> {
     public boolean isConsumable() {
         return isConsumable.get();
     }
-
 }

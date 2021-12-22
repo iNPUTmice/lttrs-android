@@ -22,7 +22,6 @@ public class EmailAddress {
     public String email;
     public String name;
 
-
     public String getEmail() {
         return this.email;
     }
@@ -36,9 +35,9 @@ public class EmailAddress {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         EmailAddress that = (EmailAddress) o;
-        return type == that.type &&
-                Objects.equal(email, that.email) &&
-                Objects.equal(name, that.name);
+        return type == that.type
+                && Objects.equal(email, that.email)
+                && Objects.equal(name, that.name);
     }
 
     @Override

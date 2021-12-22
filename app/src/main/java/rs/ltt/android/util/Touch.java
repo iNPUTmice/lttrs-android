@@ -27,21 +27,23 @@ public class Touch {
         if (viewParent instanceof View) {
             expandTouchArea((View) viewParent, view, dp);
         } else {
-            throw new IllegalArgumentException(String.format("%s is not a view", viewParent.getClass()));
+            throw new IllegalArgumentException(
+                    String.format("%s is not a view", viewParent.getClass()));
         }
     }
 
     private static void expandTouchArea(final View parent, final View view, final int dp) {
         float scale = parent.getContext().getResources().getDisplayMetrics().density;
         int padding = (int) (scale * dp);
-        parent.post(() -> {
-            Rect rect = new Rect();
-            view.getHitRect(rect);
-            rect.top -= padding;
-            rect.left -= padding;
-            rect.right += padding;
-            rect.bottom += padding;
-            parent.setTouchDelegate(new TouchDelegate(rect, view));
-        });
+        parent.post(
+                () -> {
+                    Rect rect = new Rect();
+                    view.getHitRect(rect);
+                    rect.top -= padding;
+                    rect.left -= padding;
+                    rect.right += padding;
+                    rect.bottom += padding;
+                    parent.setTouchDelegate(new TouchDelegate(rect, view));
+                });
     }
 }

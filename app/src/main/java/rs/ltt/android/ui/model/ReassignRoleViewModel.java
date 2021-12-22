@@ -1,7 +1,6 @@
 package rs.ltt.android.ui.model;
 
 import android.app.Application;
-
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -9,10 +8,8 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
-
 import java.util.Objects;
 import java.util.UUID;
-
 import rs.ltt.android.entity.MailboxWithRoleAndName;
 import rs.ltt.android.repository.MailboxRepository;
 import rs.ltt.android.util.Event;
@@ -28,10 +25,11 @@ public class ReassignRoleViewModel extends AndroidViewModel {
     private final Role role;
     private final MutableLiveData<Event<UUID>> workerDispatchedEvent = new MutableLiveData<>();
 
-    public ReassignRoleViewModel(@NonNull final Application application,
-                                 @NonNull final Long accountId,
-                                 @NonNull final String mailboxId,
-                                 @NonNull final Role role) {
+    public ReassignRoleViewModel(
+            @NonNull final Application application,
+            @NonNull final Long accountId,
+            @NonNull final String mailboxId,
+            @NonNull final Role role) {
         super(application);
         this.mailboxRepository = new MailboxRepository(application, accountId);
         this.mailbox = this.mailboxRepository.getMailbox(mailboxId);
@@ -48,7 +46,7 @@ public class ReassignRoleViewModel extends AndroidViewModel {
     }
 
     public String getHumanReadableRole() {
-        //TODO replace with translated version
+        // TODO replace with translated version
         return MailboxUtil.humanReadable(this.role);
     }
 
@@ -83,12 +81,9 @@ public class ReassignRoleViewModel extends AndroidViewModel {
         @NonNull
         @Override
         public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-            return Objects.requireNonNull(modelClass.cast(new ReassignRoleViewModel(
-                    application,
-                    accountId,
-                    mailboxId,
-                    role
-            )));
+            return Objects.requireNonNull(
+                    modelClass.cast(
+                            new ReassignRoleViewModel(application, accountId, mailboxId, role)));
         }
     }
 }

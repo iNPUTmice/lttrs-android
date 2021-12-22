@@ -20,36 +20,32 @@ import static androidx.room.ForeignKey.CASCADE;
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
-
 import com.google.common.base.Objects;
 import com.google.common.collect.Collections2;
-
 import java.util.Collection;
 import java.util.List;
-
 import rs.ltt.android.util.CharSequences;
 import rs.ltt.jmap.common.entity.IdentifiableMailboxWithRoleAndName;
 import rs.ltt.jmap.common.entity.Role;
 
-@Entity(tableName = "mailbox_overwrite",
+@Entity(
+        tableName = "mailbox_overwrite",
         primaryKeys = {"threadId", "name", "role"},
-        foreignKeys = @ForeignKey(entity = ThreadEntity.class,
-                parentColumns = {"threadId"},
-                childColumns = {"threadId"},
-                onDelete = CASCADE
-        )
-)
+        foreignKeys =
+                @ForeignKey(
+                        entity = ThreadEntity.class,
+                        parentColumns = {"threadId"},
+                        childColumns = {"threadId"},
+                        onDelete = CASCADE))
 public class MailboxOverwriteEntity {
 
-    @NonNull
-    public String threadId;
-    @NonNull
-    public String name;
-    @NonNull
-    public String role;
+    @NonNull public String threadId;
+    @NonNull public String name;
+    @NonNull public String role;
     public boolean value;
 
-    public static Collection<MailboxOverwriteEntity> of(Collection<String> threadIds, @NonNull Role role, boolean value) {
+    public static Collection<MailboxOverwriteEntity> of(
+            Collection<String> threadIds, @NonNull Role role, boolean value) {
         return Collections2.transform(threadIds, threadId -> of(threadId, role, value));
     }
 
@@ -62,7 +58,8 @@ public class MailboxOverwriteEntity {
         return entity;
     }
 
-    public static Collection<MailboxOverwriteEntity> of(Collection<String> threadIds, @NonNull String label, boolean value) {
+    public static Collection<MailboxOverwriteEntity> of(
+            Collection<String> threadIds, @NonNull String label, boolean value) {
         return Collections2.transform(threadIds, threadId -> of(threadId, label, value));
     }
 
@@ -75,8 +72,8 @@ public class MailboxOverwriteEntity {
         return entity;
     }
 
-
-    public static boolean hasOverwrite(Collection<MailboxOverwriteEntity> overwriteEntities, Role role) {
+    public static boolean hasOverwrite(
+            Collection<MailboxOverwriteEntity> overwriteEntities, Role role) {
         MailboxOverwriteEntity mailboxOverwriteEntity = find(overwriteEntities, role);
         if (mailboxOverwriteEntity != null) {
             return mailboxOverwriteEntity.value;
@@ -84,7 +81,8 @@ public class MailboxOverwriteEntity {
         return false;
     }
 
-    public static MailboxOverwriteEntity find(Collection<MailboxOverwriteEntity> overwriteEntities, Role role) {
+    public static MailboxOverwriteEntity find(
+            Collection<MailboxOverwriteEntity> overwriteEntities, Role role) {
         for (MailboxOverwriteEntity overwriteEntity : overwriteEntities) {
             if (role.toString().equals(overwriteEntity.role)) {
                 return overwriteEntity;
@@ -93,7 +91,9 @@ public class MailboxOverwriteEntity {
         return null;
     }
 
-    public static Boolean getOverwrite(final List<MailboxOverwriteEntity> mailboxOverwrites, IdentifiableMailboxWithRoleAndName mailbox) {
+    public static Boolean getOverwrite(
+            final List<MailboxOverwriteEntity> mailboxOverwrites,
+            IdentifiableMailboxWithRoleAndName mailbox) {
         for (final MailboxOverwriteEntity overwrite : mailboxOverwrites) {
             if (overwrite.matches(mailbox)) {
                 return overwrite.value;
@@ -114,8 +114,8 @@ public class MailboxOverwriteEntity {
         }
     }
 
-
-    public boolean matches(final Collection<? extends IdentifiableMailboxWithRoleAndName> mailboxes) {
+    public boolean matches(
+            final Collection<? extends IdentifiableMailboxWithRoleAndName> mailboxes) {
         for (final IdentifiableMailboxWithRoleAndName mailbox : mailboxes) {
             if (matches(mailbox)) {
                 return true;
@@ -124,16 +124,15 @@ public class MailboxOverwriteEntity {
         return false;
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MailboxOverwriteEntity entity = (MailboxOverwriteEntity) o;
-        return value == entity.value &&
-                Objects.equal(threadId, entity.threadId) &&
-                Objects.equal(name, entity.name) &&
-                Objects.equal(role, entity.role);
+        return value == entity.value
+                && Objects.equal(threadId, entity.threadId)
+                && Objects.equal(name, entity.name)
+                && Objects.equal(role, entity.role);
     }
 
     @Override

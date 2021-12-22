@@ -16,6 +16,8 @@
 package rs.ltt.android.entity;
 
 public enum EmailBodyPartType {
-
-    BODY, TEXT_BODY, HTML_BODY, ATTACHMENT
+    BODY,
+    TEXT_BODY,
+    HTML_BODY,
+    ATTACHMENT
 }

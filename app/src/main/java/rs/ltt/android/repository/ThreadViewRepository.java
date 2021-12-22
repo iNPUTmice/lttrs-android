@@ -16,17 +16,13 @@
 package rs.ltt.android.repository;
 
 import android.app.Application;
-
 import androidx.lifecycle.LiveData;
 import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
-
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
-
 import java.util.List;
-
 import rs.ltt.android.entity.EmailWithBodies;
 import rs.ltt.android.entity.ExpandedPosition;
 import rs.ltt.android.entity.KeywordOverwriteEntity;
@@ -42,7 +38,8 @@ public class ThreadViewRepository extends AbstractRepository {
     }
 
     public LiveData<PagedList<EmailWithBodies>> getEmails(String threadId) {
-        return new LivePagedListBuilder<>(database.threadAndEmailDao().getEmails(threadId), 30).build();
+        return new LivePagedListBuilder<>(database.threadAndEmailDao().getEmails(threadId), 30)
+                .build();
     }
 
     public LiveData<ThreadHeader> getThreadHeader(String threadId) {
@@ -58,24 +55,37 @@ public class ThreadViewRepository extends AbstractRepository {
     }
 
     public ListenableFuture<Seen> getSeen(String threadId) {
-        ListenableFuture<KeywordOverwriteEntity> overwriteFuture = database.overwriteDao().getKeywordOverwrite(threadId);
-        return Futures.transformAsync(overwriteFuture, overwrite -> {
-            if (overwrite != null) {
-                if (overwrite.value) {
-                    return Seen.of(true, database.threadAndEmailDao().getMaxPosition(threadId));
-                } else {
-                    return Seen.of(false, database.threadAndEmailDao().getAllPositions(threadId));
-                }
-            } else {
-                ListenableFuture<List<ExpandedPosition>> unseenFuture = database.threadAndEmailDao().getUnseenPositions(threadId);
-                return Futures.transformAsync(unseenFuture, unseen -> {
-                    if (unseen == null || unseen.size() == 0) {
-                        return Seen.of(true, database.threadAndEmailDao().getMaxPosition(threadId));
+        ListenableFuture<KeywordOverwriteEntity> overwriteFuture =
+                database.overwriteDao().getKeywordOverwrite(threadId);
+        return Futures.transformAsync(
+                overwriteFuture,
+                overwrite -> {
+                    if (overwrite != null) {
+                        if (overwrite.value) {
+                            return Seen.of(
+                                    true, database.threadAndEmailDao().getMaxPosition(threadId));
+                        } else {
+                            return Seen.of(
+                                    false, database.threadAndEmailDao().getAllPositions(threadId));
+                        }
                     } else {
-                        return Seen.of(false, Futures.immediateFuture(unseen));
+                        ListenableFuture<List<ExpandedPosition>> unseenFuture =
+                                database.threadAndEmailDao().getUnseenPositions(threadId);
+                        return Futures.transformAsync(
+                                unseenFuture,
+                                unseen -> {
+                                    if (unseen == null || unseen.size() == 0) {
+                                        return Seen.of(
+                                                true,
+                                                database.threadAndEmailDao()
+                                                        .getMaxPosition(threadId));
+                                    } else {
+                                        return Seen.of(false, Futures.immediateFuture(unseen));
+                                    }
+                                },
+                                MoreExecutors.directExecutor());
                     }
-                }, MoreExecutors.directExecutor());
-            }
-        }, MoreExecutors.directExecutor());
+                },
+                MoreExecutors.directExecutor());
     }
 }

@@ -16,24 +16,25 @@
 package rs.ltt.android.entity;
 
 import androidx.room.Relation;
-
 import com.google.common.base.Objects;
 import com.google.common.collect.Maps;
-
 import java.util.Map;
 import java.util.Set;
-
 import rs.ltt.jmap.common.entity.IdentifiableEmailWithKeywords;
 
 /**
- * This e-mail model is used for workers that modify keywords. It is also the base class for a lot of
- * the other email models
+ * This e-mail model is used for workers that modify keywords. It is also the base class for a lot
+ * of the other email models
  */
 public class EmailWithKeywords implements IdentifiableEmailWithKeywords {
 
     public String id;
 
-    @Relation(entity = EmailKeywordEntity.class, parentColumn = "id", entityColumn = "emailId", projection = {"keyword"})
+    @Relation(
+            entity = EmailKeywordEntity.class,
+            parentColumn = "id",
+            entityColumn = "emailId",
+            projection = {"keyword"})
     public Set<String> keywords;
 
     @Override
@@ -51,8 +52,7 @@ public class EmailWithKeywords implements IdentifiableEmailWithKeywords {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         EmailWithKeywords that = (EmailWithKeywords) o;
-        return Objects.equal(id, that.id) &&
-                Objects.equal(keywords, that.keywords);
+        return Objects.equal(id, that.id) && Objects.equal(keywords, that.keywords);
     }
 
     @Override

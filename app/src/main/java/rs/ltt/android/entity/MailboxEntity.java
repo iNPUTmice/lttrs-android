@@ -19,7 +19,6 @@ import androidx.annotation.NonNull;
 import androidx.room.Embedded;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
-
 import rs.ltt.jmap.common.entity.IdentifiableMailboxWithRoleAndName;
 import rs.ltt.jmap.common.entity.Mailbox;
 import rs.ltt.jmap.common.entity.Role;
@@ -27,9 +26,7 @@ import rs.ltt.jmap.common.entity.Role;
 @Entity(tableName = "mailbox")
 public class MailboxEntity implements IdentifiableMailboxWithRoleAndName {
 
-    @NonNull
-    @PrimaryKey
-    public String id;
+    @NonNull @PrimaryKey public String id;
 
     public String name;
 
@@ -47,8 +44,7 @@ public class MailboxEntity implements IdentifiableMailboxWithRoleAndName {
 
     public Long unreadThreads;
 
-    @Embedded
-    public MailboxRightsEmbed myRights;
+    @Embedded public MailboxRightsEmbed myRights;
 
     public Boolean isSubscribed;
 

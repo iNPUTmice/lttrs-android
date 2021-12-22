@@ -1,17 +1,13 @@
 package rs.ltt.android.worker;
 
 import android.content.Context;
-
 import androidx.annotation.NonNull;
 import androidx.work.Data;
 import androidx.work.WorkerParameters;
-
+import java.util.concurrent.ExecutionException;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.concurrent.ExecutionException;
-
 import rs.ltt.android.entity.MailboxWithRoleAndName;
 import rs.ltt.jmap.common.entity.Role;
 import rs.ltt.jmap.mua.Mua;
@@ -21,14 +17,13 @@ public class EmptyTrashWorker extends AbstractMuaWorker {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EmptyTrashWorker.class);
 
-    EmptyTrashWorker(@NonNull @NotNull Context context, @NonNull @NotNull WorkerParameters workerParams) {
+    EmptyTrashWorker(
+            @NonNull @NotNull Context context, @NonNull @NotNull WorkerParameters workerParams) {
         super(context, workerParams);
     }
 
     public static Data data(long accountId) {
-        return new Data.Builder()
-                .putLong(ACCOUNT_KEY, accountId)
-                .build();
+        return new Data.Builder().putLong(ACCOUNT_KEY, accountId).build();
     }
 
     @NonNull
@@ -49,7 +44,8 @@ public class EmptyTrashWorker extends AbstractMuaWorker {
             return Result.retry();
         }
         try {
-            final MailboxWithRoleAndName trashMailbox = getDatabase().mailboxDao().getMailbox(Role.TRASH);
+            final MailboxWithRoleAndName trashMailbox =
+                    getDatabase().mailboxDao().getMailbox(Role.TRASH);
             mua.query(StandardQueries.mailbox(trashMailbox)).get();
         } catch (final Exception e) {
             LOGGER.debug("Ignoring inability to refresh query", e);

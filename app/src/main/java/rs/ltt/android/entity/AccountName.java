@@ -1,7 +1,6 @@
 package rs.ltt.android.entity;
 
 import com.google.common.base.Objects;
-
 import rs.ltt.jmap.mua.util.AccountUtil;
 import rs.ltt.jmap.mua.util.Navigable;
 
@@ -27,8 +26,7 @@ public class AccountName implements Navigable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AccountName that = (AccountName) o;
-        return Objects.equal(id, that.id) &&
-                Objects.equal(name, that.name);
+        return Objects.equal(id, that.id) && Objects.equal(name, that.name);
     }
 
     @Override

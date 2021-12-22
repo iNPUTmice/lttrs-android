@@ -16,22 +16,17 @@
 package rs.ltt.android.worker;
 
 import android.content.Context;
-
 import androidx.annotation.NonNull;
 import androidx.work.Data;
 import androidx.work.WorkerParameters;
-
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.ListenableFuture;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rs.ltt.android.database.LttrsDatabase;
 import rs.ltt.android.entity.EmailWithMailboxes;
 import rs.ltt.jmap.mua.Mua;
@@ -58,7 +53,8 @@ public class MoveToTrashWorker extends AbstractMuaWorker {
                 .build();
     }
 
-    protected ListenableFuture<Boolean> modify(List<EmailWithMailboxes> emails) throws ExecutionException {
+    protected ListenableFuture<Boolean> modify(List<EmailWithMailboxes> emails)
+            throws ExecutionException {
         final Mua mua = getMua();
         LOGGER.info("Modifying {} emails in threads {}", emails.size(), threadIds);
         return mua.moveToTrash(emails);
@@ -68,7 +64,8 @@ public class MoveToTrashWorker extends AbstractMuaWorker {
     @Override
     public Result doWork() {
         LttrsDatabase database = getDatabase();
-        List<EmailWithMailboxes> emails = database.threadAndEmailDao().getEmailsWithMailboxes(threadIds);
+        List<EmailWithMailboxes> emails =
+                database.threadAndEmailDao().getEmailsWithMailboxes(threadIds);
         try {
             final boolean madeChanges = modify(emails).get();
             if (!madeChanges) {

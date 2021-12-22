@@ -9,11 +9,10 @@ import androidx.navigation.fragment.NavHostFragment;
 
 public final class NavControllers {
 
-    private NavControllers() {
+    private NavControllers() {}
 
-    }
-
-    public static NavController findNavController(final AppCompatActivity activity, @IdRes int fragmentId) {
+    public static NavController findNavController(
+            final AppCompatActivity activity, @IdRes int fragmentId) {
         final FragmentManager fragmentManager = activity.getSupportFragmentManager();
         final Fragment fragment = fragmentManager.findFragmentById(fragmentId);
         if (fragment instanceof NavHostFragment) {

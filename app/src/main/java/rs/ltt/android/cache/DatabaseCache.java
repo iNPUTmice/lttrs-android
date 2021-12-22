@@ -17,14 +17,11 @@ package rs.ltt.android.cache;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rs.ltt.android.database.LttrsDatabase;
 import rs.ltt.android.entity.MailboxEntity;
 import rs.ltt.jmap.common.entity.Email;
@@ -50,7 +47,6 @@ import rs.ltt.jmap.mua.util.QueryResultItem;
 public class DatabaseCache implements Cache {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseCache.class);
-
 
     private final LttrsDatabase database;
 
@@ -81,8 +77,8 @@ public class DatabaseCache implements Cache {
     }
 
     @Override
-    public void setMailboxes(final TypedState<Mailbox> mailboxTypedState,
-                             final Mailbox[] mailboxes) {
+    public void setMailboxes(
+            final TypedState<Mailbox> mailboxTypedState, final Mailbox[] mailboxes) {
         final List<MailboxEntity> mailboxEntities = new ArrayList<>();
         for (Mailbox mailbox : mailboxes) {
             mailboxEntities.add(MailboxEntity.of(mailbox));
@@ -91,8 +87,8 @@ public class DatabaseCache implements Cache {
     }
 
     @Override
-    public void updateMailboxes(final Update<Mailbox> update,
-                                final String[] updatedProperties) throws CacheWriteException, CacheConflictException {
+    public void updateMailboxes(final Update<Mailbox> update, final String[] updatedProperties)
+            throws CacheWriteException, CacheConflictException {
         try {
             database.mailboxDao().update(update, updatedProperties);
         } catch (IllegalArgumentException e) {
@@ -101,13 +97,15 @@ public class DatabaseCache implements Cache {
     }
 
     @Override
-    public Collection<? extends IdentifiableMailboxWithRole> getSpecialMailboxes() throws NotSynchronizedException {
-        //TODO ensure that mailbox state exists?
+    public Collection<? extends IdentifiableMailboxWithRole> getSpecialMailboxes()
+            throws NotSynchronizedException {
+        // TODO ensure that mailbox state exists?
         return database.mailboxDao().getSpecialMailboxes();
     }
 
     @Override
-    public IdentifiableMailboxWithRoleAndName getMailboxByNameAndParent(String name, String parentId) throws NotSynchronizedException {
+    public IdentifiableMailboxWithRoleAndName getMailboxByNameAndParent(
+            String name, String parentId) throws NotSynchronizedException {
         if (parentId == null) {
             return database.mailboxDao().getMailboxByNameWhereParentIdIsNull(name);
         } else {
@@ -121,21 +119,22 @@ public class DatabaseCache implements Cache {
     }
 
     @Override
-    public void setThreadsAndEmails(final TypedState<Thread> threadState,
-                                    final Thread[] threads,
-                                    final TypedState<Email> emailState,
-                                    final Email[] emails) {
+    public void setThreadsAndEmails(
+            final TypedState<Thread> threadState,
+            final Thread[] threads,
+            final TypedState<Email> emailState,
+            final Email[] emails) {
         database.threadAndEmailDao().set(threadState, threads, emailState, emails);
     }
 
     @Override
-    public void addThreadsAndEmail(final TypedState<Thread> threadState,
-                                   final Thread[] threads,
-                                   final TypedState<Email> emailState,
-                                   final Email[] emails) {
+    public void addThreadsAndEmail(
+            final TypedState<Thread> threadState,
+            final Thread[] threads,
+            final TypedState<Email> emailState,
+            final Email[] emails) {
         database.threadAndEmailDao().add(threadState, threads, emailState, emails);
     }
-
 
     @Override
     public void updateThreads(final Update<Thread> update) throws CacheWriteException {
@@ -143,10 +142,9 @@ public class DatabaseCache implements Cache {
         database.threadAndEmailDao().update(update);
     }
 
-
     @Override
-    public void updateEmails(final Update<Email> update,
-                             final String[] updatedProperties) throws CacheWriteException {
+    public void updateEmails(final Update<Email> update, final String[] updatedProperties)
+            throws CacheWriteException {
         database.threadAndEmailDao().updateEmails(update, updatedProperties);
     }
 
@@ -161,8 +159,8 @@ public class DatabaseCache implements Cache {
     }
 
     @Override
-    public void setIdentities(final TypedState<Identity> identityTypedState,
-                              final Identity[] identities) {
+    public void setIdentities(
+            final TypedState<Identity> identityTypedState, final Identity[] identities) {
         database.identityDao().set(identities, identityTypedState.getState());
     }
 
@@ -178,22 +176,23 @@ public class DatabaseCache implements Cache {
     }
 
     @Override
-    public void setQueryResult(final String queryString,
-                               final QueryResult queryResult) {
+    public void setQueryResult(final String queryString, final QueryResult queryResult) {
         database.queryDao().set(queryString, queryResult);
     }
 
     @Override
-    public void addQueryResult(final String queryString,
-                               final String afterEmailId,
-                               final QueryResult queryResult) throws CacheConflictException {
+    public void addQueryResult(
+            final String queryString, final String afterEmailId, final QueryResult queryResult)
+            throws CacheConflictException {
         database.queryDao().add(queryString, afterEmailId, queryResult);
     }
 
     @Override
-    public void updateQueryResults(final String queryString,
-                                   final QueryUpdate<Email, QueryResultItem> queryUpdate,
-                                   final TypedState<Email> emailTypedState) throws CacheConflictException {
+    public void updateQueryResults(
+            final String queryString,
+            final QueryUpdate<Email, QueryResultItem> queryUpdate,
+            final TypedState<Email> emailTypedState)
+            throws CacheConflictException {
         LOGGER.debug("updating query results {}", queryUpdate);
         database.queryDao().updateQueryResults(queryString, queryUpdate, emailTypedState);
     }

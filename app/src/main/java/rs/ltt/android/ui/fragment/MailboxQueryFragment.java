@@ -15,14 +15,10 @@
 
 package rs.ltt.android.ui.fragment;
 
-
 import android.os.Bundle;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
-
 import java.util.Collection;
-
 import rs.ltt.android.LttrsNavigationDirections;
 import rs.ltt.android.entity.MailboxOverviewItem;
 import rs.ltt.android.entity.ThreadOverviewItem;
@@ -31,19 +27,21 @@ public class MailboxQueryFragment extends AbstractMailboxQueryFragment {
     @Override
     protected String getMailboxId() {
         final Bundle bundle = getArguments();
-        return MailboxQueryFragmentArgs.fromBundle(bundle == null ? new Bundle() : bundle).getMailbox();
+        return MailboxQueryFragmentArgs.fromBundle(bundle == null ? new Bundle() : bundle)
+                .getMailbox();
     }
 
     @Override
     public void onThreadClicked(ThreadOverviewItem threadOverviewItem, boolean important) {
         MailboxOverviewItem mailbox = mailboxQueryViewModel.getMailbox().getValue();
         final String label = mailbox != null && mailbox.role == null ? mailbox.name : null;
-        getNavController().navigate(LttrsNavigationDirections.actionToThread(
-                threadOverviewItem.threadId,
-                label,
-                threadOverviewItem.getSubject(),
-                important
-        ));
+        getNavController()
+                .navigate(
+                        LttrsNavigationDirections.actionToThread(
+                                threadOverviewItem.threadId,
+                                label,
+                                threadOverviewItem.getSubject(),
+                                important));
     }
 
     @Override
@@ -53,10 +51,11 @@ public class MailboxQueryFragment extends AbstractMailboxQueryFragment {
 
     @Override
     void removeLabel(Collection<String> threadIds) {
-        final MailboxOverviewItem mailbox = Preconditions.checkNotNull(
-                mailboxQueryViewModel.getMailbox().getValue(),
-                "MailboxQueryViewModel had no information about the mailbox we were viewing"
-        );
+        final MailboxOverviewItem mailbox =
+                Preconditions.checkNotNull(
+                        mailboxQueryViewModel.getMailbox().getValue(),
+                        "MailboxQueryViewModel had no information about the mailbox we were"
+                                + " viewing");
         getThreadModifier().removeFromMailbox(threadIds, mailbox);
     }
 }

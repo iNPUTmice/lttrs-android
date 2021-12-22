@@ -17,9 +17,7 @@ package rs.ltt.android.entity;
 
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
-
 import com.google.common.base.Objects;
-
 import okhttp3.HttpUrl;
 
 @Entity(tableName = "credentials")
@@ -43,10 +41,10 @@ public class CredentialsEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CredentialsEntity that = (CredentialsEntity) o;
-        return Objects.equal(id, that.id) &&
-                Objects.equal(username, that.username) &&
-                Objects.equal(password, that.password) &&
-                Objects.equal(sessionResource, that.sessionResource);
+        return Objects.equal(id, that.id)
+                && Objects.equal(username, that.username)
+                && Objects.equal(password, that.password)
+                && Objects.equal(sessionResource, that.sessionResource);
     }
 
     @Override

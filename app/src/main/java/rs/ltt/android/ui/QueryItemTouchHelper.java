@@ -16,13 +16,11 @@
 package rs.ltt.android.ui;
 
 import android.graphics.Canvas;
-
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
-
 import rs.ltt.android.R;
 import rs.ltt.android.ui.adapter.ThreadOverviewAdapter;
 
@@ -36,16 +34,22 @@ public class QueryItemTouchHelper extends ItemTouchHelper.SimpleCallback {
     }
 
     @Override
-    public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+    public boolean onMove(
+            @NonNull RecyclerView recyclerView,
+            @NonNull RecyclerView.ViewHolder viewHolder,
+            @NonNull RecyclerView.ViewHolder target) {
         return false;
     }
 
     @Override
-    public int getSwipeDirs(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
+    public int getSwipeDirs(
+            @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
         if (viewHolder instanceof ThreadOverviewAdapter.ThreadOverviewViewHolder) {
-            final ThreadOverviewAdapter.ThreadOverviewViewHolder threadOverviewViewHolder = (ThreadOverviewAdapter.ThreadOverviewViewHolder) viewHolder;
+            final ThreadOverviewAdapter.ThreadOverviewViewHolder threadOverviewViewHolder =
+                    (ThreadOverviewAdapter.ThreadOverviewViewHolder) viewHolder;
             if (onQueryItemSwipe != null) {
-                final Swipable swipable = onQueryItemSwipe.onQueryItemSwipe(viewHolder.getAdapterPosition());
+                final Swipable swipable =
+                        onQueryItemSwipe.onQueryItemSwipe(viewHolder.getAdapterPosition());
                 if (swipable == Swipable.NO) {
                     return 0;
                 }
@@ -60,10 +64,10 @@ public class QueryItemTouchHelper extends ItemTouchHelper.SimpleCallback {
                     default:
                         resource = R.drawable.ic_label_off_white_24dp;
                         break;
-
                 }
                 threadOverviewViewHolder.binding.endSwipeActionIndicator.setImageResource(resource);
-                threadOverviewViewHolder.binding.startSwipeActionIndicator.setImageResource(resource);
+                threadOverviewViewHolder.binding.startSwipeActionIndicator.setImageResource(
+                        resource);
                 return ItemTouchHelper.RIGHT | ItemTouchHelper.LEFT;
             }
         }
@@ -78,23 +82,44 @@ public class QueryItemTouchHelper extends ItemTouchHelper.SimpleCallback {
     }
 
     @Override
-    public void onChildDraw(@NonNull Canvas c, @Nullable RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+    public void onChildDraw(
+            @NonNull Canvas c,
+            @Nullable RecyclerView recyclerView,
+            @NonNull RecyclerView.ViewHolder viewHolder,
+            float dX,
+            float dY,
+            int actionState,
+            boolean isCurrentlyActive) {
         if (viewHolder instanceof ThreadOverviewAdapter.ThreadOverviewViewHolder) {
-            final ThreadOverviewAdapter.ThreadOverviewViewHolder threadOverviewViewHolder = (ThreadOverviewAdapter.ThreadOverviewViewHolder) viewHolder;
-            getDefaultUIUtil().onDraw(c, recyclerView, threadOverviewViewHolder.binding.foreground, dX, dY, actionState, isCurrentlyActive);
+            final ThreadOverviewAdapter.ThreadOverviewViewHolder threadOverviewViewHolder =
+                    (ThreadOverviewAdapter.ThreadOverviewViewHolder) viewHolder;
+            getDefaultUIUtil()
+                    .onDraw(
+                            c,
+                            recyclerView,
+                            threadOverviewViewHolder.binding.foreground,
+                            dX,
+                            dY,
+                            actionState,
+                            isCurrentlyActive);
         }
     }
 
     @Override
-    public void clearView(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
+    public void clearView(
+            @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
         if (viewHolder instanceof ThreadOverviewAdapter.ThreadOverviewViewHolder) {
-            ThreadOverviewAdapter.ThreadOverviewViewHolder threadOverviewViewHolder = (ThreadOverviewAdapter.ThreadOverviewViewHolder) viewHolder;
+            ThreadOverviewAdapter.ThreadOverviewViewHolder threadOverviewViewHolder =
+                    (ThreadOverviewAdapter.ThreadOverviewViewHolder) viewHolder;
             getDefaultUIUtil().clearView(threadOverviewViewHolder.binding.foreground);
         }
     }
 
     public enum Swipable {
-        NO, ARCHIVE, REMOVE_LABEL, REMOVE_FLAGGED
+        NO,
+        ARCHIVE,
+        REMOVE_LABEL,
+        REMOVE_FLAGGED
     }
 
     public interface OnQueryItemSwipe {

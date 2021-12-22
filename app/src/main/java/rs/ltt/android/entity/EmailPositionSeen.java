@@ -19,5 +19,4 @@ public class EmailPositionSeen {
 
     public int position;
     public boolean seen;
-
 }

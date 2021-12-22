@@ -16,18 +16,14 @@
 package rs.ltt.android.worker;
 
 import android.content.Context;
-
 import androidx.annotation.NonNull;
 import androidx.work.Data;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkerParameters;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rs.ltt.android.entity.QueryInfo;
 import rs.ltt.jmap.common.entity.query.EmailQuery;
 
@@ -45,10 +41,7 @@ public abstract class QueryRefreshWorker extends AbstractMuaWorker {
 
     public static OneTimeWorkRequest main(long accountId) {
         return new OneTimeWorkRequest.Builder(MainMailboxQueryRefreshWorker.class)
-                .setInputData(MainMailboxQueryRefreshWorker.data(
-                        accountId,
-                        false
-                ))
+                .setInputData(MainMailboxQueryRefreshWorker.data(accountId, false))
                 .build();
     }
 
@@ -56,37 +49,31 @@ public abstract class QueryRefreshWorker extends AbstractMuaWorker {
         switch (queryInfo.type) {
             case MAIN:
                 return new OneTimeWorkRequest.Builder(MainMailboxQueryRefreshWorker.class)
-                        .setInputData(MainMailboxQueryRefreshWorker.data(
-                                queryInfo.accountId,
-                                skipOverEmpty
-                        ))
+                        .setInputData(
+                                MainMailboxQueryRefreshWorker.data(
+                                        queryInfo.accountId, skipOverEmpty))
                         .build();
             case MAILBOX:
                 return new OneTimeWorkRequest.Builder(MailboxQueryRefreshWorker.class)
-                        .setInputData(MailboxQueryRefreshWorker.data(
-                                queryInfo.accountId,
-                                skipOverEmpty,
-                                queryInfo.value
-                        ))
+                        .setInputData(
+                                MailboxQueryRefreshWorker.data(
+                                        queryInfo.accountId, skipOverEmpty, queryInfo.value))
                         .build();
             case KEYWORD:
                 return new OneTimeWorkRequest.Builder(KeywordQueryRefreshWorker.class)
-                        .setInputData(KeywordQueryRefreshWorker.data(
-                                queryInfo.accountId,
-                                skipOverEmpty,
-                                queryInfo.value
-                        ))
+                        .setInputData(
+                                KeywordQueryRefreshWorker.data(
+                                        queryInfo.accountId, skipOverEmpty, queryInfo.value))
                         .build();
             case SEARCH:
                 return new OneTimeWorkRequest.Builder(SearchQueryRefreshWorker.class)
-                        .setInputData(SearchQueryRefreshWorker.data(
-                                queryInfo.accountId,
-                                skipOverEmpty,
-                                queryInfo.value
-                        ))
+                        .setInputData(
+                                SearchQueryRefreshWorker.data(
+                                        queryInfo.accountId, skipOverEmpty, queryInfo.value))
                         .build();
             default:
-                throw new IllegalArgumentException(String.format("%s is an unknown Query Type", queryInfo.type));
+                throw new IllegalArgumentException(
+                        String.format("%s is an unknown Query Type", queryInfo.type));
         }
     }
 
@@ -109,7 +96,8 @@ public abstract class QueryRefreshWorker extends AbstractMuaWorker {
         }
     }
 
-    protected Result refresh(final EmailQuery emailQuery) throws ExecutionException, InterruptedException {
+    protected Result refresh(final EmailQuery emailQuery)
+            throws ExecutionException, InterruptedException {
         throwOnEmpty(emailQuery);
         getMua().query(emailQuery).get();
         return Result.success();
@@ -117,7 +105,8 @@ public abstract class QueryRefreshWorker extends AbstractMuaWorker {
 
     protected void throwOnEmpty(final EmailQuery emailQuery) {
         if (skipOverEmpty && getDatabase().queryDao().empty(emailQuery.asHash())) {
-            throw new IllegalStateException("Do not refresh because query is empty (UI will automatically load this)");
+            throw new IllegalStateException(
+                    "Do not refresh because query is empty (UI will automatically load this)");
         }
     }
 }

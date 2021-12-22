@@ -17,13 +17,11 @@ package rs.ltt.android.entity;
 
 import androidx.room.Ignore;
 import androidx.room.Relation;
-
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
-
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,17 +31,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
-
 import rs.ltt.android.util.CharSequences;
 import rs.ltt.jmap.common.entity.Keyword;
 import rs.ltt.jmap.mua.util.KeywordUtil;
 
 public class ThreadOverviewItem {
 
+    @Ignore private final AtomicReference<Map<String, From>> fromMap = new AtomicReference<>();
+
     @Ignore
-    private final AtomicReference<Map<String, From>> fromMap = new AtomicReference<>();
-    @Ignore
-    private final AtomicReference<List<EmailPreviewWithMailboxes>> orderedEmails = new AtomicReference<>();
+    private final AtomicReference<List<EmailPreviewWithMailboxes>> orderedEmails =
+            new AtomicReference<>();
 
     public String emailId;
     public String threadId;
@@ -60,7 +58,6 @@ public class ThreadOverviewItem {
     @Relation(parentColumn = "threadId", entityColumn = "threadId")
     public Set<MailboxOverwriteEntity> mailboxOverwriteEntities;
 
-
     public String getPreview() {
         final EmailPreviewWithMailboxes email = Iterables.getLast(getOrderedEmails(), null);
         return email == null ? "(no preview)" : Strings.nullToEmpty(email.preview).trim();
@@ -72,20 +69,27 @@ public class ThreadOverviewItem {
     }
 
     public Instant getReceivedAt() {
-        final EmailPreviewWithMailboxes email = Iterables.tryFind(emails, e -> e != null && emailId.equals(e.id)).orNull();
+        final EmailPreviewWithMailboxes email =
+                Iterables.tryFind(emails, e -> e != null && emailId.equals(e.id)).orNull();
         return email == null ? null : email.receivedAt;
     }
 
     public boolean everyHasSeenKeyword() {
-        KeywordOverwriteEntity seenOverwrite = KeywordOverwriteEntity.getKeywordOverwrite(keywordOverwriteEntities, Keyword.SEEN);
-        return seenOverwrite != null ? seenOverwrite.value : KeywordUtil.everyHas(getOrderedEmails(), Keyword.SEEN);
+        KeywordOverwriteEntity seenOverwrite =
+                KeywordOverwriteEntity.getKeywordOverwrite(keywordOverwriteEntities, Keyword.SEEN);
+        return seenOverwrite != null
+                ? seenOverwrite.value
+                : KeywordUtil.everyHas(getOrderedEmails(), Keyword.SEEN);
     }
 
     public boolean showAsFlagged() {
-        KeywordOverwriteEntity flaggedOverwrite = KeywordOverwriteEntity.getKeywordOverwrite(keywordOverwriteEntities, Keyword.FLAGGED);
-        return flaggedOverwrite != null ? flaggedOverwrite.value : KeywordUtil.anyHas(getOrderedEmails(), Keyword.FLAGGED);
+        KeywordOverwriteEntity flaggedOverwrite =
+                KeywordOverwriteEntity.getKeywordOverwrite(
+                        keywordOverwriteEntities, Keyword.FLAGGED);
+        return flaggedOverwrite != null
+                ? flaggedOverwrite.value
+                : KeywordUtil.anyHas(getOrderedEmails(), Keyword.FLAGGED);
     }
-
 
     public Integer getCount() {
         final int count = threadItemEntities.size();
@@ -111,7 +115,8 @@ public class ThreadOverviewItem {
     }
 
     private Map<String, From> calculateFromMap() {
-        KeywordOverwriteEntity seenOverwrite = KeywordOverwriteEntity.getKeywordOverwrite(keywordOverwriteEntities, Keyword.SEEN);
+        KeywordOverwriteEntity seenOverwrite =
+                KeywordOverwriteEntity.getKeywordOverwrite(keywordOverwriteEntities, Keyword.SEEN);
         LinkedHashMap<String, From> fromMap = new LinkedHashMap<>();
         final List<EmailPreviewWithMailboxes> emails = getOrderedEmails();
         for (final EmailPreviewWithMailboxes email : emails) {
@@ -119,7 +124,10 @@ public class ThreadOverviewItem {
                 fromMap.put(CharSequences.EMPTY_STRING, From.draft());
                 continue;
             }
-            final boolean seen = seenOverwrite != null ? seenOverwrite.value : email.keywords.contains(Keyword.SEEN);
+            final boolean seen =
+                    seenOverwrite != null
+                            ? seenOverwrite.value
+                            : email.keywords.contains(Keyword.SEEN);
             for (final EmailAddress emailAddress : email.emailAddresses) {
                 if (emailAddress.type == EmailAddressType.FROM) {
                     final From from = fromMap.get(emailAddress.getEmail());
@@ -127,7 +135,9 @@ public class ThreadOverviewItem {
                         fromMap.put(emailAddress.getEmail(), From.named(emailAddress, seen));
                     } else if (from instanceof From.Named) {
                         final From.Named named = (From.Named) from;
-                        fromMap.put(emailAddress.getEmail(), From.named(emailAddress, seen && named.isSeen()));
+                        fromMap.put(
+                                emailAddress.getEmail(),
+                                From.named(emailAddress, seen && named.isSeen()));
                     }
                 }
             }
@@ -152,7 +162,8 @@ public class ThreadOverviewItem {
     private List<EmailPreviewWithMailboxes> calculateOrderedEmails() {
         final List<ThreadItemEntity> threadItemEntities = new ArrayList<>(this.threadItemEntities);
         Collections.sort(threadItemEntities, (o1, o2) -> o1.getPosition() - o2.getPosition());
-        final Map<String, EmailPreviewWithMailboxes> emailMap = Maps.uniqueIndex(emails, input -> input.id);
+        final Map<String, EmailPreviewWithMailboxes> emailMap =
+                Maps.uniqueIndex(emails, input -> input.id);
         final List<EmailPreviewWithMailboxes> orderedList = new ArrayList<>(emails.size());
         for (ThreadItemEntity threadItemEntity : threadItemEntities) {
             EmailPreviewWithMailboxes email = emailMap.get(threadItemEntity.emailId);
@@ -175,7 +186,8 @@ public class ThreadOverviewItem {
         if (mailbox == null) {
             return false;
         }
-        MailboxOverwriteEntity overwrite = MailboxOverwriteEntity.find(this.mailboxOverwriteEntities, mailbox.role);
+        MailboxOverwriteEntity overwrite =
+                MailboxOverwriteEntity.find(this.mailboxOverwriteEntities, mailbox.role);
         if (overwrite != null) {
             return overwrite.value;
         }
@@ -191,14 +203,14 @@ public class ThreadOverviewItem {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ThreadOverviewItem item = (ThreadOverviewItem) o;
-        return Objects.equal(getSubject(), item.getSubject()) &&
-                Objects.equal(getPreview(), item.getPreview()) &&
-                Objects.equal(showAsFlagged(), item.showAsFlagged()) &&
-                Objects.equal(getReceivedAt(), item.getReceivedAt()) &&
-                Objects.equal(mailboxOverwriteEntities, item.mailboxOverwriteEntities) &&
-                Objects.equal(getMailboxIds(), item.getMailboxIds()) &&
-                Objects.equal(everyHasSeenKeyword(), item.everyHasSeenKeyword()) &&
-                Arrays.equals(getFromValues(), item.getFromValues());
+        return Objects.equal(getSubject(), item.getSubject())
+                && Objects.equal(getPreview(), item.getPreview())
+                && Objects.equal(showAsFlagged(), item.showAsFlagged())
+                && Objects.equal(getReceivedAt(), item.getReceivedAt())
+                && Objects.equal(mailboxOverwriteEntities, item.mailboxOverwriteEntities)
+                && Objects.equal(getMailboxIds(), item.getMailboxIds())
+                && Objects.equal(everyHasSeenKeyword(), item.everyHasSeenKeyword())
+                && Arrays.equals(getFromValues(), item.getFromValues());
     }
 
     public String[] getKeywords() {

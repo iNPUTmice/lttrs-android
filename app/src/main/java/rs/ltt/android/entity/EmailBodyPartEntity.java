@@ -18,32 +18,28 @@ package rs.ltt.android.entity;
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
-
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import rs.ltt.jmap.common.entity.Attachment;
 import rs.ltt.jmap.common.entity.Email;
 import rs.ltt.jmap.common.entity.EmailBodyPart;
 
-@Entity(tableName = "email_body_part",
+@Entity(
+        tableName = "email_body_part",
         primaryKeys = {"emailId", "bodyPartType", "position"},
-        foreignKeys = @ForeignKey(entity = EmailEntity.class,
-                parentColumns = {"id"},
-                childColumns = {"emailId"},
-                onDelete = ForeignKey.CASCADE
-        )
-)
+        foreignKeys =
+                @ForeignKey(
+                        entity = EmailEntity.class,
+                        parentColumns = {"id"},
+                        childColumns = {"emailId"},
+                        onDelete = ForeignKey.CASCADE))
 public class EmailBodyPartEntity implements Attachment, Comparable<EmailBodyPartEntity> {
 
-    @NonNull
-    public String emailId;
-    @NonNull
-    public EmailBodyPartType bodyPartType;
+    @NonNull public String emailId;
+    @NonNull public EmailBodyPartType bodyPartType;
 
     public long position;
     public String partId;
@@ -72,7 +68,8 @@ public class EmailBodyPartEntity implements Attachment, Comparable<EmailBodyPart
         return value == null ? Collections.emptyList() : value;
     }
 
-    private static EmailBodyPartEntity of(String emailId, EmailBodyPartType type, long position, EmailBodyPart emailBodyPart) {
+    private static EmailBodyPartEntity of(
+            String emailId, EmailBodyPartType type, long position, EmailBodyPart emailBodyPart) {
         final EmailBodyPartEntity entity = new EmailBodyPartEntity();
         entity.emailId = emailId;
         entity.bodyPartType = type;
@@ -88,7 +85,8 @@ public class EmailBodyPartEntity implements Attachment, Comparable<EmailBodyPart
         return entity;
     }
 
-    public static List<EmailBodyPartEntity> filter(final List<EmailBodyPartEntity> entities, final EmailBodyPartType type) {
+    public static List<EmailBodyPartEntity> filter(
+            final List<EmailBodyPartEntity> entities, final EmailBodyPartType type) {
         return entities.stream()
                 .filter(bp -> bp.bodyPartType == type)
                 .sorted()
@@ -130,21 +128,32 @@ public class EmailBodyPartEntity implements Attachment, Comparable<EmailBodyPart
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         EmailBodyPartEntity that = (EmailBodyPartEntity) o;
-        return position == that.position &&
-                Objects.equal(emailId, that.emailId) &&
-                bodyPartType == that.bodyPartType &&
-                Objects.equal(partId, that.partId) &&
-                Objects.equal(blobId, that.blobId) &&
-                Objects.equal(size, that.size) &&
-                Objects.equal(name, that.name) &&
-                Objects.equal(type, that.type) &&
-                Objects.equal(charset, that.charset) &&
-                Objects.equal(disposition, that.disposition) &&
-                Objects.equal(cid, that.cid);
+        return position == that.position
+                && Objects.equal(emailId, that.emailId)
+                && bodyPartType == that.bodyPartType
+                && Objects.equal(partId, that.partId)
+                && Objects.equal(blobId, that.blobId)
+                && Objects.equal(size, that.size)
+                && Objects.equal(name, that.name)
+                && Objects.equal(type, that.type)
+                && Objects.equal(charset, that.charset)
+                && Objects.equal(disposition, that.disposition)
+                && Objects.equal(cid, that.cid);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(emailId, bodyPartType, position, partId, blobId, size, name, type, charset, disposition, cid);
+        return Objects.hashCode(
+                emailId,
+                bodyPartType,
+                position,
+                partId,
+                blobId,
+                size,
+                name,
+                type,
+                charset,
+                disposition,
+                cid);
     }
 }

@@ -3,7 +3,6 @@ package rs.ltt.android.util;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.Observer;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -22,11 +21,11 @@ public class MergedListsLiveData<T> extends MediatorLiveData<List<T>> implements
 
     @Override
     public void onChanged(final List<T> s) {
-        this.postValue(liveDataLists.stream()
-                .map(LiveData::getValue)
-                .filter(Objects::nonNull)
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList())
-        );
+        this.postValue(
+                liveDataLists.stream()
+                        .map(LiveData::getValue)
+                        .filter(Objects::nonNull)
+                        .flatMap(Collection::stream)
+                        .collect(Collectors.toList()));
     }
 }

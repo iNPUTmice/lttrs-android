@@ -16,7 +16,10 @@
 package rs.ltt.android.ui;
 
 public enum ComposeAction {
-    EDIT_DRAFT, REPLY, REPLY_ALL, NEW;
+    EDIT_DRAFT,
+    REPLY,
+    REPLY_ALL,
+    NEW;
 
     public static ComposeAction of(final String value) {
         return value == null ? NEW : ComposeAction.valueOf(value);

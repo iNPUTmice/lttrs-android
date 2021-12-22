@@ -26,22 +26,17 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ImageSpan;
 import android.widget.EditText;
-
 import androidx.annotation.AttrRes;
 import androidx.annotation.NonNull;
-
 import com.google.android.material.chip.ChipDrawable;
 import com.google.android.material.color.MaterialColors;
-
 import java.util.HashSet;
 import java.util.Set;
-
 import rs.ltt.android.R;
 import rs.ltt.jmap.common.entity.EmailAddress;
 import rs.ltt.jmap.mua.util.EmailAddressToken;
 import rs.ltt.jmap.mua.util.EmailAddressTokenizer;
 import rs.ltt.jmap.mua.util.EmailAddressUtil;
-
 
 public class ChipDrawableSpan extends ImageSpan {
 
@@ -52,9 +47,14 @@ public class ChipDrawableSpan extends ImageSpan {
         this.emailAddressToken = token;
     }
 
-    public static void apply(final Context context, final Editable editable, final boolean requireExplicitDelimiter) {
-        final Set<EmailAddressToken> tokens = new HashSet<>(EmailAddressTokenizer.tokenize(editable, requireExplicitDelimiter));
-        final ChipDrawableSpan[] spans = editable.getSpans(0, editable.length() - 1, ChipDrawableSpan.class);
+    public static void apply(
+            final Context context,
+            final Editable editable,
+            final boolean requireExplicitDelimiter) {
+        final Set<EmailAddressToken> tokens =
+                new HashSet<>(EmailAddressTokenizer.tokenize(editable, requireExplicitDelimiter));
+        final ChipDrawableSpan[] spans =
+                editable.getSpans(0, editable.length() - 1, ChipDrawableSpan.class);
         for (ChipDrawableSpan span : spans) {
             if (tokens.remove(span.emailAddressToken)) {
                 continue;
@@ -66,7 +66,8 @@ public class ChipDrawableSpan extends ImageSpan {
             if (EmailAddressUtil.isValid(token.getEmailAddress())) {
                 chip.setChipBackgroundColor(getBackgroundColor(context, R.attr.colorSurface));
             } else {
-                chip.setChipBackgroundColor(getBackgroundColor(context, R.attr.colorSurfaceWarning));
+                chip.setChipBackgroundColor(
+                        getBackgroundColor(context, R.attr.colorSurfaceWarning));
             }
             final EmailAddress emailAddress = token.getEmailAddress();
             if (TextUtils.isEmpty(emailAddress.getName())) {
@@ -76,12 +77,16 @@ public class ChipDrawableSpan extends ImageSpan {
             }
             chip.setBounds(0, 0, chip.getIntrinsicWidth(), chip.getIntrinsicHeight());
             ChipDrawableSpan span = new ChipDrawableSpan(chip, token);
-            editable.setSpan(span, token.getStart(), token.getEnd() + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            editable.setSpan(
+                    span, token.getStart(), token.getEnd() + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
     }
 
-    private static ColorStateList getBackgroundColor(final Context context, final @AttrRes int attrRes) {
-        return ColorStateList.valueOf(MaterialColors.getColor(context, attrRes, ChipDrawableSpan.class.getCanonicalName()));
+    private static ColorStateList getBackgroundColor(
+            final Context context, final @AttrRes int attrRes) {
+        return ColorStateList.valueOf(
+                MaterialColors.getColor(
+                        context, attrRes, ChipDrawableSpan.class.getCanonicalName()));
     }
 
     public static void reset(EditText editText) {
@@ -94,11 +99,12 @@ public class ChipDrawableSpan extends ImageSpan {
     }
 
     @Override
-    public int getSize(@NonNull final Paint paint,
-                       final CharSequence text,
-                       final int start,
-                       final int end,
-                       final Paint.FontMetricsInt fontMetrics) {
+    public int getSize(
+            @NonNull final Paint paint,
+            final CharSequence text,
+            final int start,
+            final int end,
+            final Paint.FontMetricsInt fontMetrics) {
         final Rect bounds = getDrawable().getBounds();
         if (fontMetrics != null) {
             final Paint.FontMetricsInt fmPaint = paint.getFontMetricsInt();
@@ -115,15 +121,16 @@ public class ChipDrawableSpan extends ImageSpan {
     }
 
     @Override
-    public void draw(@NonNull final Canvas canvas,
-                     final CharSequence text,
-                     final int start,
-                     final int end,
-                     final float x,
-                     final int top,
-                     final int y,
-                     final int bottom,
-                     @NonNull final Paint paint) {
+    public void draw(
+            @NonNull final Canvas canvas,
+            final CharSequence text,
+            final int start,
+            final int end,
+            final float x,
+            final int top,
+            final int y,
+            final int bottom,
+            @NonNull final Paint paint) {
         final Drawable drawable = getDrawable();
         final Rect bounds = drawable.getBounds();
         canvas.save();
@@ -135,5 +142,4 @@ public class ChipDrawableSpan extends ImageSpan {
         drawable.draw(canvas);
         canvas.restore();
     }
-
 }

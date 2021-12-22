@@ -17,10 +17,8 @@ package rs.ltt.android.ui;
 
 import android.view.Menu;
 import android.view.MenuItem;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.view.ActionMode;
-
 import java.lang.ref.WeakReference;
 
 public class WeakActionModeCallback implements ActionMode.Callback {

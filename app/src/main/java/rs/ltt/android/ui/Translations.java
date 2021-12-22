@@ -1,15 +1,12 @@
 package rs.ltt.android.ui;
 
 import android.content.Context;
-
 import androidx.annotation.StringRes;
-
 import rs.ltt.android.R;
 import rs.ltt.jmap.common.entity.Role;
 import rs.ltt.jmap.mua.util.Label;
 
 public class Translations {
-
 
     public static String asHumanReadableName(final Context context, final Label label) {
         final Role role = label.getRole();
@@ -20,8 +17,7 @@ public class Translations {
         }
     }
 
-    public static @StringRes
-    int translate(final Role role) {
+    public static @StringRes int translate(final Role role) {
         switch (role) {
             case ALL:
                 return R.string.role_name_all;

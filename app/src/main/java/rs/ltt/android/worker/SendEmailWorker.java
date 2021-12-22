@@ -16,15 +16,11 @@
 package rs.ltt.android.worker;
 
 import android.content.Context;
-
 import androidx.annotation.NonNull;
 import androidx.work.WorkerParameters;
-
+import java.util.concurrent.ExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.concurrent.ExecutionException;
-
 import rs.ltt.android.entity.IdentityWithNameAndEmail;
 import rs.ltt.jmap.common.entity.Email;
 import rs.ltt.jmap.mua.Mua;
@@ -47,7 +43,8 @@ public class SendEmailWorker extends AbstractCreateEmailWorker {
             final String emailId = mua.send(email, identity).get();
             return refreshAndFetchThreadId(emailId);
         } catch (final ExecutionException e) {
-            //TODO we might have a weird corner case here where saving the draft works but submission fails. Do we need to handle that somehow?
+            // TODO we might have a weird corner case here where saving the draft works but
+            // submission fails. Do we need to handle that somehow?
             LOGGER.warn("Unable to send email", e);
             return Result.failure(Failure.of(e.getCause()));
         } catch (final InterruptedException e) {

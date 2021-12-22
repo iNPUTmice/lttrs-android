@@ -29,20 +29,17 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.annotation.DrawableRes;
 import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.core.widget.ImageViewCompat;
 import androidx.databinding.BindingAdapter;
 import androidx.lifecycle.LiveData;
-
 import com.google.android.material.color.MaterialColors;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.net.MediaType;
-
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -51,7 +48,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
 import rs.ltt.android.R;
 import rs.ltt.android.entity.From;
 import rs.ltt.android.entity.IdentityWithNameAndEmail;
@@ -74,7 +70,8 @@ public class BindingAdapters {
 
     private static boolean sameYear(final Instant a, final Instant b) {
         final ZoneId local = ZoneId.systemDefault();
-        return LocalDateTime.ofInstant(a, local).getYear() == LocalDateTime.ofInstant(b, local).getYear();
+        return LocalDateTime.ofInstant(a, local).getYear()
+                == LocalDateTime.ofInstant(b, local).getYear();
     }
 
     private static boolean sameDay(final Instant a, final Instant b) {
@@ -90,11 +87,27 @@ public class BindingAdapters {
             final Instant now = Instant.now();
             textView.setVisibility(View.VISIBLE);
             if (sameDay(receivedAt, now) || now.minus(SIX_HOURS).isBefore(receivedAt)) {
-                textView.setText(DateUtils.formatDateTime(context, receivedAt.getEpochSecond() * 1000, DateUtils.FORMAT_SHOW_TIME));
+                textView.setText(
+                        DateUtils.formatDateTime(
+                                context,
+                                receivedAt.getEpochSecond() * 1000,
+                                DateUtils.FORMAT_SHOW_TIME));
             } else if (sameYear(receivedAt, now) || now.minus(THREE_MONTH).isBefore(receivedAt)) {
-                textView.setText(DateUtils.formatDateTime(context, receivedAt.getEpochSecond() * 1000, DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_NO_YEAR | DateUtils.FORMAT_ABBREV_ALL));
+                textView.setText(
+                        DateUtils.formatDateTime(
+                                context,
+                                receivedAt.getEpochSecond() * 1000,
+                                DateUtils.FORMAT_SHOW_DATE
+                                        | DateUtils.FORMAT_NO_YEAR
+                                        | DateUtils.FORMAT_ABBREV_ALL));
             } else {
-                textView.setText(DateUtils.formatDateTime(context, receivedAt.getEpochSecond() * 1000, DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_NO_MONTH_DAY | DateUtils.FORMAT_ABBREV_ALL));
+                textView.setText(
+                        DateUtils.formatDateTime(
+                                context,
+                                receivedAt.getEpochSecond() * 1000,
+                                DateUtils.FORMAT_SHOW_DATE
+                                        | DateUtils.FORMAT_NO_MONTH_DAY
+                                        | DateUtils.FORMAT_ABBREV_ALL));
             }
         }
     }
@@ -109,7 +122,11 @@ public class BindingAdapters {
             final int start = builder.length();
             builder.append(block.toString());
             if (block.getDepth() > 0) {
-                builder.setSpan(new QuoteSpan(block.getDepth(), textView.getContext()), start, builder.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                builder.setSpan(
+                        new QuoteSpan(block.getDepth(), textView.getContext()),
+                        start,
+                        builder.length(),
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
         }
         textView.setText(builder);
@@ -132,8 +149,8 @@ public class BindingAdapters {
     @BindingAdapter("tint")
     public static void setTint(final ImageView imageView, final String key) {
         imageView.setImageTintList(
-                ColorStateList.valueOf(ConsistentColorGeneration.rgbFromKey(Strings.nullToEmpty(key)))
-        );
+                ColorStateList.valueOf(
+                        ConsistentColorGeneration.rgbFromKey(Strings.nullToEmpty(key))));
     }
 
     @BindingAdapter("from")
@@ -152,13 +169,13 @@ public class BindingAdapters {
             textView.setText(named.getName());
         } else if (from instanceof From.Draft) {
             final Context context = textView.getContext();
-            final SpannableString spannable = new SpannableString(context.getString(R.string.draft));
+            final SpannableString spannable =
+                    new SpannableString(context.getString(R.string.draft));
             spannable.setSpan(
                     new ForegroundColorSpan(MaterialColors.getColor(textView, R.attr.colorPrimary)),
                     0,
                     spannable.length(),
-                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            );
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             textView.setText(spannable);
         }
     }
@@ -178,32 +195,33 @@ public class BindingAdapters {
                     final Context context = textView.getContext();
                     builder.append(context.getString(R.string.draft));
                     builder.setSpan(
-                            new ForegroundColorSpan(MaterialColors.getColor(textView, R.attr.colorPrimary)),
+                            new ForegroundColorSpan(
+                                    MaterialColors.getColor(textView, R.attr.colorPrimary)),
                             start,
                             builder.length(),
-                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                    );
+                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 } else if (individual instanceof From.Named) {
                     final From.Named named = (From.Named) individual;
-                    builder.append(shorten ? EmailAddressUtil.shorten(named.getName()) : named.getName());
+                    builder.append(
+                            shorten ? EmailAddressUtil.shorten(named.getName()) : named.getName());
                     if (!named.isSeen()) {
                         builder.setSpan(
                                 new StyleSpan(Typeface.BOLD),
                                 start,
                                 builder.length(),
-                                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                        );
+                                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                     }
                     if (from.length > 3) {
                         if (i < from.length - 3) {
-                            builder.append(" … "); //TODO small?
+                            builder.append(" … "); // TODO small?
                             i = from.length - 3;
                         }
                     }
                 } else {
                     throw new IllegalStateException(
-                            String.format("Unable to render from type %s", individual.getClass().getName())
-                    );
+                            String.format(
+                                    "Unable to render from type %s",
+                                    individual.getClass().getName()));
                 }
             }
         }
@@ -229,10 +247,16 @@ public class BindingAdapters {
     public static void setIsFlagged(final ImageView imageView, final boolean isFlagged) {
         if (isFlagged) {
             imageView.setImageResource(R.drawable.ic_star_black_no_padding_24dp);
-            ImageViewCompat.setImageTintList(imageView, ColorStateList.valueOf(MaterialColors.getColor(imageView, R.attr.colorIndicator)));
+            ImageViewCompat.setImageTintList(
+                    imageView,
+                    ColorStateList.valueOf(
+                            MaterialColors.getColor(imageView, R.attr.colorIndicator)));
         } else {
             imageView.setImageResource(R.drawable.ic_star_border_no_padding_black_24dp);
-            ImageViewCompat.setImageTintList(imageView, ColorStateList.valueOf(MaterialColors.getColor(imageView, R.attr.colorControlNormal)));
+            ImageViewCompat.setImageTintList(
+                    imageView,
+                    ColorStateList.valueOf(
+                            MaterialColors.getColor(imageView, R.attr.colorControlNormal)));
         }
     }
 
@@ -263,16 +287,19 @@ public class BindingAdapters {
             return;
         }
         if (subjectWithImportance.important) {
-            final SpannableStringBuilder header = new SpannableStringBuilder(subjectWithImportance.subject)
-                    .append(NON_BREAKING_SPACE)
-                    .append(NARROW_NON_BREAKING_SPACE)
-                    .append(RIGHT_POINTING_DOUBLE_ANGLE_QUOTATION_MARK);
+            final SpannableStringBuilder header =
+                    new SpannableStringBuilder(subjectWithImportance.subject)
+                            .append(NON_BREAKING_SPACE)
+                            .append(NARROW_NON_BREAKING_SPACE)
+                            .append(RIGHT_POINTING_DOUBLE_ANGLE_QUOTATION_MARK);
             header.setSpan(
-                    new ImageSpan(text.getContext(), R.drawable.ic_important_indicator_22sp, ImageSpan.ALIGN_BASELINE),
+                    new ImageSpan(
+                            text.getContext(),
+                            R.drawable.ic_important_indicator_22sp,
+                            ImageSpan.ALIGN_BASELINE),
                     header.length() - 1,
                     header.length(),
-                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            );
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             text.setText(header);
         } else {
             text.setText(subjectWithImportance.subject);
@@ -322,27 +349,34 @@ public class BindingAdapters {
     }
 
     @BindingAdapter("errorText")
-    public static void setErrorText(final TextInputLayout textInputLayout, final LiveData<String> error) {
+    public static void setErrorText(
+            final TextInputLayout textInputLayout, final LiveData<String> error) {
         textInputLayout.setError(error.getValue());
     }
 
     @BindingAdapter("editorAction")
-    public static void setEditorAction(final TextInputEditText editText, final TextView.OnEditorActionListener listener) {
+    public static void setEditorAction(
+            final TextInputEditText editText, final TextView.OnEditorActionListener listener) {
         editText.setOnEditorActionListener(listener);
     }
 
     @BindingAdapter("identities")
-    public static void setIdentities(final AppCompatSpinner spinner, final List<IdentityWithNameAndEmail> identities) {
+    public static void setIdentities(
+            final AppCompatSpinner spinner, final List<IdentityWithNameAndEmail> identities) {
         final List<String> representations;
         if (identities == null) {
             representations = Collections.emptyList();
         } else {
-            representations = Lists.transform(identities, input -> EmailAddressUtil.toString(input.getEmailAddress()));
+            representations =
+                    Lists.transform(
+                            identities,
+                            input -> EmailAddressUtil.toString(input.getEmailAddress()));
         }
-        final ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                spinner.getContext(),
-                android.R.layout.simple_spinner_item,
-                representations);
+        final ArrayAdapter<String> adapter =
+                new ArrayAdapter<>(
+                        spinner.getContext(),
+                        android.R.layout.simple_spinner_item,
+                        representations);
         adapter.setDropDownViewResource(R.layout.item_simple_spinner_dropdown);
         spinner.setAdapter(adapter);
     }
@@ -352,8 +386,7 @@ public class BindingAdapters {
         imageView.setImageResource(toDrawable(mediaType));
     }
 
-    private static @DrawableRes
-    int toDrawable(final MediaType type) {
+    private static @DrawableRes int toDrawable(final MediaType type) {
         if (type == null) {
             return R.drawable.ic_baseline_attachment_24;
         } else if (type.is(MediaType.ANY_IMAGE_TYPE)) {

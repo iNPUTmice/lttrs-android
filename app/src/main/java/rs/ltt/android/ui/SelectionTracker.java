@@ -2,7 +2,6 @@ package rs.ltt.android.ui;
 
 import java.util.Iterator;
 import java.util.Set;
-
 import rs.ltt.android.ui.adapter.ThreadOverviewAdapter;
 
 public class SelectionTracker {
@@ -11,7 +10,10 @@ public class SelectionTracker {
     private final ThreadOverviewAdapter adapter;
     private final OnSelectionChanged onSelectionChanged;
 
-    public SelectionTracker(final Set<String> dataSource, final ThreadOverviewAdapter adapter, final OnSelectionChanged onSelectionChanged) {
+    public SelectionTracker(
+            final Set<String> dataSource,
+            final ThreadOverviewAdapter adapter,
+            final OnSelectionChanged onSelectionChanged) {
         this.dataSource = dataSource;
         this.adapter = adapter;
         this.onSelectionChanged = onSelectionChanged;

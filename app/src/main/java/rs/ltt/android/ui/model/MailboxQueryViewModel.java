@@ -15,15 +15,12 @@
 
 package rs.ltt.android.ui.model;
 
-
 import android.app.Application;
-
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
-
 import rs.ltt.android.entity.MailboxOverviewItem;
 import rs.ltt.android.entity.QueryInfo;
 import rs.ltt.android.ui.EmptyMailboxAction;
@@ -38,25 +35,34 @@ public class MailboxQueryViewModel extends AbstractQueryViewModel {
 
     private final LiveData<EmailQuery> emailQueryLiveData;
 
-    //TODO refactor out MainMailboxQueryViewModel to not have to deal with mailboxId==null special treatment
-    MailboxQueryViewModel(final Application application, final long accountId, final String mailboxId) {
+    // TODO refactor out MainMailboxQueryViewModel to not have to deal with mailboxId==null special
+    // treatment
+    MailboxQueryViewModel(
+            final Application application, final long accountId, final String mailboxId) {
         super(application, accountId);
         this.mailboxId = mailboxId;
         this.mailbox = this.queryRepository.getMailboxOverviewItem(mailboxId);
-        this.emailQueryLiveData = Transformations.map(mailbox, mailbox -> {
-            if (mailbox == null) {
-                return EmailQuery.unfiltered(true);
-            } else {
-                return StandardQueries.mailbox(mailbox);
-            }
-        });
-        this.emptyMailboxAction = Transformations.map(this.mailbox, mailbox -> {
-            if (EmptyMailboxAction.emptyWorthy(mailbox)) {
-                return new EmptyMailboxAction(mailbox.getRole(), mailbox.totalEmails);
-            } else {
-                return null;
-            }
-        });
+        this.emailQueryLiveData =
+                Transformations.map(
+                        mailbox,
+                        mailbox -> {
+                            if (mailbox == null) {
+                                return EmailQuery.unfiltered(true);
+                            } else {
+                                return StandardQueries.mailbox(mailbox);
+                            }
+                        });
+        this.emptyMailboxAction =
+                Transformations.map(
+                        this.mailbox,
+                        mailbox -> {
+                            if (EmptyMailboxAction.emptyWorthy(mailbox)) {
+                                return new EmptyMailboxAction(
+                                        mailbox.getRole(), mailbox.totalEmails);
+                            } else {
+                                return null;
+                            }
+                        });
         init();
     }
 
@@ -77,20 +83,11 @@ public class MailboxQueryViewModel extends AbstractQueryViewModel {
     @Override
     public QueryInfo getQueryInfo() {
         if (mailboxId == null) {
-            return new QueryInfo(
-                    queryRepository.getAccountId(),
-                    QueryInfo.Type.MAIN,
-                    null
-            );
+            return new QueryInfo(queryRepository.getAccountId(), QueryInfo.Type.MAIN, null);
         } else {
-            return new QueryInfo(
-                    queryRepository.getAccountId(),
-                    QueryInfo.Type.MAILBOX,
-                    mailboxId
-            );
+            return new QueryInfo(queryRepository.getAccountId(), QueryInfo.Type.MAILBOX, mailboxId);
         }
     }
-
 
     public static class Factory implements ViewModelProvider.Factory {
 

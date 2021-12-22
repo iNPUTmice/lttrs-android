@@ -7,10 +7,8 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-
 import androidx.annotation.DrawableRes;
 import androidx.core.app.NotificationCompat;
-
 import rs.ltt.android.R;
 import rs.ltt.android.ui.activity.MainActivity;
 import rs.ltt.jmap.client.event.State;
@@ -25,13 +23,14 @@ public class ForegroundServiceNotification extends AbstractNotification {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             return;
         }
-        final NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+        final NotificationManager notificationManager =
+                context.getSystemService(NotificationManager.class);
 
-        final NotificationChannel notificationChannel = new NotificationChannel(
-                NOTIFICATION_CHANNEL_ID,
-                context.getString(R.string.foreground_service),
-                NotificationManager.IMPORTANCE_MIN
-        );
+        final NotificationChannel notificationChannel =
+                new NotificationChannel(
+                        NOTIFICATION_CHANNEL_ID,
+                        context.getString(R.string.foreground_service),
+                        NotificationManager.IMPORTANCE_MIN);
         notificationChannel.setSound(null, null);
         notificationChannel.setShowBadge(false);
         notificationManager.createNotificationChannel(notificationChannel);
@@ -43,17 +42,17 @@ public class ForegroundServiceNotification extends AbstractNotification {
 
     public static void updateConnectionState(final Context context, final State state) {
         final Notification notification = get(context, state);
-        final NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+        final NotificationManager notificationManager =
+                context.getSystemService(NotificationManager.class);
         notificationManager.notify(ID, notification);
     }
 
     private static Notification get(final Context context, final State state) {
-        final NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(
-                context,
-                NOTIFICATION_CHANNEL_ID
-        );
+        final NotificationCompat.Builder notificationBuilder =
+                new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID);
         notificationBuilder.setContentTitle(context.getString(R.string.foreground_service));
-        notificationBuilder.setContentText(context.getString(R.string.foreground_service_notification_text));
+        notificationBuilder.setContentText(
+                context.getString(R.string.foreground_service_notification_text));
         notificationBuilder.setSmallIcon(drawable(state));
         notificationBuilder.setShowWhen(false);
         notificationBuilder.setColor(getColor(context, R.attr.colorPrimary));
@@ -61,8 +60,7 @@ public class ForegroundServiceNotification extends AbstractNotification {
         return notificationBuilder.build();
     }
 
-    private static @DrawableRes
-    int drawable(final State state) {
+    private static @DrawableRes int drawable(final State state) {
         switch (state) {
             case FAILED:
                 return R.drawable.ic_baseline_sync_problem_24;

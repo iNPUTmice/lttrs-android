@@ -21,6 +21,7 @@ import android.view.View;
 public final class Theme {
 
     public static boolean isRtl(final Context context) {
-        return context.getResources().getConfiguration().getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
+        return context.getResources().getConfiguration().getLayoutDirection()
+                == View.LAYOUT_DIRECTION_RTL;
     }
 }

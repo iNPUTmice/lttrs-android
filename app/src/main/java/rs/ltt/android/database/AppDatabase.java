@@ -15,14 +15,11 @@
 
 package rs.ltt.android.database;
 
-
 import android.content.Context;
-
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
-
 import rs.ltt.android.database.dao.AccountDao;
 import rs.ltt.android.database.dao.SearchSuggestionDao;
 import rs.ltt.android.entity.AccountEntity;
@@ -30,17 +27,11 @@ import rs.ltt.android.entity.CredentialsEntity;
 import rs.ltt.android.entity.SearchSuggestionEntity;
 
 @Database(
-        entities = {
-                CredentialsEntity.class,
-                AccountEntity.class,
-                SearchSuggestionEntity.class
-        },
+        entities = {CredentialsEntity.class, AccountEntity.class, SearchSuggestionEntity.class},
         version = 1,
-        exportSchema = false
-)
+        exportSchema = false)
 @TypeConverters(Converters.class)
 public abstract class AppDatabase extends RoomDatabase {
-
 
     private static volatile AppDatabase INSTANCE = null;
 
@@ -53,9 +44,10 @@ public abstract class AppDatabase extends RoomDatabase {
                 return INSTANCE;
             }
             final Context application = context.getApplicationContext();
-            INSTANCE = Room.databaseBuilder(application, AppDatabase.class, "app")
-                    .allowMainThreadQueries()
-                    .build();
+            INSTANCE =
+                    Room.databaseBuilder(application, AppDatabase.class, "app")
+                            .allowMainThreadQueries()
+                            .build();
             return INSTANCE;
         }
     }
@@ -63,5 +55,4 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract SearchSuggestionDao searchSuggestionDao();
 
     public abstract AccountDao accountDao();
-
 }

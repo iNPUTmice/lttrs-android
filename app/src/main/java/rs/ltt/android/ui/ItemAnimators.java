@@ -3,7 +3,6 @@ package rs.ltt.android.ui;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +23,8 @@ public class ItemAnimators {
         return defaultItemAnimator;
     }
 
-    public static void configureItemAnimator(final RecyclerView recyclerView, final boolean isInitialLoad) {
+    public static void configureItemAnimator(
+            final RecyclerView recyclerView, final boolean isInitialLoad) {
         final RecyclerView.ItemAnimator itemAnimator = recyclerView.getItemAnimator();
         if (isInitialLoad) {
             LOGGER.info("Disable item animator");

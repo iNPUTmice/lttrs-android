@@ -17,17 +17,15 @@ package rs.ltt.android;
 
 import android.app.Activity;
 import android.app.Application;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import rs.ltt.android.database.AppDatabase;
 import rs.ltt.android.ui.notification.AttachmentNotification;
 import rs.ltt.android.ui.notification.ForegroundServiceNotification;
 
 public class LttrsApplication extends Application {
 
-    private final static Object CACHE_LOCK = new Object();
+    private static final Object CACHE_LOCK = new Object();
     private final Logger LOGGER = LoggerFactory.getLogger(LttrsApplication.class);
     private Long mostRecentlySelectedAccountId = null;
 
@@ -35,7 +33,8 @@ public class LttrsApplication extends Application {
         if (application instanceof LttrsApplication) {
             return (LttrsApplication) application;
         }
-        throw new IllegalStateException("Application is not a " + LttrsApplication.class.getSimpleName());
+        throw new IllegalStateException(
+                "Application is not a " + LttrsApplication.class.getSimpleName());
     }
 
     public static LttrsApplication get(final Activity activity) {
@@ -61,7 +60,10 @@ public class LttrsApplication extends Application {
     public Long getMostRecentlySelectedAccountId() {
         synchronized (CACHE_LOCK) {
             if (this.mostRecentlySelectedAccountId == null) {
-                final Long id = AppDatabase.getInstance(this).accountDao().getMostRecentlySelectedAccountId();
+                final Long id =
+                        AppDatabase.getInstance(this)
+                                .accountDao()
+                                .getMostRecentlySelectedAccountId();
                 LOGGER.info("read most recently selected account id from database: {}", id);
                 this.mostRecentlySelectedAccountId = id;
             }

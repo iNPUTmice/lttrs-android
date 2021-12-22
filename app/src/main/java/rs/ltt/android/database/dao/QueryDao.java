@@ -22,12 +22,9 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Transaction;
-
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
-
 import rs.ltt.android.entity.QueryEntity;
 import rs.ltt.android.entity.QueryItem;
 import rs.ltt.android.entity.QueryItemEntity;
@@ -61,25 +58,39 @@ public abstract class QueryDao extends AbstractEntityDao {
     @Query("select * from `query` where queryString=:queryString and valid=1 limit 1")
     public abstract QueryEntity get(String queryString);
 
-    @Query("select position,emailId from query_item where queryId=:queryId order by position desc limit 1")
+    @Query(
+            "select position,emailId from query_item where queryId=:queryId order by position desc"
+                    + " limit 1")
     abstract QueryItem getLastQueryItem(Long queryId);
 
     @Query("select count(id) from query_item where queryId=:queryId")
     abstract int getItemCount(Long queryId);
 
-    @Query("select case when exists(select query_item.id from `query` join query_item on `query`.id = query_item.queryId where queryString=:queryString) then 0 else 1 end")
+    @Query(
+            "select case when exists(select query_item.id from `query` join query_item on"
+                + " `query`.id = query_item.queryId where queryString=:queryString) then 0 else 1"
+                + " end")
     public abstract boolean empty(String queryString);
 
     @Query("delete from `query` where queryString=:queryString")
     abstract void deleteQuery(String queryString);
 
-    //we inner join on threads here to make sure that we only return items that we actually have
-    //due to the delay of fetchMissing we might have query_items that we do not have a corresponding thread for
+    // we inner join on threads here to make sure that we only return items that we actually have
+    // due to the delay of fetchMissing we might have query_items that we do not have a
+    // corresponding thread for
     @Transaction
-    @Query("select query_item.threadId,query_item.emailId from `query` join query_item on `query`.id = query_item.queryId inner join thread on query_item.threadId=thread.threadId where queryString=:queryString  and  query_item.threadId not in (select threadId from query_item_overwrite where queryId=`query`.id) order by position asc")
-    public abstract DataSource.Factory<Integer, ThreadOverviewItem> getThreadOverviewItems(String queryString);
+    @Query(
+            "select query_item.threadId,query_item.emailId from `query` join query_item on"
+                    + " `query`.id = query_item.queryId inner join thread on"
+                    + " query_item.threadId=thread.threadId where queryString=:queryString  and "
+                    + " query_item.threadId not in (select threadId from query_item_overwrite where"
+                    + " queryId=`query`.id) order by position asc")
+    public abstract DataSource.Factory<Integer, ThreadOverviewItem> getThreadOverviewItems(
+            String queryString);
 
-    @Query("select query_item.emailId from `query` join query_item on `query`.id = query_item.queryId where queryString=:queryString order by position asc")
+    @Query(
+            "select query_item.emailId from `query` join query_item on `query`.id ="
+                    + " query_item.queryId where queryString=:queryString order by position asc")
     public abstract List<String> getEmailIds(final String queryString);
 
     @Transaction
@@ -92,7 +103,12 @@ public abstract class QueryDao extends AbstractEntityDao {
             return;
         }
 
-        long queryId = insert(QueryEntity.of(queryString, queryResult.queryState.getState(), queryResult.canCalculateChanges));
+        long queryId =
+                insert(
+                        QueryEntity.of(
+                                queryString,
+                                queryResult.queryState.getState(),
+                                queryResult.canCalculateChanges));
         insert(QueryItemEntity.of(queryId, queryResult.items, 0));
     }
 
@@ -101,15 +117,16 @@ public abstract class QueryDao extends AbstractEntityDao {
 
         final QueryEntity queryEntity = get(queryString);
 
-
-        //TODO not having a state is fine; we still want to be able to page
-        //TODO compare queryEntity.state only when it is not null
+        // TODO not having a state is fine; we still want to be able to page
+        // TODO compare queryEntity.state only when it is not null
         if (queryEntity == null || queryEntity.state == null) {
-            throw new CacheConflictException("Unable to append items to Query. Cached query state is unknown");
+            throw new CacheConflictException(
+                    "Unable to append items to Query. Cached query state is unknown");
         }
 
         if (!queryEntity.state.equals(queryResult.queryState.getState())) {
-            throw new CacheConflictException("Unable to append to Query. Cached query state did not meet our expectations");
+            throw new CacheConflictException(
+                    "Unable to append to Query. Cached query state did not meet our expectations");
         }
 
         TypedState<Email> emailState = queryResult.objectState;
@@ -118,11 +135,19 @@ public abstract class QueryDao extends AbstractEntityDao {
         final QueryItem lastQueryItem = getLastQueryItem(queryEntity.id);
 
         if (!lastQueryItem.emailId.equals(afterEmailId)) {
-            throw new CacheConflictException(String.format("Current last email id in cache (%s) doesn't match afterId (%s) from request", lastQueryItem.emailId, afterEmailId));
+            throw new CacheConflictException(
+                    String.format(
+                            "Current last email id in cache (%s) doesn't match afterId (%s) from"
+                                    + " request",
+                            lastQueryItem.emailId, afterEmailId));
         }
 
         if (lastQueryItem.position != queryResult.position - 1) {
-            throw new CorruptCacheException(String.format("Unexpected QueryPage. Cache ends with position %d. Page starts at position %d", lastQueryItem.position, queryResult.position));
+            throw new CorruptCacheException(
+                    String.format(
+                            "Unexpected QueryPage. Cache ends with position %d. Page starts at"
+                                    + " position %d",
+                            lastQueryItem.position, queryResult.position));
         }
 
         if (queryResult.items.length > 0) {
@@ -133,11 +158,15 @@ public abstract class QueryDao extends AbstractEntityDao {
     @Query("select * from `query` where queryString=:queryString")
     abstract QueryEntity getQueryEntity(String queryString);
 
-    @Query("update query_item set position=position+1 where queryId=:queryId and position>=:position ")
+    @Query(
+            "update query_item set position=position+1 where queryId=:queryId and"
+                    + " position>=:position ")
     abstract int incrementAllPositionsFrom(Long queryId, Long position);
 
-    //TODO: is this query safe to run when emailId is not found
-    @Query("update query_item set position=position-1 where queryId=:queryId and position>(select position from query_item where emailId=:emailId and queryId=:queryId)")
+    // TODO: is this query safe to run when emailId is not found
+    @Query(
+            "update query_item set position=position-1 where queryId=:queryId and position>(select"
+                    + " position from query_item where emailId=:emailId and queryId=:queryId)")
     abstract void decrementAllPositionsFrom(Long queryId, String emailId);
 
     @Query("delete from query_item where queryId=:queryId and emailId=:emailId")
@@ -150,7 +179,10 @@ public abstract class QueryDao extends AbstractEntityDao {
     abstract String getQueryState(String queryString);
 
     @Transaction
-    public void updateQueryResults(String queryString, QueryUpdate<Email, QueryResultItem> queryUpdate, final TypedState<Email> emailState) {
+    public void updateQueryResults(
+            String queryString,
+            QueryUpdate<Email, QueryResultItem> queryUpdate,
+            final TypedState<Email> emailState) {
         final String newState = queryUpdate.getNewTypedState().getState();
         final String oldState = queryUpdate.getOldTypedState().getState();
         if (newState.equals(getQueryState(queryString))) {
@@ -170,18 +202,29 @@ public abstract class QueryDao extends AbstractEntityDao {
         }
         for (AddedItem<QueryResultItem> addedItem : queryUpdate.getAdded()) {
             LOGGER.debug("adding item {}", addedItem);
-            LOGGER.debug("increment all positions where queryId={} and position={}", queryEntity.id, addedItem.getIndex());
+            LOGGER.debug(
+                    "increment all positions where queryId={} and position={}",
+                    queryEntity.id,
+                    addedItem.getIndex());
 
-            if (incrementAllPositionsFrom(queryEntity.id, addedItem.getIndex()) == 0 && getItemCount(queryEntity.id) != addedItem.getIndex()) {
+            if (incrementAllPositionsFrom(queryEntity.id, addedItem.getIndex()) == 0
+                    && getItemCount(queryEntity.id) != addedItem.getIndex()) {
                 LOGGER.debug("ignoring query item change at position = {}", addedItem.getIndex());
                 continue;
             }
-            LOGGER.debug("insert queryItemEntity on position {} and id={}", addedItem.getIndex(), queryEntity.id);
+            LOGGER.debug(
+                    "insert queryItemEntity on position {} and id={}",
+                    addedItem.getIndex(),
+                    queryEntity.id);
             insert(QueryItemEntity.of(queryEntity.id, addedItem.getIndex(), addedItem.getItem()));
         }
 
         if (updateQueryState(queryEntity.id, newState, oldState) != 1) {
-            throw new CacheConflictException("Unable to update query from oldState={}" + oldState + " to newState=" + newState);
+            throw new CacheConflictException(
+                    "Unable to update query from oldState={}"
+                            + oldState
+                            + " to newState="
+                            + newState);
         }
     }
 }

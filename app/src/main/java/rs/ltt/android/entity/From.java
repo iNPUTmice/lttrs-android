@@ -16,7 +16,6 @@ public abstract class From {
         return new Named(emailAddress, seen);
     }
 
-
     public static class Named extends From {
         private final EmailAddress emailAddress;
         private final boolean seen;
@@ -43,8 +42,7 @@ public abstract class From {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             Named named = (Named) o;
-            return seen == named.seen &&
-                    Objects.equal(emailAddress, named.emailAddress);
+            return seen == named.seen && Objects.equal(emailAddress, named.emailAddress);
         }
 
         @Override
@@ -54,10 +52,6 @@ public abstract class From {
     }
 
     public static class Draft extends From {
-        private Draft() {
-
-        }
-
+        private Draft() {}
     }
-
 }

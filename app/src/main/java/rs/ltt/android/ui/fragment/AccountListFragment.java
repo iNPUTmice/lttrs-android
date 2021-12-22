@@ -1,17 +1,13 @@
 package rs.ltt.android.ui.fragment;
 
-
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
-
 import java.util.List;
-
 import rs.ltt.android.R;
 import rs.ltt.android.databinding.FragmentAccountListBinding;
 import rs.ltt.android.entity.AccountName;
@@ -25,25 +21,28 @@ public class AccountListFragment extends AbstractAccountManagerFragment {
     private AccountAdapter accountAdapter;
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(
+            @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        this.binding = DataBindingUtil.inflate(inflater, R.layout.fragment_account_list, container, false);
+        this.binding =
+                DataBindingUtil.inflate(inflater, R.layout.fragment_account_list, container, false);
 
-        final ViewModelProvider viewModelProvider = new ViewModelProvider(
-                getViewModelStore(),
-                getDefaultViewModelProviderFactory()
-        );
-        final AccountListViewModel accountListViewModel = viewModelProvider.get(AccountListViewModel.class);
+        final ViewModelProvider viewModelProvider =
+                new ViewModelProvider(getViewModelStore(), getDefaultViewModelProviderFactory());
+        final AccountListViewModel accountListViewModel =
+                viewModelProvider.get(AccountListViewModel.class);
 
         this.accountAdapter = new AccountAdapter();
         this.binding.accountList.setAdapter(this.accountAdapter);
-        this.accountAdapter.setOnAccountSelected(id -> {
-            getNavController().navigate(
-                    AccountListFragmentDirections.actionAccountListToAccount(id)
-            );
-        });
+        this.accountAdapter.setOnAccountSelected(
+                id -> {
+                    getNavController()
+                            .navigate(AccountListFragmentDirections.actionAccountListToAccount(id));
+                });
 
-        accountListViewModel.getAccounts().observe(getViewLifecycleOwner(), this::onAccountsUpdated);
+        accountListViewModel
+                .getAccounts()
+                .observe(getViewLifecycleOwner(), this::onAccountsUpdated);
 
         this.binding.addNewAccount.setOnClickListener(v -> SetupActivity.launch(requireActivity()));
 

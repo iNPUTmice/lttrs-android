@@ -1,19 +1,15 @@
 package rs.ltt.android.worker;
 
 import android.content.Context;
-
 import androidx.annotation.NonNull;
 import androidx.work.Data;
 import androidx.work.WorkerParameters;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
-
 import rs.ltt.android.database.AppDatabase;
 import rs.ltt.android.database.LttrsDatabase;
 import rs.ltt.android.entity.AccountName;
@@ -25,12 +21,13 @@ import rs.ltt.jmap.mua.util.StandardQueries;
 
 public class MainMailboxQueryRefreshWorker extends QueryRefreshWorker {
 
-    public MainMailboxQueryRefreshWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
+    public MainMailboxQueryRefreshWorker(
+            @NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
     }
 
-    private static List<String> freshlyAddedEmailIds(final Set<String> preexistingEmailIds,
-                                                     final List<String> postRefreshEmailIds) {
+    private static List<String> freshlyAddedEmailIds(
+            final Set<String> preexistingEmailIds, final List<String> postRefreshEmailIds) {
         final ImmutableList.Builder<String> freshlyAddedEmailIds = new ImmutableList.Builder<>();
         for (final String emailId : postRefreshEmailIds) {
             if (preexistingEmailIds.contains(emailId)) {
@@ -54,26 +51,27 @@ public class MainMailboxQueryRefreshWorker extends QueryRefreshWorker {
 
     @NonNull
     @Override
-    protected Result refresh(final EmailQuery emailQuery) throws ExecutionException, InterruptedException {
+    protected Result refresh(final EmailQuery emailQuery)
+            throws ExecutionException, InterruptedException {
         throwOnEmpty(emailQuery);
         final LttrsDatabase database = getDatabase();
-        final Set<String> preexistingEmailIds = ImmutableSet.copyOf(
-                database.queryDao().getEmailIds(emailQuery.asHash())
-        );
+        final Set<String> preexistingEmailIds =
+                ImmutableSet.copyOf(database.queryDao().getEmailIds(emailQuery.asHash()));
         getMua().query(emailQuery).get();
-        final List<String> freshlyAddedEmailIds = freshlyAddedEmailIds(
-                preexistingEmailIds,
-                database.queryDao().getEmailIds(emailQuery.asHash())
-        );
-        final AccountName account = AppDatabase.getInstance(getApplicationContext()).accountDao()
-                .getAccountName(this.account);
-        //We deliberately decide to show notifications even for email that arrive while the app is
-        //in foreground. Just because the user saw the email coming in doesn't mean they don’t want
-        //to add it to their 'notification queue' and deal with it later.
-        //However we may or may not want to suppress the sound when the app is in foreground.
-        //If we decide to do so checking with `ProcessLifecycleOwner.get().getLifecycle()
+        final List<String> freshlyAddedEmailIds =
+                freshlyAddedEmailIds(
+                        preexistingEmailIds, database.queryDao().getEmailIds(emailQuery.asHash()));
+        final AccountName account =
+                AppDatabase.getInstance(getApplicationContext())
+                        .accountDao()
+                        .getAccountName(this.account);
+        // We deliberately decide to show notifications even for email that arrive while the app is
+        // in foreground. Just because the user saw the email coming in doesn't mean they don’t want
+        // to add it to their 'notification queue' and deal with it later.
+        // However we may or may not want to suppress the sound when the app is in foreground.
+        // If we decide to do so checking with `ProcessLifecycleOwner.get().getLifecycle()
         // .getCurrentState().isAtLeast(Lifecycle.State.STARTED);` in EmailNotification.Builder is
-        //a good way for telling.
+        // a good way for telling.
         EmailNotification.builder()
                 .setAccount(account)
                 .setContext(getApplicationContext())
@@ -92,5 +90,4 @@ public class MainMailboxQueryRefreshWorker extends QueryRefreshWorker {
             return StandardQueries.mailbox(inbox);
         }
     }
-
 }

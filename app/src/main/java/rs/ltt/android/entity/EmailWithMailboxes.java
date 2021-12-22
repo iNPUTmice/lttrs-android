@@ -16,21 +16,21 @@
 package rs.ltt.android.entity;
 
 import androidx.room.Relation;
-
 import com.google.common.collect.Maps;
-
 import java.util.Map;
 import java.util.Set;
-
 import rs.ltt.jmap.common.entity.IdentifiableEmailWithMailboxIds;
 
 public class EmailWithMailboxes implements IdentifiableEmailWithMailboxIds {
 
     public String id;
 
-    @Relation(entity = EmailMailboxEntity.class, parentColumn = "id", entityColumn = "emailId", projection = {"mailboxId"})
+    @Relation(
+            entity = EmailMailboxEntity.class,
+            parentColumn = "id",
+            entityColumn = "emailId",
+            projection = {"mailboxId"})
     public Set<String> mailboxIds;
-
 
     @Override
     public String getId() {

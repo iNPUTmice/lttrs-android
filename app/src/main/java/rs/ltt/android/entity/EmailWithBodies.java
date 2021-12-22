@@ -16,16 +16,13 @@
 package rs.ltt.android.entity;
 
 import androidx.room.Relation;
-
 import com.google.common.base.Objects;
 import com.google.common.collect.Maps;
-
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
 import rs.ltt.jmap.mua.util.KeywordUtil;
 
 /**
@@ -34,7 +31,7 @@ import rs.ltt.jmap.mua.util.KeywordUtil;
  */
 public class EmailWithBodies extends EmailPreview {
 
-    //TODO remove preview. use body values
+    // TODO remove preview. use body values
     public String preview;
 
     @Relation(parentColumn = "id", entityColumn = "emailId")
@@ -47,7 +44,7 @@ public class EmailWithBodies extends EmailPreview {
         return KeywordUtil.draft(this);
     }
 
-    //TODO use getTextBodies
+    // TODO use getTextBodies
     public String getPreview() {
         return preview;
     }
@@ -65,8 +62,10 @@ public class EmailWithBodies extends EmailPreview {
     }
 
     public List<String> getTextBodies() {
-        final List<EmailBodyPartEntity> textBodies = EmailBodyPartEntity.filter(bodyPartEntities, EmailBodyPartType.TEXT_BODY);
-        final Map<String, EmailBodyValueEntity> map = Maps.uniqueIndex(bodyValueEntities, value -> value.partId);
+        final List<EmailBodyPartEntity> textBodies =
+                EmailBodyPartEntity.filter(bodyPartEntities, EmailBodyPartType.TEXT_BODY);
+        final Map<String, EmailBodyValueEntity> map =
+                Maps.uniqueIndex(bodyValueEntities, value -> value.partId);
         return textBodies.stream()
                 .map(body -> map.get(body.partId))
                 .filter(java.util.Objects::nonNull)
@@ -81,7 +80,8 @@ public class EmailWithBodies extends EmailPreview {
     public Collection<String> getToAndCc() {
         LinkedHashMap<String, String> toMap = new LinkedHashMap<>();
         for (EmailAddress emailAddress : emailAddresses) {
-            if (emailAddress.type == EmailAddressType.TO || emailAddress.type == EmailAddressType.CC) {
+            if (emailAddress.type == EmailAddressType.TO
+                    || emailAddress.type == EmailAddressType.CC) {
                 toMap.put(emailAddress.getEmail(), emailAddress.getName());
             }
         }
@@ -94,9 +94,9 @@ public class EmailWithBodies extends EmailPreview {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         EmailWithBodies that = (EmailWithBodies) o;
-        return Objects.equal(preview, that.preview) &&
-                Objects.equal(bodyPartEntities, that.bodyPartEntities) &&
-                Objects.equal(bodyValueEntities, that.bodyValueEntities);
+        return Objects.equal(preview, that.preview)
+                && Objects.equal(bodyPartEntities, that.bodyPartEntities)
+                && Objects.equal(bodyValueEntities, that.bodyValueEntities);
     }
 
     @Override

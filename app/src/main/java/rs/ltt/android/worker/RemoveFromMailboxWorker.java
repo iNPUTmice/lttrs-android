@@ -16,19 +16,14 @@
 package rs.ltt.android.worker;
 
 import android.content.Context;
-
 import androidx.annotation.NonNull;
 import androidx.work.Data;
 import androidx.work.WorkerParameters;
-
 import com.google.common.util.concurrent.ListenableFuture;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rs.ltt.android.entity.EmailWithMailboxes;
 import rs.ltt.jmap.common.entity.IdentifiableMailboxWithRole;
 
@@ -39,7 +34,8 @@ public class RemoveFromMailboxWorker extends AbstractMailboxModificationWorker {
     private static final Logger LOGGER = LoggerFactory.getLogger(RemoveFromMailboxWorker.class);
     private final String mailboxId;
 
-    public RemoveFromMailboxWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
+    public RemoveFromMailboxWorker(
+            @NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
         final Data data = getInputData();
         this.mailboxId = data.getString(MAILBOX_ID_KEY);
@@ -54,7 +50,8 @@ public class RemoveFromMailboxWorker extends AbstractMailboxModificationWorker {
     }
 
     @Override
-    protected ListenableFuture<Boolean> modify(List<EmailWithMailboxes> emails) throws ExecutionException {
+    protected ListenableFuture<Boolean> modify(List<EmailWithMailboxes> emails)
+            throws ExecutionException {
         LOGGER.info("Modifying {} emails in thread {}", emails.size(), threadId);
         return getMua().removeFromMailbox(emails, this.mailboxId);
     }

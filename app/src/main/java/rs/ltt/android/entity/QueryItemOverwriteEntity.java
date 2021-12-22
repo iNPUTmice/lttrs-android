@@ -22,39 +22,39 @@ import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.Index;
 
-@Entity(tableName = "query_item_overwrite",
+@Entity(
+        tableName = "query_item_overwrite",
         primaryKeys = {"queryId", "threadId"},
         indices = {@Index(value = {"threadId"})},
         foreignKeys = {
-                @ForeignKey(entity = ThreadEntity.class,
-                        parentColumns = {"threadId"},
-                        childColumns = {"threadId"},
-                        onDelete = CASCADE
-                ),
-                @ForeignKey(entity = QueryEntity.class,
-                        parentColumns = {"id"},
-                        childColumns = {"queryId"},
-                        onDelete = CASCADE)})
+            @ForeignKey(
+                    entity = ThreadEntity.class,
+                    parentColumns = {"threadId"},
+                    childColumns = {"threadId"},
+                    onDelete = CASCADE),
+            @ForeignKey(
+                    entity = QueryEntity.class,
+                    parentColumns = {"id"},
+                    childColumns = {"queryId"},
+                    onDelete = CASCADE)
+        })
 public class QueryItemOverwriteEntity {
 
-    @NonNull
-    public Long queryId;
-    @NonNull
-    public String threadId;
+    @NonNull public Long queryId;
+    @NonNull public String threadId;
 
-    @NonNull
-    public Type type;
+    @NonNull public Type type;
 
     public boolean executed = false;
 
-
-    public QueryItemOverwriteEntity(@NonNull Long queryId, @NonNull String threadId, @NonNull Type type) {
+    public QueryItemOverwriteEntity(
+            @NonNull Long queryId, @NonNull String threadId, @NonNull Type type) {
         this.queryId = queryId;
         this.threadId = threadId;
         this.type = type;
     }
 
-    //TODO add one for IMPORTANT because that can be toggled individual as well
+    // TODO add one for IMPORTANT because that can be toggled individual as well
     public enum Type {
         KEYWORD,
         MAILBOX,

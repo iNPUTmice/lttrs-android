@@ -16,31 +16,26 @@
 package rs.ltt.android.worker;
 
 import android.content.Context;
-
 import androidx.annotation.NonNull;
 import androidx.work.WorkerParameters;
-
 import com.google.common.util.concurrent.ListenableFuture;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rs.ltt.android.entity.EmailWithMailboxes;
 
 public class ArchiveWorker extends AbstractMailboxModificationWorker {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ArchiveWorker.class);
 
-
     public ArchiveWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
     }
 
     @Override
-    protected ListenableFuture<Boolean> modify(List<EmailWithMailboxes> emails) throws ExecutionException {
+    protected ListenableFuture<Boolean> modify(List<EmailWithMailboxes> emails)
+            throws ExecutionException {
         LOGGER.info("Modifying {} emails in thread {}", emails.size(), threadId);
         return getMua().archive(emails);
     }

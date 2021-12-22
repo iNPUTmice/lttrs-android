@@ -15,14 +15,12 @@
 
 package rs.ltt.android.ui.fragment;
 
-
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.appcompat.view.ActionMode;
@@ -34,20 +32,16 @@ import androidx.lifecycle.OnLifecycleEvent;
 import androidx.paging.PagedList;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.google.android.material.color.MaterialColors;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Collection;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rs.ltt.android.LttrsNavigationDirections;
 import rs.ltt.android.R;
 import rs.ltt.android.databinding.FragmentThreadListBinding;
@@ -58,6 +52,7 @@ import rs.ltt.android.ui.EmptyMailboxAction;
 import rs.ltt.android.ui.ExtendedFabSizeChanger;
 import rs.ltt.android.ui.ItemAnimators;
 import rs.ltt.android.ui.QueryItemTouchHelper;
+import rs.ltt.android.ui.RecyclerViews;
 import rs.ltt.android.ui.SelectionTracker;
 import rs.ltt.android.ui.Translations;
 import rs.ltt.android.ui.activity.ComposeActivity;
@@ -66,12 +61,16 @@ import rs.ltt.android.ui.adapter.OnFlaggedToggled;
 import rs.ltt.android.ui.adapter.OnSelectionToggled;
 import rs.ltt.android.ui.adapter.ThreadOverviewAdapter;
 import rs.ltt.android.ui.model.AbstractQueryViewModel;
-import rs.ltt.android.ui.RecyclerViews;
 import rs.ltt.jmap.mua.util.LabelWithCount;
 
-
-public abstract class AbstractQueryFragment extends AbstractLttrsFragment implements OnFlaggedToggled,
-        ThreadOverviewAdapter.OnThreadClicked, QueryItemTouchHelper.OnQueryItemSwipe, ActionMode.Callback, LifecycleObserver, OnSelectionToggled, ThreadOverviewAdapter.OnEmptyMailboxActionClicked {
+public abstract class AbstractQueryFragment extends AbstractLttrsFragment
+        implements OnFlaggedToggled,
+                ThreadOverviewAdapter.OnThreadClicked,
+                QueryItemTouchHelper.OnQueryItemSwipe,
+                ActionMode.Callback,
+                LifecycleObserver,
+                OnSelectionToggled,
+                ThreadOverviewAdapter.OnEmptyMailboxActionClicked {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractQueryFragment.class);
     protected FragmentThreadListBinding binding;
@@ -84,14 +83,17 @@ public abstract class AbstractQueryFragment extends AbstractLttrsFragment implem
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.composeLauncher = registerForActivityResult(new ComposeContract(), this::onComposeResult);
+        this.composeLauncher =
+                registerForActivityResult(new ComposeContract(), this::onComposeResult);
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(
+            @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         final AbstractQueryViewModel viewModel = getQueryViewModel();
-        this.binding = DataBindingUtil.inflate(inflater, R.layout.fragment_thread_list, container, false);
+        this.binding =
+                DataBindingUtil.inflate(inflater, R.layout.fragment_thread_list, container, false);
 
         setupAdapter(viewModel);
         setupSelectionTracker(getQueryViewModel().getSelectedThreads());
@@ -99,7 +101,8 @@ public abstract class AbstractQueryFragment extends AbstractLttrsFragment implem
 
         binding.setViewModel(viewModel);
         binding.setLifecycleOwner(getViewLifecycleOwner());
-        binding.compose.setOnClickListener((v) -> composeLauncher.launch(ComposeActivity.compose()));
+        binding.compose.setOnClickListener(
+                (v) -> composeLauncher.launch(ComposeActivity.compose()));
         if (showComposeButton() && actionMode == null) {
             binding.compose.show();
         }
@@ -108,16 +111,19 @@ public abstract class AbstractQueryFragment extends AbstractLttrsFragment implem
 
         getViewLifecycleOwner().getLifecycle().addObserver(this);
 
-        binding.swipeToRefresh.setColorSchemeColors(MaterialColors.getColor(binding.swipeToRefresh, R.attr.colorAccent));
+        binding.swipeToRefresh.setColorSchemeColors(
+                MaterialColors.getColor(binding.swipeToRefresh, R.attr.colorAccent));
         binding.swipeToRefresh.setProgressBackgroundColorSchemeColor(
-                MaterialColors.getColor(binding.swipeToRefresh, R.attr.colorSurface)
-        );
-
+                MaterialColors.getColor(binding.swipeToRefresh, R.attr.colorSurface));
 
         ItemAnimators.disableChangeAnimation(binding.threadList.getItemAnimator());
 
-        viewModel.isRunningPagingRequest().observe(getViewLifecycleOwner(), threadOverviewAdapter::setLoading);
-        viewModel.getEmptyMailboxAction().observe(getViewLifecycleOwner(), this::setEmptyMailboxAction);
+        viewModel
+                .isRunningPagingRequest()
+                .observe(getViewLifecycleOwner(), threadOverviewAdapter::setLoading);
+        viewModel
+                .getEmptyMailboxAction()
+                .observe(getViewLifecycleOwner(), this::setEmptyMailboxAction);
 
         this.itemTouchHelper = new ItemTouchHelper(new QueryItemTouchHelper(this));
         this.itemTouchHelper.attachToRecyclerView(binding.threadList);
@@ -126,7 +132,7 @@ public abstract class AbstractQueryFragment extends AbstractLttrsFragment implem
     }
 
     private void setEmptyMailboxAction(final EmptyMailboxAction emptyMailboxAction) {
-        //TODO if != null we might need to scroll to top
+        // TODO if != null we might need to scroll to top
         threadOverviewAdapter.setEmptyMailboxAction(emptyMailboxAction);
     }
 
@@ -151,43 +157,44 @@ public abstract class AbstractQueryFragment extends AbstractLttrsFragment implem
     }
 
     private void setupSelectionTracker(final Set<String> dataSource) {
-        this.tracker = new SelectionTracker(
-                dataSource,
-                threadOverviewAdapter,
-                this::toggleActionMode
-        );
+        this.tracker =
+                new SelectionTracker(dataSource, threadOverviewAdapter, this::toggleActionMode);
         if (this.tracker.hasSelection()) {
             toggleActionMode();
         }
     }
 
-
-    private void observeThreadOverviewItems(final LiveData<PagedList<ThreadOverviewItem>> liveData) {
+    private void observeThreadOverviewItems(
+            final LiveData<PagedList<ThreadOverviewItem>> liveData) {
         final AtomicBoolean actionModeRefreshed = new AtomicBoolean(false);
-        liveData.observe(getViewLifecycleOwner(), threadOverviewItems -> {
-            final boolean atTop = RecyclerViews.scrolledToTop(binding.threadList);
-            configureItemAnimator();
-            threadOverviewAdapter.submitList(threadOverviewItems, () -> {
-                if (atTop && binding != null) {
-                    binding.threadList.scrollToPosition(0);
-                }
-                if (actionMode != null && actionModeRefreshed.compareAndSet(false, true)) {
-                    actionMode.invalidate();
-                }
-            });
-        });
+        liveData.observe(
+                getViewLifecycleOwner(),
+                threadOverviewItems -> {
+                    final boolean atTop = RecyclerViews.scrolledToTop(binding.threadList);
+                    configureItemAnimator();
+                    threadOverviewAdapter.submitList(
+                            threadOverviewItems,
+                            () -> {
+                                if (atTop && binding != null) {
+                                    binding.threadList.scrollToPosition(0);
+                                }
+                                if (actionMode != null
+                                        && actionModeRefreshed.compareAndSet(false, true)) {
+                                    actionMode.invalidate();
+                                }
+                            });
+                });
     }
 
     /**
      * The RecyclerView displays a spinning wheel while waiting for the initial load from database.
-     * However we don’t want to animate the change from one item with spinning wheel to multiple real
-     * items (Threads). Therefor we disable the animator during the first submission and re-add it later
+     * However we don’t want to animate the change from one item with spinning wheel to multiple
+     * real items (Threads). Therefor we disable the animator during the first submission and re-add
+     * it later
      */
     private void configureItemAnimator() {
         ItemAnimators.configureItemAnimator(
-                this.binding.threadList,
-                this.threadOverviewAdapter.isInitialLoad()
-        );
+                this.binding.threadList, this.threadOverviewAdapter.isInitialLoad());
     }
 
     @Override
@@ -220,7 +227,8 @@ public abstract class AbstractQueryFragment extends AbstractLttrsFragment implem
 
     void onLabelOpened(final LabelWithCount label) {
         getLttrsViewModel().setSelectedLabel(label);
-        getLttrsViewModel().setActivityTitle(Translations.asHumanReadableName(requireContext(), label));
+        getLttrsViewModel()
+                .setActivityTitle(Translations.asHumanReadableName(requireContext(), label));
     }
 
     @Override
@@ -241,7 +249,6 @@ public abstract class AbstractQueryFragment extends AbstractLttrsFragment implem
     public void startPushService() {
         EventMonitorService.watchQuery(requireContext(), getQueryViewModel().getQueryInfo());
         LOGGER.warn("startPushService({})", getClass().getSimpleName());
-
     }
 
     protected void archive(ThreadOverviewItem item) {
@@ -256,12 +263,13 @@ public abstract class AbstractQueryFragment extends AbstractLttrsFragment implem
 
     @Override
     public void onThreadClicked(ThreadOverviewItem threadOverviewItem, boolean important) {
-        getNavController().navigate(LttrsNavigationDirections.actionToThread(
-                threadOverviewItem.threadId,
-                null,
-                threadOverviewItem.getSubject(),
-                important
-        ));
+        getNavController()
+                .navigate(
+                        LttrsNavigationDirections.actionToThread(
+                                threadOverviewItem.threadId,
+                                null,
+                                threadOverviewItem.getSubject(),
+                                important));
     }
 
     @Override
@@ -276,18 +284,19 @@ public abstract class AbstractQueryFragment extends AbstractLttrsFragment implem
 
     @Override
     public void onEmptyMailboxActionClicked(final EmptyMailboxAction action) {
-        final String message = requireActivity().getResources().getQuantityString(
-                R.plurals.x_emails_will_permanently_deleted,
-                action.getItemCount(),
-                action.getItemCount()
-        );
+        final String message =
+                requireActivity()
+                        .getResources()
+                        .getQuantityString(
+                                R.plurals.x_emails_will_permanently_deleted,
+                                action.getItemCount(),
+                                action.getItemCount());
         new MaterialAlertDialogBuilder(requireActivity())
                 .setTitle(R.string.empty_trash_dialog_title)
                 .setMessage(message)
                 .setPositiveButton(
                         R.string.empty,
-                        (dialog, which) -> getThreadModifier().executeEmptyMailboxAction(action)
-                )
+                        (dialog, which) -> getThreadModifier().executeEmptyMailboxAction(action))
                 .setNegativeButton(R.string.cancel, null)
                 .show();
     }
@@ -308,8 +317,8 @@ public abstract class AbstractQueryFragment extends AbstractLttrsFragment implem
             tracker.deselect(item.threadId);
         } else {
             LOGGER.debug("Reset swipe because we do not expect QueryItem to be removed");
-            //Those two instructions seem to be the only combination that resets the swiped state
-            //ItemTouchHelper usually assumes that the items gets removed
+            // Those two instructions seem to be the only combination that resets the swiped state
+            // ItemTouchHelper usually assumes that the items gets removed
             threadOverviewAdapter.notifyItemChanged(position);
             itemTouchHelper.startSwipe(viewHolder);
         }
@@ -333,10 +342,9 @@ public abstract class AbstractQueryFragment extends AbstractLttrsFragment implem
         LOGGER.debug("prepare action mode for {} selected items", tracker.getSelection().size());
         final ActionModeMenuConfiguration.QueryType queryType = getQueryType();
         getQueryViewModel().getThreadOverviewItems().getValue();
-        final ActionModeMenuConfiguration.SelectionInfo selectionInfo = ActionModeMenuConfiguration.SelectionInfo.vote(
-                tracker.getSelection(),
-                threadOverviewAdapter
-        );
+        final ActionModeMenuConfiguration.SelectionInfo selectionInfo =
+                ActionModeMenuConfiguration.SelectionInfo.vote(
+                        tracker.getSelection(), threadOverviewAdapter);
         final MenuItem archive = menu.findItem(R.id.action_archive);
         final MenuItem removeLabel = menu.findItem(R.id.action_remove_label);
         final MenuItem moveToTrash = menu.findItem(R.id.action_move_to_trash);
@@ -368,10 +376,18 @@ public abstract class AbstractQueryFragment extends AbstractLttrsFragment implem
         }
         markRead.setVisible(!selectionInfo.read);
         markUnRead.setVisible(selectionInfo.read);
-        markImportant.setVisible(queryType != ActionModeMenuConfiguration.QueryType.IMPORTANT && !selectionInfo.important);
-        markNotImportant.setVisible(queryType != ActionModeMenuConfiguration.QueryType.IMPORTANT && selectionInfo.important);
-        addFlag.setVisible(queryType != ActionModeMenuConfiguration.QueryType.FLAGGED && !selectionInfo.flagged);
-        removeFlag.setVisible(queryType != ActionModeMenuConfiguration.QueryType.FLAGGED && selectionInfo.flagged);
+        markImportant.setVisible(
+                queryType != ActionModeMenuConfiguration.QueryType.IMPORTANT
+                        && !selectionInfo.important);
+        markNotImportant.setVisible(
+                queryType != ActionModeMenuConfiguration.QueryType.IMPORTANT
+                        && selectionInfo.important);
+        addFlag.setVisible(
+                queryType != ActionModeMenuConfiguration.QueryType.FLAGGED
+                        && !selectionInfo.flagged);
+        removeFlag.setVisible(
+                queryType != ActionModeMenuConfiguration.QueryType.FLAGGED
+                        && selectionInfo.flagged);
         return true;
     }
 
@@ -390,9 +406,10 @@ public abstract class AbstractQueryFragment extends AbstractLttrsFragment implem
         } else if (itemId == R.id.action_mark_unread) {
             getThreadModifier().markUnread(threadIds);
         } else if (itemId == R.id.action_change_labels) {
-            getNavController().navigate(LttrsNavigationDirections.actionChangeLabels(
-                    threadIds.toArray(new String[0])
-            ));
+            getNavController()
+                    .navigate(
+                            LttrsNavigationDirections.actionChangeLabels(
+                                    threadIds.toArray(new String[0])));
         } else if (itemId == R.id.action_move_to_inbox) {
             getThreadModifier().moveToInbox(threadIds);
             tracker.clearSelection();

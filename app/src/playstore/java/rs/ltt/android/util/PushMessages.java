@@ -3,9 +3,7 @@ package rs.ltt.android.util;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.primitives.Longs;
-
 import java.util.Map;
-
 import rs.ltt.jmap.common.entity.AbstractIdentifiableEntity;
 import rs.ltt.jmap.common.entity.PushMessage;
 import rs.ltt.jmap.common.entity.PushVerification;
@@ -20,9 +18,7 @@ public final class PushMessages {
     private static final String DATA_KEY_VERIFICATION_CODE = "verificationCode";
     private static final String DATA_KEY_SUBSCRIPTION_ID = "subscriptionId";
 
-    private PushMessages() {
-
-    }
+    private PushMessages() {}
 
     public static PushMessage of(final Map<String, String> data) {
         final String type = data.get(DATA_KEY_TYPE);
@@ -35,8 +31,9 @@ public final class PushMessages {
                     .build();
         } else if ("StateChange".equals(type)) {
             final String account = data.get(DATA_KEY_ACCOUNT);
-            final ImmutableMap.Builder<Class<? extends AbstractIdentifiableEntity>, String> stateBuilder = ImmutableMap.builder();
-            for(final Map.Entry<String,String> entry : data.entrySet()) {
+            final ImmutableMap.Builder<Class<? extends AbstractIdentifiableEntity>, String>
+                    stateBuilder = ImmutableMap.builder();
+            for (final Map.Entry<String, String> entry : data.entrySet()) {
                 final String key = entry.getKey();
                 final String value = entry.getValue();
                 if (key.equals(DATA_KEY_ACCOUNT) || key.equals(DATA_KEY_CID)) {
@@ -47,12 +44,11 @@ public final class PushMessages {
                     stateBuilder.put(clazz, value);
                 }
             }
-            return StateChange.builder()
-                    .changed(account, stateBuilder.build())
-                    .build();
+            return StateChange.builder().changed(account, stateBuilder.build()).build();
 
         } else {
-            throw new IllegalArgumentException(String.format("%s is not a valid type", Strings.nullToEmpty(type)));
+            throw new IllegalArgumentException(
+                    String.format("%s is not a valid type", Strings.nullToEmpty(type)));
         }
     }
 

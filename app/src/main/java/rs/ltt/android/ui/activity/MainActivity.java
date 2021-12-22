@@ -17,13 +17,10 @@ package rs.ltt.android.ui.activity;
 
 import android.os.Bundle;
 import android.os.SystemClock;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import rs.ltt.android.LttrsApplication;
 
 public class MainActivity extends AppCompatActivity {

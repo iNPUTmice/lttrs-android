@@ -11,10 +11,7 @@ public interface IdentifiableWithOwner {
         throw new OwnerMismatchException(
                 String.format(
                         "%s and %s do not belong to the same account",
-                        a.getClass().getSimpleName(),
-                        b.getClass().getSimpleName()
-                )
-        );
+                        a.getClass().getSimpleName(), b.getClass().getSimpleName()));
     }
 
     String getId();

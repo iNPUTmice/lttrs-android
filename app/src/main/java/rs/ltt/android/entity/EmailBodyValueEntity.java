@@ -18,30 +18,26 @@ package rs.ltt.android.entity;
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
-
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
-
 import java.util.List;
 import java.util.Map;
-
 import rs.ltt.jmap.common.entity.Email;
 import rs.ltt.jmap.common.entity.EmailBodyValue;
 
-@Entity(tableName = "email_body_value",
+@Entity(
+        tableName = "email_body_value",
         primaryKeys = {"emailId", "partId"},
-        foreignKeys = @ForeignKey(entity = EmailEntity.class,
-                parentColumns = {"id"},
-                childColumns = {"emailId"},
-                onDelete = ForeignKey.CASCADE
-        )
-)
+        foreignKeys =
+                @ForeignKey(
+                        entity = EmailEntity.class,
+                        parentColumns = {"id"},
+                        childColumns = {"emailId"},
+                        onDelete = ForeignKey.CASCADE))
 public class EmailBodyValueEntity {
 
-    @NonNull
-    public String emailId;
-    @NonNull
-    public String partId;
+    @NonNull public String emailId;
+    @NonNull public String partId;
 
     public String value;
     public Boolean isEncodingProblem;
@@ -51,12 +47,12 @@ public class EmailBodyValueEntity {
         ImmutableList.Builder<EmailBodyValueEntity> builder = new ImmutableList.Builder<>();
         for (Map.Entry<String, EmailBodyValue> bodyValue : email.getBodyValues().entrySet()) {
             builder.add(of(email.getId(), bodyValue.getKey(), bodyValue.getValue()));
-
         }
         return builder.build();
     }
 
-    private static EmailBodyValueEntity of(String emailId, String partId, EmailBodyValue emailBodyValue) {
+    private static EmailBodyValueEntity of(
+            String emailId, String partId, EmailBodyValue emailBodyValue) {
         final EmailBodyValueEntity entity = new EmailBodyValueEntity();
         entity.emailId = emailId;
         entity.partId = partId;
@@ -71,11 +67,11 @@ public class EmailBodyValueEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         EmailBodyValueEntity that = (EmailBodyValueEntity) o;
-        return Objects.equal(emailId, that.emailId) &&
-                Objects.equal(partId, that.partId) &&
-                Objects.equal(value, that.value) &&
-                Objects.equal(isEncodingProblem, that.isEncodingProblem) &&
-                Objects.equal(isTruncated, that.isTruncated);
+        return Objects.equal(emailId, that.emailId)
+                && Objects.equal(partId, that.partId)
+                && Objects.equal(value, that.value)
+                && Objects.equal(isEncodingProblem, that.isEncodingProblem)
+                && Objects.equal(isTruncated, that.isTruncated);
     }
 
     @Override

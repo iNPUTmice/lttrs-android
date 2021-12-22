@@ -16,9 +16,7 @@
 package rs.ltt.android.entity;
 
 import androidx.annotation.NonNull;
-
 import com.google.common.base.Objects;
-
 import rs.ltt.jmap.common.entity.Role;
 import rs.ltt.jmap.mua.util.LabelWithCount;
 
@@ -37,13 +35,13 @@ public class MailboxOverviewItem extends MailboxWithRoleAndName implements Label
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MailboxOverviewItem that = (MailboxOverviewItem) o;
-        return Objects.equal(id, that.id) &&
-                Objects.equal(parentId, that.parentId) &&
-                Objects.equal(name, that.name) &&
-                role == that.role &&
-                Objects.equal(sortOrder, that.sortOrder) &&
-                Objects.equal(totalEmails, that.totalEmails) &&
-                Objects.equal(unreadThreads, that.unreadThreads);
+        return Objects.equal(id, that.id)
+                && Objects.equal(parentId, that.parentId)
+                && Objects.equal(name, that.name)
+                && role == that.role
+                && Objects.equal(sortOrder, that.sortOrder)
+                && Objects.equal(totalEmails, that.totalEmails)
+                && Objects.equal(unreadThreads, that.unreadThreads);
     }
 
     @Override

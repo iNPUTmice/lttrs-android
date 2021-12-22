@@ -19,5 +19,4 @@ public class ExpandedPosition {
 
     public int position;
     public String emailId;
-
 }

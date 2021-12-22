@@ -18,9 +18,7 @@ package rs.ltt.android.ui.widget;
 import android.content.Context;
 import android.text.Editable;
 import android.util.AttributeSet;
-
 import androidx.appcompat.widget.AppCompatEditText;
-
 import rs.ltt.android.ui.ChipDrawableSpan;
 
 public class EmailAddressEditText extends AppCompatEditText {
@@ -40,7 +38,8 @@ public class EmailAddressEditText extends AppCompatEditText {
     protected void onSelectionChanged(final int start, final int end) {
         super.onSelectionChanged(start, end);
         final Editable editable = getEditableText();
-        final ChipDrawableSpan[] spans = editable.getSpans(0, editable.length(), ChipDrawableSpan.class);
+        final ChipDrawableSpan[] spans =
+                editable.getSpans(0, editable.length(), ChipDrawableSpan.class);
         int beginEditableArea = 0;
         for (ChipDrawableSpan span : spans) {
             beginEditableArea = editable.getSpanEnd(span);

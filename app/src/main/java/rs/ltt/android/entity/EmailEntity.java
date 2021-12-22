@@ -18,19 +18,14 @@ package rs.ltt.android.entity;
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
-
 import java.time.Instant;
 import java.time.OffsetDateTime;
-
 import rs.ltt.jmap.common.entity.Email;
 
 @Entity(tableName = "email")
 public class EmailEntity {
 
-
-    @NonNull
-    @PrimaryKey
-    public String id;
+    @NonNull @PrimaryKey public String id;
 
     public String blobId;
 
@@ -61,5 +56,4 @@ public class EmailEntity {
         entity.preview = email.getPreview();
         return entity;
     }
-
 }

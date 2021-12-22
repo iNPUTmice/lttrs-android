@@ -23,20 +23,17 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
-
 import com.google.common.base.Strings;
-
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import rs.ltt.android.R;
 import rs.ltt.android.entity.From;
 import rs.ltt.android.util.ConsistentColorGeneration;
 
 public class AvatarDrawable extends ColorDrawable {
 
-    //pattern from @cketti (K-9 Mail)
+    // pattern from @cketti (K-9 Mail)
     private static final Pattern LETTER_PATTERN = Pattern.compile("\\p{L}\\p{M}*");
 
     private final Paint paint;
@@ -59,11 +56,11 @@ public class AvatarDrawable extends ColorDrawable {
         this.textPaint = getTextPaint();
         final Matcher matcher = LETTER_PATTERN.matcher(Strings.nullToEmpty(name));
         this.letter = matcher.find() ? matcher.group().toUpperCase(Locale.ROOT) : null;
-        final int avatarDrawableSize = context.getResources().getDimensionPixelSize(R.dimen.avatar_drawable_size);
+        final int avatarDrawableSize =
+                context.getResources().getDimensionPixelSize(R.dimen.avatar_drawable_size);
         this.intrinsicHeight = avatarDrawableSize;
         this.intrinsicWidth = avatarDrawableSize;
     }
-
 
     private Paint getPaint(final String key) {
         final Paint paint = new Paint();
@@ -113,9 +110,9 @@ public class AvatarDrawable extends ColorDrawable {
     }
 
     public Bitmap toBitmap() {
-        final Bitmap bitmap = Bitmap.createBitmap(
-                getIntrinsicWidth(), getIntrinsicHeight(), Bitmap.Config.ARGB_8888
-        );
+        final Bitmap bitmap =
+                Bitmap.createBitmap(
+                        getIntrinsicWidth(), getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
         final Canvas canvas = new Canvas(bitmap);
         this.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
         this.draw(canvas);

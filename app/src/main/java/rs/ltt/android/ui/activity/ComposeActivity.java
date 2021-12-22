@@ -25,7 +25,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -34,16 +33,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
-
 import com.google.common.base.Preconditions;
 import com.google.common.net.MediaType;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.List;
 import java.util.UUID;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rs.ltt.android.LttrsApplication;
 import rs.ltt.android.R;
 import rs.ltt.android.databinding.ActivityComposeBinding;
@@ -58,7 +53,7 @@ import rs.ltt.android.util.MediaTypes;
 import rs.ltt.jmap.common.entity.Attachment;
 import rs.ltt.jmap.mua.util.MailToUri;
 
-//TODO handle save instance state
+// TODO handle save instance state
 public class ComposeActivity extends AppCompatActivity {
 
     public static final String EDITING_TASK_ID_EXTRA = "work_request_id";
@@ -83,9 +78,8 @@ public class ComposeActivity extends AppCompatActivity {
         return launch(account, emailId, ComposeAction.REPLY_ALL);
     }
 
-    public static Bundle launch(final Long account,
-                                final String emailId,
-                                final ComposeAction action) {
+    public static Bundle launch(
+            final Long account, final String emailId, final ComposeAction action) {
         Preconditions.checkNotNull(action);
         final Bundle extras = new Bundle();
         if (account != null) {
@@ -115,7 +109,8 @@ public class ComposeActivity extends AppCompatActivity {
         try {
             return MailToUri.get(data.toString());
         } catch (final IllegalArgumentException e) {
-            LOGGER.warn("activity was called with invalid URI {}. {}", data.toString(), e.getMessage());
+            LOGGER.warn(
+                    "activity was called with invalid URI {}. {}", data.toString(), e.getMessage());
             return null;
         }
     }
@@ -130,22 +125,19 @@ public class ComposeActivity extends AppCompatActivity {
             return;
         }
 
-        this.getAttachmentLauncher = registerForActivityResult(
-                new ActivityResultContracts.GetContent(),
-                this::addAttachment
-        );
+        this.getAttachmentLauncher =
+                registerForActivityResult(
+                        new ActivityResultContracts.GetContent(), this::addAttachment);
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_compose);
 
         setupActionBar();
 
-        final ViewModelProvider viewModelProvider = new ViewModelProvider(
-                this,
-                new ComposeViewModel.Factory(
-                        getApplication(),
-                        getViewModelParameter(savedInstanceState)
-                )
-        );
+        final ViewModelProvider viewModelProvider =
+                new ViewModelProvider(
+                        this,
+                        new ComposeViewModel.Factory(
+                                getApplication(), getViewModelParameter(savedInstanceState)));
         composeViewModel = viewModelProvider.get(ComposeViewModel.class);
 
         composeViewModel.getErrorMessage().observe(this, this::onErrorMessage);
@@ -158,13 +150,13 @@ public class ComposeActivity extends AppCompatActivity {
 
         binding.to.addTextChangedListener(new ChipTextWatcher(binding.to));
         binding.to.setOnFocusChangeListener(
-                (v, hasFocus) -> ChipDrawableSpan.apply(this, binding.to.getEditableText(), hasFocus)
-        );
+                (v, hasFocus) ->
+                        ChipDrawableSpan.apply(this, binding.to.getEditableText(), hasFocus));
 
         binding.cc.addTextChangedListener(new ChipTextWatcher(binding.cc));
         binding.cc.setOnFocusChangeListener(
-                (v, hasFocus) -> ChipDrawableSpan.apply(this, binding.cc.getEditableText(), hasFocus)
-        );
+                (v, hasFocus) ->
+                        ChipDrawableSpan.apply(this, binding.cc.getEditableText(), hasFocus));
 
         binding.moreAddresses.setOnClickListener((v -> composeViewModel.showExtendedAddresses()));
 
@@ -175,7 +167,8 @@ public class ComposeActivity extends AppCompatActivity {
         binding.ccLabel.setOnClickListener(v -> requestFocusAndOpenKeyboard(binding.cc));
         binding.placeholder.setOnClickListener(v -> requestFocusAndOpenKeyboard(binding.body));
 
-        //TODO once we handle instance state ourselves we need to call ChipDrawableSpan.reset() on `to`
+        // TODO once we handle instance state ourselves we need to call ChipDrawableSpan.reset() on
+        // `to`
     }
 
     private void onErrorMessage(final Event<String> event) {
@@ -201,16 +194,13 @@ public class ComposeActivity extends AppCompatActivity {
     }
 
     private View renderAttachment(final Attachment attachment) {
-        final ItemAttachmentBinding attachmentBinding = ItemAttachmentBinding.inflate(
-                getLayoutInflater(),
-                binding.attachments,
-                false
-        );
+        final ItemAttachmentBinding attachmentBinding =
+                ItemAttachmentBinding.inflate(getLayoutInflater(), binding.attachments, false);
         attachmentBinding.setAttachment(attachment);
         attachmentBinding.action.setImageResource(R.drawable.ic_baseline_close_24);
         attachmentBinding.action.setOnClickListener((v) -> deleteAttachment(attachment));
         attachmentBinding.getRoot().setOnClickListener((v -> composeViewModel.open(attachment)));
-        //TODO wire up 'open/view'
+        // TODO wire up 'open/view'
         return attachmentBinding.getRoot();
     }
 
@@ -250,7 +240,8 @@ public class ComposeActivity extends AppCompatActivity {
         } else {
             account = null;
         }
-        final ComposeAction action = ComposeAction.of(i == null ? null : i.getStringExtra(COMPOSE_ACTION_EXTRA));
+        final ComposeAction action =
+                ComposeAction.of(i == null ? null : i.getStringExtra(COMPOSE_ACTION_EXTRA));
         final String emailId = i == null ? null : i.getStringExtra(EMAIL_ID_EXTRA);
         return new ComposeViewModel.Parameter(account, freshStart, action, emailId);
     }
@@ -349,8 +340,7 @@ public class ComposeActivity extends AppCompatActivity {
         actionbar.setDisplayHomeAsUpEnabled(displayUpButton);
     }
 
-    private @NonNull
-    ActionBar requireActionBar() {
+    private @NonNull ActionBar requireActionBar() {
         final ActionBar actionBar = getSupportActionBar();
         if (actionBar == null) {
             throw new IllegalStateException("No ActionBar found");
@@ -367,14 +357,10 @@ public class ComposeActivity extends AppCompatActivity {
         }
 
         @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-        }
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
         @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-        }
+        public void onTextChanged(CharSequence s, int start, int before, int count) {}
 
         @Override
         public void afterTextChanged(Editable editable) {

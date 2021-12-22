@@ -16,21 +16,16 @@
 package rs.ltt.android.repository;
 
 import android.app.Application;
-
 import androidx.work.Constraints;
 import androidx.work.NetworkType;
-
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.util.concurrent.ListenableFuture;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Collection;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rs.ltt.android.database.AppDatabase;
 import rs.ltt.android.database.LttrsDatabase;
 import rs.ltt.android.entity.AccountWithCredentials;
@@ -46,9 +41,8 @@ import rs.ltt.jmap.mua.util.StandardQueries;
 public abstract class AbstractRepository {
 
     static final Executor IO_EXECUTOR = Executors.newSingleThreadExecutor();
-    static final Constraints CONNECTED_CONSTRAINT = new Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .build();
+    static final Constraints CONNECTED_CONSTRAINT =
+            new Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build();
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRepository.class);
     protected final Application application;
     protected final long accountId;
@@ -84,24 +78,28 @@ public abstract class AbstractRepository {
         }
     }
 
-    protected void insertQueryItemOverwrite(final Collection<String> threadIds, final IdentifiableMailboxWithRole mailbox) {
+    protected void insertQueryItemOverwrite(
+            final Collection<String> threadIds, final IdentifiableMailboxWithRole mailbox) {
         insertQueryItemOverwrite(
-                threadIds,
-                StandardQueries.mailbox(mailbox),
-                QueryItemOverwriteEntity.Type.MAILBOX
-        );
+                threadIds, StandardQueries.mailbox(mailbox), QueryItemOverwriteEntity.Type.MAILBOX);
     }
 
-    protected void insertSearchQueryItemOverwrite(final Collection<String> threadIds, final String searchTerm) {
-        final EmailQuery search = StandardQueries.search(searchTerm, database.mailboxDao().getMailboxes(Role.TRASH, Role.JUNK));
+    protected void insertSearchQueryItemOverwrite(
+            final Collection<String> threadIds, final String searchTerm) {
+        final EmailQuery search =
+                StandardQueries.search(
+                        searchTerm, database.mailboxDao().getMailboxes(Role.TRASH, Role.JUNK));
         final QueryEntity queryEntity = database.queryDao().get(search.asHash());
         if (queryEntity != null) {
-            database.overwriteDao().insertQueryOverwrites(
-                    Collections2.transform(
-                            threadIds,
-                            threadId -> new QueryItemOverwriteEntity(queryEntity.id, threadId, QueryItemOverwriteEntity.Type.SEARCH)
-                    )
-            );
+            database.overwriteDao()
+                    .insertQueryOverwrites(
+                            Collections2.transform(
+                                    threadIds,
+                                    threadId ->
+                                            new QueryItemOverwriteEntity(
+                                                    queryEntity.id,
+                                                    threadId,
+                                                    QueryItemOverwriteEntity.Type.SEARCH)));
         }
     }
 
@@ -109,25 +107,28 @@ public abstract class AbstractRepository {
         insertQueryItemOverwrite(ImmutableSet.of(threadId), keyword);
     }
 
-    protected void insertQueryItemOverwrite(final Collection<String> threadIds, final String keyword) {
+    protected void insertQueryItemOverwrite(
+            final Collection<String> threadIds, final String keyword) {
         insertQueryItemOverwrite(
                 threadIds,
-                StandardQueries.keyword(keyword, database.mailboxDao().getMailboxes(Role.TRASH, Role.JUNK)),
-                QueryItemOverwriteEntity.Type.KEYWORD
-        );
+                StandardQueries.keyword(
+                        keyword, database.mailboxDao().getMailboxes(Role.TRASH, Role.JUNK)),
+                QueryItemOverwriteEntity.Type.KEYWORD);
     }
 
-    protected void insertQueryItemOverwrite(final Collection<String> threadIds,
-                                            final EmailQuery emailQuery,
-                                            final QueryItemOverwriteEntity.Type type) {
+    protected void insertQueryItemOverwrite(
+            final Collection<String> threadIds,
+            final EmailQuery emailQuery,
+            final QueryItemOverwriteEntity.Type type) {
         final QueryEntity queryEntity = database.queryDao().get(emailQuery.asHash());
         if (queryEntity != null) {
-            database.overwriteDao().insertQueryOverwrites(
-                    Collections2.transform(
-                            threadIds,
-                            threadId -> new QueryItemOverwriteEntity(queryEntity.id, threadId, type)
-                    )
-            );
+            database.overwriteDao()
+                    .insertQueryOverwrites(
+                            Collections2.transform(
+                                    threadIds,
+                                    threadId ->
+                                            new QueryItemOverwriteEntity(
+                                                    queryEntity.id, threadId, type)));
         }
     }
 
@@ -138,29 +139,34 @@ public abstract class AbstractRepository {
         }
     }
 
-    protected void deleteQueryItemOverwrite(final Collection<String> threadIds, final IdentifiableMailboxWithRole mailbox) {
-        deleteQueryItemOverwrite(threadIds,
-                StandardQueries.mailbox(mailbox),
-                QueryItemOverwriteEntity.Type.MAILBOX
-        );
+    protected void deleteQueryItemOverwrite(
+            final Collection<String> threadIds, final IdentifiableMailboxWithRole mailbox) {
+        deleteQueryItemOverwrite(
+                threadIds, StandardQueries.mailbox(mailbox), QueryItemOverwriteEntity.Type.MAILBOX);
     }
 
-    protected void deleteQueryItemOverwrite(final Collection<String> threadIds, final String keyword) {
-        deleteQueryItemOverwrite(threadIds,
-                StandardQueries.keyword(keyword, database.mailboxDao().getMailboxes(Role.TRASH, Role.JUNK)),
-                QueryItemOverwriteEntity.Type.KEYWORD
-        );
+    protected void deleteQueryItemOverwrite(
+            final Collection<String> threadIds, final String keyword) {
+        deleteQueryItemOverwrite(
+                threadIds,
+                StandardQueries.keyword(
+                        keyword, database.mailboxDao().getMailboxes(Role.TRASH, Role.JUNK)),
+                QueryItemOverwriteEntity.Type.KEYWORD);
     }
 
-    private void deleteQueryItemOverwrite(final Collection<String> threadIds, final EmailQuery emailQuery, QueryItemOverwriteEntity.Type type) {
+    private void deleteQueryItemOverwrite(
+            final Collection<String> threadIds,
+            final EmailQuery emailQuery,
+            QueryItemOverwriteEntity.Type type) {
         QueryEntity queryEntity = database.queryDao().get(emailQuery.asHash());
         if (queryEntity != null) {
-            database.overwriteDao().deleteQueryOverwrites(
-                    Collections2.transform(
-                            threadIds,
-                            threadId -> new QueryItemOverwriteEntity(queryEntity.id, threadId, type)
-                    )
-            );
+            database.overwriteDao()
+                    .deleteQueryOverwrites(
+                            Collections2.transform(
+                                    threadIds,
+                                    threadId ->
+                                            new QueryItemOverwriteEntity(
+                                                    queryEntity.id, threadId, type)));
         }
     }
 }

@@ -16,7 +16,6 @@
 package rs.ltt.android.ui.model;
 
 import android.app.Application;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.lifecycle.AndroidViewModel;
@@ -26,19 +25,15 @@ import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.work.WorkInfo;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.util.concurrent.ListenableFuture;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rs.ltt.android.LttrsApplication;
 import rs.ltt.android.entity.AccountName;
 import rs.ltt.android.repository.LttrsRepository;
@@ -72,27 +67,30 @@ public class LttrsViewModel extends AndroidViewModel {
         this.mainRepository = new MainRepository(application);
         this.accountId = accountId;
         this.lttrsRepository = new LttrsRepository(application, accountId);
-        final LiveData<List<Navigable>> labels = Transformations.map(
-                this.lttrsRepository.getMailboxes(),
-                boxes -> ImmutableList.copyOf(LabelUtil.fillUpAndSort(boxes))
-        );
-        final LiveData<List<Navigable>> accounts = Transformations.map(
-                this.mainRepository.getAccountNames(),
-                names -> {
-                    final ImmutableList.Builder<Navigable> builder = new ImmutableList.Builder<>();
-                    builder.addAll(names);
-                    builder.addAll(AdditionalNavigationItem.ACCOUNT_SELECTOR_ITEMS);
-                    return builder.build();
-                }
-        );
-        this.navigableItems = Transformations.switchMap(this.accountSelectionVisible, input -> {
-            if (Boolean.TRUE.equals(input)) {
-                return accounts;
-            } else {
-                return labels;
-            }
-        });
-
+        final LiveData<List<Navigable>> labels =
+                Transformations.map(
+                        this.lttrsRepository.getMailboxes(),
+                        boxes -> ImmutableList.copyOf(LabelUtil.fillUpAndSort(boxes)));
+        final LiveData<List<Navigable>> accounts =
+                Transformations.map(
+                        this.mainRepository.getAccountNames(),
+                        names -> {
+                            final ImmutableList.Builder<Navigable> builder =
+                                    new ImmutableList.Builder<>();
+                            builder.addAll(names);
+                            builder.addAll(AdditionalNavigationItem.ACCOUNT_SELECTOR_ITEMS);
+                            return builder.build();
+                        });
+        this.navigableItems =
+                Transformations.switchMap(
+                        this.accountSelectionVisible,
+                        input -> {
+                            if (Boolean.TRUE.equals(input)) {
+                                return accounts;
+                            } else {
+                                return labels;
+                            }
+                        });
     }
 
     public LiveData<Event<Failure>> getFailureEvent() {
@@ -156,7 +154,6 @@ public class LttrsViewModel extends AndroidViewModel {
         return this.navigableItems;
     }
 
-
     public void insertSearchSuggestion(String term) {
         this.mainRepository.insertSearchSuggestion(term);
     }
@@ -177,11 +174,13 @@ public class LttrsViewModel extends AndroidViewModel {
         this.lttrsRepository.moveToInbox(threadIds);
     }
 
-    public void removeFromMailbox(final Collection<String> threadIds, final IdentifiableMailboxWithRole mailbox) {
+    public void removeFromMailbox(
+            final Collection<String> threadIds, final IdentifiableMailboxWithRole mailbox) {
         this.lttrsRepository.removeFromMailbox(threadIds, mailbox);
     }
 
-    public void copyToMailbox(final Collection<String> threadIds, final IdentifiableMailboxWithRole mailbox) {
+    public void copyToMailbox(
+            final Collection<String> threadIds, final IdentifiableMailboxWithRole mailbox) {
         this.lttrsRepository.copyToMailbox(threadIds, mailbox);
     }
 
@@ -251,7 +250,8 @@ public class LttrsViewModel extends AndroidViewModel {
         @NonNull
         @Override
         public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-            return Objects.requireNonNull(modelClass.cast(new LttrsViewModel(application, accountId)));
+            return Objects.requireNonNull(
+                    modelClass.cast(new LttrsViewModel(application, accountId)));
         }
     }
 }

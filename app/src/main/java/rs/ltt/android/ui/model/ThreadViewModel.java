@@ -17,7 +17,6 @@ package rs.ltt.android.ui.model;
 
 import android.app.Application;
 import android.net.Uri;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
@@ -32,24 +31,20 @@ import androidx.work.ExistingWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
-
-import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
-
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rs.ltt.android.cache.BlobStorage;
 import rs.ltt.android.entity.EmailWithBodies;
 import rs.ltt.android.entity.ExpandedPosition;
@@ -78,7 +73,8 @@ public class ThreadViewModel extends AbstractAttachmentViewModel {
     private final String threadId;
     private final String label;
     private final MediatorLiveData<Event<String>> threadViewRedirect = new MediatorLiveData<>();
-    private final MediatorLiveData<SubjectWithImportance> subjectWithImportance = new MediatorLiveData<>();
+    private final MediatorLiveData<SubjectWithImportance> subjectWithImportance =
+            new MediatorLiveData<>();
     private final LiveData<PagedList<EmailWithBodies>> emails;
     private final LiveData<Boolean> flagged;
     private final LiveData<List<MailboxWithRoleAndName>> mailboxes;
@@ -87,84 +83,134 @@ public class ThreadViewModel extends AbstractAttachmentViewModel {
 
     private AttachmentReference attachmentReference = null;
 
-    ThreadViewModel(@NonNull final Application application,
-                    final long accountId,
-                    final String threadId,
-                    final String label) {
+    ThreadViewModel(
+            @NonNull final Application application,
+            final long accountId,
+            final String threadId,
+            final String label) {
         super(application);
         this.accountId = accountId;
         this.threadId = threadId;
         this.label = label;
-        final ThreadViewRepository threadViewRepository = new ThreadViewRepository(application, accountId);
+        final ThreadViewRepository threadViewRepository =
+                new ThreadViewRepository(application, accountId);
         final LiveData<ThreadHeader> header = threadViewRepository.getThreadHeader(threadId);
         this.emails = threadViewRepository.getEmails(threadId);
         this.mailboxes = threadViewRepository.getMailboxes(threadId);
         final ListenableFuture<Seen> seen = threadViewRepository.getSeen(threadId);
-        this.expandedPositions = Futures.transform(seen, Seen::getExpandedPositions, MoreExecutors.directExecutor());
-        Futures.addCallback(seen, new FutureCallback<Seen>() {
-            @Override
-            public void onSuccess(@Nullable Seen seen) {
-                if (seen != null) {
-                    seenEvent.postValue(new Event<>(seen));
-                }
-            }
+        this.expandedPositions =
+                Futures.transform(seen, Seen::getExpandedPositions, MoreExecutors.directExecutor());
+        Futures.addCallback(
+                seen,
+                new FutureCallback<Seen>() {
+                    @Override
+                    public void onSuccess(@Nullable Seen seen) {
+                        if (seen != null) {
+                            seenEvent.postValue(new Event<>(seen));
+                        }
+                    }
 
-            @Override
-            public void onFailure(@NotNull Throwable t) {
+                    @Override
+                    public void onFailure(@NotNull Throwable t) {}
+                },
+                MoreExecutors.directExecutor());
 
-            }
-        }, MoreExecutors.directExecutor());
+        final LiveData<List<MailboxOverwriteEntity>> overwriteEntityLiveData =
+                threadViewRepository.getMailboxOverwrites(threadId);
 
-        final LiveData<List<MailboxOverwriteEntity>> overwriteEntityLiveData = threadViewRepository.getMailboxOverwrites(threadId);
+        final CombinedListsLiveData<MailboxOverwriteEntity, MailboxWithRoleAndName> combined =
+                new CombinedListsLiveData<>(overwriteEntityLiveData, mailboxes);
 
-        final CombinedListsLiveData<MailboxOverwriteEntity, MailboxWithRoleAndName> combined = new CombinedListsLiveData<>(overwriteEntityLiveData, mailboxes);
+        this.labels =
+                Transformations.map(
+                        combined,
+                        pair ->
+                                combine(pair.first, pair.second).stream()
+                                        .filter(
+                                                m ->
+                                                        m.getRole() == null
+                                                                || m.getRole() == Role.INBOX)
+                                        .sorted(LabelUtil.COMPARATOR)
+                                        .collect(Collectors.toList()));
 
-        this.labels = Transformations.map(combined, pair -> combine(pair.first, pair.second).stream()
-                .filter(m -> m.getRole() == null || m.getRole() == Role.INBOX)
-                .sorted(LabelUtil.COMPARATOR)
-                .collect(Collectors.toList()));
+        this.menuConfiguration =
+                Transformations.map(
+                        combined,
+                        pair -> {
+                            List<MailboxOverwriteEntity> overwrites = pair.first;
+                            List<MailboxWithRoleAndName> list = pair.second;
+                            boolean wasPutInArchiveOverwrite =
+                                    MailboxOverwriteEntity.hasOverwrite(overwrites, Role.ARCHIVE);
+                            boolean wasPutInTrashOverwrite =
+                                    MailboxOverwriteEntity.hasOverwrite(overwrites, Role.TRASH);
+                            boolean wasPutInInboxOverwrite =
+                                    MailboxOverwriteEntity.hasOverwrite(overwrites, Role.INBOX);
+                            final MailboxOverwriteEntity importantOverwrite =
+                                    MailboxOverwriteEntity.find(overwrites, Role.IMPORTANT);
 
-        this.menuConfiguration = Transformations.map(combined, pair -> {
-            List<MailboxOverwriteEntity> overwrites = pair.first;
-            List<MailboxWithRoleAndName> list = pair.second;
-            boolean wasPutInArchiveOverwrite = MailboxOverwriteEntity.hasOverwrite(overwrites, Role.ARCHIVE);
-            boolean wasPutInTrashOverwrite = MailboxOverwriteEntity.hasOverwrite(overwrites, Role.TRASH);
-            boolean wasPutInInboxOverwrite = MailboxOverwriteEntity.hasOverwrite(overwrites, Role.INBOX);
-            final MailboxOverwriteEntity importantOverwrite = MailboxOverwriteEntity.find(overwrites, Role.IMPORTANT);
+                            final boolean removeLabel =
+                                    MailboxWithRoleAndName.isAnyOfLabel(list, this.label);
+                            final boolean archive =
+                                    !removeLabel
+                                            && (MailboxWithRoleAndName.isAnyOfRole(list, Role.INBOX)
+                                                    || wasPutInInboxOverwrite)
+                                            && !wasPutInArchiveOverwrite
+                                            && !wasPutInTrashOverwrite;
+                            final boolean moveToInbox =
+                                    (MailboxWithRoleAndName.isAnyOfRole(list, Role.ARCHIVE)
+                                                    || MailboxWithRoleAndName.isAnyOfRole(
+                                                            list, Role.TRASH)
+                                                    || wasPutInArchiveOverwrite
+                                                    || wasPutInTrashOverwrite)
+                                            && !wasPutInInboxOverwrite;
+                            final boolean moveToTrash =
+                                    (MailboxWithRoleAndName.isAnyNotOfRole(list, Role.TRASH)
+                                                    || wasPutInInboxOverwrite)
+                                            && !wasPutInTrashOverwrite;
 
-            final boolean removeLabel = MailboxWithRoleAndName.isAnyOfLabel(list, this.label);
-            final boolean archive = !removeLabel && (MailboxWithRoleAndName.isAnyOfRole(list, Role.INBOX) || wasPutInInboxOverwrite) && !wasPutInArchiveOverwrite && !wasPutInTrashOverwrite;
-            final boolean moveToInbox = (MailboxWithRoleAndName.isAnyOfRole(list, Role.ARCHIVE) || MailboxWithRoleAndName.isAnyOfRole(list, Role.TRASH) || wasPutInArchiveOverwrite || wasPutInTrashOverwrite) && !wasPutInInboxOverwrite;
-            final boolean moveToTrash = (MailboxWithRoleAndName.isAnyNotOfRole(list, Role.TRASH) || wasPutInInboxOverwrite) && !wasPutInTrashOverwrite;
+                            final boolean markedAsImportant =
+                                    importantOverwrite != null
+                                            ? importantOverwrite.value
+                                            : MailboxWithRoleAndName.isAnyOfRole(
+                                                    list, Role.IMPORTANT);
 
-            final boolean markedAsImportant = importantOverwrite != null ? importantOverwrite.value : MailboxWithRoleAndName.isAnyOfRole(list, Role.IMPORTANT);
+                            return new MenuConfiguration(
+                                    archive,
+                                    removeLabel,
+                                    moveToInbox,
+                                    moveToTrash,
+                                    !markedAsImportant,
+                                    markedAsImportant);
+                        });
 
-            return new MenuConfiguration(archive,
-                    removeLabel,
-                    moveToInbox,
-                    moveToTrash,
-                    !markedAsImportant,
-                    markedAsImportant
-            );
-        });
+        final LiveData<Boolean> importance =
+                Transformations.map(
+                        combined,
+                        pair -> {
+                            final List<MailboxOverwriteEntity> overwrites = pair.first;
+                            final List<MailboxWithRoleAndName> list = pair.second;
+                            final MailboxOverwriteEntity importantOverwrite =
+                                    MailboxOverwriteEntity.find(overwrites, Role.IMPORTANT);
+                            return importantOverwrite != null
+                                    ? importantOverwrite.value
+                                    : MailboxWithRoleAndName.isAnyOfRole(list, Role.IMPORTANT);
+                        });
 
-        final LiveData<Boolean> importance = Transformations.map(combined, pair -> {
-            final List<MailboxOverwriteEntity> overwrites = pair.first;
-            final List<MailboxWithRoleAndName> list = pair.second;
-            final MailboxOverwriteEntity importantOverwrite = MailboxOverwriteEntity.find(overwrites, Role.IMPORTANT);
-            return importantOverwrite != null ? importantOverwrite.value : MailboxWithRoleAndName.isAnyOfRole(list, Role.IMPORTANT);
-        });
-
-        //TODO subject might just become a label
-        this.subjectWithImportance.addSource(importance, important -> setSubjectWithImportance(header.getValue(), important));
-        this.subjectWithImportance.addSource(header, threadHeader -> setSubjectWithImportance(threadHeader, importance.getValue()));
+        // TODO subject might just become a label
+        this.subjectWithImportance.addSource(
+                importance, important -> setSubjectWithImportance(header.getValue(), important));
+        this.subjectWithImportance.addSource(
+                header,
+                threadHeader -> setSubjectWithImportance(threadHeader, importance.getValue()));
 
         this.flagged = Transformations.map(header, h -> h != null && h.showAsFlagged());
 
-        //TODO add LiveData that is true when header != null and display 'Thread not found' or something in UI
+        // TODO add LiveData that is true when header != null and display 'Thread not found' or
+        // something in UI
     }
 
-    private static List<MailboxWithRoleAndName> combine(List<MailboxOverwriteEntity> overwrites, List<MailboxWithRoleAndName> mailboxes) {
+    private static List<MailboxWithRoleAndName> combine(
+            List<MailboxOverwriteEntity> overwrites, List<MailboxWithRoleAndName> mailboxes) {
         final ImmutableList.Builder<MailboxWithRoleAndName> builder = ImmutableList.builder();
         for (final MailboxWithRoleAndName mailbox : mailboxes) {
             final Boolean overwrite = MailboxOverwriteEntity.getOverwrite(overwrites, mailbox);
@@ -226,7 +272,10 @@ public class ThreadViewModel extends AbstractAttachmentViewModel {
 
     public MailboxWithRoleAndName getMailbox() {
         final List<MailboxWithRoleAndName> mailboxes = this.mailboxes.getValue();
-        final MailboxWithRoleAndName mailbox = mailboxes == null ? null : MailboxWithRoleAndName.findByLabel(mailboxes, this.label);
+        final MailboxWithRoleAndName mailbox =
+                mailboxes == null
+                        ? null
+                        : MailboxWithRoleAndName.findByLabel(mailboxes, this.label);
         if (mailbox == null) {
             throw new IllegalStateException("No mailbox found with the label " + this.label);
         }
@@ -236,19 +285,21 @@ public class ThreadViewModel extends AbstractAttachmentViewModel {
     public void waitForEdit(UUID uuid) {
         final WorkManager workManager = WorkManager.getInstance(getApplication());
         final LiveData<WorkInfo> liveData = workManager.getWorkInfoByIdLiveData(uuid);
-        threadViewRedirect.addSource(liveData, workInfo -> {
-            if (workInfo.getState().isFinished()) {
-                threadViewRedirect.removeSource(liveData);
-            }
-            if (workInfo.getState() == WorkInfo.State.SUCCEEDED) {
-                final Data data = workInfo.getOutputData();
-                final String threadId = data.getString("threadId");
-                if (threadId != null && !ThreadViewModel.this.threadId.equals(threadId)) {
-                    LOGGER.info("redirecting to thread {}", threadId);
-                    threadViewRedirect.postValue(new Event<>(threadId));
-                }
-            }
-        });
+        threadViewRedirect.addSource(
+                liveData,
+                workInfo -> {
+                    if (workInfo.getState().isFinished()) {
+                        threadViewRedirect.removeSource(liveData);
+                    }
+                    if (workInfo.getState() == WorkInfo.State.SUCCEEDED) {
+                        final Data data = workInfo.getOutputData();
+                        final String threadId = data.getString("threadId");
+                        if (threadId != null && !ThreadViewModel.this.threadId.equals(threadId)) {
+                            LOGGER.info("redirecting to thread {}", threadId);
+                            threadViewRedirect.postValue(new Event<>(threadId));
+                        }
+                    }
+                });
     }
 
     public void setAttachmentReference(final String emailId, final String blobId) {
@@ -261,43 +312,57 @@ public class ThreadViewModel extends AbstractAttachmentViewModel {
             throw new IllegalStateException("AttachmentReference has not been set");
         }
         this.attachmentReference = null;
-        final ListenableFuture<BlobStorage> future = BlobStorage.getIfCached(
-                getApplication(), accountId, attachment.blobId
-        );
-        Futures.addCallback(future, new FutureCallback<BlobStorage>() {
-            @Override
-            public void onSuccess(final BlobStorage blobStorage) {
-                storeAttachment(blobStorage, uri);
-            }
+        final ListenableFuture<BlobStorage> future =
+                BlobStorage.getIfCached(getApplication(), accountId, attachment.blobId);
+        Futures.addCallback(
+                future,
+                new FutureCallback<BlobStorage>() {
+                    @Override
+                    public void onSuccess(final BlobStorage blobStorage) {
+                        storeAttachment(blobStorage, uri);
+                    }
 
-            @Override
-            public void onFailure(@NotNull Throwable throwable) {
-                if (throwable instanceof BlobStorage.InvalidCacheException) {
-                    downloadAndStoreAttachment(attachment, uri);
-                } else {
-                    //TODO display error message?
-                }
-            }
-        }, MoreExecutors.directExecutor());
+                    @Override
+                    public void onFailure(@NotNull Throwable throwable) {
+                        if (throwable instanceof BlobStorage.InvalidCacheException) {
+                            downloadAndStoreAttachment(attachment, uri);
+                        } else {
+                            // TODO display error message?
+                        }
+                    }
+                },
+                MoreExecutors.directExecutor());
     }
 
     private void storeAttachment(final BlobStorage blobStorage, final Uri uri) {
         final WorkManager workManager = WorkManager.getInstance(getApplication());
-        final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(StoreAttachmentWorker.class)
-                .setInputData(StoreAttachmentWorker.data(blobStorage.file, uri))
-                .build();
+        final OneTimeWorkRequest workRequest =
+                new OneTimeWorkRequest.Builder(StoreAttachmentWorker.class)
+                        .setInputData(StoreAttachmentWorker.data(blobStorage.file, uri))
+                        .build();
         workManager.enqueue(workRequest);
     }
 
-    private void downloadAndStoreAttachment(final AttachmentReference attachmentReference, final Uri uri) {
+    private void downloadAndStoreAttachment(
+            final AttachmentReference attachmentReference, final Uri uri) {
         final WorkManager workManager = WorkManager.getInstance(getApplication());
-        final OneTimeWorkRequest downloadWorkRequest = new OneTimeWorkRequest.Builder(BlobDownloadWorker.class)
-                .setInputData(BlobDownloadWorker.data(accountId, attachmentReference.emailId, attachmentReference.blobId))
-                .build();
-        final OneTimeWorkRequest storeWorkRequest = new OneTimeWorkRequest.Builder(StoreAttachmentWorker.class)
-                .setInputData(StoreAttachmentWorker.data(uri))
-                .build();
-        workManager.beginUniqueWork(BlobDownloadWorker.uniqueName(), ExistingWorkPolicy.APPEND_OR_REPLACE, downloadWorkRequest)
+        final OneTimeWorkRequest downloadWorkRequest =
+                new OneTimeWorkRequest.Builder(BlobDownloadWorker.class)
+                        .setInputData(
+                                BlobDownloadWorker.data(
+                                        accountId,
+                                        attachmentReference.emailId,
+                                        attachmentReference.blobId))
+                        .build();
+        final OneTimeWorkRequest storeWorkRequest =
+                new OneTimeWorkRequest.Builder(StoreAttachmentWorker.class)
+                        .setInputData(StoreAttachmentWorker.data(uri))
+                        .build();
+        workManager
+                .beginUniqueWork(
+                        BlobDownloadWorker.uniqueName(),
+                        ExistingWorkPolicy.APPEND_OR_REPLACE,
+                        downloadWorkRequest)
                 .then(storeWorkRequest)
                 .enqueue();
     }
@@ -315,7 +380,13 @@ public class ThreadViewModel extends AbstractAttachmentViewModel {
         public final boolean markImportant;
         public final boolean markNotImportant;
 
-        MenuConfiguration(boolean archive, boolean removeLabel, boolean moveToInbox, boolean moveToTrash, boolean markImportant, boolean markNotImportant) {
+        MenuConfiguration(
+                boolean archive,
+                boolean removeLabel,
+                boolean moveToInbox,
+                boolean moveToTrash,
+                boolean markImportant,
+                boolean markNotImportant) {
             this.archive = archive;
             this.removeLabel = removeLabel;
             this.moveToInbox = moveToInbox;
@@ -325,13 +396,7 @@ public class ThreadViewModel extends AbstractAttachmentViewModel {
         }
 
         public static MenuConfiguration none() {
-            return new MenuConfiguration(false,
-                    false,
-                    false,
-                    false,
-                    false,
-                    false
-            );
+            return new MenuConfiguration(false, false, false, false, false, false);
         }
     }
 
@@ -342,10 +407,11 @@ public class ThreadViewModel extends AbstractAttachmentViewModel {
         private final String threadId;
         private final String label;
 
-        public Factory(final Application application,
-                       final long accountId,
-                       final String threadId,
-                       final String label) {
+        public Factory(
+                final Application application,
+                final long accountId,
+                final String threadId,
+                final String label) {
             this.application = application;
             this.accountId = accountId;
             this.threadId = threadId;
@@ -355,7 +421,8 @@ public class ThreadViewModel extends AbstractAttachmentViewModel {
         @NonNull
         @Override
         public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-            return Objects.requireNonNull(modelClass.cast(new ThreadViewModel(application, accountId, threadId, label)));
+            return Objects.requireNonNull(
+                    modelClass.cast(new ThreadViewModel(application, accountId, threadId, label)));
         }
     }
 
@@ -368,5 +435,4 @@ public class ThreadViewModel extends AbstractAttachmentViewModel {
             this.blobId = blobId;
         }
     }
-
 }

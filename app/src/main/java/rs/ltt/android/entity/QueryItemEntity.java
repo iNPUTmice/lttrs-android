@@ -20,33 +20,30 @@ import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
-
 import com.google.common.collect.ImmutableList;
-
 import java.util.List;
-
 import rs.ltt.jmap.mua.util.QueryResultItem;
 
-@Entity(tableName = "query_item",
-        foreignKeys = {@ForeignKey(entity = QueryEntity.class,
-                parentColumns = {"id"},
-                childColumns = {"queryId"},
-                onDelete = ForeignKey.CASCADE
-        )},
-        indices = {@Index(value = "queryId")}
-)
+@Entity(
+        tableName = "query_item",
+        foreignKeys = {
+            @ForeignKey(
+                    entity = QueryEntity.class,
+                    parentColumns = {"id"},
+                    childColumns = {"queryId"},
+                    onDelete = ForeignKey.CASCADE)
+        },
+        indices = {@Index(value = "queryId")})
 public class QueryItemEntity {
 
     @PrimaryKey(autoGenerate = true)
     public Long id;
 
-    @NonNull
-    public Long queryId;
+    @NonNull public Long queryId;
 
     public Long position;
     public String emailId;
     public String threadId;
-
 
     public QueryItemEntity(@NonNull Long queryId, Long position, String emailId, String threadId) {
         this.queryId = queryId;
@@ -55,8 +52,8 @@ public class QueryItemEntity {
         this.threadId = threadId;
     }
 
-
-    public static List<QueryItemEntity> of(final Long queryId, final QueryResultItem[] items, final long offset) {
+    public static List<QueryItemEntity> of(
+            final Long queryId, final QueryResultItem[] items, final long offset) {
         ImmutableList.Builder<QueryItemEntity> builder = new ImmutableList.Builder<>();
         for (int i = 0; i < items.length; ++i) {
             QueryResultItem item = items[i];

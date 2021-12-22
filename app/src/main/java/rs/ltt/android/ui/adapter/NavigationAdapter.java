@@ -20,7 +20,6 @@ import android.content.res.ColorStateList;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
@@ -31,14 +30,10 @@ import androidx.recyclerview.widget.AsyncDifferConfig;
 import androidx.recyclerview.widget.AsyncListDiffer;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.google.android.material.color.MaterialColors;
-
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
-
 import rs.ltt.android.R;
 import rs.ltt.android.databinding.ItemNavigationAccountBinding;
 import rs.ltt.android.databinding.ItemNavigationAdditionalBinding;
@@ -55,7 +50,8 @@ import rs.ltt.jmap.mua.util.Label;
 import rs.ltt.jmap.mua.util.LabelWithCount;
 import rs.ltt.jmap.mua.util.Navigable;
 
-public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.AbstractNavigationItemViewHolder> {
+public class NavigationAdapter
+        extends RecyclerView.Adapter<NavigationAdapter.AbstractNavigationItemViewHolder> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NavigationAdapter.class);
 
@@ -64,38 +60,43 @@ public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.Ab
     private static final int ACCOUNT_VIEW_TYPE = 3;
     private static final int ADDITIONAL_VIEW_TYPE = 4;
 
-    private static final DiffUtil.ItemCallback<Navigable> ITEM_CALLBACK = new DiffUtil.ItemCallback<Navigable>() {
-        @Override
-        public boolean areItemsTheSame(@NonNull Navigable oldItem, @NonNull Navigable newItem) {
-            if (oldItem instanceof LabelWithCount && newItem instanceof LabelWithCount) {
-                return same((LabelWithCount) oldItem, (LabelWithCount) newItem);
-            }
-            if (oldItem instanceof AccountName && newItem instanceof AccountName) {
-                return ((AccountName) oldItem).id.equals(((AccountName) newItem).id);
-            }
-            if (oldItem instanceof AdditionalNavigationItem && newItem instanceof AdditionalNavigationItem) {
-                return ((AdditionalNavigationItem) oldItem).type == ((AdditionalNavigationItem) newItem).type;
-            }
-            return oldItem.equals(newItem);
-        }
+    private static final DiffUtil.ItemCallback<Navigable> ITEM_CALLBACK =
+            new DiffUtil.ItemCallback<Navigable>() {
+                @Override
+                public boolean areItemsTheSame(
+                        @NonNull Navigable oldItem, @NonNull Navigable newItem) {
+                    if (oldItem instanceof LabelWithCount && newItem instanceof LabelWithCount) {
+                        return same((LabelWithCount) oldItem, (LabelWithCount) newItem);
+                    }
+                    if (oldItem instanceof AccountName && newItem instanceof AccountName) {
+                        return ((AccountName) oldItem).id.equals(((AccountName) newItem).id);
+                    }
+                    if (oldItem instanceof AdditionalNavigationItem
+                            && newItem instanceof AdditionalNavigationItem) {
+                        return ((AdditionalNavigationItem) oldItem).type
+                                == ((AdditionalNavigationItem) newItem).type;
+                    }
+                    return oldItem.equals(newItem);
+                }
 
-        @Override
-        public boolean areContentsTheSame(@NonNull Navigable oldItem, @NonNull Navigable newItem) {
-            return oldItem.equals(newItem);
-        }
-    };
+                @Override
+                public boolean areContentsTheSame(
+                        @NonNull Navigable oldItem, @NonNull Navigable newItem) {
+                    return oldItem.equals(newItem);
+                }
+            };
 
-    private final AsyncListDiffer<Navigable> mDiffer = new AsyncListDiffer<>(
-            new OffsetListUpdateCallback<>(this, 1),
-            new AsyncDifferConfig.Builder<>(ITEM_CALLBACK).build()
-    );
+    private final AsyncListDiffer<Navigable> mDiffer =
+            new AsyncListDiffer<>(
+                    new OffsetListUpdateCallback<>(this, 1),
+                    new AsyncDifferConfig.Builder<>(ITEM_CALLBACK).build());
 
-    //current state
+    // current state
     private LabelWithCount selectedLabel = null;
     private boolean accountSelectionVisible = false;
     private AccountName accountName;
 
-    //callbacks
+    // callbacks
     private OnLabelSelected onLabelSelected = null;
     private OnAccountViewToggled onAccountViewToggled = null;
     private OnAccountSelected onAccountSelected = null;
@@ -117,25 +118,35 @@ public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.Ab
 
     @NonNull
     @Override
-    public AbstractNavigationItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, final int viewType) {
+    public AbstractNavigationItemViewHolder onCreateViewHolder(
+            @NonNull ViewGroup parent, final int viewType) {
         final LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         if (viewType == LABEL_VIEW_TYPE) {
-            final ItemNavigationLabelBinding binding = DataBindingUtil.inflate(layoutInflater, R.layout.item_navigation_label, parent, false);
+            final ItemNavigationLabelBinding binding =
+                    DataBindingUtil.inflate(
+                            layoutInflater, R.layout.item_navigation_label, parent, false);
             return new LabelViewHolder(binding);
         } else if (viewType == ACCOUNT_VIEW_TYPE) {
-            final ItemNavigationAccountBinding binding = DataBindingUtil.inflate(layoutInflater, R.layout.item_navigation_account, parent, false);
+            final ItemNavigationAccountBinding binding =
+                    DataBindingUtil.inflate(
+                            layoutInflater, R.layout.item_navigation_account, parent, false);
             return new AccountViewHolder(binding);
         } else if (viewType == ADDITIONAL_VIEW_TYPE) {
-            final ItemNavigationAdditionalBinding binding = DataBindingUtil.inflate(layoutInflater, R.layout.item_navigation_additional, parent, false);
+            final ItemNavigationAdditionalBinding binding =
+                    DataBindingUtil.inflate(
+                            layoutInflater, R.layout.item_navigation_additional, parent, false);
             return new AdditionalItemViewHolder(binding);
         } else {
-            ItemNavigationHeaderBinding binding = DataBindingUtil.inflate(layoutInflater, R.layout.item_navigation_header, parent, false);
+            ItemNavigationHeaderBinding binding =
+                    DataBindingUtil.inflate(
+                            layoutInflater, R.layout.item_navigation_header, parent, false);
             return new NavigationHeaderViewHolder(binding);
         }
     }
 
     @Override
-    public void onBindViewHolder(@NonNull AbstractNavigationItemViewHolder abstractHolder, final int position) {
+    public void onBindViewHolder(
+            @NonNull AbstractNavigationItemViewHolder abstractHolder, final int position) {
         if (abstractHolder instanceof NavigationHeaderViewHolder) {
             onBindViewHolder((NavigationHeaderViewHolder) abstractHolder);
             return;
@@ -150,48 +161,57 @@ public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.Ab
             return;
         }
         if (abstractHolder instanceof AdditionalItemViewHolder) {
-            onBindViewHolder((AdditionalItemViewHolder) abstractHolder, (AdditionalNavigationItem) navigable);
+            onBindViewHolder(
+                    (AdditionalItemViewHolder) abstractHolder,
+                    (AdditionalNavigationItem) navigable);
             return;
         }
-        throw new IllegalStateException(String.format("Unable to bind %s", abstractHolder.getClass().getName()));
+        throw new IllegalStateException(
+                String.format("Unable to bind %s", abstractHolder.getClass().getName()));
     }
 
-    private void onBindViewHolder(final AdditionalItemViewHolder viewHolder, final AdditionalNavigationItem item) {
+    private void onBindViewHolder(
+            final AdditionalItemViewHolder viewHolder, final AdditionalNavigationItem item) {
         @StringRes final int string;
         @DrawableRes final int icon;
         switch (item.type) {
-            case MANAGE_ACCOUNT: {
-                string = R.string.manage_accounts;
-                icon = R.drawable.ic_baseline_manage_accounts_24;
-            }
-            break;
-            case ADD_ACCOUNT: {
-                string = R.string.add_another_account;
-                icon = R.drawable.ic_baseline_add_account_24;
-            }
-            break;
+            case MANAGE_ACCOUNT:
+                {
+                    string = R.string.manage_accounts;
+                    icon = R.drawable.ic_baseline_manage_accounts_24;
+                }
+                break;
+            case ADD_ACCOUNT:
+                {
+                    string = R.string.add_another_account;
+                    icon = R.drawable.ic_baseline_add_account_24;
+                }
+                break;
             default:
                 throw new IllegalStateException(String.format("Unable to draw %s", item.type));
         }
         viewHolder.binding.icon.setImageResource(icon);
         viewHolder.binding.label.setText(string);
-        viewHolder.binding.item.setOnClickListener((v) -> {
-            if (onAdditionalNavigationItemSelected != null) {
-                onAdditionalNavigationItemSelected.onAdditionalNavigationItemSelected(item.type);
-            }
-        });
+        viewHolder.binding.item.setOnClickListener(
+                (v) -> {
+                    if (onAdditionalNavigationItemSelected != null) {
+                        onAdditionalNavigationItemSelected.onAdditionalNavigationItemSelected(
+                                item.type);
+                    }
+                });
     }
 
-    private void onBindViewHolder(final AccountViewHolder viewHolder, final AccountName accountName) {
+    private void onBindViewHolder(
+            final AccountViewHolder viewHolder, final AccountName accountName) {
         viewHolder.binding.setAccount(accountName);
-        viewHolder.binding.item.setOnClickListener((v) -> {
-            if (onAccountSelected != null) {
-                onAccountSelected.onAccountSelected(accountName.id);
-            }
-        });
+        viewHolder.binding.item.setOnClickListener(
+                (v) -> {
+                    if (onAccountSelected != null) {
+                        onAccountSelected.onAccountSelected(accountName.id);
+                    }
+                });
         viewHolder.binding.icon.setImageTintList(
-                ColorStateList.valueOf(ConsistentColorGeneration.rgbFromKey(accountName.name))
-        );
+                ColorStateList.valueOf(ConsistentColorGeneration.rgbFromKey(accountName.name)));
     }
 
     private void onBindViewHolder(final NavigationHeaderViewHolder viewHolder) {
@@ -206,10 +226,11 @@ public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.Ab
         }
         viewHolder.binding.toggle.setImageResource(imageResource);
         viewHolder.binding.toggle.setContentDescription(
-                viewHolder.binding.getRoot().getContext().getString(imageDescriptionResource)
-        );
-        viewHolder.binding.toggle.setOnClickListener(v -> onAccountViewToggled.onAccountViewToggled());
-        viewHolder.binding.wrapper.setOnClickListener(v -> onAccountViewToggled.onAccountViewToggled());
+                viewHolder.binding.getRoot().getContext().getString(imageDescriptionResource));
+        viewHolder.binding.toggle.setOnClickListener(
+                v -> onAccountViewToggled.onAccountViewToggled());
+        viewHolder.binding.wrapper.setOnClickListener(
+                v -> onAccountViewToggled.onAccountViewToggled());
         if (this.accountName != null) {
             viewHolder.binding.name.setText(AccountUtil.printableName(this.accountName.name));
             viewHolder.binding.account.setText(this.accountName.name);
@@ -219,19 +240,28 @@ public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.Ab
     private void onBindViewHolder(final LabelViewHolder viewHolder, final LabelWithCount label) {
         final Context context = viewHolder.binding.getRoot().getContext();
         viewHolder.binding.setLabel(label);
-        viewHolder.binding.item.setOnClickListener(v -> {
-            if (onLabelSelected != null) {
-                onLabelSelected.onLabelSelected(label, same(label, this.selectedLabel));
-            }
-        });
+        viewHolder.binding.item.setOnClickListener(
+                v -> {
+                    if (onLabelSelected != null) {
+                        onLabelSelected.onLabelSelected(label, same(label, this.selectedLabel));
+                    }
+                });
         if (same(label, this.selectedLabel)) {
-            viewHolder.binding.item.setBackgroundColor(ContextCompat.getColor(context, R.color.primary_highlight));
-            ImageViewCompat.setImageTintList(viewHolder.binding.icon, ColorStateList.valueOf(MaterialColors.getColor(viewHolder.binding.item, R.attr.colorPrimary)));
+            viewHolder.binding.item.setBackgroundColor(
+                    ContextCompat.getColor(context, R.color.primary_highlight));
+            ImageViewCompat.setImageTintList(
+                    viewHolder.binding.icon,
+                    ColorStateList.valueOf(
+                            MaterialColors.getColor(viewHolder.binding.item, R.attr.colorPrimary)));
         } else {
             viewHolder.binding.item.setBackgroundResource(
-                    MaterialBackgrounds.getBackgroundResource(context, android.R.attr.selectableItemBackground)
-            );
-            ImageViewCompat.setImageTintList(viewHolder.binding.icon, ColorStateList.valueOf(MaterialColors.getColor(viewHolder.binding.item, R.attr.colorControlNormal)));
+                    MaterialBackgrounds.getBackgroundResource(
+                            context, android.R.attr.selectableItemBackground));
+            ImageViewCompat.setImageTintList(
+                    viewHolder.binding.icon,
+                    ColorStateList.valueOf(
+                            MaterialColors.getColor(
+                                    viewHolder.binding.item, R.attr.colorControlNormal)));
         }
     }
 
@@ -292,7 +322,8 @@ public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.Ab
         } else if (navigable instanceof AdditionalNavigationItem) {
             return ADDITIONAL_VIEW_TYPE;
         }
-        throw new IllegalStateException(String.format("No view type found for %s", navigable.getClass().getSimpleName()));
+        throw new IllegalStateException(
+                String.format("No view type found for %s", navigable.getClass().getSimpleName()));
     }
 
     private Navigable getItem(int position) {
@@ -315,7 +346,8 @@ public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.Ab
         this.onAccountSelected = listener;
     }
 
-    public void setOnAdditionalNavigationItemSelected(final OnAdditionalNavigationItemSelected listener) {
+    public void setOnAdditionalNavigationItemSelected(
+            final OnAdditionalNavigationItemSelected listener) {
         this.onAdditionalNavigationItemSelected = listener;
     }
 
@@ -335,7 +367,7 @@ public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.Ab
         void onAdditionalNavigationItemSelected(AdditionalNavigationItem.Type type);
     }
 
-    static abstract class AbstractNavigationItemViewHolder extends RecyclerView.ViewHolder {
+    abstract static class AbstractNavigationItemViewHolder extends RecyclerView.ViewHolder {
 
         AbstractNavigationItemViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -380,6 +412,5 @@ public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.Ab
             super(binding.getRoot());
             this.binding = binding;
         }
-
     }
 }

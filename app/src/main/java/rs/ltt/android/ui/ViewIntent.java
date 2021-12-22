@@ -4,9 +4,7 @@ import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
-
 import com.google.common.net.MediaType;
-
 import rs.ltt.android.R;
 import rs.ltt.android.util.MediaTypes;
 
@@ -28,8 +26,8 @@ public class ViewIntent {
         } catch (final ActivityNotFoundException e) {
             MaterialAlertDialogs.error(
                     activity,
-                    activity.getString(R.string.no_application_to_open_x, MediaTypes.toString(mediaType))
-            );
+                    activity.getString(
+                            R.string.no_application_to_open_x, MediaTypes.toString(mediaType)));
         }
     }
 }

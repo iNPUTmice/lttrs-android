@@ -1,26 +1,28 @@
 package rs.ltt.android.entity;
 
 import androidx.room.Relation;
-
 import com.google.common.base.Objects;
 import com.google.common.collect.Collections2;
-
 import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
-
 import rs.ltt.jmap.common.entity.IdentifiableEmailWithAddresses;
 
 /**
  * This e-mail model has keywords and addresses. It acts as a common base class for EmailWithBodies
  * (used in the Thread view) and EmailPreviewWithMailboxes (Used by the ThreadOverviewItem)
  */
-public abstract class EmailPreview extends EmailWithKeywords implements IdentifiableEmailWithAddresses {
+public abstract class EmailPreview extends EmailWithKeywords
+        implements IdentifiableEmailWithAddresses {
 
     public String threadId;
     public Instant receivedAt;
 
-    @Relation(entity = EmailEmailAddressEntity.class, parentColumn = "id", entityColumn = "emailId", projection = {"email", "name", "type"})
+    @Relation(
+            entity = EmailEmailAddressEntity.class,
+            parentColumn = "id",
+            entityColumn = "emailId",
+            projection = {"email", "name", "type"})
     public List<EmailAddress> emailAddresses;
 
     @Override
@@ -52,14 +54,17 @@ public abstract class EmailPreview extends EmailWithKeywords implements Identifi
         return getAddresses(EmailAddressType.REPLY_TO);
     }
 
-    private Collection<rs.ltt.jmap.common.entity.EmailAddress> getAddresses(final EmailAddressType type) {
+    private Collection<rs.ltt.jmap.common.entity.EmailAddress> getAddresses(
+            final EmailAddressType type) {
         return Collections2.transform(
-                Collections2.filter(
-                        emailAddresses,
-                        input -> input != null && input.type == type
-                ),
-                input -> input == null ? null : rs.ltt.jmap.common.entity.EmailAddress.builder().email(input.email).name(input.name).build()
-        );
+                Collections2.filter(emailAddresses, input -> input != null && input.type == type),
+                input ->
+                        input == null
+                                ? null
+                                : rs.ltt.jmap.common.entity.EmailAddress.builder()
+                                        .email(input.email)
+                                        .name(input.name)
+                                        .build());
     }
 
     @Override
@@ -68,9 +73,9 @@ public abstract class EmailPreview extends EmailWithKeywords implements Identifi
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         EmailPreview that = (EmailPreview) o;
-        return Objects.equal(threadId, that.threadId) &&
-                Objects.equal(receivedAt, that.receivedAt) &&
-                Objects.equal(emailAddresses, that.emailAddresses);
+        return Objects.equal(threadId, that.threadId)
+                && Objects.equal(receivedAt, that.receivedAt)
+                && Objects.equal(emailAddresses, that.emailAddresses);
     }
 
     @Override

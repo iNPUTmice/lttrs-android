@@ -16,11 +16,9 @@
 package rs.ltt.android.database;
 
 import androidx.room.TypeConverter;
-
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
-
 import okhttp3.HttpUrl;
 import rs.ltt.android.entity.EmailAddressType;
 import rs.ltt.android.entity.EmailBodyPartType;
@@ -30,7 +28,6 @@ import rs.ltt.jmap.common.entity.Role;
 import rs.ltt.jmap.common.util.Mapper;
 
 public class Converters {
-
 
     @TypeConverter
     public static String toString(final Role role) {
@@ -42,25 +39,26 @@ public class Converters {
         return role == null ? null : Role.valueOf(role);
     }
 
-
     @TypeConverter
     public static String toString(final Class<? extends AbstractIdentifiableEntity> clazz) {
         final String type = Mapper.ENTITIES.inverse().get(clazz);
         if (type == null) {
-            throw new IllegalArgumentException(String.format("%s is not a known entity class", clazz.getName()));
+            throw new IllegalArgumentException(
+                    String.format("%s is not a known entity class", clazz.getName()));
         }
         return type;
     }
 
     @TypeConverter
-    public static Class<? extends AbstractIdentifiableEntity> toEntityType(final String entityType) {
+    public static Class<? extends AbstractIdentifiableEntity> toEntityType(
+            final String entityType) {
         final Class<? extends AbstractIdentifiableEntity> clazz = Mapper.ENTITIES.get(entityType);
         if (clazz == null) {
-            throw new IllegalArgumentException(String.format("%s is not a known entity type", entityType));
+            throw new IllegalArgumentException(
+                    String.format("%s is not a known entity type", entityType));
         }
         return clazz;
     }
-
 
     @TypeConverter
     public static EmailAddressType toEmailAddressType(String type) {
@@ -72,7 +70,6 @@ public class Converters {
         return type.toString();
     }
 
-
     @TypeConverter
     public static EmailBodyPartType toEmailBodyPartType(String type) {
         return EmailBodyPartType.valueOf(type);
@@ -83,7 +80,6 @@ public class Converters {
         return type.toString();
     }
 
-
     @TypeConverter
     public static QueryItemOverwriteEntity.Type toType(String type) {
         return QueryItemOverwriteEntity.Type.valueOf(type);
@@ -93,7 +89,6 @@ public class Converters {
     public static String toString(QueryItemOverwriteEntity.Type type) {
         return type.toString();
     }
-
 
     @TypeConverter
     public static Instant toInstant(long timestamp) {

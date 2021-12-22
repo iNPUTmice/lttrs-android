@@ -20,29 +20,27 @@ import static androidx.room.ForeignKey.CASCADE;
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import rs.ltt.jmap.common.entity.Thread;
 
-@Entity(tableName = "thread_item",
+@Entity(
+        tableName = "thread_item",
         primaryKeys = {"threadId", "emailId"},
-        foreignKeys = @ForeignKey(entity = ThreadEntity.class,
-                parentColumns = {"threadId"},
-                childColumns = {"threadId"},
-                onDelete = CASCADE
-        )
-)
+        foreignKeys =
+                @ForeignKey(
+                        entity = ThreadEntity.class,
+                        parentColumns = {"threadId"},
+                        childColumns = {"threadId"},
+                        onDelete = CASCADE))
 public class ThreadItemEntity {
-    @NonNull
-    public String threadId;
-    @NonNull
-    public String emailId;
+    @NonNull public String threadId;
+    @NonNull public String emailId;
 
     public Integer position;
 
-    public ThreadItemEntity(@NonNull String threadId, @NonNull String emailId, @NonNull Integer position) {
+    public ThreadItemEntity(
+            @NonNull String threadId, @NonNull String emailId, @NonNull Integer position) {
         this.threadId = threadId;
         this.emailId = emailId;
         this.position = position;

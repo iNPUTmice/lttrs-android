@@ -1,17 +1,13 @@
 package rs.ltt.android.ui;
 
 import com.google.common.collect.ImmutableList;
-
 import java.util.List;
-
 import rs.ltt.android.entity.MailboxOverviewItem;
 import rs.ltt.jmap.common.entity.Role;
 
 public class EmptyMailboxAction {
 
-    private static final List<Role> EMPTY_WORTHY_ROLES = ImmutableList.of(
-            Role.TRASH
-    );
+    private static final List<Role> EMPTY_WORTHY_ROLES = ImmutableList.of(Role.TRASH);
     private final Role role;
     private final int itemCount;
 

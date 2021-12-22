@@ -15,42 +15,38 @@
 
 package rs.ltt.android.ui.fragment;
 
-
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProvider;
-
 import com.google.common.base.Preconditions;
-
 import java.util.Collection;
-
 import rs.ltt.android.entity.ThreadOverviewItem;
 import rs.ltt.android.ui.ActionModeMenuConfiguration;
 import rs.ltt.android.ui.QueryItemTouchHelper;
 import rs.ltt.android.ui.model.AbstractQueryViewModel;
 import rs.ltt.android.ui.model.SearchQueryViewModel;
 
-
 public class SearchQueryFragment extends AbstractQueryFragment {
 
     private SearchQueryViewModel searchQueryViewModel;
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(
+            @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final Bundle bundle = getArguments();
-        final String term = SearchQueryFragmentArgs.fromBundle(bundle == null ? new Bundle() : bundle).getText();
-        final ViewModelProvider viewModelProvider = new ViewModelProvider(
-                getViewModelStore(),
-                new SearchQueryViewModel.Factory(
-                        requireActivity().getApplication(),
-                        getLttrsViewModel().getAccountId(),
-                        term
-                )
-        );
+        final String term =
+                SearchQueryFragmentArgs.fromBundle(bundle == null ? new Bundle() : bundle)
+                        .getText();
+        final ViewModelProvider viewModelProvider =
+                new ViewModelProvider(
+                        getViewModelStore(),
+                        new SearchQueryViewModel.Factory(
+                                requireActivity().getApplication(),
+                                getLttrsViewModel().getAccountId(),
+                                term));
         this.searchQueryViewModel = viewModelProvider.get(SearchQueryViewModel.class);
         return super.onCreateView(inflater, container, savedInstanceState);
     }
@@ -63,18 +59,24 @@ public class SearchQueryFragment extends AbstractQueryFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        searchQueryViewModel.getSearchTerm().observe(getViewLifecycleOwner(), searchTerm -> {
-            if (searchTerm == null) {
-                return;
-            }
-            getLttrsViewModel().setSelectedLabel(null);
-            getLttrsViewModel().setCurrentSearchTerm(searchTerm);
-        });
+        searchQueryViewModel
+                .getSearchTerm()
+                .observe(
+                        getViewLifecycleOwner(),
+                        searchTerm -> {
+                            if (searchTerm == null) {
+                                return;
+                            }
+                            getLttrsViewModel().setSelectedLabel(null);
+                            getLttrsViewModel().setCurrentSearchTerm(searchTerm);
+                        });
     }
 
     @Override
     protected QueryItemTouchHelper.Swipable onQueryItemSwipe(ThreadOverviewItem item) {
-        return searchQueryViewModel.isInInbox(item) ? QueryItemTouchHelper.Swipable.ARCHIVE : QueryItemTouchHelper.Swipable.NO;
+        return searchQueryViewModel.isInInbox(item)
+                ? QueryItemTouchHelper.Swipable.ARCHIVE
+                : QueryItemTouchHelper.Swipable.NO;
     }
 
     @Override
@@ -84,7 +86,8 @@ public class SearchQueryFragment extends AbstractQueryFragment {
 
     @Override
     protected void onQueryItemSwiped(ThreadOverviewItem item) {
-        Preconditions.checkState(searchQueryViewModel.isInInbox(item), "Swiped thread is not in inbox");
+        Preconditions.checkState(
+                searchQueryViewModel.isInInbox(item), "Swiped thread is not in inbox");
         archive(item);
     }
 

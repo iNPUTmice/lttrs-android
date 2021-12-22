@@ -19,16 +19,19 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.AdapterListUpdateCallback;
 import androidx.recyclerview.widget.ListUpdateCallback;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.google.common.base.Preconditions;
 
-public class OffsetListUpdateCallback<VH extends RecyclerView.ViewHolder> implements ListUpdateCallback {
+public class OffsetListUpdateCallback<VH extends RecyclerView.ViewHolder>
+        implements ListUpdateCallback {
 
     private final AdapterListUpdateCallback adapterCallback;
     private final int offset;
     private boolean isOffsetVisible = true;
 
-    public OffsetListUpdateCallback(final RecyclerView.Adapter<VH> adapter, final int offset, final boolean isOffsetVisible) {
+    public OffsetListUpdateCallback(
+            final RecyclerView.Adapter<VH> adapter,
+            final int offset,
+            final boolean isOffsetVisible) {
         this(adapter, offset);
         this.isOffsetVisible = isOffsetVisible;
     }
@@ -78,5 +81,4 @@ public class OffsetListUpdateCallback<VH extends RecyclerView.ViewHolder> implem
     public int getCurrentOffset() {
         return this.isOffsetVisible ? this.offset : 0;
     }
-
 }

@@ -23,15 +23,11 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Transaction;
-
 import com.google.common.util.concurrent.ListenableFuture;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Collection;
 import java.util.List;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rs.ltt.android.entity.DownloadableBlob;
 import rs.ltt.android.entity.EmailBodyPartEntity;
 import rs.ltt.android.entity.EmailBodyValueEntity;
@@ -127,7 +123,9 @@ public abstract class ThreadAndEmailDao extends AbstractEntityDao {
         throwOnUpdateConflict(Thread.class, update.getOldTypedState(), update.getNewTypedState());
     }
 
-    @Query(" select threadId from `query` join query_item on `query`.id = queryId where threadId not in(select thread.threadId from thread) and queryString=:queryString")
+    @Query(
+            " select threadId from `query` join query_item on `query`.id = queryId where threadId"
+                    + " not in(select thread.threadId from thread) and queryString=:queryString")
     public abstract List<String> getMissingThreadIds(String queryString);
 
     @Transaction
@@ -190,11 +188,16 @@ public abstract class ThreadAndEmailDao extends AbstractEntityDao {
     @Query("select id from email where id=:id")
     public abstract EmailWithKeywords getEmailWithKeyword(String id);
 
-    @Query("select blobId,type,name,size from email_body_part where emailId=:emailId and blobId=:blobId")
+    @Query(
+            "select blobId,type,name,size from email_body_part where emailId=:emailId and"
+                    + " blobId=:blobId")
     public abstract DownloadableBlob getDownloadable(String emailId, String blobId);
 
     @Transaction
-    @Query("select id,receivedAt,preview,email.threadId from thread_item join email on thread_item.emailId=email.id where thread_item.threadId=:threadId order by position")
+    @Query(
+            "select id,receivedAt,preview,email.threadId from thread_item join email on"
+                    + " thread_item.emailId=email.id where thread_item.threadId=:threadId order by"
+                    + " position")
     public abstract DataSource.Factory<Integer, EmailWithBodies> getEmails(String threadId);
 
     @Query("select emailId from thread_item where threadId in (:threadIds)")
@@ -204,23 +207,35 @@ public abstract class ThreadAndEmailDao extends AbstractEntityDao {
     @Query("select id,receivedAt,preview,threadId,subject from email where id in (:emailIds)")
     public abstract List<EmailWithBodiesAndSubject> getEmails(Collection<String> emailIds);
 
-    //TODO remove 'preview'. 'receivedAt' is strictly speaking not necessary currently but might be needed in the future for quoting the original email
+    // TODO remove 'preview'. 'receivedAt' is strictly speaking not necessary currently but might be
+    // needed in the future for quoting the original email
     @Transaction
-    @Query("select :accountId as accountId,id,threadId,subject,receivedAt,preview from email where id=:id")
-    public abstract ListenableFuture<EmailWithReferences> getEmailWithReferences(Long accountId, String id);
+    @Query(
+            "select :accountId as accountId,id,threadId,subject,receivedAt,preview from email"
+                    + " where id=:id")
+    public abstract ListenableFuture<EmailWithReferences> getEmailWithReferences(
+            Long accountId, String id);
 
     @Transaction
-    @Query("select subject,email.threadId from thread_item join email on thread_item.emailId=email.id where thread_item.threadId=:threadId order by position limit 1")
+    @Query(
+            "select subject,email.threadId from thread_item join email on"
+                    + " thread_item.emailId=email.id where thread_item.threadId=:threadId order by"
+                    + " position limit 1")
     public abstract LiveData<ThreadHeader> getThreadHeader(String threadId);
 
-
-    @Query("select position,emailId from thread_item where threadId=:threadId and thread_item.emailId not in (select thread_item.emailId from thread_item join email_keyword on thread_item.emailId=email_keyword.emailId where threadId=:threadId and email_keyword.keyword='$seen') order by position")
+    @Query(
+            "select position,emailId from thread_item where threadId=:threadId and"
+                + " thread_item.emailId not in (select thread_item.emailId from thread_item join"
+                + " email_keyword on thread_item.emailId=email_keyword.emailId where"
+                + " threadId=:threadId and email_keyword.keyword='$seen') order by position")
     public abstract ListenableFuture<List<ExpandedPosition>> getUnseenPositions(String threadId);
 
     @Query("select position,emailId from thread_item where threadId=:threadId order by position")
     public abstract ListenableFuture<List<ExpandedPosition>> getAllPositions(String threadId);
 
-    @Query("select position,emailId from thread_item where threadId=:threadId order by position desc limit 1")
+    @Query(
+            "select position,emailId from thread_item where threadId=:threadId order by position"
+                    + " desc limit 1")
     public abstract ListenableFuture<List<ExpandedPosition>> getMaxPosition(String threadId);
 
     @Query("delete from email")
@@ -234,23 +249,37 @@ public abstract class ThreadAndEmailDao extends AbstractEntityDao {
         insert(new EntityStateEntity(Email.class, state));
     }
 
-    @Query("delete from keyword_overwrite where threadId=(select threadId from email where id=:emailId)")
+    @Query(
+            "delete from keyword_overwrite where threadId=(select threadId from email where"
+                    + " id=:emailId)")
     protected abstract void deleteKeywordToggle(String emailId);
 
-    @Query("delete from mailbox_overwrite where threadId=(select threadId from email where id=:emailId)")
+    @Query(
+            "delete from mailbox_overwrite where threadId=(select threadId from email where"
+                    + " id=:emailId)")
     protected abstract void deleteMailboxOverwrite(String emailId);
 
-    @Query("update query_item_overwrite set executed=1 where executed=0 and threadId IN(select email.threadid from email where email.id=:emailId)")
+    @Query(
+            "update query_item_overwrite set executed=1 where executed=0 and threadId IN(select"
+                    + " email.threadid from email where email.id=:emailId)")
     protected abstract int markAsExecuted(String emailId);
 
     @Transaction
-    public void add(final TypedState<Thread> expectedThreadState, Thread[] threads, final TypedState<Email> expectedEmailState, final Email[] emails) {
+    public void add(
+            final TypedState<Thread> expectedThreadState,
+            Thread[] threads,
+            final TypedState<Email> expectedEmailState,
+            final Email[] emails) {
         add(expectedThreadState, threads);
         add(expectedEmailState, emails);
     }
 
     @Transaction
-    public void set(final TypedState<Thread> threadState, Thread[] threads, final TypedState<Email> emailState, final Email[] emails) {
+    public void set(
+            final TypedState<Thread> threadState,
+            Thread[] threads,
+            final TypedState<Email> emailState,
+            final Email[] emails) {
         set(threads, threadState.getState());
         set(emails, emailState.getState());
     }
@@ -292,7 +321,9 @@ public abstract class ThreadAndEmailDao extends AbstractEntityDao {
         if (updatedProperties != null) {
             for (final Email email : update.getUpdated()) {
                 if (!emailExists(email.getId())) {
-                    LOGGER.warn("skipping updates to email {} because we don’t have that", email.getId());
+                    LOGGER.warn(
+                            "skipping updates to email {} because we don’t have that",
+                            email.getId());
                     continue;
                 }
                 for (final String property : updatedProperties) {
@@ -306,7 +337,8 @@ public abstract class ThreadAndEmailDao extends AbstractEntityDao {
                             insertMailboxes(EmailMailboxEntity.of(email));
                             break;
                         default:
-                            throw new IllegalArgumentException("Unable to update property '" + property + "'");
+                            throw new IllegalArgumentException(
+                                    "Unable to update property '" + property + "'");
                     }
                 }
                 deleteOverwrites(email.getId());
@@ -326,5 +358,4 @@ public abstract class ThreadAndEmailDao extends AbstractEntityDao {
             LOGGER.info("Marked {} query item overwrites as executed", executed);
         }
     }
-
 }

@@ -17,23 +17,18 @@ package rs.ltt.android.database;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-
-import androidx.room.AutoMigration;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rs.ltt.android.database.dao.AutocryptDao;
 import rs.ltt.android.database.dao.IdentityDao;
 import rs.ltt.android.database.dao.MailboxDao;
@@ -65,31 +60,30 @@ import rs.ltt.android.entity.ThreadItemEntity;
 
 @Database(
         entities = {
-                MailboxEntity.class,
-                EntityStateEntity.class,
-                ThreadEntity.class,
-                ThreadItemEntity.class,
-                EmailEntity.class,
-                EmailInReplyToEntity.class,
-                EmailMessageIdEntity.class,
-                EmailEmailAddressEntity.class,
-                EmailKeywordEntity.class,
-                EmailMailboxEntity.class,
-                EmailBodyValueEntity.class,
-                EmailBodyPartEntity.class,
-                IdentityEntity.class,
-                IdentityEmailAddressEntity.class,
-                QueryEntity.class,
-                QueryItemEntity.class,
-                KeywordOverwriteEntity.class,
-                MailboxOverwriteEntity.class,
-                QueryItemOverwriteEntity.class,
-                AccountStateEntity.class,
-                PeerStateEntity.class
+            MailboxEntity.class,
+            EntityStateEntity.class,
+            ThreadEntity.class,
+            ThreadItemEntity.class,
+            EmailEntity.class,
+            EmailInReplyToEntity.class,
+            EmailMessageIdEntity.class,
+            EmailEmailAddressEntity.class,
+            EmailKeywordEntity.class,
+            EmailMailboxEntity.class,
+            EmailBodyValueEntity.class,
+            EmailBodyPartEntity.class,
+            IdentityEntity.class,
+            IdentityEmailAddressEntity.class,
+            QueryEntity.class,
+            QueryItemEntity.class,
+            KeywordOverwriteEntity.class,
+            MailboxOverwriteEntity.class,
+            QueryItemOverwriteEntity.class,
+            AccountStateEntity.class,
+            PeerStateEntity.class
         },
         version = 1,
-        exportSchema = false
-)
+        exportSchema = false)
 @TypeConverters(Converters.class)
 public abstract class LttrsDatabase extends RoomDatabase {
 
@@ -105,9 +99,8 @@ public abstract class LttrsDatabase extends RoomDatabase {
             final LttrsDatabase lttrsDatabase = INSTANCES.remove(account);
             if (lttrsDatabase != null) {
                 LOGGER.info("Closing LttrsDatabase account id {}", account);
-                final File file = new File(
-                        lttrsDatabase.getOpenHelper().getReadableDatabase().getPath()
-                );
+                final File file =
+                        new File(lttrsDatabase.getOpenHelper().getReadableDatabase().getPath());
                 lttrsDatabase.close();
                 RECENTLY_CLOSED.add(account);
                 return file;
@@ -127,18 +120,19 @@ public abstract class LttrsDatabase extends RoomDatabase {
                 return existing;
             }
             if (RECENTLY_CLOSED.contains(account)) {
-                throw new IllegalStateException(String.format(
-                        Locale.US,
-                        "Database for account %d has recently been closed",
-                        account
-                ));
+                throw new IllegalStateException(
+                        String.format(
+                                Locale.US,
+                                "Database for account %d has recently been closed",
+                                account));
             }
             LOGGER.info("Building LttrsDatabase account id {}", account);
             final Context application = context.getApplicationContext();
             final String filename = String.format("lttrs-%x", account);
-            final LttrsDatabase lttrsDatabase = Room.databaseBuilder(application, LttrsDatabase.class, filename)
-                    .fallbackToDestructiveMigration()
-                    .build();
+            final LttrsDatabase lttrsDatabase =
+                    Room.databaseBuilder(application, LttrsDatabase.class, filename)
+                            .fallbackToDestructiveMigration()
+                            .build();
             INSTANCES.put(account, lttrsDatabase);
             return lttrsDatabase;
         }

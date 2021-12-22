@@ -18,12 +18,9 @@ package rs.ltt.android.database.dao;
 import androidx.room.Dao;
 import androidx.room.Query;
 import androidx.room.Transaction;
-
 import com.google.common.collect.ImmutableList;
-
 import java.util.Arrays;
 import java.util.List;
-
 import rs.ltt.android.entity.EntityStateEntity;
 import rs.ltt.jmap.common.entity.AbstractIdentifiableEntity;
 import rs.ltt.jmap.common.entity.Email;
@@ -36,12 +33,12 @@ import rs.ltt.jmap.mua.cache.QueryStateWrapper;
 public abstract class StateDao {
 
     @Query("select state,type from entity_state where type in (:types)")
-    public abstract List<EntityStateEntity> getEntityStates(List<Class<? extends AbstractIdentifiableEntity>> types);
+    public abstract List<EntityStateEntity> getEntityStates(
+            List<Class<? extends AbstractIdentifiableEntity>> types);
 
     public ObjectsState getObjectsState() {
-        final List<EntityStateEntity> entityStates = getEntityStates(
-                Arrays.asList(Email.class, Mailbox.class, Thread.class)
-        );
+        final List<EntityStateEntity> entityStates =
+                getEntityStates(Arrays.asList(Email.class, Mailbox.class, Thread.class));
         final ObjectsState.Builder builder = ObjectsState.builder();
         for (final EntityStateEntity entityState : entityStates) {
             if (entityState.type == Mailbox.class) {
@@ -57,10 +54,14 @@ public abstract class StateDao {
         return builder.build();
     }
 
-    @Query("select state,canCalculateChanges from `query` where queryString=:queryString and valid=1")
+    @Query(
+            "select state,canCalculateChanges from `query` where queryString=:queryString and"
+                    + " valid=1")
     abstract QueryState getQueryState(String queryString);
 
-    @Query("select emailId as id,position from `query` join query_item on `query`.id = queryId  where queryString=:queryString order by position desc limit 1")
+    @Query(
+            "select emailId as id,position from `query` join query_item on `query`.id = queryId "
+                    + " where queryString=:queryString order by position desc limit 1")
     abstract QueryStateWrapper.UpTo getUpTo(String queryString);
 
     @Query("update `query` set valid=0 where queryString=:queryString")
@@ -85,13 +86,15 @@ public abstract class StateDao {
     public QueryStateWrapper getQueryStateWrapper(String queryString) {
         final QueryState queryState = getQueryState(queryString);
         final ObjectsState objectsState = getObjectsState();
-        //TODO we maybe want to include upTo even if no queryState was found to make cache invalidation more graceful
+        // TODO we maybe want to include upTo even if no queryState was found to make cache
+        // invalidation more graceful
         final QueryStateWrapper.UpTo upTo;
         if (queryState == null) {
             return new QueryStateWrapper(null, false, null, objectsState);
         } else {
             upTo = getUpTo(queryString);
-            return new QueryStateWrapper(queryState.state, queryState.canCalculateChanges, upTo, objectsState);
+            return new QueryStateWrapper(
+                    queryState.state, queryState.canCalculateChanges, upTo, objectsState);
         }
     }
 

@@ -16,25 +16,36 @@
 package rs.ltt.android.entity;
 
 import androidx.room.Relation;
-
 import java.util.List;
 
 /**
- * This e-mail model is used in the ComposeActivity. It contains all information necessary to
- * edit a draft including subject, body, all attachments, addresses and message Id as well as reply-to
- * ids.
+ * This e-mail model is used in the ComposeActivity. It contains all information necessary to edit a
+ * draft including subject, body, all attachments, addresses and message Id as well as reply-to ids.
  */
-public class EmailWithReferences extends EmailWithBodiesAndSubject implements IdentifiableWithOwner {
+public class EmailWithReferences extends EmailWithBodiesAndSubject
+        implements IdentifiableWithOwner {
 
     public Long accountId;
 
-    @Relation(entity = EmailInReplyToEntity.class, parentColumn = "id", entityColumn = "emailId", projection = {"id"})
+    @Relation(
+            entity = EmailInReplyToEntity.class,
+            parentColumn = "id",
+            entityColumn = "emailId",
+            projection = {"id"})
     public List<String> inReplyTo;
 
-    @Relation(entity = EmailMessageIdEntity.class, parentColumn = "id", entityColumn = "emailId", projection = {"id"})
+    @Relation(
+            entity = EmailMessageIdEntity.class,
+            parentColumn = "id",
+            entityColumn = "emailId",
+            projection = {"id"})
     public List<String> messageId;
 
-    @Relation(entity = ThreadItemEntity.class, parentColumn = "threadId", entityColumn = "threadId", projection = {"emailId"})
+    @Relation(
+            entity = ThreadItemEntity.class,
+            parentColumn = "threadId",
+            entityColumn = "threadId",
+            projection = {"emailId"})
     public List<String> emailsInThread;
 
     public boolean isOnlyEmailInThread() {
@@ -46,7 +57,8 @@ public class EmailWithReferences extends EmailWithBodiesAndSubject implements Id
         return accountId;
     }
 
-    //TODO do something smarter to deal with someone editing an HTML email or an email with multiple bodies
+    // TODO do something smarter to deal with someone editing an HTML email or an email with
+    // multiple bodies
     public String getText() {
         return getTextBodies().stream().findAny().orElse("");
     }

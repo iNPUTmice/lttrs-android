@@ -15,11 +15,9 @@
 
 package rs.ltt.android.util;
 
-
 import androidx.core.util.Pair;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
-
 import java.util.Collections;
 import java.util.List;
 
@@ -27,19 +25,24 @@ public class CombinedListsLiveData<T, U> extends MediatorLiveData<Pair<List<T>, 
     private List<T> ts = Collections.emptyList();
     private List<U> us = Collections.emptyList();
 
-    public CombinedListsLiveData(final LiveData<List<T>> tLiveData, final LiveData<List<U>> uLiveData) {
+    public CombinedListsLiveData(
+            final LiveData<List<T>> tLiveData, final LiveData<List<U>> uLiveData) {
         this.setValue(Pair.create(this.ts, this.us));
-        this.addSource(tLiveData, (ts) -> {
-            if (ts != null) {
-                this.ts = ts;
-            }
-            this.setValue(Pair.create(ts, us));
-        });
-        this.addSource(uLiveData, (us) -> {
-            if (us != null) {
-                this.us = us;
-            }
-            this.setValue(Pair.create(ts, us));
-        });
+        this.addSource(
+                tLiveData,
+                (ts) -> {
+                    if (ts != null) {
+                        this.ts = ts;
+                    }
+                    this.setValue(Pair.create(ts, us));
+                });
+        this.addSource(
+                uLiveData,
+                (us) -> {
+                    if (us != null) {
+                        this.us = us;
+                    }
+                    this.setValue(Pair.create(ts, us));
+                });
     }
 }

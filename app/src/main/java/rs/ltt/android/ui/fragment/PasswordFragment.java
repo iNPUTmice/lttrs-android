@@ -19,10 +19,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
-
 import rs.ltt.android.R;
 import rs.ltt.android.databinding.FragmentPasswordBinding;
 
@@ -31,9 +29,11 @@ public class PasswordFragment extends AbstractSetupFragment {
     FragmentPasswordBinding binding;
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(
+            @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        this.binding = DataBindingUtil.inflate(inflater, R.layout.fragment_password, container, false);
+        this.binding =
+                DataBindingUtil.inflate(inflater, R.layout.fragment_password, container, false);
         binding.setSetupViewModel(setupViewModel);
         binding.setLifecycleOwner(getViewLifecycleOwner());
         return binding.getRoot();

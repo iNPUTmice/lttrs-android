@@ -17,20 +17,14 @@ package rs.ltt.android.util;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
-
 import rs.ltt.android.R;
 
 public class UserAgent {
 
     private static final String UNKNOWN = "unknown";
 
-
     public static String get(final Context context) {
-        return String.format(
-                "%s/%s",
-                context.getString(R.string.app_name),
-                getVersion(context)
-        );
+        return String.format("%s/%s", context.getString(R.string.app_name), getVersion(context));
     }
 
     private static String getVersion(final Context context) {

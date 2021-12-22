@@ -3,18 +3,14 @@ package rs.ltt.android.entity;
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
-
 import java.time.Instant;
-
 import rs.ltt.autocrypt.client.header.EncryptionPreference;
 import rs.ltt.autocrypt.client.storage.PeerState;
 
 @Entity(tableName = "autocrypt_peer")
 public class PeerStateEntity implements PeerState {
 
-    @NonNull
-    @PrimaryKey
-    public String address;
+    @NonNull @PrimaryKey public String address;
     public Instant lastSeen;
     public Instant autocryptTimestamp;
     public Instant gossipTimestamp;

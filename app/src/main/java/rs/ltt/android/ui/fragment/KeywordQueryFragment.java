@@ -19,14 +19,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProvider;
-
 import com.google.common.collect.ImmutableSet;
-
 import java.util.Collection;
-
 import rs.ltt.android.entity.ThreadOverviewItem;
 import rs.ltt.android.ui.ActionModeMenuConfiguration;
 import rs.ltt.android.ui.QueryItemTouchHelper;
@@ -37,24 +33,22 @@ import rs.ltt.jmap.mua.util.KeywordLabel;
 
 public class KeywordQueryFragment extends AbstractQueryFragment {
 
-
     private KeywordQueryViewModel keywordQueryViewModel;
 
-
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(
+            @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final Bundle bundle = getArguments();
-        final KeywordLabel keywordLabel = KeywordQueryFragmentArgs.fromBundle(
-                bundle == null ? new Bundle() : bundle
-        ).getKeyword();
-        final ViewModelProvider viewModelProvider = new ViewModelProvider(
-                getViewModelStore(),
-                new KeywordQueryViewModel.Factory(
-                        requireActivity().getApplication(),
-                        getLttrsViewModel().getAccountId(),
-                        keywordLabel.getKeyword()
-                )
-        );
+        final KeywordLabel keywordLabel =
+                KeywordQueryFragmentArgs.fromBundle(bundle == null ? new Bundle() : bundle)
+                        .getKeyword();
+        final ViewModelProvider viewModelProvider =
+                new ViewModelProvider(
+                        getViewModelStore(),
+                        new KeywordQueryViewModel.Factory(
+                                requireActivity().getApplication(),
+                                getLttrsViewModel().getAccountId(),
+                                keywordLabel.getKeyword()));
         this.keywordQueryViewModel = viewModelProvider.get(KeywordQueryViewModel.class);
         onLabelOpened(keywordLabel);
         return super.onCreateView(inflater, container, savedInstanceState);
@@ -107,7 +101,6 @@ public class KeywordQueryFragment extends AbstractQueryFragment {
     @Override
     void removeLabel(Collection<String> threadIds) {
         getThreadModifier().removeFromKeyword(threadIds, keywordQueryViewModel.getKeyword());
-
     }
 
     @Override

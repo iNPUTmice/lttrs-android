@@ -15,18 +15,14 @@
 
 package rs.ltt.android.ui.model;
 
-
 import android.app.Application;
-
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
-
 import com.google.common.util.concurrent.ListenableFuture;
-
 import rs.ltt.android.entity.MailboxOverwriteEntity;
 import rs.ltt.android.entity.MailboxWithRoleAndName;
 import rs.ltt.android.entity.QueryInfo;
@@ -42,13 +38,15 @@ public class SearchQueryViewModel extends AbstractQueryViewModel {
     private final LiveData<EmailQuery> searchQueryLiveData;
     private final ListenableFuture<MailboxWithRoleAndName> inbox;
 
-    SearchQueryViewModel(final Application application, final long accountId, final String searchTerm) {
+    SearchQueryViewModel(
+            final Application application, final long accountId, final String searchTerm) {
         super(application, accountId);
         this.searchTerm = searchTerm;
         this.inbox = queryRepository.getInbox();
-        this.searchQueryLiveData = Transformations.map(
-                queryRepository.getTrashAndJunk(),
-                trashAndJunk -> StandardQueries.search(searchTerm, trashAndJunk));
+        this.searchQueryLiveData =
+                Transformations.map(
+                        queryRepository.getTrashAndJunk(),
+                        trashAndJunk -> StandardQueries.search(searchTerm, trashAndJunk));
         init();
     }
 
@@ -64,10 +62,7 @@ public class SearchQueryViewModel extends AbstractQueryViewModel {
     @Override
     public QueryInfo getQueryInfo() {
         return new QueryInfo(
-                queryRepository.getAccountId(),
-                QueryInfo.Type.SEARCH,
-                this.searchTerm
-        );
+                queryRepository.getAccountId(), QueryInfo.Type.SEARCH, this.searchTerm);
     }
 
     public boolean isInInbox(ThreadOverviewItem item) {
@@ -110,5 +105,4 @@ public class SearchQueryViewModel extends AbstractQueryViewModel {
             return modelClass.cast(new SearchQueryViewModel(application, accountId, query));
         }
     }
-
 }

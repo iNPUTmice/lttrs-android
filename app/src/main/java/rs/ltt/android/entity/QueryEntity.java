@@ -19,8 +19,13 @@ import androidx.room.Entity;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "query",
-        indices = {@Index(value = {"queryString"}, unique = true)})
+@Entity(
+        tableName = "query",
+        indices = {
+            @Index(
+                    value = {"queryString"},
+                    unique = true)
+        })
 public class QueryEntity {
 
     @PrimaryKey(autoGenerate = true)
@@ -31,13 +36,13 @@ public class QueryEntity {
     public Boolean canCalculateChanges;
     public Boolean valid;
 
-    public QueryEntity(String queryString, String state, Boolean canCalculateChanges, Boolean valid) {
+    public QueryEntity(
+            String queryString, String state, Boolean canCalculateChanges, Boolean valid) {
         this.queryString = queryString;
         this.state = state;
         this.canCalculateChanges = canCalculateChanges;
         this.valid = valid;
     }
-
 
     public static QueryEntity of(String queryString, String state, Boolean canCalculateChanges) {
         return new QueryEntity(queryString, state, canCalculateChanges, true);

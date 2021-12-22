@@ -3,28 +3,23 @@ package rs.ltt.android.worker;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.net.Uri;
-
 import androidx.annotation.NonNull;
 import androidx.work.Data;
 import androidx.work.ForegroundInfo;
 import androidx.work.WorkInfo;
 import androidx.work.WorkerParameters;
-
 import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.RateLimiter;
-
-import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.concurrent.ExecutionException;
-
 import okhttp3.Call;
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rs.ltt.android.cache.BlobStorage;
 import rs.ltt.android.entity.DownloadableBlob;
 import rs.ltt.android.ui.notification.AttachmentNotification;
@@ -49,7 +44,8 @@ public class BlobDownloadWorker extends AbstractMuaWorker {
     private ListenableFuture<Download> downloadFuture;
     private int currentlyShownProgress = 0;
 
-    public BlobDownloadWorker(@NonNull @NotNull Context context, @NonNull @NotNull WorkerParameters workerParams) {
+    public BlobDownloadWorker(
+            @NonNull @NotNull Context context, @NonNull @NotNull WorkerParameters workerParams) {
         super(context, workerParams);
         final Data data = workerParams.getInputData();
         this.emailId = data.getString(EMAIL_ID_KEY);
@@ -58,9 +54,12 @@ public class BlobDownloadWorker extends AbstractMuaWorker {
     }
 
     public static Uri getUri(final WorkInfo workInfo) {
-        Preconditions.checkState(workInfo.getState() == WorkInfo.State.SUCCEEDED, "Work must have succeeded to extract uri");
+        Preconditions.checkState(
+                workInfo.getState() == WorkInfo.State.SUCCEEDED,
+                "Work must have succeeded to extract uri");
         final Data data = workInfo.getOutputData();
-        final String uri = Preconditions.checkNotNull(data.getString(URI_KEY), "OutputData is missing URI");
+        final String uri =
+                Preconditions.checkNotNull(data.getString(URI_KEY), "OutputData is missing URI");
         return Uri.parse(uri);
     }
 
@@ -100,10 +99,14 @@ public class BlobDownloadWorker extends AbstractMuaWorker {
         }
         this.call = download.getCall();
         if (expectedSize != null && expectedSize != download.getContentLength()) {
-            LOGGER.info("expected size {} does not match ContentLength {}", expectedSize, download.getContentLength());
+            LOGGER.info(
+                    "expected size {} does not match ContentLength {}",
+                    expectedSize,
+                    download.getContentLength());
         }
         try (final InputStream inputStream = download.getInputStream();
-             final OutputStream outputStream = new FileOutputStream(temporaryFile, download.isResumed())) {
+                final OutputStream outputStream =
+                        new FileOutputStream(temporaryFile, download.isResumed())) {
             long transmitted = rangeStart;
             int count;
             final byte[] buffer = new byte[8192];
@@ -121,27 +124,31 @@ public class BlobDownloadWorker extends AbstractMuaWorker {
             }
             outputStream.flush();
         } catch (final Exception e) {
-            //TODO get cause. When cause FailureToResume delete tmp file
+            // TODO get cause. When cause FailureToResume delete tmp file
             LOGGER.warn("Unable to download file", e);
             return Result.failure();
         }
 
-        //There seems to be a minimum display time of sorts. Even for very short running jobs
-        //WorkManager will display the foreground notification for at least some time x.
-        //However if the download finishes earlier the notification would still show 'downloading'
-        //stuck at 100% (Even though we already have the file and performed a view action)
-        //Therefore we change the notification to 'Download complete' for the remainder of time x.
-        //For long running download jobs this will effectively not be shown
+        // There seems to be a minimum display time of sorts. Even for very short running jobs
+        // WorkManager will display the foreground notification for at least some time x.
+        // However if the download finishes earlier the notification would still show 'downloading'
+        // stuck at 100% (Even though we already have the file and performed a view action)
+        // Therefore we change the notification to 'Download complete' for the remainder of time x.
+        // For long running download jobs this will effectively not be shown
         notifyDownloadComplete();
         LOGGER.info("Finished downloading {}", storage.temporaryFile.getAbsolutePath());
         if (storage.moveTemporaryToFile()) {
-            final Uri uri = BlobStorage.getFileProviderUri(
-                    getApplicationContext(), storage.file, downloadable.getName()
-            );
-            final Data data = new Data.Builder()
-                    .putString(URI_KEY, uri.toString()) //to be picked up by view intent
-                    .putString(StoreAttachmentWorker.FILE_KEY, storage.file.getAbsolutePath()) //to be picked up by StoreAttachmentWorker
-                    .build();
+            final Uri uri =
+                    BlobStorage.getFileProviderUri(
+                            getApplicationContext(), storage.file, downloadable.getName());
+            final Data data =
+                    new Data.Builder()
+                            .putString(URI_KEY, uri.toString()) // to be picked up by view intent
+                            .putString(
+                                    StoreAttachmentWorker.FILE_KEY,
+                                    storage.file.getAbsolutePath()) // to be picked up by
+                            // StoreAttachmentWorker
+                            .build();
             return Result.success(data);
         } else {
             return Result.failure();
@@ -162,28 +169,24 @@ public class BlobDownloadWorker extends AbstractMuaWorker {
     }
 
     private ForegroundInfo getForegroundInfo() {
-        final DownloadableBlob downloadable = Preconditions.checkNotNull(
-                this.downloadable,
-                "getForegroundInfo can only be called after setting downloadable"
-        );
-        return new ForegroundInfo(AttachmentNotification.DOWNLOAD_ID, AttachmentNotification.downloading(
-                getApplicationContext(),
-                getId(),
-                downloadable,
-                0,
-                true
-        ));
+        final DownloadableBlob downloadable =
+                Preconditions.checkNotNull(
+                        this.downloadable,
+                        "getForegroundInfo can only be called after setting downloadable");
+        return new ForegroundInfo(
+                AttachmentNotification.DOWNLOAD_ID,
+                AttachmentNotification.downloading(
+                        getApplicationContext(), getId(), downloadable, 0, true));
     }
 
     private void notifyDownloadComplete() {
-        final DownloadableBlob downloadable = Preconditions.checkNotNull(
-                this.downloadable,
-                "getForegroundInfo can only be called after setting downloadable"
-        );
-        notificationManager.notify(AttachmentNotification.DOWNLOAD_ID, AttachmentNotification.downloaded(
-                getApplicationContext(),
-                downloadable
-        ));
+        final DownloadableBlob downloadable =
+                Preconditions.checkNotNull(
+                        this.downloadable,
+                        "getForegroundInfo can only be called after setting downloadable");
+        notificationManager.notify(
+                AttachmentNotification.DOWNLOAD_ID,
+                AttachmentNotification.downloaded(getApplicationContext(), downloadable));
     }
 
     private void updateProgress(final int progress, final boolean indeterminate) {
@@ -191,17 +194,18 @@ public class BlobDownloadWorker extends AbstractMuaWorker {
             return;
         }
         if (notificationRateLimiter.tryAcquire()) {
-            final DownloadableBlob downloadable = Preconditions.checkNotNull(
-                    this.downloadable,
-                    "getForegroundInfo can only be called after setting downloadable"
-            );
-            notificationManager.notify(AttachmentNotification.DOWNLOAD_ID, AttachmentNotification.downloading(
-                    getApplicationContext(),
-                    getId(),
-                    downloadable,
-                    progress,
-                    indeterminate
-            ));
+            final DownloadableBlob downloadable =
+                    Preconditions.checkNotNull(
+                            this.downloadable,
+                            "getForegroundInfo can only be called after setting downloadable");
+            notificationManager.notify(
+                    AttachmentNotification.DOWNLOAD_ID,
+                    AttachmentNotification.downloading(
+                            getApplicationContext(),
+                            getId(),
+                            downloadable,
+                            progress,
+                            indeterminate));
             this.currentlyShownProgress = progress;
         }
     }

@@ -16,20 +16,16 @@
 package rs.ltt.android.worker;
 
 import android.content.Context;
-
 import androidx.annotation.NonNull;
 import androidx.work.Data;
 import androidx.work.WorkerParameters;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rs.ltt.android.entity.IdentityWithNameAndEmail;
 import rs.ltt.android.util.UserAgent;
 import rs.ltt.jmap.common.entity.Attachment;
@@ -61,7 +57,6 @@ public abstract class AbstractCreateEmailWorker extends AbstractMuaWorker {
     private final String body;
     private final List<Attachment> attachments;
 
-
     AbstractCreateEmailWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
         final Data data = workerParams.getInputData();
@@ -75,17 +70,19 @@ public abstract class AbstractCreateEmailWorker extends AbstractMuaWorker {
         final String[] inReplyTo = data.getStringArray(IN_REPLY_TO_KEY);
         this.inReplyTo = inReplyTo == null ? Collections.emptyList() : Arrays.asList(inReplyTo);
         final byte[] attachments = data.getByteArray(ATTACHMENTS_KEY);
-        this.attachments = attachments == null ? null : rs.ltt.android.entity.Attachment.of(attachments);
+        this.attachments =
+                attachments == null ? null : rs.ltt.android.entity.Attachment.of(attachments);
     }
 
-    public static Data data(final Long account,
-                            final String identity,
-                            final Collection<String> inReplyTo,
-                            final Collection<EmailAddress> to,
-                            final Collection<EmailAddress> cc,
-                            final String subject,
-                            final String body,
-                            final Collection<? extends Attachment> attachments) {
+    public static Data data(
+            final Long account,
+            final String identity,
+            final Collection<String> inReplyTo,
+            final Collection<EmailAddress> to,
+            final Collection<EmailAddress> cc,
+            final String subject,
+            final String body,
+            final Collection<? extends Attachment> attachments) {
         return new Data.Builder()
                 .putLong(ACCOUNT_KEY, account)
                 .putString(IDENTITY_KEY, identity)
@@ -94,7 +91,8 @@ public abstract class AbstractCreateEmailWorker extends AbstractMuaWorker {
                 .putString(CC_KEY, EmailAddressUtil.toHeaderValue(cc))
                 .putString(SUBJECT_KEY, subject)
                 .putString(BODY_KEY, body)
-                .putByteArray(ATTACHMENTS_KEY, rs.ltt.android.entity.Attachment.toByteArray(attachments))
+                .putByteArray(
+                        ATTACHMENTS_KEY, rs.ltt.android.entity.Attachment.toByteArray(attachments))
                 .build();
     }
 
@@ -102,10 +100,11 @@ public abstract class AbstractCreateEmailWorker extends AbstractMuaWorker {
         refresh();
         final String threadId = getDatabase().threadAndEmailDao().getThreadId(emailId);
         LOGGER.info("Email saved as draft with id {} in thread {}", emailId, threadId);
-        final Data data = new Data.Builder()
-                .putString("emailId", emailId)
-                .putString("threadId", threadId)
-                .build();
+        final Data data =
+                new Data.Builder()
+                        .putString("emailId", emailId)
+                        .putString("threadId", threadId)
+                        .build();
         return Result.success(data);
     }
 
@@ -118,17 +117,14 @@ public abstract class AbstractCreateEmailWorker extends AbstractMuaWorker {
     }
 
     Email buildEmail(final IdentityWithNameAndEmail identity) {
-        final EmailBodyValue emailBodyValue = EmailBodyValue.builder()
-                .value(this.body)
-                .build();
+        final EmailBodyValue emailBodyValue = EmailBodyValue.builder().value(this.body).build();
         final String partId = "0";
-        final EmailBodyPart emailBodyPart = EmailBodyPart.builder()
-                .partId(partId)
-                .type("text/plain")
-                .build();
-        final List<EmailBodyPart> attachments = this.attachments.stream()
-                .map(AttachmentUtil::toEmailBodyPart)
-                .collect(Collectors.toList());
+        final EmailBodyPart emailBodyPart =
+                EmailBodyPart.builder().partId(partId).type("text/plain").build();
+        final List<EmailBodyPart> attachments =
+                this.attachments.stream()
+                        .map(AttachmentUtil::toEmailBodyPart)
+                        .collect(Collectors.toList());
         return Email.builder()
                 .from(identity.getEmailAddress())
                 .inReplyTo(this.inReplyTo)
