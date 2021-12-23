@@ -16,6 +16,24 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/action_encryption_options"
+        android:title="@string/encryption_options"
+        android:icon="@drawable/ic_lock_white_24dp"
+        app:showAsAction="always">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/encryption_option_clear_text"
+                    android:title="@string/cleartext"
+                    android:checked="true"/>
+                <item
+                    android:id="@+id/encryption_option_encrypted"
+                    android:title="@string/encrypted"
+                    android:checked="false"/>
+            </group>
+        </menu>
+    </item>
+    <item
         android:id="@+id/action_attach_file"
         android:icon="@drawable/ic_attachment_white_24dp"
         android:title="@string/attach_file"

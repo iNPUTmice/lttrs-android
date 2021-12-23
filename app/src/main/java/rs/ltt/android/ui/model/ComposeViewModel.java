@@ -31,8 +31,12 @@ import androidx.work.ExistingWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
@@ -62,6 +66,7 @@ import rs.ltt.android.util.FileSizes;
 import rs.ltt.android.util.MergedListsLiveData;
 import rs.ltt.android.worker.BlobUploadWorker;
 import rs.ltt.android.worker.Failure;
+import rs.ltt.autocrypt.client.Decision;
 import rs.ltt.jmap.common.entity.Attachment;
 import rs.ltt.jmap.common.entity.EmailAddress;
 import rs.ltt.jmap.mua.util.AttachmentUtil.CombinedAttachmentSizeExceedsLimitException;
@@ -79,6 +84,17 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
 
     private final MutableLiveData<Event<String>> errorMessage = new MutableLiveData<>();
 
+    private final LoadingCache<Long, ComposeRepository> repositories =
+            CacheBuilder.newBuilder()
+                    .build(
+                            new CacheLoader<>() {
+                                @NonNull
+                                @Override
+                                public ComposeRepository load(@NonNull Long id) {
+                                    return new ComposeRepository(getApplication(), id);
+                                }
+                            });
+
     private final MutableLiveData<Integer> selectedIdentityPosition = new MutableLiveData<>();
     private final MutableLiveData<Boolean> extendedAddresses = new MutableLiveData<>();
     private final MutableLiveData<String> to = new MutableLiveData<>();
@@ -88,6 +104,10 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
     private final MediatorLiveData<List<? extends Attachment>> attachments =
             new MediatorLiveData<>();
     private final LiveData<List<IdentityWithNameAndEmail>> identities;
+
+    private final LiveData<EncryptionOptions> encryptionOptions;
+    private final MutableLiveData<UserEncryptionChoice> userEncryptionChoice =
+            new MutableLiveData<>(UserEncryptionChoice.NONE);
 
     private boolean draftHasBeenHandled = false;
 
@@ -125,6 +145,31 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
                 initializeWithEmail();
             }
         }
+        final LiveData<List<EmailAddress>> recipientsTo =
+                Transformations.map(this.to, EmailAddressUtil::parse);
+        final LiveData<List<EmailAddress>> recipientsCC =
+                Transformations.map(this.cc, EmailAddressUtil::parse);
+        final MergedListsLiveData<EmailAddress> recipients =
+                new MergedListsLiveData<>(ImmutableList.of(recipientsTo, recipientsCC));
+        final LiveData<Decision> autocryptDecision =
+                Transformations.switchMap(
+                        recipients,
+                        input -> getRepository(getAccountId()).getAutocryptDecision(input, false));
+        final MediatorLiveData<EncryptionOptions> encryptionOptions = new MediatorLiveData<>();
+
+        encryptionOptions.addSource(
+                autocryptDecision,
+                decision ->
+                        encryptionOptions.postValue(
+                                new EncryptionOptions(userEncryptionChoice.getValue(), decision)));
+        encryptionOptions.addSource(
+                userEncryptionChoice,
+                userEncryptionChoice ->
+                        encryptionOptions.postValue(
+                                new EncryptionOptions(
+                                        userEncryptionChoice, autocryptDecision.getValue())));
+
+        this.encryptionOptions = Transformations.distinctUntilChanged(encryptionOptions);
     }
 
     private static Collection<String> inReplyTo(
@@ -145,8 +190,8 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
         return in == null ? Collections.emptyList() : in;
     }
 
-    private ComposeRepository getRepository(Long accountId) {
-        return new ComposeRepository(getApplication(), accountId);
+    private ComposeRepository getRepository(final Long accountId) {
+        return this.repositories.getUnchecked(accountId);
     }
 
     public LiveData<Event<String>> getErrorMessage() {
@@ -183,6 +228,10 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
 
     public MutableLiveData<Integer> getSelectedIdentityPosition() {
         return this.selectedIdentityPosition;
+    }
+
+    public LiveData<EncryptionOptions> getEncryptionOptions() {
+        return this.encryptionOptions;
     }
 
     public void showExtendedAddresses() {
@@ -642,6 +691,52 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
         public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
             return Objects.requireNonNull(
                     modelClass.cast(new ComposeViewModel(application, parameter)));
+        }
+    }
+
+    public enum UserEncryptionChoice {
+        NONE,
+        ENCRYPTED,
+        CLEARTEXT
+    }
+
+    public static class EncryptionOptions {
+        public final UserEncryptionChoice userEncryptionChoice;
+        public final Decision decision;
+
+        public EncryptionOptions(UserEncryptionChoice userEncryptionChoice, Decision decision) {
+            this.userEncryptionChoice = userEncryptionChoice;
+            this.decision = decision == null ? Decision.DISABLE : decision;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            EncryptionOptions that = (EncryptionOptions) o;
+            return userEncryptionChoice == that.userEncryptionChoice && decision == that.decision;
+        }
+
+        @Override
+        public int hashCode() {
+            return com.google.common.base.Objects.hashCode(userEncryptionChoice, decision);
+        }
+
+        @NonNull
+        @Override
+        public String toString() {
+            return MoreObjects.toStringHelper(this)
+                    .add("userEncryptionChoice", userEncryptionChoice)
+                    .add("decision", decision)
+                    .toString();
+        }
+
+        public static EncryptionOptions of(final LiveData<EncryptionOptions> liveData) {
+            final EncryptionOptions value = liveData.getValue();
+            if (value != null) {
+                return value;
+            }
+            return new EncryptionOptions(UserEncryptionChoice.NONE, Decision.DISABLE);
         }
     }
 }

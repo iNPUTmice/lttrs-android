@@ -25,6 +25,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.TextView;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -48,8 +49,10 @@ import rs.ltt.android.ui.ComposeAction;
 import rs.ltt.android.ui.MaterialAlertDialogs;
 import rs.ltt.android.ui.ViewIntent;
 import rs.ltt.android.ui.model.ComposeViewModel;
+import rs.ltt.android.ui.model.ComposeViewModel.EncryptionOptions;
 import rs.ltt.android.util.Event;
 import rs.ltt.android.util.MediaTypes;
+import rs.ltt.autocrypt.client.Decision;
 import rs.ltt.jmap.common.entity.Attachment;
 import rs.ltt.jmap.mua.util.MailToUri;
 
@@ -149,14 +152,10 @@ public class ComposeActivity extends AppCompatActivity {
         binding.setLifecycleOwner(this);
 
         binding.to.addTextChangedListener(new ChipTextWatcher(binding.to));
-        binding.to.setOnFocusChangeListener(
-                (v, hasFocus) ->
-                        ChipDrawableSpan.apply(this, binding.to.getEditableText(), hasFocus));
+        binding.to.setOnFocusChangeListener(this::focusOnRecipientFieldChanged);
 
         binding.cc.addTextChangedListener(new ChipTextWatcher(binding.cc));
-        binding.cc.setOnFocusChangeListener(
-                (v, hasFocus) ->
-                        ChipDrawableSpan.apply(this, binding.cc.getEditableText(), hasFocus));
+        binding.cc.setOnFocusChangeListener(this::focusOnRecipientFieldChanged);
 
         binding.moreAddresses.setOnClickListener((v -> composeViewModel.showExtendedAddresses()));
 
@@ -167,8 +166,15 @@ public class ComposeActivity extends AppCompatActivity {
         binding.ccLabel.setOnClickListener(v -> requestFocusAndOpenKeyboard(binding.cc));
         binding.placeholder.setOnClickListener(v -> requestFocusAndOpenKeyboard(binding.body));
 
+        composeViewModel.getEncryptionOptions().observe(this, this::onEncryptionOptionChanged);
+
         // TODO once we handle instance state ourselves we need to call ChipDrawableSpan.reset() on
         // `to`
+    }
+
+    private void onEncryptionOptionChanged(ComposeViewModel.EncryptionOptions encryptionOptions) {
+        LOGGER.info("onEncryptionOptionChanged({})", encryptionOptions);
+        this.invalidateOptionsMenu();
     }
 
     private void onErrorMessage(final Event<String> event) {
@@ -246,6 +252,16 @@ public class ComposeActivity extends AppCompatActivity {
         return new ComposeViewModel.Parameter(account, freshStart, action, emailId);
     }
 
+    private void focusOnRecipientFieldChanged(final View view, final boolean hasFocus) {
+        if (view instanceof TextView) {
+            final TextView textView = (TextView) view;
+            LOGGER.info("hasFocus({})", hasFocus);
+            ChipDrawableSpan.apply(this, textView.getEditableText(), hasFocus);
+            return;
+        }
+        throw new IllegalArgumentException("View parameter is not of type TextView");
+    }
+
     private void focusOnBodyOrSubject(final View view, final boolean hasFocus) {
         if (hasFocus) {
             composeViewModel.suggestHideExtendedAddresses();
@@ -263,7 +279,41 @@ public class ComposeActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(@NonNull Menu menu) {
         getMenuInflater().inflate(R.menu.activity_compose, menu);
+        prepareEncryptionMenu(menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    private void prepareEncryptionMenu(@NonNull final Menu menu) {
+        final MenuItem encryptionOptionsMenuItem = menu.findItem(R.id.action_encryption_options);
+        final MenuItem cleartextMenuItem = menu.findItem(R.id.encryption_option_clear_text);
+        final MenuItem encryptedMenuItem = menu.findItem(R.id.encryption_option_encrypted);
+        final EncryptionOptions encryptionOptions =
+                EncryptionOptions.of(composeViewModel.getEncryptionOptions());
+        final ComposeViewModel.UserEncryptionChoice choice = encryptionOptions.userEncryptionChoice;
+        final Decision decision = encryptionOptions.decision;
+        if (encryptionOptions.decision == Decision.DISABLE) {
+            encryptionOptionsMenuItem.setVisible(false);
+        } else {
+            encryptionOptionsMenuItem.setVisible(true);
+            if (encryptionOptions.decision == Decision.DISCOURAGE) {
+                encryptionOptionsMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+            } else {
+                encryptionOptionsMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+            }
+        }
+        final boolean encrypted;
+        if (choice == ComposeViewModel.UserEncryptionChoice.NONE) {
+            encrypted = decision == Decision.ENCRYPT;
+        } else {
+            encrypted = choice == ComposeViewModel.UserEncryptionChoice.ENCRYPTED;
+        }
+        if (encrypted) {
+            encryptionOptionsMenuItem.setIcon(R.drawable.ic_lock_white_24dp);
+            encryptedMenuItem.setChecked(true);
+        } else {
+            encryptionOptionsMenuItem.setIcon(R.drawable.ic_lock_open_white_24dp);
+            cleartextMenuItem.setChecked(true);
+        }
     }
 
     @Override

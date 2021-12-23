@@ -21,26 +21,54 @@ import androidx.work.ExistingWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkContinuation;
 import androidx.work.WorkManager;
+import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.MoreExecutors;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+import rs.ltt.android.MuaPool;
 import rs.ltt.android.entity.EmailWithReferences;
 import rs.ltt.android.entity.IdentityWithNameAndEmail;
 import rs.ltt.android.ui.model.ComposeViewModel;
+import rs.ltt.android.util.FuturesLiveData;
 import rs.ltt.android.worker.AbstractMuaWorker;
 import rs.ltt.android.worker.DiscardDraftWorker;
 import rs.ltt.android.worker.SaveDraftWorker;
 import rs.ltt.android.worker.SendEmailWorker;
 import rs.ltt.android.worker.SubmitEmailWorker;
+import rs.ltt.autocrypt.client.Decision;
+import rs.ltt.autocrypt.client.Recommendation;
+import rs.ltt.autocrypt.jmap.AutocryptPlugin;
+import rs.ltt.jmap.common.entity.EmailAddress;
 import rs.ltt.jmap.common.entity.IdentifiableIdentity;
 import rs.ltt.jmap.common.entity.Keyword;
 import rs.ltt.jmap.common.entity.Role;
+import rs.ltt.jmap.mua.Mua;
 
 public class ComposeRepository extends AbstractRepository {
 
     public ComposeRepository(final Application application, final long accountId) {
         super(application, accountId);
+    }
+
+    public LiveData<Decision> getAutocryptDecision(
+            final List<EmailAddress> addresses, final boolean isReplyToEncrypted) {
+        final ListenableFuture<Mua> muaFuture = MuaPool.getInstance(application, accountId);
+        final ListenableFuture<List<Recommendation>> recommendationFuture =
+                Futures.transformAsync(
+                        muaFuture,
+                        mua ->
+                                mua.getPlugin(AutocryptPlugin.class)
+                                        .getAutocryptClient()
+                                        .getRecommendationsForAddresses(
+                                                addresses, isReplyToEncrypted),
+                        MoreExecutors.directExecutor());
+        return FuturesLiveData.of(
+                Futures.transform(
+                        recommendationFuture,
+                        Recommendation::combine,
+                        MoreExecutors.directExecutor()));
     }
 
     public LiveData<List<IdentityWithNameAndEmail>> getIdentities() {
