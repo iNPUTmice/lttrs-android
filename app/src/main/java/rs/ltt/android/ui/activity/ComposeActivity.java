@@ -50,6 +50,7 @@ import rs.ltt.android.ui.MaterialAlertDialogs;
 import rs.ltt.android.ui.ViewIntent;
 import rs.ltt.android.ui.model.ComposeViewModel;
 import rs.ltt.android.ui.model.ComposeViewModel.EncryptionOptions;
+import rs.ltt.android.ui.model.ComposeViewModel.UserEncryptionChoice;
 import rs.ltt.android.util.Event;
 import rs.ltt.android.util.MediaTypes;
 import rs.ltt.autocrypt.client.Decision;
@@ -289,7 +290,7 @@ public class ComposeActivity extends AppCompatActivity {
         final MenuItem encryptedMenuItem = menu.findItem(R.id.encryption_option_encrypted);
         final EncryptionOptions encryptionOptions =
                 EncryptionOptions.of(composeViewModel.getEncryptionOptions());
-        final ComposeViewModel.UserEncryptionChoice choice = encryptionOptions.userEncryptionChoice;
+        final UserEncryptionChoice choice = encryptionOptions.userEncryptionChoice;
         final Decision decision = encryptionOptions.decision;
         if (encryptionOptions.decision == Decision.DISABLE) {
             encryptionOptionsMenuItem.setVisible(false);
@@ -302,10 +303,10 @@ public class ComposeActivity extends AppCompatActivity {
             }
         }
         final boolean encrypted;
-        if (choice == ComposeViewModel.UserEncryptionChoice.NONE) {
+        if (choice == UserEncryptionChoice.NONE) {
             encrypted = decision == Decision.ENCRYPT;
         } else {
-            encrypted = choice == ComposeViewModel.UserEncryptionChoice.ENCRYPTED;
+            encrypted = choice == UserEncryptionChoice.ENCRYPTED;
         }
         if (encrypted) {
             encryptionOptionsMenuItem.setIcon(R.drawable.ic_lock_white_24dp);
@@ -330,6 +331,12 @@ public class ComposeActivity extends AppCompatActivity {
             return true;
         } else if (itemId == R.id.action_attach_file) {
             this.getAttachmentLauncher.launch(MediaTypes.toString(MediaType.ANY_TYPE));
+            return true;
+        } else if (itemId == R.id.encryption_option_clear_text) {
+            composeViewModel.setUserEncryptionChoice(UserEncryptionChoice.CLEARTEXT);
+            return true;
+        } else if (itemId == R.id.encryption_option_encrypted) {
+            composeViewModel.setUserEncryptionChoice(UserEncryptionChoice.ENCRYPTED);
             return true;
         } else {
             return super.onOptionsItemSelected(item);

@@ -234,6 +234,10 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
         return this.encryptionOptions;
     }
 
+    public void setUserEncryptionChoice(final UserEncryptionChoice choice) {
+        this.userEncryptionChoice.postValue(choice);
+    }
+
     public void showExtendedAddresses() {
         this.extendedAddresses.postValue(true);
     }
