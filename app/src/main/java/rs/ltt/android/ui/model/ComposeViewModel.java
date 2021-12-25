@@ -145,6 +145,10 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
                 initializeWithEmail();
             }
         }
+        this.encryptionOptions = setupEncryptionOptions();
+    }
+
+    private LiveData<EncryptionOptions> setupEncryptionOptions() {
         final LiveData<List<EmailAddress>> recipientsTo =
                 Transformations.map(this.to, EmailAddressUtil::parse);
         final LiveData<List<EmailAddress>> recipientsCC =
@@ -168,8 +172,7 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
                         encryptionOptions.postValue(
                                 new EncryptionOptions(
                                         userEncryptionChoice, autocryptDecision.getValue())));
-
-        this.encryptionOptions = Transformations.distinctUntilChanged(encryptionOptions);
+        return Transformations.distinctUntilChanged(encryptionOptions);
     }
 
     private static Collection<String> inReplyTo(
