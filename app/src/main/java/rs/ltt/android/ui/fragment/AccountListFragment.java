@@ -34,11 +34,8 @@ public class AccountListFragment extends AbstractAccountManagerFragment {
 
         this.accountAdapter = new AccountAdapter();
         this.binding.accountList.setAdapter(this.accountAdapter);
-        this.accountAdapter.setOnAccountSelected(
-                id -> {
-                    getNavController()
-                            .navigate(AccountListFragmentDirections.actionAccountListToAccount(id));
-                });
+
+        this.accountAdapter.setOnAccountSelected(this::navigateToAccount);
 
         accountListViewModel
                 .getAccounts()
@@ -47,6 +44,10 @@ public class AccountListFragment extends AbstractAccountManagerFragment {
         this.binding.addNewAccount.setOnClickListener(v -> SetupActivity.launch(requireActivity()));
 
         return this.binding.getRoot();
+    }
+
+    private void navigateToAccount(final long id) {
+        getNavController().navigate(AccountListFragmentDirections.actionAccountListToAccount(id));
     }
 
     @Override

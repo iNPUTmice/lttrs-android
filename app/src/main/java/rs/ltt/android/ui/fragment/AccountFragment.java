@@ -90,7 +90,11 @@ public class AccountFragment extends AbstractAccountManagerFragment {
         return super.onOptionsItemSelected(menuItem);
     }
 
-    private void onE2ee(final View view) {}
+    private void onE2ee(final View view) {
+        final long id = accountViewModel.getAccountId();
+        getNavController()
+                .navigate(AccountFragmentDirections.actionAccountToEncryptionSettings(id));
+    }
 
     private void onVacationResponse(final View view) {}
 
