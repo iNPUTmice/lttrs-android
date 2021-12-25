@@ -36,6 +36,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="64dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
                 android:text="@string/autocrypt_encryption_preference"
                 android:textAppearance="?textAppearanceTitleMedium" />
 
@@ -47,6 +49,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
                     android:gravity="top"
                     android:paddingStart="32dp"
                     android:paddingEnd="0dp"
@@ -56,6 +59,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
                     android:gravity="top"
                     android:paddingStart="32dp"
                     android:paddingEnd="0dp"

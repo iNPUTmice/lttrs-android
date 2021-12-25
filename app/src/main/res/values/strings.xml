@@ -153,9 +153,9 @@
     <string name="cleartext">Cleartext</string>
     <string name="encrypted">Encrypted</string>
     <string name="transfer_secret_key">Transfer secret key</string>
-    <string name="autocrypt_enable_description">Enable support for end-to-end encryption. Your public key will be attached to outgoing emails. This allows your contacts to send encrypted emails to you.</string>
+    <string name="autocrypt_enable_description">Enable support for end-to-end encryption. Your public key will be attached to outgoing emails. This allows your contacts to send you encrypted emails.</string>
     <string name="autocrypt_no_preference_description">On demand. You and your contacts will be able to explicitly enable encryption for individual emails.</string>
-    <string name="autocrypt_mutual_description">I wish to receive encrypted emails. Encryption will be used by default for all contacts that also wish to receive encrypted emails.</string>
+    <string name="autocrypt_mutual_description">You wish to receive encrypted emails. End-to-end encryption will be used by default for all contacts who also wish to receive encrypted emails.</string>
     <string name="autocrypt_encryption_preference">Encryption preference</string>
     <plurals name="x_emails_in_trash">
         <item quantity="one">There is currently %d e-mail in the trash.</item>
