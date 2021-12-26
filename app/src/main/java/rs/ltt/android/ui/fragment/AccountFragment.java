@@ -20,8 +20,6 @@ import rs.ltt.android.util.Event;
 
 public class AccountFragment extends AbstractAccountManagerFragment {
 
-    private FragmentAccountBinding binding;
-
     private AccountViewModel accountViewModel;
 
     @Override
@@ -38,7 +36,7 @@ public class AccountFragment extends AbstractAccountManagerFragment {
         final AccountFragmentArgs arguments = AccountFragmentArgs.fromBundle(requireArguments());
         final long accountId = arguments.getId();
 
-        this.binding =
+        final FragmentAccountBinding binding =
                 DataBindingUtil.inflate(inflater, R.layout.fragment_account, container, false);
 
         final ViewModelProvider viewModelProvider =
@@ -58,13 +56,13 @@ public class AccountFragment extends AbstractAccountManagerFragment {
                 .isEnabled()
                 .observe(getViewLifecycleOwner(), e -> binding.setEnabled(Boolean.TRUE.equals(e)));
 
-        this.binding.remove.setOnClickListener(this::onRemoveAccount);
-        this.binding.identities.setOnClickListener(this::onIdentities);
-        this.binding.labels.setOnClickListener(this::onLabels);
-        this.binding.vacationResponse.setOnClickListener(this::onVacationResponse);
-        this.binding.e2ee.setOnClickListener(this::onE2ee);
+        binding.remove.setOnClickListener(this::onRemoveAccount);
+        binding.identities.setOnClickListener(this::onIdentities);
+        binding.labels.setOnClickListener(this::onLabels);
+        binding.vacationResponse.setOnClickListener(this::onVacationResponse);
+        binding.e2ee.setOnClickListener(this::onE2ee);
 
-        return this.binding.getRoot();
+        return binding.getRoot();
     }
 
     private void onFinishEvent(final Event<Void> event) {

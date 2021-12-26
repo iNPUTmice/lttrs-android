@@ -27,6 +27,7 @@ import android.text.style.ImageSpan;
 import android.text.style.StyleSpan;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.DrawableRes;
@@ -413,4 +414,30 @@ public class BindingAdapters {
             return R.drawable.ic_baseline_attachment_24;
         }
     }
+
+    @BindingAdapter("android:checked")
+    public static void setChecked(final CompoundButton button, final boolean checked) {
+        setChecked(button, Boolean.valueOf(checked));
+    }
+
+    @BindingAdapter("android:checked")
+    public static void setChecked(final CompoundButton button, final Boolean checked) {
+        if (checked == null) {
+            return;
+        }
+        final Object tag = button.getTag();
+        button.setChecked(checked);
+        if (tag instanceof InitialValueSet) {
+            return;
+        }
+        flagInitialValueSet(button);
+    }
+
+    public static void flagInitialValueSet(final CompoundButton button) {
+        button.jumpDrawablesToCurrentState();
+        button.setTag(new InitialValueSet());
+        button.setVisibility(View.VISIBLE);
+    }
+
+    private static class InitialValueSet {}
 }
