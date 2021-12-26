@@ -1,5 +1,6 @@
 package rs.ltt.android.database.dao;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
@@ -15,6 +16,12 @@ public abstract class AutocryptDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract void insert(final AccountStateEntity accountState);
+
+    @Query("select enabled from autocrypt_account where userId=:userId")
+    public abstract LiveData<Boolean> isAutocryptEnabled(final String userId);
+
+    @Query("select encryptionPreference from autocrypt_account where userId=:userId")
+    public abstract LiveData<EncryptionPreference> getEncryptionPreference(final String userId);
 
     @Query("select * from autocrypt_account where userId=:userId")
     public abstract AccountStateEntity getAccountState(final String userId);

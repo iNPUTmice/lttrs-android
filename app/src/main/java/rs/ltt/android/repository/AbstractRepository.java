@@ -169,4 +169,5 @@ public abstract class AbstractRepository {
                                                     queryEntity.id, threadId, type)));
         }
     }
+
 }
