@@ -383,6 +383,7 @@ public class ComposeActivity extends AppCompatActivity {
 
     @Override
     public void onDestroy() {
+        // TODO take changing configuration into account?
         if (isFinishing() && composeViewModel != null) {
             composeViewModel.saveDraft();
         }

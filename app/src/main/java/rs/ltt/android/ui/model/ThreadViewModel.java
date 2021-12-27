@@ -368,7 +368,7 @@ public class ThreadViewModel extends AbstractAttachmentViewModel {
     }
 
     @Override
-    protected long getAccountId() {
+    protected long getAccountIdOrThrow() {
         return this.accountId;
     }
 

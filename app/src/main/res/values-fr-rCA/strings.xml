@@ -137,7 +137,6 @@
     <string name="combined_size_of_attachments_exceeds_the_limit_of_x">La taille combinée de toutes les pièces jointes dépasse la limite de %s</string>
     <string name="attachment_is_not_cached">La pièce jointe n’est pas mise en cache</string>
     <string name="upload_complete">Téléversement terminé</string>
-    <string name="failed_to_upload_attachment">Impossible de téléverser la pièce jointe</string>
     <string name="the_file_exceeds_the_limit_of_x">Le fichier dépasse la limite de %s</string>
     <string name="download_complete">Téléchargement terminé</string>
     <string name="no_application_to_open_x">Aucune application n’a pu afficher %s. Essayez plutôt de télécharger la pièce jointe.</string>

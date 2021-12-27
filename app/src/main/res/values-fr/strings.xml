@@ -123,7 +123,6 @@
     <string name="account">Compte</string>
     <string name="no_application_to_open_x">Aucune application n’a pu afficher %s. Essayez plutôt de télécharger la pièce jointe.</string>
     <string name="attachments">Pièces jointes</string>
-    <string name="failed_to_upload_attachment">Impossible de téléverser la pièce jointe</string>
     <plurals name="x_emails_will_permanently_deleted">
         <item quantity="one">%d courriel sera définitivement supprimé.</item>
         <item quantity="other">%d courriels seront définitivement supprimés.</item>

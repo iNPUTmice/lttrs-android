@@ -104,11 +104,12 @@
                 android:orientation="horizontal">
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/remove"
+                    android:id="@+id/transfer_secret_key"
                     style="?attr/materialButtonOutlinedStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/transfer_secret_key"
+                    android:enabled="@{viewModel.isAutocryptEnabled() != null}"
                     app:icon="@drawable/ic_baseline_import_export_24" />
             </LinearLayout>
         </LinearLayout>

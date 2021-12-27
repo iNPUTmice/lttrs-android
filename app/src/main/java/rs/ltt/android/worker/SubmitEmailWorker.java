@@ -58,6 +58,7 @@ public class SubmitEmailWorker extends AbstractMuaWorker {
             final boolean madeChanges = getMua().submit(this.emailId, identity).get();
             if (madeChanges) {
                 LOGGER.info("Submitted draft {}", this.emailId);
+                getMua().refresh().get();
             } else {
                 LOGGER.info("Unable to submit {}. No changes were made", this.emailId);
             }

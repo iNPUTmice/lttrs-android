@@ -47,7 +47,7 @@ public abstract class AbstractCreateEmailWorker extends AbstractMuaWorker {
     private static final String CC_KEY = "cc";
     private static final String SUBJECT_KEY = "subject";
     private static final String BODY_KEY = "body";
-    private static final String ATTACHMENTS_KEY = "attachments";
+    public static final String ATTACHMENTS_KEY = "attachments";
 
     private final String identity;
     private final List<String> inReplyTo;

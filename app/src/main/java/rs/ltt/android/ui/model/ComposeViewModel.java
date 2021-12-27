@@ -26,7 +26,6 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.work.Data;
 import androidx.work.ExistingWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkInfo;
@@ -48,13 +47,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.concurrent.CancellationException;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rs.ltt.android.MuaPool;
 import rs.ltt.android.R;
+import rs.ltt.android.cache.LocalAttachment;
 import rs.ltt.android.database.AppDatabase;
 import rs.ltt.android.entity.EmailWithReferences;
 import rs.ltt.android.entity.IdentifiableWithOwner;
@@ -65,8 +64,8 @@ import rs.ltt.android.util.Event;
 import rs.ltt.android.util.FileSizes;
 import rs.ltt.android.util.MergedListsLiveData;
 import rs.ltt.android.worker.BlobUploadWorker;
-import rs.ltt.android.worker.Failure;
 import rs.ltt.autocrypt.client.Decision;
+import rs.ltt.jmap.client.blob.MaxUploadSizeExceededException;
 import rs.ltt.jmap.common.entity.Attachment;
 import rs.ltt.jmap.common.entity.EmailAddress;
 import rs.ltt.jmap.mua.util.AttachmentUtil.CombinedAttachmentSizeExceedsLimitException;
@@ -158,7 +157,13 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
         final LiveData<Decision> autocryptDecision =
                 Transformations.switchMap(
                         recipients,
-                        input -> getRepository(getAccountId()).getAutocryptDecision(input, false));
+                        input -> {
+                            final Long accountId = getAccountId();
+                            if (accountId == null) {
+                                return new MutableLiveData<>(Decision.DISABLE);
+                            }
+                            return getRepository(getAccountId()).getAutocryptDecision(input, false);
+                        });
         final MediatorLiveData<EncryptionOptions> encryptionOptions = new MediatorLiveData<>();
 
         encryptionOptions.addSource(
@@ -370,7 +375,7 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
     private void initializeWithEmail() {
         Futures.addCallback(
                 this.email,
-                new FutureCallback<EmailWithReferences>() {
+                new FutureCallback<>() {
                     @Override
                     public void onSuccess(@Nullable final EmailWithReferences result) {
                         initializeWithEmail(result);
@@ -409,43 +414,36 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
             postErrorMessage(R.string.select_sender);
             return;
         }
-        final LiveData<WorkInfo> workInfoLiveData = uploadAttachment(identity, uri);
-        // TODO do we want to create StubAttachment while waiting for Worker?
-        waitForUpload(workInfoLiveData);
-    }
-
-    private void waitForUpload(final LiveData<WorkInfo> workInfoLiveData) {
-        attachments.addSource(
-                workInfoLiveData,
-                workInfo -> {
-                    final WorkInfo.State state = workInfo.getState();
-                    if (state.isFinished()) {
-                        attachments.removeSource(workInfoLiveData);
-                        if (state == WorkInfo.State.SUCCEEDED) {
-                            addAttachment(BlobUploadWorker.getAttachment(workInfo));
-                        } else if (state == WorkInfo.State.FAILED) {
-                            postAttachmentFailure(workInfo.getOutputData());
-                        }
+        final ComposeRepository composeRepository = getRepository(identity.getAccountId());
+        final ListenableFuture<LocalAttachment> attachmentFuture =
+                composeRepository.addAttachment(uri);
+        Futures.addCallback(
+                attachmentFuture,
+                new FutureCallback<>() {
+                    @Override
+                    public void onSuccess(LocalAttachment attachment) {
+                        addAttachment(attachment);
                     }
-                });
+
+                    @Override
+                    public void onFailure(@NonNull Throwable throwable) {
+                        postAttachmentFailure(throwable);
+                    }
+                },
+                MoreExecutors.directExecutor());
     }
 
-    private void postAttachmentFailure(final Data data) {
-        final Failure failure;
-        try {
-            failure = Failure.of(data);
-        } catch (IllegalArgumentException e) {
-            postErrorMessage(R.string.failed_to_upload_attachment);
-            return;
-        }
-        if (failure instanceof Failure.MaxUploadSizeExceeded) {
-            final long max = ((Failure.MaxUploadSizeExceeded) failure).getMaxUploadSize();
+    private void postAttachmentFailure(final Throwable throwable) {
+        if (throwable instanceof MaxUploadSizeExceededException) {
+            final MaxUploadSizeExceededException exception =
+                    (MaxUploadSizeExceededException) throwable;
+            final long max = exception.getMaxFileSize();
             postErrorMessage(R.string.the_file_exceeds_the_limit_of_x, FileSizes.toString(max));
-        } else if (failure.getException() != CancellationException.class) {
-            if (Strings.isNullOrEmpty(failure.getMessage())) {
-                postErrorMessage(R.string.failed_to_upload_attachment);
+        } else {
+            if (Strings.isNullOrEmpty(throwable.getMessage())) {
+                postErrorMessage(R.string.could_not_cache_attachment);
             } else {
-                postErrorMessage(failure.getMessage());
+                postErrorMessage(throwable.getMessage());
             }
         }
     }
@@ -462,7 +460,7 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
         final WorkManager workManager = WorkManager.getInstance(getApplication());
         final OneTimeWorkRequest workRequest =
                 new OneTimeWorkRequest.Builder(BlobUploadWorker.class)
-                        .setInputData(BlobUploadWorker.data(identity.getAccountId(), uri))
+                        // .setInputData(BlobUploadWorker.data(identity.getAccountId(), uri))
                         .build();
         workManager.enqueueUniqueWork(
                 BlobUploadWorker.uniqueName(), ExistingWorkPolicy.APPEND_OR_REPLACE, workRequest);
@@ -474,6 +472,9 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
                 new ArrayList<>(nullToEmpty(this.attachments.getValue()));
         if (current.remove(attachment)) {
             refreshAttachments(ImmutableList.copyOf(current));
+        }
+        if (attachment instanceof LocalAttachment) {
+            ComposeRepository.deleteLocalAttachment(getApplication(), (LocalAttachment) attachment);
         }
     }
 
@@ -524,12 +525,17 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
     }
 
     @Override
-    protected long getAccountId() {
+    protected long getAccountIdOrThrow() {
         final IdentityWithNameAndEmail identity = getIdentity();
         if (identity == null) {
             throw new IllegalStateException("There are attachments but no selected identity");
         }
         return identity.getAccountId();
+    }
+
+    private Long getAccountId() {
+        final IdentityWithNameAndEmail identity = getIdentity();
+        return identity == null ? null : identity.getAccountId();
     }
 
     public void open(final Attachment attachment) {

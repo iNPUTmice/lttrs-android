@@ -12,7 +12,9 @@ import androidx.lifecycle.ViewModelProvider;
 import rs.ltt.android.R;
 import rs.ltt.android.databinding.FragmentEncryptionSettingsBinding;
 import rs.ltt.android.ui.BindingAdapters;
+import rs.ltt.android.ui.MaterialAlertDialogs;
 import rs.ltt.android.ui.model.AutocryptViewModel;
+import rs.ltt.android.util.Event;
 import rs.ltt.autocrypt.client.header.EncryptionPreference;
 
 public class EncryptionSettingsFragment extends AbstractAccountManagerFragment {
@@ -55,7 +57,16 @@ public class EncryptionSettingsFragment extends AbstractAccountManagerFragment {
                                 BindingAdapters.flagInitialValueSet(binding.mutual);
                             }
                         });
+
+        this.autocryptViewModel
+                .getErrorMessage()
+                .observe(getViewLifecycleOwner(), this::onErrorMessage);
+
         return binding.getRoot();
+    }
+
+    private void onErrorMessage(Event<String> event) {
+        MaterialAlertDialogs.error(requireActivity(), event);
     }
 
     private void onEncryptionPreferenceChanged(final RadioGroup radioGroup, final @IdRes int id) {

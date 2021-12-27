@@ -136,7 +136,6 @@
         <item quantity="one">%d e-post vil bli slettet for godt.</item>
         <item quantity="other">%d e-poster vil bli slettet for godt.</item>
     </plurals>
-    <string name="failed_to_upload_attachment">Klarte ikke å laste opp vedlegg</string>
     <string name="empty_trash_dialog_title">Tøm papirkurven\?</string>
     <string name="empty_trash">Tøm papirkurven</string>
     <string name="upload_complete">Opplasting fullført</string>

@@ -5,15 +5,27 @@ import androidx.lifecycle.LiveData;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rs.ltt.android.MuaPool;
+import rs.ltt.autocrypt.client.AbstractAutocryptClient;
 import rs.ltt.autocrypt.client.header.EncryptionPreference;
 import rs.ltt.autocrypt.jmap.AutocryptClient;
 import rs.ltt.autocrypt.jmap.AutocryptPlugin;
 
 public class AutocryptRepository extends AbstractRepository {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AutocryptRepository.class);
+
     public AutocryptRepository(final Application application, final long accountId) {
         super(application, accountId);
+    }
+
+    public ListenableFuture<Void> ensureEverythingIsSetup() {
+        return Futures.transformAsync(
+                getAutocryptClient(),
+                AbstractAutocryptClient::ensureEverythingIsSetup,
+                MoreExecutors.directExecutor());
     }
 
     public LiveData<Boolean> isAutocryptEnabled(final String userId) {

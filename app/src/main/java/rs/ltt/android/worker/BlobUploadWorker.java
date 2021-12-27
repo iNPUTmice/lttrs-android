@@ -1,30 +1,28 @@
 package rs.ltt.android.worker;
 
 import android.app.NotificationManager;
-import android.content.ContentResolver;
 import android.content.Context;
-import android.database.Cursor;
-import android.net.Uri;
-import android.provider.OpenableColumns;
 import androidx.annotation.NonNull;
 import androidx.work.Data;
 import androidx.work.ForegroundInfo;
-import androidx.work.WorkInfo;
 import androidx.work.WorkerParameters;
-import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.io.ByteStreams;
 import com.google.common.net.MediaType;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.RateLimiter;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rs.ltt.android.cache.BlobStorage;
+import rs.ltt.android.cache.LocalAttachment;
 import rs.ltt.android.entity.Attachment;
 import rs.ltt.android.ui.notification.AttachmentNotification;
 import rs.ltt.jmap.client.blob.Progress;
@@ -35,15 +33,14 @@ import rs.ltt.jmap.mua.Mua;
 public class BlobUploadWorker extends AbstractMuaWorker implements Progress {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BlobUploadWorker.class);
-    private static final String URI_KEY = "uri";
-    private static final String BLOB_ID_KEY = "blobId";
+    public static final String BLOB_ID_KEY = "blobId";
     private static final String NAME_KEY = "name";
     private static final String TYPE_KEY = "type";
     private static final String SIZE_KEY = "size";
-    private final Uri uri;
+    private static final String LOCAL_ATTACHMENT_UUID = "localAttachmentId";
     private final NotificationManager notificationManager;
     private final RateLimiter notificationRateLimiter = RateLimiter.create(1);
-    private String name;
+    private final LocalAttachment localAttachment;
     private int currentlyShownProgress = 0;
     private ListenableFuture<Upload> uploadFuture;
 
@@ -51,14 +48,22 @@ public class BlobUploadWorker extends AbstractMuaWorker implements Progress {
             @NonNull @NotNull Context context, @NonNull @NotNull WorkerParameters workerParams) {
         super(context, workerParams);
         final Data data = workerParams.getInputData();
-        this.uri = Uri.parse(Objects.requireNonNull(data.getString(URI_KEY)));
+        final UUID uuid =
+                UUID.fromString(Objects.requireNonNull(data.getString(LOCAL_ATTACHMENT_UUID)));
+        final String name = data.getString(NAME_KEY);
+        final String type = Objects.requireNonNull(data.getString(TYPE_KEY));
+        final long size = data.getLong(SIZE_KEY, 0);
+        this.localAttachment = new LocalAttachment(uuid, MediaType.parse(type), name, size);
         this.notificationManager = context.getSystemService(NotificationManager.class);
     }
 
-    public static Data data(Long accountId, final Uri uri) {
+    public static Data data(Long accountId, final LocalAttachment attachment) {
         return new Data.Builder()
                 .putLong(ACCOUNT_KEY, accountId)
-                .putString(URI_KEY, uri.toString())
+                .putString(LOCAL_ATTACHMENT_UUID, attachment.getUuid().toString())
+                .putString(NAME_KEY, attachment.getName())
+                .putString(TYPE_KEY, attachment.getType())
+                .putLong(SIZE_KEY, attachment.getSize())
                 .build();
     }
 
@@ -66,11 +71,7 @@ public class BlobUploadWorker extends AbstractMuaWorker implements Progress {
         return "blob-upload";
     }
 
-    public static Attachment getAttachment(final WorkInfo workInfo) {
-        Preconditions.checkState(
-                workInfo.getState() == WorkInfo.State.SUCCEEDED,
-                "Work must have succeeded to extract attachment");
-        final Data data = workInfo.getOutputData();
+    public static Attachment getAttachment(final Data data) {
         return new Attachment(
                 data.getString(BLOB_ID_KEY),
                 data.getString(TYPE_KEY),
@@ -86,33 +87,21 @@ public class BlobUploadWorker extends AbstractMuaWorker implements Progress {
     @NotNull
     @Override
     public Result doWork() {
-        // https://developer.android.com/training/secure-file-sharing/retrieve-info
-        final ContentResolver contentResolver = getApplicationContext().getContentResolver();
-        final String type = contentResolver.getType(uri);
-        final long size;
-        try (final Cursor cursor = contentResolver.query(uri, null, null, null, null)) {
-            cursor.moveToFirst();
-            size = cursor.getLong(cursor.getColumnIndexOrThrow(OpenableColumns.SIZE));
-            name = cursor.getString(cursor.getColumnIndexOrThrow(OpenableColumns.DISPLAY_NAME));
-        } catch (final Exception e) {
-            LOGGER.debug("Unable to retrieve file size and name", e);
-            return Result.failure();
-        }
+        final File file = LocalAttachment.asFile(getApplicationContext(), localAttachment);
         setForegroundAsync(getForegroundInfo());
         final Mua mua = getMua();
-        try (final InputStream inputStream = contentResolver.openInputStream(uri)) {
-            final Uploadable uploadable =
-                    new ContentProviderUpload(inputStream, MediaType.parse(type), size);
+        try (final InputStream inputStream = new FileInputStream(file)) {
+            final Uploadable uploadable = new LocalAttachmentUpload(inputStream, localAttachment);
             this.uploadFuture = mua.upload(uploadable, this);
             final Upload upload = this.uploadFuture.get();
             LOGGER.info("Upload succeeded {}", upload);
             notifyUploadComplete();
-            cacheBlob(uri, upload.getBlobId());
+            cacheBlob(file, upload.getBlobId());
             final Data data =
                     new Data.Builder()
                             .putString(BLOB_ID_KEY, upload.getBlobId())
                             .putString(TYPE_KEY, upload.getType())
-                            .putString(NAME_KEY, name)
+                            .putString(NAME_KEY, localAttachment.getName())
                             .putLong(SIZE_KEY, upload.getSize())
                             .build();
             return Result.success(data);
@@ -125,15 +114,18 @@ public class BlobUploadWorker extends AbstractMuaWorker implements Progress {
         }
     }
 
-    private void cacheBlob(final Uri uri, final String blobId) {
+    private void cacheBlob(final File file, final String blobId) {
         final BlobStorage blobStorage = BlobStorage.get(getApplicationContext(), account, blobId);
         if (blobStorage.file.exists()) {
             LOGGER.info("Blob {} is already cached", blobId);
             return;
         }
-        final ContentResolver contentResolver = getApplicationContext().getContentResolver();
+        if (file.renameTo(blobStorage.file)) {
+            LOGGER.info("Successfully cached blob {} by moving local attachment", blobId);
+            return;
+        }
         final long bytesCopied;
-        try (final InputStream inputStream = contentResolver.openInputStream(uri);
+        try (final InputStream inputStream = new FileInputStream(file);
                 final FileOutputStream fileOutputStream =
                         new FileOutputStream(blobStorage.temporaryFile)) {
             bytesCopied = ByteStreams.copy(inputStream, fileOutputStream);
@@ -154,14 +146,18 @@ public class BlobUploadWorker extends AbstractMuaWorker implements Progress {
         return new ForegroundInfo(
                 AttachmentNotification.UPLOAD_ID,
                 AttachmentNotification.uploading(
-                        getApplicationContext(), getId(), Strings.nullToEmpty(this.name), 0, true));
+                        getApplicationContext(),
+                        getId(),
+                        Strings.nullToEmpty(localAttachment.getName()),
+                        0,
+                        true));
     }
 
     private void notifyUploadComplete() {
         notificationManager.notify(
                 AttachmentNotification.UPLOAD_ID,
                 AttachmentNotification.uploaded(
-                        getApplicationContext(), Strings.nullToEmpty(this.name)));
+                        getApplicationContext(), Strings.nullToEmpty(localAttachment.getName())));
     }
 
     @Override
@@ -175,7 +171,7 @@ public class BlobUploadWorker extends AbstractMuaWorker implements Progress {
                     AttachmentNotification.uploading(
                             getApplicationContext(),
                             getId(),
-                            Strings.nullToEmpty(this.name),
+                            Strings.nullToEmpty(localAttachment.getName()),
                             progress,
                             false));
             this.currentlyShownProgress = progress;
@@ -192,16 +188,16 @@ public class BlobUploadWorker extends AbstractMuaWorker implements Progress {
         }
     }
 
-    private static class ContentProviderUpload implements Uploadable {
+    private static class LocalAttachmentUpload implements Uploadable {
 
         private final InputStream inputStream;
         private final MediaType mediaType;
         private final long contentLength;
 
-        private ContentProviderUpload(InputStream inputStream, MediaType mediaType, long size) {
+        private LocalAttachmentUpload(InputStream inputStream, LocalAttachment localAttachment) {
             this.inputStream = inputStream;
-            this.mediaType = mediaType;
-            this.contentLength = size;
+            this.mediaType = localAttachment.getMediaType();
+            this.contentLength = localAttachment.getSize();
         }
 
         @Override

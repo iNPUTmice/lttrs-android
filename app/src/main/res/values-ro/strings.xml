@@ -134,7 +134,6 @@
     <string name="empty_trash_dialog_title">Goliți gunoiul\?</string>
     <string name="combined_size_of_attachments_exceeds_the_limit_of_x">Dimensiunea combinată a tuturor atașamentelor depășește limita de %s</string>
     <string name="upload_complete">Încărcare finalizată</string>
-    <string name="failed_to_upload_attachment">Nu s-a putut încărca atașamentul</string>
     <string name="the_file_exceeds_the_limit_of_x">Fișierul depășește limita de %s</string>
     <string name="download_complete">Descărcare completă</string>
     <string name="no_application_to_open_x">Nicio aplicație nu a putut afișa %s. Încercați să descărcați în schimb fișierul atașat.</string>

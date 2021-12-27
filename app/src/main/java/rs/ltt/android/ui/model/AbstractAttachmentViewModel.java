@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rs.ltt.android.R;
 import rs.ltt.android.cache.BlobStorage;
+import rs.ltt.android.cache.LocalAttachment;
 import rs.ltt.android.ui.ViewIntent;
 import rs.ltt.android.util.Event;
 import rs.ltt.android.util.MainThreadExecutor;
@@ -40,7 +41,7 @@ public abstract class AbstractAttachmentViewModel extends AndroidViewModel {
         super(application);
     }
 
-    protected abstract long getAccountId();
+    protected abstract long getAccountIdOrThrow();
 
     public void open(final String emailId, final Attachment attachment) {
         Futures.addCallback(
@@ -72,7 +73,7 @@ public abstract class AbstractAttachmentViewModel extends AndroidViewModel {
                 new OneTimeWorkRequest.Builder(BlobDownloadWorker.class)
                         .setInputData(
                                 BlobDownloadWorker.data(
-                                        getAccountId(), emailId, attachment.getBlobId()))
+                                        getAccountIdOrThrow(), emailId, attachment.getBlobId()))
                         .build();
         workManager.enqueueUniqueWork(
                 BlobDownloadWorker.uniqueName(), ExistingWorkPolicy.APPEND_OR_REPLACE, workRequest);
@@ -130,6 +131,10 @@ public abstract class AbstractAttachmentViewModel extends AndroidViewModel {
     }
 
     private ListenableFuture<Uri> getFileProviderUri(final Attachment attachment) {
-        return BlobStorage.getFileProviderUri(getApplication(), getAccountId(), attachment);
+        if (attachment instanceof LocalAttachment) {
+            return LocalAttachment.getFileProviderUri(
+                    getApplication(), (LocalAttachment) attachment);
+        }
+        return BlobStorage.getFileProviderUri(getApplication(), getAccountIdOrThrow(), attachment);
     }
 }

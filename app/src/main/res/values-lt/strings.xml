@@ -21,7 +21,6 @@
     <string name="empty_trash">Išvalyti šiukšlinę</string>
     <string name="combined_size_of_attachments_exceeds_the_limit_of_x">Bendras visų priedų dydis viršija %s</string>
     <string name="upload_complete">Įkėlimas baigtas</string>
-    <string name="failed_to_upload_attachment">Nepavyko įkelti priedo</string>
     <string name="the_file_exceeds_the_limit_of_x">Failas viršija %s ribą</string>
     <string name="download_complete">Atsisiuntimas baigtas</string>
     <string name="no_application_to_open_x">Jokia programa negalėjo parodyti %s. Vietoj to pabandykite priedą atsisiųsti.</string>

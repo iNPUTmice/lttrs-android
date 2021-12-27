@@ -139,7 +139,7 @@
     <string name="no_application_to_open_x">No app could show %s. Try downloading the attachment instead.</string>
     <string name="download_complete">Download complete</string>
     <string name="the_file_exceeds_the_limit_of_x">The file exceeds the limit of %s</string>
-    <string name="failed_to_upload_attachment">Could not upload attachment</string>
+    <string name="could_not_cache_attachment">Could not cache attachment</string>
     <string name="upload_complete">Upload complete</string>
     <string name="attachment_is_not_cached">The attachment is not cached</string>
     <string name="combined_size_of_attachments_exceeds_the_limit_of_x">The combined size of all attachments exceeds the limit of %s</string>
@@ -157,6 +157,8 @@
     <string name="autocrypt_no_preference_description">On demand. You and your contacts will be able to explicitly enable encryption for individual emails.</string>
     <string name="autocrypt_mutual_description">You wish to receive encrypted emails. End-to-end encryption will be used by default for all contacts who also wish to receive encrypted emails.</string>
     <string name="autocrypt_encryption_preference">Encryption preference</string>
+    <string name="could_not_configure_autocrypt">Could not configure autocrypt</string>
+    <string name="encryption_provider_can_not_create_secret_key">The encryption provider on this phone is unable to create your secret key.</string>
     <plurals name="x_emails_in_trash">
         <item quantity="one">There is currently %d e-mail in the trash.</item>
         <item quantity="other">There are currently %d e-mails in the trash.</item>

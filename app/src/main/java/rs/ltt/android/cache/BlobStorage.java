@@ -21,6 +21,8 @@ public class BlobStorage {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BlobStorage.class);
 
+    private static final String BLOB_DIRECTORY = "blob";
+
     public final File temporaryFile;
     public final File file;
 
@@ -31,7 +33,7 @@ public class BlobStorage {
 
     public static BlobStorage get(
             final Context context, final long accountId, final String blobId) {
-        final File blobDirectory = new File(context.getCacheDir(), "blobs");
+        final File blobDirectory = new File(context.getCacheDir(), BLOB_DIRECTORY);
         final File accountDirectory =
                 new File(blobDirectory, String.format(Locale.US, "account-%d", accountId));
         if (accountDirectory.mkdirs()) {

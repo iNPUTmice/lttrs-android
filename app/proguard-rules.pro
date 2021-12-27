@@ -6,6 +6,10 @@
 # JMAP entities
 -keep class rs.ltt.jmap.common.** {*;}
 
+# Bouncecastle provider (required for autocrypt)
+-keep class org.bouncycastle.jcajce.provider.** { *; }
+-keep class org.bouncycastle.jce.provider.** { *; }
+
 # Logger
 -keep class org.slf4j.** {*;}
 -keep class ch.qos.** {*;}
