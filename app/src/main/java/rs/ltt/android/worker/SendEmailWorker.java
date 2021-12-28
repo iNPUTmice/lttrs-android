@@ -37,9 +37,15 @@ public class SendEmailWorker extends AbstractCreateEmailWorker {
     @Override
     public Result doWork() {
         final IdentityWithNameAndEmail identity = getIdentity();
-        final Email email = buildEmail(identity);
+        final Mua mua = getMua();
+        final Email email;
         try {
-            final Mua mua = getMua();
+            email = buildEmail(identity);
+        } catch (final Exception e) {
+            LOGGER.error("Failed to build email", e);
+            return Result.failure();
+        }
+        try {
             final String emailId = mua.send(email, identity).get();
             return refreshAndFetchThreadId(emailId);
         } catch (final ExecutionException e) {

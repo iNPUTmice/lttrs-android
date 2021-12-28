@@ -18,20 +18,25 @@ package rs.ltt.android.repository;
 import android.annotation.SuppressLint;
 import android.app.Application;
 import android.net.Uri;
+
 import androidx.lifecycle.LiveData;
 import androidx.work.ExistingWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkContinuation;
 import androidx.work.WorkManager;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
+
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Executors;
+
 import rs.ltt.android.MuaPool;
 import rs.ltt.android.cache.LocalAttachment;
 import rs.ltt.android.entity.EmailWithReferences;
@@ -145,9 +150,11 @@ public class ComposeRepository extends AbstractRepository {
             IdentifiableIdentity identity,
             ComposeViewModel.Draft draft,
             final Collection<String> inReplyTo,
+            final boolean encrypted,
             EmailWithReferences discard) {
         final EmailCreation emailCreation =
-                createEmailWorkRequest(identity, draft, inReplyTo, SendEmailWorker.class);
+                createEmailWorkRequest(
+                        identity, draft, inReplyTo, encrypted, SendEmailWorker.class);
         if (discard != null) {
             final OneTimeWorkRequest discardPreviousDraft =
                     new OneTimeWorkRequest.Builder(DiscardDraftWorker.class)
@@ -179,9 +186,10 @@ public class ComposeRepository extends AbstractRepository {
             IdentifiableIdentity identity,
             ComposeViewModel.Draft draft,
             final Collection<String> inReplyTo,
+            final boolean encrypted,
             final Class<? extends AbstractCreateEmailWorker> clazz) {
         final WorkManager workManager = WorkManager.getInstance(application);
-        final Attachments attachments = Attachments.collect(draft);
+        final Attachments attachments = Attachments.collect(draft, encrypted);
         final OneTimeWorkRequest createEmailWorkRequest =
                 new OneTimeWorkRequest.Builder(clazz)
                         .setConstraints(CONNECTED_CONSTRAINT)
@@ -195,10 +203,11 @@ public class ComposeRepository extends AbstractRepository {
                                         draft.getCc(),
                                         draft.getSubject(),
                                         draft.getBody(),
-                                        attachments.attachments))
+                                        attachments.processDirectly,
+                                        encrypted))
                         .build();
         final WorkContinuation workContinuation;
-        if (attachments.localAttachments.isEmpty()) {
+        if (attachments.requireUploading.isEmpty()) {
             workContinuation =
                     workManager.beginUniqueWork(
                             AbstractMuaWorker.uniqueName(accountId),
@@ -210,7 +219,7 @@ public class ComposeRepository extends AbstractRepository {
                             .beginUniqueWork(
                                     AbstractMuaWorker.uniqueName(accountId),
                                     ExistingWorkPolicy.APPEND_OR_REPLACE,
-                                    blobUploads(attachments.localAttachments))
+                                    blobUploads(attachments.requireUploading))
                             .then(createEmailWorkRequest);
         }
         return new EmailCreation(createEmailWorkRequest, workContinuation);
@@ -230,9 +239,11 @@ public class ComposeRepository extends AbstractRepository {
             final IdentifiableIdentity identity,
             final ComposeViewModel.Draft draft,
             final Collection<String> inReplyTo,
+            final boolean encrypted,
             final EmailWithReferences discard) {
         final EmailCreation workRequest =
-                createEmailWorkRequest(identity, draft, inReplyTo, SaveDraftWorker.class);
+                createEmailWorkRequest(
+                        identity, draft, inReplyTo, encrypted, SaveDraftWorker.class);
         if (discard != null) {
             final OneTimeWorkRequest discardPreviousDraft =
                     new OneTimeWorkRequest.Builder(DiscardDraftWorker.class)
@@ -270,15 +281,22 @@ public class ComposeRepository extends AbstractRepository {
     }
 
     private static class Attachments {
-        private final List<LocalAttachment> localAttachments;
-        private final List<Attachment> attachments;
+        private final List<LocalAttachment> requireUploading;
+        private final List<Attachment> processDirectly;
 
-        private Attachments(List<LocalAttachment> localAttachments, List<Attachment> attachments) {
-            this.localAttachments = localAttachments;
-            this.attachments = attachments;
+        private Attachments(
+                final List<LocalAttachment> requireUploading,
+                final List<Attachment> processDirectly) {
+            this.requireUploading = requireUploading;
+            this.processDirectly = processDirectly;
         }
 
-        public static Attachments collect(final ComposeViewModel.Draft draft) {
+        public static Attachments collect(
+                final ComposeViewModel.Draft draft, final boolean encrypted) {
+            if (encrypted) {
+                return new Attachments(
+                        Collections.emptyList(), ImmutableList.copyOf(draft.getAttachments()));
+            }
             final ImmutableList.Builder<LocalAttachment> localAttachmentBuilder =
                     new ImmutableList.Builder<>();
             final ImmutableList.Builder<Attachment> attachmentBuilder =

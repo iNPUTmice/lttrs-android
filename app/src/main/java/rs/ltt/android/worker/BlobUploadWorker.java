@@ -99,6 +99,7 @@ public class BlobUploadWorker extends AbstractMuaWorker implements Progress {
             LOGGER.info("Upload succeeded {}", upload);
             notifyUploadComplete();
             cacheBlob(file, upload.getBlobId());
+            LocalAttachment.delete(getApplicationContext(), localAttachment);
             final Data data =
                     new Data.Builder()
                             .putString(BLOB_ID_KEY, upload.getBlobId())

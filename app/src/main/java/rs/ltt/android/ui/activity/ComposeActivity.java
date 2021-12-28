@@ -302,13 +302,7 @@ public class ComposeActivity extends AppCompatActivity {
                 encryptionOptionsMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
             }
         }
-        final boolean encrypted;
-        if (choice == UserEncryptionChoice.NONE) {
-            encrypted = decision == Decision.ENCRYPT;
-        } else {
-            encrypted = choice == UserEncryptionChoice.ENCRYPTED;
-        }
-        if (encrypted) {
+        if (encryptionOptions.encrypted()) {
             encryptionOptionsMenuItem.setIcon(R.drawable.ic_lock_white_24dp);
             encryptedMenuItem.setChecked(true);
         } else {

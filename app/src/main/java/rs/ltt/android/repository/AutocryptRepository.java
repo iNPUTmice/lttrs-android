@@ -1,13 +1,10 @@
 package rs.ltt.android.repository;
 
 import android.app.Application;
-
 import androidx.lifecycle.LiveData;
-
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
-
 import rs.ltt.android.MuaPool;
 import rs.ltt.autocrypt.client.AbstractAutocryptClient;
 import rs.ltt.autocrypt.client.header.EncryptionPreference;

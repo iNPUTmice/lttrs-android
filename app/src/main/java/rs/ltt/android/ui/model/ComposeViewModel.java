@@ -26,10 +26,6 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.work.ExistingWorkPolicy;
-import androidx.work.OneTimeWorkRequest;
-import androidx.work.WorkInfo;
-import androidx.work.WorkManager;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
@@ -63,7 +59,6 @@ import rs.ltt.android.ui.ComposeAction;
 import rs.ltt.android.util.Event;
 import rs.ltt.android.util.FileSizes;
 import rs.ltt.android.util.MergedListsLiveData;
-import rs.ltt.android.worker.BlobUploadWorker;
 import rs.ltt.autocrypt.client.Decision;
 import rs.ltt.jmap.client.blob.MaxUploadSizeExceededException;
 import rs.ltt.jmap.common.entity.Attachment;
@@ -297,7 +292,15 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
             workInfoId = repository.submitEmail(identity, editableEmail);
         } else {
             final Collection<String> inReplyTo = inReplyTo(editableEmail, composeAction);
-            workInfoId = repository.sendEmail(identity, currentDraft, inReplyTo, editableEmail);
+            final EncryptionOptions encryptionOptions =
+                    EncryptionOptions.of(this.encryptionOptions);
+            workInfoId =
+                    repository.sendEmail(
+                            identity,
+                            currentDraft,
+                            inReplyTo,
+                            encryptionOptions.encrypted(),
+                            editableEmail);
         }
         this.draftHasBeenHandled = true;
         return workInfoId;
@@ -318,6 +321,7 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
             LOGGER.info("not storing draft. To, subject, body and attachments are empty.");
             return null;
         }
+        final EncryptionOptions encryptionOptions = EncryptionOptions.of(this.encryptionOptions);
         final EmailWithReferences editableEmail = getEmail();
         final Draft originalDraft = Draft.with(this.composeAction, this.uri, editableEmail);
         if (originalDraft != null && currentDraft.unedited(originalDraft)) {
@@ -337,7 +341,12 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
         final Collection<String> inReplyTo = inReplyTo(editableEmail, composeAction);
         final UUID uuid =
                 getRepository(identity.accountId)
-                        .saveDraft(identity, currentDraft, inReplyTo, discard);
+                        .saveDraft(
+                                identity,
+                                currentDraft,
+                                inReplyTo,
+                                encryptionOptions.encrypted(),
+                                discard);
         this.draftHasBeenHandled = true;
         return uuid;
     }
@@ -730,6 +739,14 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
                     .add("userEncryptionChoice", userEncryptionChoice)
                     .add("decision", decision)
                     .toString();
+        }
+
+        public boolean encrypted() {
+            if (userEncryptionChoice == UserEncryptionChoice.NONE) {
+                return decision == Decision.ENCRYPT;
+            } else {
+                return userEncryptionChoice == UserEncryptionChoice.ENCRYPTED;
+            }
         }
 
         public static EncryptionOptions of(final LiveData<EncryptionOptions> liveData) {
