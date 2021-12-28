@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rs.ltt.android.util.AttachmentSerializer;
 import rs.ltt.jmap.common.entity.Attachment;
 
 public class AttachmentInputMerger extends InputMerger {
@@ -25,7 +26,7 @@ public class AttachmentInputMerger extends InputMerger {
             } else {
                 final byte[] bytes = data.getByteArray(AbstractCreateEmailWorker.ATTACHMENTS_KEY);
                 final List<rs.ltt.jmap.common.entity.Attachment> attachments =
-                        bytes == null ? null : rs.ltt.android.entity.Attachment.of(bytes);
+                        bytes == null ? null : AttachmentSerializer.of(bytes);
                 if (attachments != null) {
                     attachmentBuilder.addAll(attachments);
                 }
@@ -36,7 +37,7 @@ public class AttachmentInputMerger extends InputMerger {
         LOGGER.info("Found {} attachments", attachments.size());
         dataBuilder.putByteArray(
                 AbstractCreateEmailWorker.ATTACHMENTS_KEY,
-                rs.ltt.android.entity.Attachment.toByteArray(attachments));
+                AttachmentSerializer.toByteArray(attachments));
         return dataBuilder.build();
     }
 }

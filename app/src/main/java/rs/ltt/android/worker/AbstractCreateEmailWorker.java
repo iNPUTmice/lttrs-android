@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rs.ltt.android.entity.IdentityWithNameAndEmail;
+import rs.ltt.android.util.AttachmentSerializer;
 import rs.ltt.android.util.UserAgent;
 import rs.ltt.jmap.common.entity.Attachment;
 import rs.ltt.jmap.common.entity.Email;
@@ -70,8 +71,7 @@ public abstract class AbstractCreateEmailWorker extends AbstractMuaWorker {
         final String[] inReplyTo = data.getStringArray(IN_REPLY_TO_KEY);
         this.inReplyTo = inReplyTo == null ? Collections.emptyList() : Arrays.asList(inReplyTo);
         final byte[] attachments = data.getByteArray(ATTACHMENTS_KEY);
-        this.attachments =
-                attachments == null ? null : rs.ltt.android.entity.Attachment.of(attachments);
+        this.attachments = attachments == null ? null : AttachmentSerializer.of(attachments);
     }
 
     public static Data data(
@@ -91,8 +91,7 @@ public abstract class AbstractCreateEmailWorker extends AbstractMuaWorker {
                 .putString(CC_KEY, EmailAddressUtil.toHeaderValue(cc))
                 .putString(SUBJECT_KEY, subject)
                 .putString(BODY_KEY, body)
-                .putByteArray(
-                        ATTACHMENTS_KEY, rs.ltt.android.entity.Attachment.toByteArray(attachments))
+                .putByteArray(ATTACHMENTS_KEY, AttachmentSerializer.toByteArray(attachments))
                 .build();
     }
 

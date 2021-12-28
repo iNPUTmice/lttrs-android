@@ -23,10 +23,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rs.ltt.android.cache.BlobStorage;
 import rs.ltt.android.cache.LocalAttachment;
-import rs.ltt.android.entity.Attachment;
 import rs.ltt.android.ui.notification.AttachmentNotification;
 import rs.ltt.jmap.client.blob.Progress;
 import rs.ltt.jmap.client.blob.Uploadable;
+import rs.ltt.jmap.common.entity.Attachment;
+import rs.ltt.jmap.common.entity.EmailBodyPart;
 import rs.ltt.jmap.common.entity.Upload;
 import rs.ltt.jmap.mua.Mua;
 
@@ -72,11 +73,12 @@ public class BlobUploadWorker extends AbstractMuaWorker implements Progress {
     }
 
     public static Attachment getAttachment(final Data data) {
-        return new Attachment(
-                data.getString(BLOB_ID_KEY),
-                data.getString(TYPE_KEY),
-                data.getString(NAME_KEY),
-                data.getLong(SIZE_KEY, 0));
+        return EmailBodyPart.builder()
+                .blobId(data.getString(BLOB_ID_KEY))
+                .type(data.getString(TYPE_KEY))
+                .name(data.getString(NAME_KEY))
+                .size(data.getLong(SIZE_KEY, 0))
+                .build();
     }
 
     private static boolean isDone(final ListenableFuture<?> future) {

@@ -455,18 +455,6 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
         refreshAttachments(attachmentBuilder.build());
     }
 
-    private LiveData<WorkInfo> uploadAttachment(
-            final IdentityWithNameAndEmail identity, final Uri uri) {
-        final WorkManager workManager = WorkManager.getInstance(getApplication());
-        final OneTimeWorkRequest workRequest =
-                new OneTimeWorkRequest.Builder(BlobUploadWorker.class)
-                        // .setInputData(BlobUploadWorker.data(identity.getAccountId(), uri))
-                        .build();
-        workManager.enqueueUniqueWork(
-                BlobUploadWorker.uniqueName(), ExistingWorkPolicy.APPEND_OR_REPLACE, workRequest);
-        return workManager.getWorkInfoByIdLiveData(workRequest.getId());
-    }
-
     public void deleteAttachment(final Attachment attachment) {
         final List<? extends Attachment> current =
                 new ArrayList<>(nullToEmpty(this.attachments.getValue()));

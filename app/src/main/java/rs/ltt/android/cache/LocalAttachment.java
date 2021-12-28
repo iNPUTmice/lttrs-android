@@ -101,7 +101,7 @@ public class LocalAttachment implements Attachment {
             if (file.delete()) {
                 LOGGER.info("Clean up file {}", file.getAbsolutePath());
             }
-            throw new RuntimeException(e);
+            throw new CacheWriteException(e);
         }
     }
 
@@ -144,5 +144,11 @@ public class LocalAttachment implements Attachment {
         return Futures.immediateFuture(
                 BlobStorage.getFileProviderUri(
                         context, asFile(context, attachment), attachment.getName()));
+    }
+
+    public static class CacheWriteException extends RuntimeException {
+        private CacheWriteException(final IOException e) {
+            super("Could not cache local attachment", e);
+        }
     }
 }
