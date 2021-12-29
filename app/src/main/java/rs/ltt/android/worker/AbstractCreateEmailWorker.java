@@ -33,6 +33,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import rs.ltt.android.cache.BlobStorage;
 import rs.ltt.android.cache.LocalAttachment;
 import rs.ltt.android.entity.IdentityWithNameAndEmail;
 import rs.ltt.android.util.AttachmentSerializer;
@@ -187,10 +189,14 @@ public abstract class AbstractCreateEmailWorker extends AbstractMuaWorker {
             final LocalAttachment localAttachment = (LocalAttachment) attachment;
             return new FileInputStream(
                     LocalAttachment.asFile(getApplicationContext(), localAttachment));
+        } else {
+            final String blobId = attachment.getBlobId();
+            final BlobStorage blobStorage = BlobStorage.get(getApplicationContext(), account, blobId);
+            if (blobStorage.file.exists()) {
+                return new FileInputStream(blobStorage.file);
+            }
+            throw new IOException(String.format("Blob %s is not cached", blobId));
         }
-        throw new IllegalArgumentException(
-                String.format(
-                        "unexpected attachment of type %s", attachment.getClass().getSimpleName()));
     }
 
     protected Email buildEmail(final IdentityWithNameAndEmail identity)
