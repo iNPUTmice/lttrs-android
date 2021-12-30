@@ -33,7 +33,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import rs.ltt.android.cache.BlobStorage;
 import rs.ltt.android.cache.LocalAttachment;
 import rs.ltt.android.entity.IdentityWithNameAndEmail;
@@ -164,7 +163,8 @@ public abstract class AbstractCreateEmailWorker extends AbstractMuaWorker {
         for (final Attachment attachment : this.attachments) {
             final InputStream inputStream = openInputStream(attachment);
             bodyPartTuples.add(
-                    BodyPartTuple.of(AttachmentUtil.toAnonymousEmailBodyPart(attachment), inputStream));
+                    BodyPartTuple.of(
+                            AttachmentUtil.toAnonymousEmailBodyPart(attachment), inputStream));
         }
         final Upload upload =
                 autocryptPlugin
@@ -191,7 +191,8 @@ public abstract class AbstractCreateEmailWorker extends AbstractMuaWorker {
                     LocalAttachment.asFile(getApplicationContext(), localAttachment));
         } else {
             final String blobId = attachment.getBlobId();
-            final BlobStorage blobStorage = BlobStorage.get(getApplicationContext(), account, blobId);
+            final BlobStorage blobStorage =
+                    BlobStorage.get(getApplicationContext(), account, blobId);
             if (blobStorage.file.exists()) {
                 return new FileInputStream(blobStorage.file);
             }

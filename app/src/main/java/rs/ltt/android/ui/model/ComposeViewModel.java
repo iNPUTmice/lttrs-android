@@ -710,6 +710,7 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
         CLEARTEXT
     }
 
+    // TODO warn user when userchoice is encrypt but disable
     public static class EncryptionOptions {
         public final UserEncryptionChoice userEncryptionChoice;
         public final Decision decision;
@@ -742,7 +743,9 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
         }
 
         public boolean encrypted() {
-            if (userEncryptionChoice == UserEncryptionChoice.NONE) {
+            if (decision == Decision.DISABLE) {
+                return false;
+            } else if (userEncryptionChoice == UserEncryptionChoice.NONE) {
                 return decision == Decision.ENCRYPT;
             } else {
                 return userEncryptionChoice == UserEncryptionChoice.ENCRYPTED;
