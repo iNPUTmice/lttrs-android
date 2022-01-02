@@ -93,7 +93,8 @@ public class BlobUploadWorker extends AbstractMuaWorker implements Progress {
         final File file = LocalAttachment.asFile(getApplicationContext(), localAttachment);
         setForegroundAsync(getForegroundInfo());
         final Mua mua = getMua();
-        try (final LegacyFileUpload fileUpload = LegacyFileUpload.of(file, localAttachment.getMediaType())) {
+        try (final LegacyFileUpload fileUpload =
+                LegacyFileUpload.of(file, localAttachment.getMediaType())) {
             this.uploadFuture = mua.upload(fileUpload, this);
             final Upload upload = this.uploadFuture.get();
             LOGGER.info("Upload succeeded {}", upload);

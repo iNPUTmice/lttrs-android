@@ -239,7 +239,8 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
 
     public boolean hasImpossibleEncryptionChoice() {
         final EncryptionOptions options = EncryptionOptions.of(this.encryptionOptions);
-        return options.decision == Decision.DISABLE && options.userEncryptionChoice == UserEncryptionChoice.ENCRYPTED;
+        return options.decision == Decision.DISABLE
+                && options.userEncryptionChoice == UserEncryptionChoice.ENCRYPTED;
     }
 
     public void setUserEncryptionChoice(final UserEncryptionChoice choice) {

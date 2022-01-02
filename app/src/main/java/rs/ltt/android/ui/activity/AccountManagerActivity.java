@@ -16,8 +16,6 @@ import rs.ltt.android.util.NavControllers;
 
 public class AccountManagerActivity extends AppCompatActivity {
 
-    private ActivityAccountManagerBinding binding;
-
     public static void launch(final AppCompatActivity activity) {
         final Intent intent = new Intent(activity, AccountManagerActivity.class);
         activity.startActivity(intent);
@@ -32,37 +30,40 @@ public class AccountManagerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.binding = DataBindingUtil.setContentView(this, R.layout.activity_account_manager);
+        final ActivityAccountManagerBinding binding =
+                DataBindingUtil.setContentView(this, R.layout.activity_account_manager);
+
+        this.setSupportActionBar(binding.toolbar);
 
         final NavController navController = getNavController();
         navController.addOnDestinationChangedListener(this::onDestinationChanged);
-
-        configureActionBar();
     }
 
     private void onDestinationChanged(
-            NavController navController, NavDestination navDestination, Bundle bundle) {
+            final NavController navController,
+            final NavDestination navDestination,
+            final Bundle bundle) {
         setTitle(navDestination.getLabel());
+        final boolean root = isTaskRoot() && navDestination.getId() == R.id.account_list;
+        configureActionBar(!root);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                final NavController navController = getNavController();
-                if (navController.popBackStack()) {
-                    return true;
-                }
+    public boolean onOptionsItemSelected(final MenuItem item) {
+        final int id = item.getItemId();
+        if (id == android.R.id.home) {
+            final NavController navController = getNavController();
+            if (navController.popBackStack()) {
+                return true;
+            }
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private void configureActionBar() {
-        this.setSupportActionBar(this.binding.toolbar);
+    private void configureActionBar(final boolean upEnabled) {
         final ActionBar actionBar = Objects.requireNonNull(getSupportActionBar());
-        final boolean taskRoot = isTaskRoot();
-        actionBar.setHomeButtonEnabled(!taskRoot);
-        actionBar.setDisplayHomeAsUpEnabled(!taskRoot);
+        actionBar.setHomeButtonEnabled(upEnabled);
+        actionBar.setDisplayHomeAsUpEnabled(upEnabled);
     }
 
     public NavController getNavController() {
