@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import rs.ltt.android.cache.BlobStorage;
 import rs.ltt.android.cache.LocalAttachment;
 import rs.ltt.android.ui.notification.AttachmentNotification;
+import rs.ltt.jmap.client.blob.LegacyFileUpload;
 import rs.ltt.jmap.client.blob.Progress;
 import rs.ltt.jmap.client.blob.Uploadable;
 import rs.ltt.jmap.common.entity.Attachment;
@@ -92,9 +93,8 @@ public class BlobUploadWorker extends AbstractMuaWorker implements Progress {
         final File file = LocalAttachment.asFile(getApplicationContext(), localAttachment);
         setForegroundAsync(getForegroundInfo());
         final Mua mua = getMua();
-        try (final InputStream inputStream = new FileInputStream(file)) {
-            final Uploadable uploadable = new LocalAttachmentUpload(inputStream, localAttachment);
-            this.uploadFuture = mua.upload(uploadable, this);
+        try (final LegacyFileUpload fileUpload = LegacyFileUpload.of(file, localAttachment.getMediaType())) {
+            this.uploadFuture = mua.upload(fileUpload, this);
             final Upload upload = this.uploadFuture.get();
             LOGGER.info("Upload succeeded {}", upload);
             notifyUploadComplete();
