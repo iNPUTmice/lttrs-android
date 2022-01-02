@@ -159,6 +159,8 @@
     <string name="autocrypt_encryption_preference">Encryption preference</string>
     <string name="could_not_configure_autocrypt">Could not configure autocrypt</string>
     <string name="encryption_provider_can_not_create_secret_key">The encryption provider on this phone is unable to create your secret key.</string>
+    <string name="encryption_is_not_available_for_those_recipients">The option to send an encrypted e-mail is not available for those recipients.</string>
+    <string name="send_as_cleartext">Send as cleartext</string>
     <plurals name="x_emails_in_trash">
         <item quantity="one">There is currently %d e-mail in the trash.</item>
         <item quantity="other">There are currently %d e-mails in the trash.</item>

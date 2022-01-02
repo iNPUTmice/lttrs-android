@@ -26,6 +26,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
+
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -34,12 +35,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.common.base.Preconditions;
 import com.google.common.net.MediaType;
-import java.util.List;
-import java.util.UUID;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
+import java.util.UUID;
+
 import rs.ltt.android.LttrsApplication;
 import rs.ltt.android.R;
 import rs.ltt.android.databinding.ActivityComposeBinding;
@@ -255,12 +261,30 @@ public class ComposeActivity extends AppCompatActivity {
 
     private void focusOnRecipientFieldChanged(final View view, final boolean hasFocus) {
         if (view instanceof TextView) {
-            final TextView textView = (TextView) view;
-            LOGGER.info("hasFocus({})", hasFocus);
-            ChipDrawableSpan.apply(this, textView.getEditableText(), hasFocus);
+            focusOnRecipientFieldChanged((TextView) view, hasFocus);
             return;
         }
         throw new IllegalArgumentException("View parameter is not of type TextView");
+    }
+
+    private void focusOnRecipientFieldChanged(final TextView textView, final boolean hasFocus) {
+        ChipDrawableSpan.apply(this, textView.getEditableText(), hasFocus);
+        if (hasFocus) {
+            return;
+        }
+        if (composeViewModel.hasImpossibleEncryptionChoice()) {
+            warnEncryptionNotAvailable();
+        }
+    }
+
+    private void warnEncryptionNotAvailable() {
+        new MaterialAlertDialogBuilder(this)
+                .setMessage(R.string.encryption_is_not_available_for_those_recipients)
+                .setPositiveButton(
+                        R.string.send_as_cleartext,
+                        (dialog, which) ->
+                                composeViewModel.setUserEncryptionChoice(UserEncryptionChoice.NONE))
+                .show();
     }
 
     private void focusOnBodyOrSubject(final View view, final boolean hasFocus) {
@@ -290,13 +314,12 @@ public class ComposeActivity extends AppCompatActivity {
         final MenuItem encryptedMenuItem = menu.findItem(R.id.encryption_option_encrypted);
         final EncryptionOptions encryptionOptions =
                 EncryptionOptions.of(composeViewModel.getEncryptionOptions());
-        final UserEncryptionChoice choice = encryptionOptions.userEncryptionChoice;
         final Decision decision = encryptionOptions.decision;
-        if (encryptionOptions.decision == Decision.DISABLE) {
+        if (decision == Decision.DISABLE) {
             encryptionOptionsMenuItem.setVisible(false);
         } else {
             encryptionOptionsMenuItem.setVisible(true);
-            if (encryptionOptions.decision == Decision.DISCOURAGE) {
+            if (decision == Decision.DISCOURAGE) {
                 encryptionOptionsMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
             } else {
                 encryptionOptionsMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
