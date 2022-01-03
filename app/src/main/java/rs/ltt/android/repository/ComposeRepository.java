@@ -18,12 +18,14 @@ package rs.ltt.android.repository;
 import android.annotation.SuppressLint;
 import android.app.Application;
 import android.net.Uri;
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.work.ExistingWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkContinuation;
 import androidx.work.WorkManager;
 import com.google.common.collect.ImmutableList;
+import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
@@ -33,6 +35,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Executors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rs.ltt.android.MuaPool;
 import rs.ltt.android.cache.LocalAttachment;
 import rs.ltt.android.entity.EmailWithReferences;
@@ -59,14 +63,36 @@ import rs.ltt.jmap.common.entity.Keyword;
 import rs.ltt.jmap.common.entity.Role;
 import rs.ltt.jmap.common.entity.capability.CoreCapability;
 import rs.ltt.jmap.mua.Mua;
+import rs.ltt.jmap.mua.Status;
 
 public class ComposeRepository extends AbstractRepository {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ComposeRepository.class);
 
     private static final ListeningExecutorService ATTACHMENT_EXECUTOR =
             MoreExecutors.listeningDecorator(Executors.newSingleThreadExecutor());
 
     public ComposeRepository(final Application application, final long accountId) {
         super(application, accountId);
+        final ListenableFuture<Status> identityRefresh =
+                Futures.transformAsync(
+                        MuaPool.getInstance(application, accountId),
+                        Mua::refreshIdentities,
+                        MoreExecutors.directExecutor());
+        Futures.addCallback(
+                identityRefresh,
+                new FutureCallback<>() {
+                    @Override
+                    public void onSuccess(final Status status) {
+                        LOGGER.debug("Identities refresh {}", status);
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Throwable throwable) {
+                        LOGGER.warn("Unable to refresh identities", throwable);
+                    }
+                },
+                MoreExecutors.directExecutor());
     }
 
     public ListenableFuture<LocalAttachment> addAttachment(Uri uri) {
