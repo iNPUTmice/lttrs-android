@@ -18,8 +18,11 @@ package rs.ltt.android.entity;
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
+import com.google.common.base.Optional;
 import java.time.Instant;
 import java.time.OffsetDateTime;
+import rs.ltt.autocrypt.jmap.EncryptedBodyPart;
+import rs.ltt.jmap.common.entity.Downloadable;
 import rs.ltt.jmap.common.entity.Email;
 
 @Entity(tableName = "email")
@@ -43,7 +46,13 @@ public class EmailEntity {
 
     public String preview;
 
-    public static EmailEntity of(Email email) {
+    public EncryptionStatus encryptionStatus;
+
+    public String encryptedBlobId;
+
+    public static EmailEntity of(final Email email) {
+        final Optional<Downloadable> encryptedBodyPart =
+                EncryptedBodyPart.findEncryptedBodyPart(email);
         final EmailEntity entity = new EmailEntity();
         entity.id = email.getId();
         entity.blobId = email.getBlobId();
@@ -54,6 +63,10 @@ public class EmailEntity {
         entity.sentAt = email.getSentAt();
         entity.hasAttachment = email.getHasAttachment();
         entity.preview = email.getPreview();
+        if (encryptedBodyPart.isPresent()) {
+            entity.encryptionStatus = EncryptionStatus.ENCRYPTED;
+            entity.encryptedBlobId = encryptedBodyPart.get().getBlobId();
+        }
         return entity;
     }
 }
