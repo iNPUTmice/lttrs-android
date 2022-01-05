@@ -39,9 +39,11 @@ import rs.ltt.android.entity.EmailMailboxEntity;
 import rs.ltt.android.entity.EmailMessageIdEntity;
 import rs.ltt.android.entity.EmailWithBodies;
 import rs.ltt.android.entity.EmailWithBodiesAndSubject;
+import rs.ltt.android.entity.EmailWithEncryptionStatus;
 import rs.ltt.android.entity.EmailWithKeywords;
 import rs.ltt.android.entity.EmailWithMailboxes;
 import rs.ltt.android.entity.EmailWithReferences;
+import rs.ltt.android.entity.EncryptionStatus;
 import rs.ltt.android.entity.EntityStateEntity;
 import rs.ltt.android.entity.ExpandedPosition;
 import rs.ltt.android.entity.ThreadEntity;
@@ -186,7 +188,16 @@ public abstract class ThreadAndEmailDao extends AbstractEntityDao {
 
     @Transaction
     @Query("select id from email where id=:id")
-    public abstract EmailWithKeywords getEmailWithKeyword(String id);
+    public abstract EmailWithKeywords getEmailWithKeyword(final String id);
+
+    @Query("select id,encryptionStatus,encryptedBlobId from email where id=:id")
+    public abstract EmailWithEncryptionStatus getEmailWithEncryptionStatus(final String id);
+
+    @Query(
+            "select id,encryptionStatus,encryptedBlobId from email where threadId=:threadId and"
+                    + " encryptionStatus=:encryptionStatus")
+    public abstract LiveData<List<EmailWithEncryptionStatus>> getEmailsWithEncryptionStatus(
+            final String threadId, final EncryptionStatus encryptionStatus);
 
     @Query(
             "select blobId,type,name,size from email_body_part where emailId=:emailId and"

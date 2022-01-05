@@ -81,6 +81,7 @@ public class ThreadViewModel extends AbstractAttachmentViewModel {
     private final LiveData<List<MailboxWithRoleAndName>> mailboxes;
     private final LiveData<List<MailboxWithRoleAndName>> labels;
     private final LiveData<MenuConfiguration> menuConfiguration;
+    private final LiveData<List<WorkInfo>> decryptionWorkInfo;
 
     private AttachmentReference attachmentReference = null;
 
@@ -97,6 +98,7 @@ public class ThreadViewModel extends AbstractAttachmentViewModel {
                 new ThreadViewRepository(application, accountId);
         final LiveData<ThreadHeader> header = threadViewRepository.getThreadHeader(threadId);
         this.emails = threadViewRepository.getEmails(threadId);
+        this.decryptionWorkInfo = threadViewRepository.getDecryptionWorkInfo(threadId);
         this.mailboxes = threadViewRepository.getMailboxes(threadId);
         final ListenableFuture<Seen> seen = threadViewRepository.getSeen(threadId);
         this.expandedPositions =
@@ -250,6 +252,10 @@ public class ThreadViewModel extends AbstractAttachmentViewModel {
 
     public LiveData<MenuConfiguration> getMenuConfiguration() {
         return menuConfiguration;
+    }
+
+    public LiveData<List<WorkInfo>> getDecryptionWorkInfo() {
+        return this.decryptionWorkInfo;
     }
 
     public String getLabel() {

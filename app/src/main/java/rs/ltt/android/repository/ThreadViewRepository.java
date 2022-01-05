@@ -16,22 +16,43 @@
 package rs.ltt.android.repository;
 
 import android.app.Application;
+
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Transformations;
 import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
+import androidx.work.ExistingWorkPolicy;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkInfo;
+import androidx.work.WorkManager;
+import androidx.work.WorkQuery;
+
+import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.List;
+import java.util.UUID;
+
 import rs.ltt.android.entity.EmailWithBodies;
+import rs.ltt.android.entity.EmailWithEncryptionStatus;
+import rs.ltt.android.entity.EncryptionStatus;
 import rs.ltt.android.entity.ExpandedPosition;
 import rs.ltt.android.entity.KeywordOverwriteEntity;
 import rs.ltt.android.entity.MailboxOverwriteEntity;
 import rs.ltt.android.entity.MailboxWithRoleAndName;
 import rs.ltt.android.entity.Seen;
 import rs.ltt.android.entity.ThreadHeader;
+import rs.ltt.android.worker.DecryptionWorker;
 
 public class ThreadViewRepository extends AbstractRepository {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ThreadViewRepository.class);
 
     public ThreadViewRepository(final Application application, final long accountId) {
         super(application, accountId);
@@ -52,6 +73,36 @@ public class ThreadViewRepository extends AbstractRepository {
 
     public LiveData<List<MailboxOverwriteEntity>> getMailboxOverwrites(String threadId) {
         return database.overwriteDao().getMailboxOverwrites(threadId);
+    }
+
+    public LiveData<List<WorkInfo>> getDecryptionWorkInfo(final String threadId) {
+        final LiveData<List<EmailWithEncryptionStatus>> encryptedEmails =
+                database.threadAndEmailDao()
+                        .getEmailsWithEncryptionStatus(threadId, EncryptionStatus.ENCRYPTED);
+        return Transformations.switchMap(encryptedEmails, this::enqueueDecryptionWorkers);
+    }
+
+    private LiveData<List<WorkInfo>> enqueueDecryptionWorkers(
+            final List<EmailWithEncryptionStatus> emails) {
+        LOGGER.info("Enqueue decryption jobs for {}", emails);
+        if (emails.isEmpty()) {
+            return new MutableLiveData<>();
+        }
+        final WorkManager workManager = WorkManager.getInstance(application);
+        final ImmutableList.Builder<UUID> uuidBuilder = new ImmutableList.Builder<>();
+        for (final EmailWithEncryptionStatus email : emails) {
+            final OneTimeWorkRequest oneTimeWorkRequest =
+                    new OneTimeWorkRequest.Builder(DecryptionWorker.class)
+                            .setInputData(DecryptionWorker.data(accountId, email.id))
+                            .build();
+            uuidBuilder.add(oneTimeWorkRequest.getId());
+            workManager.enqueueUniqueWork(
+                    DecryptionWorker.uniqueName(accountId, email.id),
+                    ExistingWorkPolicy.KEEP,
+                    oneTimeWorkRequest);
+        }
+        return workManager.getWorkInfosLiveData(
+                WorkQuery.Builder.fromIds(uuidBuilder.build()).build());
     }
 
     public ListenableFuture<Seen> getSeen(String threadId) {

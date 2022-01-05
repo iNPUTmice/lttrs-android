@@ -66,6 +66,8 @@ public class EmailEntity {
         if (encryptedBodyPart.isPresent()) {
             entity.encryptionStatus = EncryptionStatus.ENCRYPTED;
             entity.encryptedBlobId = encryptedBodyPart.get().getBlobId();
+        } else {
+            entity.encryptionStatus = EncryptionStatus.CLEARTEXT;
         }
         return entity;
     }
