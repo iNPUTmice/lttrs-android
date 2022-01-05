@@ -19,6 +19,7 @@ import android.app.Application;
 import android.net.Uri;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.util.Pair;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -102,7 +103,7 @@ public class ThreadViewModel extends AbstractAttachmentViewModel {
                 Futures.transform(seen, Seen::getExpandedPositions, MoreExecutors.directExecutor());
         Futures.addCallback(
                 seen,
-                new FutureCallback<Seen>() {
+                new FutureCallback<>() {
                     @Override
                     public void onSuccess(@Nullable Seen seen) {
                         if (seen != null) {
@@ -121,82 +122,12 @@ public class ThreadViewModel extends AbstractAttachmentViewModel {
         final CombinedListsLiveData<MailboxOverwriteEntity, MailboxWithRoleAndName> combined =
                 new CombinedListsLiveData<>(overwriteEntityLiveData, mailboxes);
 
-        this.labels =
-                Transformations.map(
-                        combined,
-                        pair ->
-                                combine(pair.first, pair.second).stream()
-                                        .filter(
-                                                m ->
-                                                        m.getRole() == null
-                                                                || m.getRole() == Role.INBOX)
-                                        .sorted(LabelUtil.COMPARATOR)
-                                        .collect(Collectors.toList()));
+        this.labels = Transformations.map(combined, this::getLabels);
 
-        this.menuConfiguration =
-                Transformations.map(
-                        combined,
-                        pair -> {
-                            List<MailboxOverwriteEntity> overwrites = pair.first;
-                            List<MailboxWithRoleAndName> list = pair.second;
-                            boolean wasPutInArchiveOverwrite =
-                                    MailboxOverwriteEntity.hasOverwrite(overwrites, Role.ARCHIVE);
-                            boolean wasPutInTrashOverwrite =
-                                    MailboxOverwriteEntity.hasOverwrite(overwrites, Role.TRASH);
-                            boolean wasPutInInboxOverwrite =
-                                    MailboxOverwriteEntity.hasOverwrite(overwrites, Role.INBOX);
-                            final MailboxOverwriteEntity importantOverwrite =
-                                    MailboxOverwriteEntity.find(overwrites, Role.IMPORTANT);
+        this.menuConfiguration = Transformations.map(combined, this::getMenuConfiguration);
 
-                            final boolean removeLabel =
-                                    MailboxWithRoleAndName.isAnyOfLabel(list, this.label);
-                            final boolean archive =
-                                    !removeLabel
-                                            && (MailboxWithRoleAndName.isAnyOfRole(list, Role.INBOX)
-                                                    || wasPutInInboxOverwrite)
-                                            && !wasPutInArchiveOverwrite
-                                            && !wasPutInTrashOverwrite;
-                            final boolean moveToInbox =
-                                    (MailboxWithRoleAndName.isAnyOfRole(list, Role.ARCHIVE)
-                                                    || MailboxWithRoleAndName.isAnyOfRole(
-                                                            list, Role.TRASH)
-                                                    || wasPutInArchiveOverwrite
-                                                    || wasPutInTrashOverwrite)
-                                            && !wasPutInInboxOverwrite;
-                            final boolean moveToTrash =
-                                    (MailboxWithRoleAndName.isAnyNotOfRole(list, Role.TRASH)
-                                                    || wasPutInInboxOverwrite)
-                                            && !wasPutInTrashOverwrite;
+        final LiveData<Boolean> importance = Transformations.map(combined, this::getImportance);
 
-                            final boolean markedAsImportant =
-                                    importantOverwrite != null
-                                            ? importantOverwrite.value
-                                            : MailboxWithRoleAndName.isAnyOfRole(
-                                                    list, Role.IMPORTANT);
-
-                            return new MenuConfiguration(
-                                    archive,
-                                    removeLabel,
-                                    moveToInbox,
-                                    moveToTrash,
-                                    !markedAsImportant,
-                                    markedAsImportant);
-                        });
-
-        final LiveData<Boolean> importance =
-                Transformations.map(
-                        combined,
-                        pair -> {
-                            final List<MailboxOverwriteEntity> overwrites = pair.first;
-                            final List<MailboxWithRoleAndName> list = pair.second;
-                            final MailboxOverwriteEntity importantOverwrite =
-                                    MailboxOverwriteEntity.find(overwrites, Role.IMPORTANT);
-                            return importantOverwrite != null
-                                    ? importantOverwrite.value
-                                    : MailboxWithRoleAndName.isAnyOfRole(list, Role.IMPORTANT);
-                        });
-
-        // TODO subject might just become a label
         this.subjectWithImportance.addSource(
                 importance, important -> setSubjectWithImportance(header.getValue(), important));
         this.subjectWithImportance.addSource(
@@ -206,7 +137,70 @@ public class ThreadViewModel extends AbstractAttachmentViewModel {
         this.flagged = Transformations.map(header, h -> h != null && h.showAsFlagged());
 
         // TODO add LiveData that is true when header != null and display 'Thread not found' or
-        // something in UI
+        //  something in UI
+    }
+
+    private MenuConfiguration getMenuConfiguration(
+            Pair<List<MailboxOverwriteEntity>, List<MailboxWithRoleAndName>> pair) {
+        List<MailboxOverwriteEntity> overwrites = pair.first;
+        List<MailboxWithRoleAndName> list = pair.second;
+        boolean wasPutInArchiveOverwrite =
+                MailboxOverwriteEntity.hasOverwrite(overwrites, Role.ARCHIVE);
+        boolean wasPutInTrashOverwrite =
+                MailboxOverwriteEntity.hasOverwrite(overwrites, Role.TRASH);
+        boolean wasPutInInboxOverwrite =
+                MailboxOverwriteEntity.hasOverwrite(overwrites, Role.INBOX);
+        final MailboxOverwriteEntity importantOverwrite =
+                MailboxOverwriteEntity.find(overwrites, Role.IMPORTANT);
+
+        final boolean removeLabel = MailboxWithRoleAndName.isAnyOfLabel(list, this.label);
+        final boolean archive =
+                !removeLabel
+                        && (MailboxWithRoleAndName.isAnyOfRole(list, Role.INBOX)
+                                || wasPutInInboxOverwrite)
+                        && !wasPutInArchiveOverwrite
+                        && !wasPutInTrashOverwrite;
+        final boolean moveToInbox =
+                (MailboxWithRoleAndName.isAnyOfRole(list, Role.ARCHIVE)
+                                || MailboxWithRoleAndName.isAnyOfRole(list, Role.TRASH)
+                                || wasPutInArchiveOverwrite
+                                || wasPutInTrashOverwrite)
+                        && !wasPutInInboxOverwrite;
+        final boolean moveToTrash =
+                (MailboxWithRoleAndName.isAnyNotOfRole(list, Role.TRASH) || wasPutInInboxOverwrite)
+                        && !wasPutInTrashOverwrite;
+
+        final boolean markedAsImportant =
+                importantOverwrite != null
+                        ? importantOverwrite.value
+                        : MailboxWithRoleAndName.isAnyOfRole(list, Role.IMPORTANT);
+
+        return new MenuConfiguration(
+                archive,
+                removeLabel,
+                moveToInbox,
+                moveToTrash,
+                !markedAsImportant,
+                markedAsImportant);
+    }
+
+    private Boolean getImportance(
+            final Pair<List<MailboxOverwriteEntity>, List<MailboxWithRoleAndName>> pair) {
+        final List<MailboxOverwriteEntity> overwrites = pair.first;
+        final List<MailboxWithRoleAndName> list = pair.second;
+        final MailboxOverwriteEntity importantOverwrite =
+                MailboxOverwriteEntity.find(overwrites, Role.IMPORTANT);
+        return importantOverwrite != null
+                ? importantOverwrite.value
+                : MailboxWithRoleAndName.isAnyOfRole(list, Role.IMPORTANT);
+    }
+
+    private List<MailboxWithRoleAndName> getLabels(
+            final Pair<List<MailboxOverwriteEntity>, List<MailboxWithRoleAndName>> pair) {
+        return combine(pair.first, pair.second).stream()
+                .filter(m -> m.getRole() == null || m.getRole() == Role.INBOX)
+                .sorted(LabelUtil.COMPARATOR)
+                .collect(Collectors.toList());
     }
 
     private static List<MailboxWithRoleAndName> combine(
