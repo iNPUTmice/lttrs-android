@@ -29,7 +29,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.paging.PagedList;
 import androidx.work.WorkInfo;
-
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.FutureCallback;
@@ -149,7 +148,9 @@ public class ThreadFragment extends AbstractLttrsFragment
         threadViewModel
                 .getThreadViewRedirect()
                 .observe(getViewLifecycleOwner(), this::onThreadViewRedirect);
-        threadViewModel.getDecryptionWorkInfo().observe(getViewLifecycleOwner(), this::onDecryptionWorkInfo);
+        threadViewModel
+                .getDecryptionWorkInfo()
+                .observe(getViewLifecycleOwner(), this::onDecryptionWorkInfo);
         return binding.getRoot();
     }
 

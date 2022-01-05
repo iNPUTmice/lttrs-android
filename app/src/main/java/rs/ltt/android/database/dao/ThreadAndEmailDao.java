@@ -23,6 +23,7 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Transaction;
+import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.util.Collection;
 import java.util.List;
@@ -150,6 +151,9 @@ public abstract class ThreadAndEmailDao extends AbstractEntityDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract void insert(EmailEntity entity);
 
+    @Query("update email set encryptionStatus=:status where id=:emailId")
+    abstract void setEncryptionStatus(final String emailId, final EncryptionStatus status);
+
     @Insert
     abstract void insertEmailAddresses(List<EmailEmailAddressEntity> entities);
 
@@ -168,8 +172,14 @@ public abstract class ThreadAndEmailDao extends AbstractEntityDao {
     @Insert
     abstract void insertEmailBodyValues(List<EmailBodyValueEntity> entities);
 
+    @Query("delete from email_body_value where emailId=:emailId")
+    abstract void deleteEmailBodyValues(final String emailId);
+
     @Insert
     abstract void insertEmailBodyParts(List<EmailBodyPartEntity> entities);
+
+    @Query("delete from email_body_part where emailId=:emailId")
+    abstract void deleteEmailBodyParts(final String emailId);
 
     @Query("select threadId from email where id=:emailId")
     public abstract String getThreadId(String emailId);
@@ -368,5 +378,15 @@ public abstract class ThreadAndEmailDao extends AbstractEntityDao {
         if (executed > 0) {
             LOGGER.info("Marked {} query item overwrites as executed", executed);
         }
+    }
+
+    @Transaction
+    public void setPlaintextBodyParts(final Email email) {
+        Preconditions.checkNotNull(email.getId(), "Email must contain an ID");
+        deleteEmailBodyParts(email.getId());
+        insertEmailBodyParts(EmailBodyPartEntity.of(email));
+        deleteEmailBodyValues(email.getId());
+        insertEmailBodyValues(EmailBodyValueEntity.of(email));
+        setEncryptionStatus(email.getId(), EncryptionStatus.PLAINTEXT);
     }
 }

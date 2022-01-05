@@ -44,8 +44,8 @@ public class EmailBodyValueEntity {
     public Boolean isTruncated;
 
     public static List<EmailBodyValueEntity> of(Email email) {
-        ImmutableList.Builder<EmailBodyValueEntity> builder = new ImmutableList.Builder<>();
-        for (Map.Entry<String, EmailBodyValue> bodyValue : email.getBodyValues().entrySet()) {
+        final ImmutableList.Builder<EmailBodyValueEntity> builder = new ImmutableList.Builder<>();
+        for (final Map.Entry<String, EmailBodyValue> bodyValue : email.getBodyValues().entrySet()) {
             builder.add(of(email.getId(), bodyValue.getKey(), bodyValue.getValue()));
         }
         return builder.build();

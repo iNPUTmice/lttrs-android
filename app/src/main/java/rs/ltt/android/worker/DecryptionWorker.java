@@ -57,8 +57,9 @@ public class DecryptionWorker extends AbstractMuaWorker {
                                     throws IOException {}
                         });
         try {
-            final Email plaintextEmail = plaintextEmailFuture.get();
-            LOGGER.info("email {}", plaintextEmail);
+            final Email plaintextEmail =
+                    plaintextEmailFuture.get().toBuilder().id(originalEmail.getId()).build();
+            getDatabase().threadAndEmailDao().setPlaintextBodyParts(plaintextEmail);
             return Result.success();
         } catch (final ExecutionException e) {
             final Throwable cause = e.getCause();

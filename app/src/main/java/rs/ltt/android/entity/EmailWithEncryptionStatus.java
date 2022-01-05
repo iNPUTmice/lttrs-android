@@ -2,7 +2,6 @@ package rs.ltt.android.entity;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
-
 import rs.ltt.jmap.common.entity.Identifiable;
 
 public class EmailWithEncryptionStatus implements Identifiable {
@@ -27,7 +26,9 @@ public class EmailWithEncryptionStatus implements Identifiable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         EmailWithEncryptionStatus that = (EmailWithEncryptionStatus) o;
-        return Objects.equal(id, that.id) && encryptionStatus == that.encryptionStatus && Objects.equal(encryptedBlobId, that.encryptedBlobId);
+        return Objects.equal(id, that.id)
+                && encryptionStatus == that.encryptionStatus
+                && Objects.equal(encryptedBlobId, that.encryptedBlobId);
     }
 
     @Override
