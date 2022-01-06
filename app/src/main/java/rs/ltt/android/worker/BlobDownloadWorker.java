@@ -177,10 +177,10 @@ public class BlobDownloadWorker extends AbstractMuaWorker {
                                             getApplicationContext(),
                                             account,
                                             attachment.getBlobId());
+                            final long bytesWritten;
                             try (final FileOutputStream fileOutputStream =
                                     new FileOutputStream(blobStorage.getFile())) {
-                                final long bytesWritten =
-                                        ByteStreams.copy(inputStream, fileOutputStream);
+                                bytesWritten = ByteStreams.copy(inputStream, fileOutputStream);
                                 LOGGER.info(
                                         "Stored plaintext attachment {} to {} ({} bytes written)",
                                         attachment.getName(),
@@ -188,6 +188,7 @@ public class BlobDownloadWorker extends AbstractMuaWorker {
                                         bytesWritten);
                             }
                             blobIdStorageMap.put(attachment.getBlobId(), blobStorage);
+                            return bytesWritten;
                         });
         try {
             final Email plaintextEmail = plaintextEmailFuture.get();

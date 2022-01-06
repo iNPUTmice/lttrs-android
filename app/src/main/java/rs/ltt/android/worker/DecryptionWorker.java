@@ -65,7 +65,7 @@ public class DecryptionWorker extends AbstractMuaWorker {
         }
     }
 
-    private void storeAttachment(final Attachment attachment, final InputStream inputStream)
+    private long storeAttachment(final Attachment attachment, final InputStream inputStream)
             throws IOException {
         final BlobStorage blobStorage =
                 BlobStorage.get(getApplicationContext(), account, attachment.getBlobId());
@@ -77,6 +77,7 @@ public class DecryptionWorker extends AbstractMuaWorker {
                     attachment.getName(),
                     blobStorage.getFile().getAbsolutePath(),
                     bytesWritten);
+            return bytesWritten;
         }
     }
 
