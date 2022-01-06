@@ -54,23 +54,6 @@ android {
         }
     }
 
-    File signingProperties = new File("signing.properties")
-
-    if (signingProperties.exists()) {
-        Properties props = new Properties()
-        props.load(new FileInputStream(signingProperties))
-
-        signingConfigs {
-            release {
-                storeFile file(props['keystore'])
-                storePassword props['keystore.password']
-                keyAlias props['keystore.alias']
-                keyPassword props['keystore.password']
-            }
-        }
-        buildTypes.release.signingConfig = signingConfigs.release
-    }
-
     buildFeatures {
         dataBinding true
     }
