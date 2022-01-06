@@ -24,6 +24,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import rs.ltt.android.util.TextBodies;
 import rs.ltt.jmap.mua.util.KeywordUtil;
 
 /**
@@ -43,8 +45,7 @@ public class EmailWithBodies extends EmailPreview {
     }
 
     public String getPreview() {
-        final String body = Joiner.on(' ').join(getTextBodies());
-        return body.substring(0, Math.min(1024, body.length()));
+        return TextBodies.getPreview(bodyPartEntities, bodyValueEntities);
     }
 
     public From getFirstFrom() {
@@ -59,17 +60,8 @@ public class EmailWithBodies extends EmailPreview {
         return null;
     }
 
-    // TODO externalize getTextBodies into some helper class
     public List<String> getTextBodies() {
-        final List<EmailBodyPartEntity> textBodies =
-                EmailBodyPartEntity.filter(bodyPartEntities, EmailBodyPartType.TEXT_BODY);
-        final Map<String, EmailBodyValueEntity> map =
-                Maps.uniqueIndex(bodyValueEntities, value -> value.partId);
-        return textBodies.stream()
-                .map(body -> map.get(body.partId))
-                .filter(java.util.Objects::nonNull)
-                .map(value -> value.value)
-                .collect(Collectors.toList());
+        return TextBodies.getTextBodies(bodyPartEntities, bodyValueEntities);
     }
 
     public List<EmailBodyPartEntity> getAttachments() {

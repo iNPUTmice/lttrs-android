@@ -50,6 +50,7 @@ import rs.ltt.android.entity.ExpandedPosition;
 import rs.ltt.android.entity.ThreadEntity;
 import rs.ltt.android.entity.ThreadHeader;
 import rs.ltt.android.entity.ThreadItemEntity;
+import rs.ltt.android.util.TextBodies;
 import rs.ltt.jmap.common.entity.Email;
 import rs.ltt.jmap.common.entity.Thread;
 import rs.ltt.jmap.common.entity.TypedState;
@@ -153,6 +154,9 @@ public abstract class ThreadAndEmailDao extends AbstractEntityDao {
 
     @Query("update email set encryptionStatus=:status where id=:emailId")
     abstract void setEncryptionStatus(final String emailId, final EncryptionStatus status);
+
+    @Query("update email set preview=:preview where id=:emailId")
+    abstract void setPreview(final String emailId, final String preview);
 
     @Insert
     abstract void insertEmailAddresses(List<EmailEmailAddressEntity> entities);
@@ -384,10 +388,13 @@ public abstract class ThreadAndEmailDao extends AbstractEntityDao {
     public void setPlaintextBodyParts(final Email email) {
         Preconditions.checkNotNull(email.getId(), "Email must contain an ID");
         deleteEmailBodyParts(email.getId());
-        insertEmailBodyParts(EmailBodyPartEntity.of(email));
+        final List<EmailBodyPartEntity> bodyPartEntities = EmailBodyPartEntity.of(email);
+        insertEmailBodyParts(bodyPartEntities);
         deleteEmailBodyValues(email.getId());
-        insertEmailBodyValues(EmailBodyValueEntity.of(email));
-        // TODO recalculate Preview using getTextBodies and preview from EmailWithBodies
+        final List<EmailBodyValueEntity> bodyValueEntities = EmailBodyValueEntity.of(email);
+        insertEmailBodyValues(bodyValueEntities);
+        final String preview = TextBodies.getPreview(bodyPartEntities, bodyValueEntities);
         setEncryptionStatus(email.getId(), EncryptionStatus.PLAINTEXT);
+        setPreview(email.getId(), preview);
     }
 }
