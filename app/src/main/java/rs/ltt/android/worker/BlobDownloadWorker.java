@@ -9,12 +9,15 @@ import androidx.work.ForegroundInfo;
 import androidx.work.WorkInfo;
 import androidx.work.WorkerParameters;
 import com.google.common.base.Preconditions;
+import com.google.common.io.ByteStreams;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.RateLimiter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import okhttp3.Call;
 import org.jetbrains.annotations.NotNull;
@@ -22,9 +25,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rs.ltt.android.cache.BlobStorage;
 import rs.ltt.android.entity.DownloadableBlob;
+import rs.ltt.android.entity.EmailWithEncryptionStatus;
+import rs.ltt.android.entity.EncryptionStatus;
 import rs.ltt.android.ui.notification.AttachmentNotification;
+import rs.ltt.autocrypt.jmap.AutocryptPlugin;
+import rs.ltt.autocrypt.jmap.EncryptedBodyPart;
 import rs.ltt.jmap.client.blob.Download;
 import rs.ltt.jmap.client.blob.Progress;
+import rs.ltt.jmap.common.entity.Downloadable;
+import rs.ltt.jmap.common.entity.Email;
 import rs.ltt.jmap.mua.Mua;
 
 public class BlobDownloadWorker extends AbstractMuaWorker {
@@ -80,6 +89,16 @@ public class BlobDownloadWorker extends AbstractMuaWorker {
     @Override
     public Result doWork() {
         this.downloadable = getDatabase().threadAndEmailDao().getDownloadable(emailId, blobId);
+        final EmailWithEncryptionStatus encryptionStatus =
+                getDatabase().threadAndEmailDao().getEmailWithEncryptionStatus(emailId);
+        if (encryptionStatus.getEncryptionStatus() == EncryptionStatus.CLEARTEXT) {
+            return downloadCleartextBlob();
+        } else {
+            return downloadEncryptedBlob(encryptionStatus.encryptedBlobId);
+        }
+    }
+
+    private Result downloadCleartextBlob() {
         final BlobStorage storage = BlobStorage.get(getApplicationContext(), account, blobId);
         final File temporaryFile = storage.temporaryFile;
         final Mua mua = getMua();
@@ -138,21 +157,76 @@ public class BlobDownloadWorker extends AbstractMuaWorker {
         notifyDownloadComplete();
         LOGGER.info("Finished downloading {}", storage.temporaryFile.getAbsolutePath());
         if (storage.moveTemporaryToFile()) {
-            final Uri uri =
-                    BlobStorage.getFileProviderUri(
-                            getApplicationContext(), storage.file, downloadable.getName());
-            final Data data =
-                    new Data.Builder()
-                            .putString(URI_KEY, uri.toString()) // to be picked up by view intent
-                            .putString(
-                                    StoreAttachmentWorker.FILE_KEY,
-                                    storage.file.getAbsolutePath()) // to be picked up by
-                            // StoreAttachmentWorker
-                            .build();
-            return Result.success(data);
+            return getResult(storage);
         } else {
             return Result.failure();
         }
+    }
+
+    private Result downloadEncryptedBlob(final String encryptedBlobId) {
+        final Downloadable encryptedBlob = EncryptedBodyPart.getDownloadable(encryptedBlobId);
+        final AutocryptPlugin autocryptPlugin = getMua().getPlugin(AutocryptPlugin.class);
+        final Map<String, BlobStorage> blobIdStorageMap = new HashMap<>();
+        setForegroundAsync(getForegroundInfo());
+        final ListenableFuture<Email> plaintextEmailFuture =
+                autocryptPlugin.downloadAndDecrypt(
+                        encryptedBlob,
+                        (attachment, inputStream) -> {
+                            final BlobStorage blobStorage =
+                                    BlobStorage.get(
+                                            getApplicationContext(),
+                                            account,
+                                            attachment.getBlobId());
+                            try (final FileOutputStream fileOutputStream =
+                                    new FileOutputStream(blobStorage.getFile())) {
+                                final long bytesWritten =
+                                        ByteStreams.copy(inputStream, fileOutputStream);
+                                LOGGER.info(
+                                        "Stored plaintext attachment {} to {} ({} bytes written)",
+                                        attachment.getName(),
+                                        blobStorage.getFile().getAbsolutePath(),
+                                        bytesWritten);
+                            }
+                            blobIdStorageMap.put(attachment.getBlobId(), blobStorage);
+                        });
+        try {
+            final Email plaintextEmail = plaintextEmailFuture.get();
+            LOGGER.info(
+                    "Cached {} plaintext attachments. Expected {}",
+                    blobIdStorageMap.size(),
+                    plaintextEmail.getAttachments().size());
+            final BlobStorage storage = blobIdStorageMap.get(this.blobId);
+            if (storage == null) {
+                LOGGER.error(
+                        "{} was not among downloaded blobs {}",
+                        this.blobId,
+                        blobIdStorageMap.keySet());
+                return Result.failure();
+            }
+            notifyDownloadComplete();
+            return getResult(storage);
+        } catch (final ExecutionException e) {
+            final Throwable cause = e.getCause();
+            LOGGER.error("Could not decrypt email", cause);
+            return Result.failure();
+        } catch (final InterruptedException e) {
+            return Result.retry();
+        }
+    }
+
+    private Result getResult(final BlobStorage storage) {
+        final Uri uri =
+                BlobStorage.getFileProviderUri(
+                        getApplicationContext(), storage.file, downloadable.getName());
+        final Data data =
+                new Data.Builder()
+                        .putString(URI_KEY, uri.toString()) // to be picked up by view intent
+                        .putString(
+                                StoreAttachmentWorker.FILE_KEY,
+                                storage.file.getAbsolutePath()) // to be picked up by
+                        // StoreAttachmentWorker
+                        .build();
+        return Result.success(data);
     }
 
     @Override

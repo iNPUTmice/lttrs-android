@@ -229,14 +229,14 @@ public abstract class ThreadAndEmailDao extends AbstractEntityDao {
     public abstract ListenableFuture<List<String>> getEmailIds(final Collection<String> threadIds);
 
     @Transaction
-    @Query("select id,receivedAt,preview,threadId,subject from email where id in (:emailIds)")
+    @Query("select id,receivedAt,threadId,subject from email where id in (:emailIds)")
     public abstract List<EmailWithBodiesAndSubject> getEmails(Collection<String> emailIds);
 
     // TODO remove 'preview'. 'receivedAt' is strictly speaking not necessary currently but might be
     // needed in the future for quoting the original email
     @Transaction
     @Query(
-            "select :accountId as accountId,id,threadId,subject,receivedAt,preview from email"
+            "select :accountId as accountId,id,threadId,subject,receivedAt from email"
                     + " where id=:id")
     public abstract ListenableFuture<EmailWithReferences> getEmailWithReferences(
             Long accountId, String id);
