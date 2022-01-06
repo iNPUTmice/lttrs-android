@@ -316,7 +316,7 @@ public class ThreadViewModel extends AbstractAttachmentViewModel {
                 BlobStorage.getIfCached(getApplication(), accountId, attachment.blobId);
         Futures.addCallback(
                 future,
-                new FutureCallback<BlobStorage>() {
+                new FutureCallback<>() {
                     @Override
                     public void onSuccess(final BlobStorage blobStorage) {
                         storeAttachment(blobStorage, uri);

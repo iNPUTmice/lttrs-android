@@ -216,7 +216,7 @@ public abstract class ThreadAndEmailDao extends AbstractEntityDao {
 
     @Transaction
     @Query(
-            "select id,receivedAt,preview,email.threadId from thread_item join email on"
+            "select id,receivedAt,email.threadId from thread_item join email on"
                     + " thread_item.emailId=email.id where thread_item.threadId=:threadId order by"
                     + " position")
     public abstract DataSource.Factory<Integer, EmailWithBodies> getEmails(String threadId);
@@ -387,6 +387,7 @@ public abstract class ThreadAndEmailDao extends AbstractEntityDao {
         insertEmailBodyParts(EmailBodyPartEntity.of(email));
         deleteEmailBodyValues(email.getId());
         insertEmailBodyValues(EmailBodyValueEntity.of(email));
+        // TODO recalculate Preview using getTextBodies and preview from EmailWithBodies
         setEncryptionStatus(email.getId(), EncryptionStatus.PLAINTEXT);
     }
 }

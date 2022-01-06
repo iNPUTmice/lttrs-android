@@ -16,6 +16,7 @@
 package rs.ltt.android.entity;
 
 import androidx.room.Relation;
+import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
 import com.google.common.collect.Maps;
 import java.util.Collection;
@@ -31,9 +32,6 @@ import rs.ltt.jmap.mua.util.KeywordUtil;
  */
 public class EmailWithBodies extends EmailPreview {
 
-    // TODO remove preview. use body values
-    public String preview;
-
     @Relation(parentColumn = "id", entityColumn = "emailId")
     public List<EmailBodyPartEntity> bodyPartEntities;
 
@@ -44,9 +42,9 @@ public class EmailWithBodies extends EmailPreview {
         return KeywordUtil.draft(this);
     }
 
-    // TODO use getTextBodies
     public String getPreview() {
-        return preview;
+        final String body = Joiner.on(' ').join(getTextBodies());
+        return body.substring(0, Math.min(1024, body.length()));
     }
 
     public From getFirstFrom() {
@@ -61,6 +59,7 @@ public class EmailWithBodies extends EmailPreview {
         return null;
     }
 
+    // TODO externalize getTextBodies into some helper class
     public List<String> getTextBodies() {
         final List<EmailBodyPartEntity> textBodies =
                 EmailBodyPartEntity.filter(bodyPartEntities, EmailBodyPartType.TEXT_BODY);
@@ -94,13 +93,12 @@ public class EmailWithBodies extends EmailPreview {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         EmailWithBodies that = (EmailWithBodies) o;
-        return Objects.equal(preview, that.preview)
-                && Objects.equal(bodyPartEntities, that.bodyPartEntities)
+        return Objects.equal(bodyPartEntities, that.bodyPartEntities)
                 && Objects.equal(bodyValueEntities, that.bodyValueEntities);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(super.hashCode(), preview, bodyPartEntities, bodyValueEntities);
+        return Objects.hashCode(super.hashCode(), bodyPartEntities, bodyValueEntities);
     }
 }
