@@ -47,6 +47,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rs.ltt.android.cache.BlobStorage;
+import rs.ltt.android.cache.CachedAttachment;
 import rs.ltt.android.entity.EmailWithBodies;
 import rs.ltt.android.entity.ExpandedPosition;
 import rs.ltt.android.entity.MailboxOverwriteEntity;
@@ -312,19 +313,19 @@ public class ThreadViewModel extends AbstractAttachmentViewModel {
             throw new IllegalStateException("AttachmentReference has not been set");
         }
         this.attachmentReference = null;
-        final ListenableFuture<BlobStorage> future =
+        final ListenableFuture<CachedAttachment> future =
                 BlobStorage.getIfCached(getApplication(), accountId, attachment.blobId);
         Futures.addCallback(
                 future,
                 new FutureCallback<>() {
                     @Override
-                    public void onSuccess(final BlobStorage blobStorage) {
-                        storeAttachment(blobStorage, uri);
+                    public void onSuccess(final CachedAttachment cachedAttachment) {
+                        storeAttachment(cachedAttachment, uri);
                     }
 
                     @Override
                     public void onFailure(@NotNull Throwable throwable) {
-                        if (throwable instanceof BlobStorage.InvalidCacheException) {
+                        if (throwable instanceof CachedAttachment.InvalidCacheException) {
                             downloadAndStoreAttachment(attachment, uri);
                         } else {
                             // TODO display error message?
@@ -334,11 +335,11 @@ public class ThreadViewModel extends AbstractAttachmentViewModel {
                 MoreExecutors.directExecutor());
     }
 
-    private void storeAttachment(final BlobStorage blobStorage, final Uri uri) {
+    private void storeAttachment(final CachedAttachment cachedAttachment, final Uri uri) {
         final WorkManager workManager = WorkManager.getInstance(getApplication());
         final OneTimeWorkRequest workRequest =
                 new OneTimeWorkRequest.Builder(StoreAttachmentWorker.class)
-                        .setInputData(StoreAttachmentWorker.data(blobStorage.file, uri))
+                        .setInputData(StoreAttachmentWorker.data(cachedAttachment.getFile(), uri))
                         .build();
         workManager.enqueue(workRequest);
     }

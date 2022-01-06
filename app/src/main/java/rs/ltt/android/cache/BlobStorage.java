@@ -3,7 +3,6 @@ package rs.ltt.android.cache;
 import android.content.Context;
 import android.net.Uri;
 import androidx.core.content.FileProvider;
-import com.google.common.base.CharMatcher;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.io.File;
@@ -15,7 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rs.ltt.jmap.common.entity.Attachment;
 
-public class BlobStorage {
+public class BlobStorage extends CachedAttachment {
 
     private static final Executor IO_EXECUTOR = Executors.newSingleThreadExecutor();
 
@@ -39,7 +38,7 @@ public class BlobStorage {
         if (accountDirectory.mkdirs()) {
             LOGGER.info("Created account directory {}", accountDirectory.getAbsolutePath());
         }
-        final String cleanBlobId = CharMatcher.is(File.pathSeparatorChar).removeFrom(blobId);
+        final String cleanBlobId = cleanId(blobId);
         final File temporary =
                 new File(accountDirectory, String.format(Locale.US, "%s.tmp", cleanBlobId));
         final File file = new File(accountDirectory, cleanBlobId);
@@ -62,7 +61,7 @@ public class BlobStorage {
                 IO_EXECUTOR);
     }
 
-    public static ListenableFuture<BlobStorage> getIfCached(
+    public static ListenableFuture<CachedAttachment> getIfCached(
             final Context context, final long accountId, final String blobId) {
         final ListenableFuture<BlobStorage> blobFuture =
                 Futures.submit(() -> get(context, accountId, blobId), IO_EXECUTOR);
@@ -92,10 +91,8 @@ public class BlobStorage {
         return temporaryFile.renameTo(file);
     }
 
-    public static class InvalidCacheException extends IllegalStateException {
-
-        InvalidCacheException(final File file) {
-            super(String.format("%s not found", file.getAbsolutePath()));
-        }
+    @Override
+    public File getFile() {
+        return this.file;
     }
 }

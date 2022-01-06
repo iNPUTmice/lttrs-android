@@ -5,18 +5,20 @@ import androidx.annotation.NonNull;
 import androidx.work.Data;
 import androidx.work.WorkerParameters;
 import com.google.common.base.Strings;
+import com.google.common.io.ByteStreams;
 import com.google.common.util.concurrent.ListenableFuture;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rs.ltt.android.cache.BlobStorage;
 import rs.ltt.android.entity.EmailWithEncryptionStatus;
 import rs.ltt.android.entity.EncryptionStatus;
 import rs.ltt.autocrypt.jmap.AutocryptPlugin;
 import rs.ltt.autocrypt.jmap.EncryptedBodyPart;
-import rs.ltt.autocrypt.jmap.mime.AttachmentRetriever;
 import rs.ltt.jmap.common.entity.Attachment;
 import rs.ltt.jmap.common.entity.Downloadable;
 import rs.ltt.jmap.common.entity.Email;
@@ -48,14 +50,7 @@ public class DecryptionWorker extends AbstractMuaWorker {
                 EncryptedBodyPart.getDownloadable(originalEmail.encryptedBlobId);
         final AutocryptPlugin autocryptPlugin = getMua().getPlugin(AutocryptPlugin.class);
         final ListenableFuture<Email> plaintextEmailFuture =
-                autocryptPlugin.downloadAndDecrypt(
-                        encryptedBlob,
-                        new AttachmentRetriever() {
-                            @Override
-                            public void onAttachmentRetrieved(
-                                    Attachment attachment, InputStream inputStream)
-                                    throws IOException {}
-                        });
+                autocryptPlugin.downloadAndDecrypt(encryptedBlob, this::storeAttachment);
         try {
             final Email plaintextEmail =
                     plaintextEmailFuture.get().toBuilder().id(originalEmail.getId()).build();
@@ -67,6 +62,21 @@ public class DecryptionWorker extends AbstractMuaWorker {
             return Result.failure();
         } catch (final InterruptedException e) {
             return Result.retry();
+        }
+    }
+
+    private void storeAttachment(final Attachment attachment, final InputStream inputStream)
+            throws IOException {
+        final BlobStorage blobStorage =
+                BlobStorage.get(getApplicationContext(), account, attachment.getBlobId());
+        try (final FileOutputStream fileOutputStream =
+                new FileOutputStream(blobStorage.getFile())) {
+            final long bytesWritten = ByteStreams.copy(inputStream, fileOutputStream);
+            LOGGER.info(
+                    "Stored plaintext attachment {} to {} ({} bytes written)",
+                    attachment.getName(),
+                    blobStorage.getFile().getAbsolutePath(),
+                    bytesWritten);
         }
     }
 

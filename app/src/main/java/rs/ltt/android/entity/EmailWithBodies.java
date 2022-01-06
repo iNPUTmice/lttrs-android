@@ -16,15 +16,10 @@
 package rs.ltt.android.entity;
 
 import androidx.room.Relation;
-import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
-import com.google.common.collect.Maps;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import rs.ltt.android.util.TextBodies;
 import rs.ltt.jmap.mua.util.KeywordUtil;
 
