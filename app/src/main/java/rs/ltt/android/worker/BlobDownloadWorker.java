@@ -26,7 +26,6 @@ import org.slf4j.LoggerFactory;
 import rs.ltt.android.cache.BlobStorage;
 import rs.ltt.android.entity.DownloadableBlob;
 import rs.ltt.android.entity.EmailWithEncryptionStatus;
-import rs.ltt.android.entity.EncryptionStatus;
 import rs.ltt.android.ui.notification.AttachmentNotification;
 import rs.ltt.autocrypt.jmap.AutocryptPlugin;
 import rs.ltt.autocrypt.jmap.EncryptedBodyPart;
@@ -88,13 +87,17 @@ public class BlobDownloadWorker extends AbstractMuaWorker {
     @NotNull
     @Override
     public Result doWork() {
-        this.downloadable = getDatabase().threadAndEmailDao().getDownloadable(emailId, blobId);
         final EmailWithEncryptionStatus encryptionStatus =
                 getDatabase().threadAndEmailDao().getEmailWithEncryptionStatus(emailId);
-        if (encryptionStatus.getEncryptionStatus() == EncryptionStatus.CLEARTEXT) {
-            return downloadCleartextBlob();
-        } else {
+        if (encryptionStatus == null) {
+            LOGGER.error("Unable to download blob {}. E-mail {} does not exist", blobId, emailId);
+            return Result.failure();
+        }
+        this.downloadable = getDatabase().threadAndEmailDao().getDownloadable(emailId, blobId);
+        if (encryptionStatus.getEncryptionStatus().isEncrypted()) {
             return downloadEncryptedBlob(encryptionStatus.encryptedBlobId);
+        } else {
+            return downloadCleartextBlob();
         }
     }
 

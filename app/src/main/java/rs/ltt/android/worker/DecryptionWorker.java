@@ -42,8 +42,8 @@ public class DecryptionWorker extends AbstractMuaWorker {
     public Result doWork() {
         final EmailWithEncryptionStatus originalEmail =
                 getDatabase().threadAndEmailDao().getEmailWithEncryptionStatus(this.emailId);
-        if (Strings.isNullOrEmpty(originalEmail.encryptedBlobId)
-                || originalEmail.getEncryptionStatus() == EncryptionStatus.CLEARTEXT) {
+        if (originalEmail == null || originalEmail.isCleartext()) {
+            LOGGER.error("E-mail {} is not an encrypted email", this.emailId);
             return Result.failure();
         }
         final Downloadable encryptedBlob =

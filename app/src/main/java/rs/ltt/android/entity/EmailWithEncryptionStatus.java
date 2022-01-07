@@ -2,6 +2,8 @@ package rs.ltt.android.entity;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
+import com.google.common.base.Strings;
+
 import rs.ltt.jmap.common.entity.Identifiable;
 
 public class EmailWithEncryptionStatus implements Identifiable {
@@ -19,6 +21,11 @@ public class EmailWithEncryptionStatus implements Identifiable {
     @Override
     public String getId() {
         return this.id;
+    }
+
+    public boolean isCleartext() {
+        return Strings.isNullOrEmpty(encryptedBlobId)
+                || getEncryptionStatus() == EncryptionStatus.CLEARTEXT;
     }
 
     @Override
