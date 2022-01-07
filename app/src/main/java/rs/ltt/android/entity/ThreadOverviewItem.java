@@ -18,7 +18,6 @@ package rs.ltt.android.entity;
 import androidx.room.Ignore;
 import androidx.room.Relation;
 import com.google.common.base.Objects;
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
@@ -58,14 +57,18 @@ public class ThreadOverviewItem {
     @Relation(parentColumn = "threadId", entityColumn = "threadId")
     public Set<MailboxOverwriteEntity> mailboxOverwriteEntities;
 
-    public String getPreview() {
+    public Preview getPreview() {
         final EmailPreviewWithMailboxes email = Iterables.getLast(getOrderedEmails(), null);
-        return email == null ? "(no preview)" : Strings.nullToEmpty(email.preview).trim();
+        if (email == null) {
+            return new Preview(null, false);
+        } else {
+            return new Preview(email.preview, email.isEncrypted());
+        }
     }
 
-    public String getSubject() {
+    public Subject getSubject() {
         final EmailPreviewWithMailboxes email = Iterables.getFirst(getOrderedEmails(), null);
-        return email == null ? "(no subject)" : Strings.nullToEmpty(email.subject).trim();
+        return email == null ? null : new Subject(email.subject);
     }
 
     public Instant getReceivedAt() {

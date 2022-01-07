@@ -39,8 +39,9 @@ public class EmailWithBodies extends EmailPreview {
         return KeywordUtil.draft(this);
     }
 
-    public String getPreview() {
-        return TextBodies.getPreview(bodyPartEntities, bodyValueEntities);
+    public Preview getPreview() {
+        final String preview = TextBodies.getPreview(bodyPartEntities, bodyValueEntities);
+        return new Preview(preview, isEncrypted());
     }
 
     public From getFirstFrom() {

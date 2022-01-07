@@ -17,6 +17,7 @@ public abstract class EmailPreview extends EmailWithKeywords
 
     public String threadId;
     public Instant receivedAt;
+    public EncryptionStatus encryptionStatus;
 
     @Relation(
             entity = EmailEmailAddressEntity.class,
@@ -65,6 +66,11 @@ public abstract class EmailPreview extends EmailWithKeywords
                                         .email(input.email)
                                         .name(input.name)
                                         .build());
+    }
+
+    public boolean isEncrypted() {
+        final EncryptionStatus encryptionStatus = this.encryptionStatus;
+        return encryptionStatus != null && encryptionStatus.isEncrypted();
     }
 
     @Override

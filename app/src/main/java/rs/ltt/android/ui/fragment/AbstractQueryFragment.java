@@ -268,7 +268,7 @@ public abstract class AbstractQueryFragment extends AbstractLttrsFragment
                         LttrsNavigationDirections.actionToThread(
                                 threadOverviewItem.threadId,
                                 null,
-                                threadOverviewItem.getSubject(),
+                                threadOverviewItem.getSubject().getSubject(),
                                 important));
     }
 

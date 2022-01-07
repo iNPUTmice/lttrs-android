@@ -52,6 +52,8 @@ import java.util.List;
 import rs.ltt.android.R;
 import rs.ltt.android.entity.From;
 import rs.ltt.android.entity.IdentityWithNameAndEmail;
+import rs.ltt.android.entity.Preview;
+import rs.ltt.android.entity.Subject;
 import rs.ltt.android.entity.SubjectWithImportance;
 import rs.ltt.android.util.ConsistentColorGeneration;
 import rs.ltt.android.util.MediaTypes;
@@ -283,10 +285,20 @@ public class BindingAdapters {
 
     @BindingAdapter("android:text")
     public static void setText(TextView text, SubjectWithImportance subjectWithImportance) {
-        if (subjectWithImportance == null || subjectWithImportance.subject == null) {
-            text.setText(null);
+        if (subjectWithImportance == null || Strings.isNullOrEmpty(subjectWithImportance.subject)) {
+            text.setTextColor(
+                    MaterialColors.getColor(
+                            text.getContext(),
+                            R.attr.colorControlNormal,
+                            BindingAdapters.class.getCanonicalName()));
+            text.setText(R.string.no_subject);
             return;
         }
+        text.setTextColor(
+                MaterialColors.getColor(
+                        text.getContext(),
+                        R.attr.colorOnSurface,
+                        BindingAdapters.class.getCanonicalName()));
         if (subjectWithImportance.important) {
             final SpannableStringBuilder header =
                     new SpannableStringBuilder(subjectWithImportance.subject)
@@ -412,6 +424,48 @@ public class BindingAdapters {
             return R.drawable.ic_baseline_tour_24;
         } else {
             return R.drawable.ic_baseline_attachment_24;
+        }
+    }
+
+    @BindingAdapter("android:text")
+    public static void setSubject(final TextView textView, final Subject subject) {
+        if (Strings.isNullOrEmpty(subject.getSubject())) {
+            textView.setTextColor(
+                    MaterialColors.getColor(
+                            textView.getContext(),
+                            R.attr.colorControlNormal,
+                            BindingAdapters.class.getCanonicalName()));
+            textView.setText(R.string.no_subject);
+        } else {
+            textView.setText(subject.getSubject());
+            textView.setTextColor(
+                    MaterialColors.getColor(
+                            textView.getContext(),
+                            R.attr.colorOnSurface,
+                            BindingAdapters.class.getCanonicalName()));
+        }
+    }
+
+    @BindingAdapter("android:text")
+    public static void setPreview(final TextView textView, final Preview preview) {
+        if (Strings.isNullOrEmpty(preview.getPreview())) {
+            textView.setTextColor(
+                    MaterialColors.getColor(
+                            textView.getContext(),
+                            R.attr.colorControlNormal,
+                            BindingAdapters.class.getCanonicalName()));
+            if (preview.isEncrypted) {
+                textView.setText(R.string.encrypted_email);
+            } else {
+                textView.setText(R.string.no_body);
+            }
+        } else {
+            textView.setText(preview.getPreview());
+            textView.setTextColor(
+                    MaterialColors.getColor(
+                            textView.getContext(),
+                            R.attr.colorOnSurface,
+                            BindingAdapters.class.getCanonicalName()));
         }
     }
 

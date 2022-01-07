@@ -40,7 +40,7 @@ public class MailboxQueryFragment extends AbstractMailboxQueryFragment {
                         LttrsNavigationDirections.actionToThread(
                                 threadOverviewItem.threadId,
                                 label,
-                                threadOverviewItem.getSubject(),
+                                threadOverviewItem.getSubject().getSubject(),
                                 important));
     }
 
