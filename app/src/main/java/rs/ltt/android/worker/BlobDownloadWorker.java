@@ -9,7 +9,6 @@ import androidx.work.ForegroundInfo;
 import androidx.work.WorkInfo;
 import androidx.work.WorkerParameters;
 import com.google.common.base.Preconditions;
-import com.google.common.io.ByteStreams;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.RateLimiter;
 import java.io.File;
@@ -31,6 +30,7 @@ import rs.ltt.autocrypt.jmap.AutocryptPlugin;
 import rs.ltt.autocrypt.jmap.EncryptedBodyPart;
 import rs.ltt.jmap.client.blob.Download;
 import rs.ltt.jmap.client.blob.Progress;
+import rs.ltt.jmap.client.io.ByteStreams;
 import rs.ltt.jmap.common.entity.Downloadable;
 import rs.ltt.jmap.common.entity.Email;
 import rs.ltt.jmap.mua.Mua;
@@ -49,7 +49,7 @@ public class BlobDownloadWorker extends AbstractMuaWorker {
     private final RateLimiter notificationRateLimiter = RateLimiter.create(1);
     private DownloadableBlob downloadable;
     private Call call;
-    private ListenableFuture<Download> downloadFuture;
+    private ListenableFuture<?> cancelableFuture;
     private int currentlyShownProgress = 0;
 
     public BlobDownloadWorker(
@@ -108,10 +108,11 @@ public class BlobDownloadWorker extends AbstractMuaWorker {
         final long rangeStart = temporaryFile.exists() ? temporaryFile.length() : 0;
         final Long expectedSize = this.downloadable.getSize();
         setForegroundAsync(getForegroundInfo());
-        this.downloadFuture = mua.download(downloadable, rangeStart);
+        final ListenableFuture<Download> downloadFuture = mua.download(downloadable, rangeStart);
+        this.cancelableFuture = mua.download(downloadable, rangeStart);
         final Download download;
         try {
-            download = this.downloadFuture.get();
+            download = downloadFuture.get();
         } catch (final ExecutionException e) {
             final Throwable cause = e.getCause();
             LOGGER.warn("Unable to execute download request", cause);
@@ -193,6 +194,7 @@ public class BlobDownloadWorker extends AbstractMuaWorker {
                             blobIdStorageMap.put(attachment.getBlobId(), blobStorage);
                             return bytesWritten;
                         });
+        this.cancelableFuture = plaintextEmailFuture;
         try {
             final Email plaintextEmail = plaintextEmailFuture.get();
             LOGGER.info(
@@ -236,8 +238,8 @@ public class BlobDownloadWorker extends AbstractMuaWorker {
     @Override
     public void onStopped() {
         super.onStopped();
-        if (this.downloadFuture != null) {
-            if (this.downloadFuture.cancel(true)) {
+        if (this.cancelableFuture != null) {
+            if (this.cancelableFuture.cancel(true)) {
                 LOGGER.info("Cancelled download future");
             }
         }

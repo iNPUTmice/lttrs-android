@@ -9,8 +9,8 @@ buildscript {
         swipeRefreshLayoutVersion = "1.1.0"
         roomVersion = "2.4.0"
         workVersion = "2.7.1"
-        muaVersion = "0.8.6"
-        autocryptJmapVersion = "0.2.0"
+        muaVersion = "0.8.8"
+        autocryptJmapVersion = "0.2.1"
         espressoVersion = "3.4.0"
         material = "1.5.0-rc01"
     }

@@ -20,6 +20,8 @@ import java.nio.charset.Charset;
 import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import rs.ltt.jmap.client.io.ByteStreams;
 import rs.ltt.jmap.common.entity.Attachment;
 
 public class LocalAttachment implements Attachment {
@@ -91,7 +93,7 @@ public class LocalAttachment implements Attachment {
         final File file = asFile(context, localAttachment);
         try (final InputStream inputStream = contentResolver.openInputStream(uri);
                 final OutputStream outputStream = new FileOutputStream(file)) {
-            final long total = copy(inputStream, outputStream);
+            final long total = ByteStreams.copy(inputStream, outputStream);
             LOGGER.info(
                     "copied {} bytes to {}. Reported size was {}",
                     total,
@@ -118,25 +120,6 @@ public class LocalAttachment implements Attachment {
         if (file.delete()) {
             LOGGER.info("Clean up unused file {}", file.getAbsolutePath());
         }
-    }
-
-    private static long copy(InputStream from, OutputStream to) throws IOException {
-        Preconditions.checkNotNull(from);
-        Preconditions.checkNotNull(to);
-        final byte[] buffer = new byte[8096];
-        long total = 0;
-        while (true) {
-            if (Thread.interrupted()) {
-                throw new InterruptedIOException();
-            }
-            final int read = from.read(buffer);
-            if (read == -1) {
-                break;
-            }
-            to.write(buffer, 0, read);
-            total += read;
-        }
-        return total;
     }
 
     public static ListenableFuture<Uri> getFileProviderUri(
