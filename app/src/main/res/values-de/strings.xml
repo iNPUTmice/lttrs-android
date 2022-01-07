@@ -156,4 +156,6 @@
     <string name="autocrypt_no_preference_description">Auf Anfrage. Du und deine Kontakte können die Verschlüsselung für einzelne E-Mails explizit aktivieren.</string>
     <string name="autocrypt_enable_description">Aktiviere die Unterstützung für die Ende-zu-Ende-Verschlüsselung. Dein öffentlicher Schlüssel wird an ausgehende E-Mails angehängt. So können deine Kontakte dir verschlüsselte E-Mails senden.</string>
     <string name="could_not_configure_autocrypt">Autocrypt konnte nicht konfiguriert werden</string>
+    <string name="no_body">(Kein Hauptteil)</string>
+    <string name="no_subject">(Kein Betreff)</string>
 </resources>
