@@ -13,6 +13,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.RateLimiter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
@@ -183,13 +184,19 @@ public class BlobDownloadWorker extends AbstractMuaWorker {
                                             attachment.getBlobId());
                             final long bytesWritten;
                             try (final FileOutputStream fileOutputStream =
-                                    new FileOutputStream(blobStorage.getFile())) {
+                                    new FileOutputStream(blobStorage.temporaryFile)) {
                                 bytesWritten = ByteStreams.copy(inputStream, fileOutputStream);
-                                LOGGER.info(
-                                        "Stored plaintext attachment {} to {} ({} bytes written)",
-                                        attachment.getName(),
-                                        blobStorage.getFile().getAbsolutePath(),
-                                        bytesWritten);
+                                if (blobStorage.moveTemporaryToFile()) {
+                                    LOGGER.info(
+                                            "Stored plaintext attachment {} to {} ({} bytes"
+                                                    + " written)",
+                                            attachment.getName(),
+                                            blobStorage.getFile().getAbsolutePath(),
+                                            bytesWritten);
+                                } else {
+                                    throw new IOException(
+                                            "Unable to move attachment to non-temporary position");
+                                }
                             }
                             blobIdStorageMap.put(attachment.getBlobId(), blobStorage);
                             return bytesWritten;
