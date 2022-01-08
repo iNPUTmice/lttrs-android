@@ -57,6 +57,7 @@ import rs.ltt.android.entity.Subject;
 import rs.ltt.android.entity.SubjectWithImportance;
 import rs.ltt.android.util.ConsistentColorGeneration;
 import rs.ltt.android.util.MediaTypes;
+import rs.ltt.autocrypt.jmap.SetupMessage;
 import rs.ltt.jmap.common.entity.Role;
 import rs.ltt.jmap.mua.util.EmailAddressUtil;
 import rs.ltt.jmap.mua.util.EmailBodyUtil;
@@ -422,6 +423,8 @@ public class BindingAdapters {
             return R.drawable.ic_baseline_document_24;
         } else if (MediaTypes.isTour(type)) {
             return R.drawable.ic_baseline_tour_24;
+        } else if (type.is(SetupMessage.AUTOCRYPT_SETUP)) {
+            return R.drawable.ic_baseline_security_24;
         } else {
             return R.drawable.ic_baseline_attachment_24;
         }
