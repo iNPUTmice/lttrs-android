@@ -9,6 +9,7 @@ import androidx.databinding.DataBindingUtil;
 import rs.ltt.android.R;
 import rs.ltt.android.databinding.FragmentAutocryptExportSetupCodeBinding;
 import rs.ltt.android.ui.model.AutocryptExportViewModel;
+import rs.ltt.android.util.Event;
 
 public class AutocryptExportSetupCodeFragment extends AbstractAutocryptExportFragment {
 
@@ -21,6 +22,17 @@ public class AutocryptExportSetupCodeFragment extends AbstractAutocryptExportFra
         final AutocryptExportViewModel viewModel = getAutocryptExportViewModel();
         binding.setLifecycleOwner(getViewLifecycleOwner());
         binding.setAutocryptViewModel(viewModel);
+        getAutocryptExportViewModel()
+                .getSetupMessageCreated()
+                .observe(getViewLifecycleOwner(), this::onSetupMessageCreated);
         return binding.getRoot();
+    }
+
+    private void onSetupMessageCreated(final Event<Void> event) {
+        if (event.isConsumable()) {
+            event.consume();
+            getNavController()
+                    .navigate(AutocryptExportSetupCodeFragmentDirections.actionCodeToDone());
+        }
     }
 }

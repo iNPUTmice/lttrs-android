@@ -135,6 +135,9 @@ public class LttrsActivity extends AppCompatActivity
         activity.overridePendingTransition(0, 0);
     }
 
+    public static void view(
+            final AppCompatActivity activity, final long accountId, final String threadId) {}
+
     public static Intent viewIntent(
             final Context context, final EmailNotification.Tag tag, final String threadId) {
         final Intent intent = new Intent(context, LttrsActivity.class);

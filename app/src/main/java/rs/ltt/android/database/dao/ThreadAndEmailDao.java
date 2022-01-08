@@ -188,6 +188,9 @@ public abstract class ThreadAndEmailDao extends AbstractEntityDao {
     @Query("select threadId from email where id=:emailId")
     public abstract String getThreadId(String emailId);
 
+    @Query("select threadId from email where id=:emailId")
+    public abstract LiveData<String> getThreadIdLiveData(String emailId);
+
     @Transaction
     @Query("select id from email where threadId=:threadId")
     public abstract List<EmailWithKeywords> getEmailsWithKeywords(String threadId);

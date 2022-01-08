@@ -4,6 +4,7 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
@@ -16,7 +17,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rs.ltt.android.MuaPool;
 import rs.ltt.android.R;
+import rs.ltt.android.database.LttrsDatabase;
+import rs.ltt.android.ui.notification.EmailNotification;
 import rs.ltt.android.util.Event;
+import rs.ltt.android.util.MainThreadExecutor;
 import rs.ltt.autocrypt.jmap.AutocryptPlugin;
 import rs.ltt.autocrypt.jmap.SetupMessage;
 import rs.ltt.jmap.mua.Mua;
@@ -27,12 +31,15 @@ public class AutocryptExportViewModel extends AndroidViewModel {
     private static final Logger LOGGER = LoggerFactory.getLogger(AutocryptExportViewModel.class);
 
     private final MutableLiveData<Event<String>> errorMessage = new MutableLiveData<>();
+    private final MutableLiveData<Event<Void>> setupMessageCreated = new MutableLiveData<>();
 
     private final long accountId;
 
     private final String passphrase = SetupMessage.generateSetupCode();
 
     private final MutableLiveData<Boolean> loading = new MutableLiveData<>(false);
+
+    private final MediatorLiveData<Message> message = new MediatorLiveData<>();
 
     public AutocryptExportViewModel(@NonNull Application application, final long accountId) {
         super(application);
@@ -69,8 +76,10 @@ public class AutocryptExportViewModel extends AndroidViewModel {
                 setupMessageId,
                 new FutureCallback<>() {
                     @Override
-                    public void onSuccess(final String messageId) {
-                        // post redirect
+                    public void onSuccess(final String emailId) {
+                        refreshEmails();
+                        setEmailId(emailId);
+                        setupMessageCreated.postValue(new Event<>(null));
                         loading.postValue(false);
                     }
 
@@ -81,7 +90,22 @@ public class AutocryptExportViewModel extends AndroidViewModel {
                         postErrorMessage(throwable);
                     }
                 },
-                MoreExecutors.directExecutor());
+                MainThreadExecutor.getInstance());
+    }
+
+    private void refreshEmails() {
+        final ListenableFuture<Mua> muaFuture = MuaPool.getInstance(getApplication(), accountId);
+        Futures.transformAsync(muaFuture, Mua::refresh, MoreExecutors.directExecutor());
+    }
+
+    private void setEmailId(final String emailId) {
+        final LiveData<String> threadIdLiveData =
+                LttrsDatabase.getInstance(getApplication(), accountId)
+                        .threadAndEmailDao()
+                        .getThreadIdLiveData(emailId);
+        this.message.addSource(
+                threadIdLiveData,
+                threadId -> this.message.postValue(new Message(accountId, emailId, threadId)));
     }
 
     private void postErrorMessage(final Throwable throwable) {
@@ -101,11 +125,29 @@ public class AutocryptExportViewModel extends AndroidViewModel {
         return this.errorMessage;
     }
 
+    public LiveData<Event<Void>> getSetupMessageCreated() {
+        return this.setupMessageCreated;
+    }
+
     public LiveData<Boolean> isLoading() {
         return this.loading;
     }
 
     public String getPassphrase() {
         return this.passphrase;
+    }
+
+    public LiveData<Message> getMessage() {
+        return this.message;
+    }
+
+    public static class Message {
+        public final EmailNotification.Tag tag;
+        public final String threadId;
+
+        public Message(final long accountId, final String emailId, final String threadId) {
+            this.tag = new EmailNotification.Tag(accountId, emailId);
+            this.threadId = threadId;
+        }
     }
 }

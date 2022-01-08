@@ -17,6 +17,14 @@
     <fragment
         android:id="@+id/setup_code"
         android:name="rs.ltt.android.ui.fragment.AutocryptExportSetupCodeFragment"
-        tools:layout="@layout/fragment_autocrypt_export_setup_code" />
+        tools:layout="@layout/fragment_autocrypt_export_setup_code">
+        <action
+            android:id="@+id/action_code_to_done"
+            app:destination="@+id/done" />
+    </fragment>
+    <fragment
+        android:id="@+id/done"
+        android:name="rs.ltt.android.ui.fragment.AutocryptExportDoneFragment"
+        tools:layout="@layout/fragment_autocrypt_export_done" />
 
 </navigation>
