@@ -3,6 +3,7 @@ package rs.ltt.android.ui.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.WindowManager;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
@@ -31,6 +32,8 @@ public class AutocryptExportActivity extends AppCompatActivity {
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setWindowFlags(
+                WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         final ActivityAutocryptExportBinding binding =
                 DataBindingUtil.setContentView(this, R.layout.activity_autocrypt_export);
 
@@ -55,6 +58,10 @@ public class AutocryptExportActivity extends AppCompatActivity {
 
         this.setSupportActionBar(binding.toolbar);
         configureActionBar();
+    }
+
+    private void setWindowFlags(final int flags, final int mask) {
+        getWindow().setFlags(flags, mask);
     }
 
     private void onErrorMessage(final Event<String> event) {

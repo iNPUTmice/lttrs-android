@@ -168,6 +168,7 @@
     <string name="autocrypt_export_explained_hint_two">The Setup Message is a regular e-mail placed in your Sent mailbox. Other apps will be able to pick it up from there and import your secret key.</string>
     <string name="autocrypt_export_explained_hint_three">In the next step Ltt.rs will create a secure Setup Code. You will have to write that code down and keep it in a secure place.</string>
     <string name="autocrypt_export_explained_hint_four">You’ll need to use this Setup Code on your other device to import your secret key. Keep this Setup Code in a secure place.</string>
+    <string name="could_not_store_setup_message">Could not store Setup Message</string>
     <plurals name="x_emails_in_trash">
         <item quantity="one">There is currently %d e-mail in the trash.</item>
         <item quantity="other">There are currently %d e-mails in the trash.</item>

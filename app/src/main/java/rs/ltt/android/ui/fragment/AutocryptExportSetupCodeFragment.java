@@ -19,7 +19,8 @@ public class AutocryptExportSetupCodeFragment extends AbstractAutocryptExportFra
                 DataBindingUtil.inflate(
                         inflater, R.layout.fragment_autocrypt_export_setup_code, container, false);
         final AutocryptExportViewModel viewModel = getAutocryptExportViewModel();
-        binding.setPassphrase(viewModel.getPassphrase());
+        binding.setLifecycleOwner(getViewLifecycleOwner());
+        binding.setAutocryptViewModel(viewModel);
         return binding.getRoot();
     }
 }
