@@ -165,7 +165,7 @@
     <string name="no_body">(no body)</string>
     <string name="no_subject">(no subject)</string>
     <string name="autocrypt_export_explained_hint_one">To transfer your secret key to another device Ltt.rs will create a Setup Message. It contains your secret key protected by a Setup Code.</string>
-    <string name="autocrypt_export_explained_hint_two">The Setup Message is a regular e-mail placed in your Sent mailbox. Other apps will be able to pick it up from there and import your secret key.</string>
+    <string name="autocrypt_export_explained_hint_two">The Setup Message is a regular e-mail labeled as Sent. Other apps will be able to pick it up from there and import your secret key.</string>
     <string name="autocrypt_export_explained_hint_three">In the next step Ltt.rs will create a secure Setup Code. You will have to write that code down and keep it in a secure place.</string>
     <string name="autocrypt_export_explained_hint_four">You’ll need to use this Setup Code on your other device to import your secret key. Keep this Setup Code in a secure place.</string>
     <string name="could_not_store_setup_message">Could not store Setup Message</string>
