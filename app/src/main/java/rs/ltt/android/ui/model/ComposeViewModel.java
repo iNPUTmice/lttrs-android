@@ -147,8 +147,14 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
                 Transformations.map(this.to, EmailAddressUtil::parse);
         final LiveData<List<EmailAddress>> recipientsCC =
                 Transformations.map(this.cc, EmailAddressUtil::parse);
+        // placeholder liveData that triggers when the selected identity is changed
+        final LiveData<List<EmailAddress>> recipientsIdentity =
+                Transformations.map(selectedIdentityPosition, input -> Collections.emptyList());
+
         final MergedListsLiveData<EmailAddress> recipients =
-                new MergedListsLiveData<>(ImmutableList.of(recipientsTo, recipientsCC));
+                new MergedListsLiveData<>(
+                        ImmutableList.of(recipientsTo, recipientsCC, recipientsIdentity));
+
         final LiveData<Decision> autocryptDecision =
                 Transformations.switchMap(
                         recipients,
@@ -725,7 +731,6 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
         CLEARTEXT
     }
 
-    // TODO warn user when userchoice is encrypt but disable
     public static class EncryptionOptions {
         public final UserEncryptionChoice userEncryptionChoice;
         public final Decision decision;
