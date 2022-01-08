@@ -15,6 +15,7 @@
 
 package rs.ltt.android.entity;
 
+import androidx.room.Ignore;
 import androidx.room.Relation;
 import java.util.List;
 
@@ -47,6 +48,8 @@ public class EmailWithReferences extends EmailWithBodiesAndSubject
             entityColumn = "threadId",
             projection = {"emailId"})
     public List<String> emailsInThread;
+
+    @Ignore public List<String> identityEmailAddresses;
 
     public boolean isOnlyEmailInThread() {
         return emailsInThread != null && emailsInThread.size() == 1 && emailsInThread.contains(id);

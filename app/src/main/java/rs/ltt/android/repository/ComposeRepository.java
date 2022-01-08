@@ -152,7 +152,18 @@ public class ComposeRepository extends AbstractRepository {
     }
 
     public ListenableFuture<EmailWithReferences> getEmailWithReferences(final String id) {
-        return database.threadAndEmailDao().getEmailWithReferences(accountId, id);
+        final ListenableFuture<List<String>> addressesFuture =
+                database.identityDao().getEmailAddresses();
+        final ListenableFuture<EmailWithReferences> emailFuture =
+                database.threadAndEmailDao().getEmailWithReferences(accountId, id);
+        return Futures.whenAllComplete(addressesFuture, emailFuture)
+                .call(
+                        () -> {
+                            final EmailWithReferences email = emailFuture.get();
+                            email.identityEmailAddresses = addressesFuture.get();
+                            return email;
+                        },
+                        MoreExecutors.directExecutor());
     }
 
     private List<OneTimeWorkRequest> blobUploads(final List<LocalAttachment> localAttachments) {

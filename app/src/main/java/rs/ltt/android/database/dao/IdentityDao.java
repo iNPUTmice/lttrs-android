@@ -20,6 +20,7 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Transaction;
+import com.google.common.util.concurrent.ListenableFuture;
 import java.util.Collection;
 import java.util.List;
 import org.slf4j.Logger;
@@ -61,6 +62,9 @@ public abstract class IdentityDao extends AbstractEntityDao {
 
     @Query("select :accountId as accountId,id,name,email from identity where id=:id limit 1")
     public abstract IdentityWithNameAndEmail get(final Long accountId, final String id);
+
+    @Query("select email from identity")
+    public abstract ListenableFuture<List<String>> getEmailAddresses();
 
     @Transaction
     public void set(Identity[] identities, String state) {

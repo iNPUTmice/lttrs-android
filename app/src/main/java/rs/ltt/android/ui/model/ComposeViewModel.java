@@ -184,7 +184,7 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
         if (action == ComposeAction.EDIT_DRAFT) {
             return editableEmail.inReplyTo;
         }
-        if (action == ComposeAction.REPLY_ALL) {
+        if (action == ComposeAction.REPLY_ALL || action == ComposeAction.REPLY) {
             return editableEmail.messageId;
         }
         return Collections.emptyList();
@@ -637,7 +637,8 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
         }
 
         private static Draft replyAll(EmailWithReferences email) {
-            final EmailUtil.ReplyAddresses replyAddresses = EmailUtil.replyAll(email);
+            final EmailUtil.ReplyAddresses replyAddresses =
+                    EmailUtil.replyAll(email, email.identityEmailAddresses);
             return new Draft(
                     replyAddresses.getTo(),
                     replyAddresses.getCc(),
