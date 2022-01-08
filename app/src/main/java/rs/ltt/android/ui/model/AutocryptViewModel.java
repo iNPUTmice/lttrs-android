@@ -145,6 +145,10 @@ public class AutocryptViewModel extends AndroidViewModel {
                 MoreExecutors.directExecutor());
     }
 
+    public long getAccountId() {
+        return this.autocryptRepository.getAccountId();
+    }
+
     public static class Factory implements ViewModelProvider.Factory {
 
         private final Application application;

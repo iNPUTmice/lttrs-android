@@ -50,6 +50,8 @@
             android:authorities="rs.ltt.android.provider.EmailSearchSuggestionsProvider"
             android:exported="false" />
 
+        <!-- MainActivity either redirects to LttrsActivity passing the most recently used
+        account id as an extra parameter or to SetupActivity if no accounts have been configured -->
         <activity
             android:name=".ui.activity.MainActivity"
             android:exported="true"
@@ -88,6 +90,11 @@
             android:name=".ui.activity.AccountManagerActivity"
             android:launchMode="singleTask"
             android:parentActivityName=".ui.activity.LttrsActivity" />
+
+        <activity
+            android:name=".ui.activity.AutocryptExportActivity"
+            android:label="@string/transfer_secret_key"
+            android:parentActivityName=".ui.activity.AccountManagerActivity" />
 
         <activity
             android:name=".ui.activity.ComposeActivity"

@@ -13,6 +13,7 @@ import rs.ltt.android.R;
 import rs.ltt.android.databinding.FragmentEncryptionSettingsBinding;
 import rs.ltt.android.ui.BindingAdapters;
 import rs.ltt.android.ui.MaterialAlertDialogs;
+import rs.ltt.android.ui.activity.AutocryptExportActivity;
 import rs.ltt.android.ui.model.AutocryptViewModel;
 import rs.ltt.android.util.Event;
 import rs.ltt.autocrypt.client.header.EncryptionPreference;
@@ -62,7 +63,13 @@ public class EncryptionSettingsFragment extends AbstractAccountManagerFragment {
                 .getErrorMessage()
                 .observe(getViewLifecycleOwner(), this::onErrorMessage);
 
+        binding.transferSecretKey.setOnClickListener(this::onTransferSecretKey);
+
         return binding.getRoot();
+    }
+
+    private void onTransferSecretKey(final View view) {
+        AutocryptExportActivity.launch(requireActivity(), autocryptViewModel.getAccountId());
     }
 
     private void onErrorMessage(Event<String> event) {

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/autocrypt_export_navigation"
+    app:startDestination="@+id/export_explained">
+
+    <fragment
+        android:id="@+id/export_explained"
+        android:name="rs.ltt.android.ui.fragment.AutocryptExportExplainedFragment"
+        tools:layout="@layout/fragment_autocrypt_export_explained">
+        <action
+            android:id="@+id/action_explained_to_setup_code"
+            app:destination="@+id/setup_code" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/setup_code"
+        android:name="rs.ltt.android.ui.fragment.AutocryptExportSetupCodeFragment"
+        tools:layout="@layout/fragment_autocrypt_export_setup_code" />
+
+</navigation>
