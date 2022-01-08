@@ -157,7 +157,8 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
                             if (accountId == null) {
                                 return new MutableLiveData<>(Decision.DISABLE);
                             }
-                            return getRepository(getAccountId()).getAutocryptDecision(input, false);
+                            return getRepository(getAccountId())
+                                    .getAutocryptDecision(input, isReplyToEncrypted());
                         });
         final MediatorLiveData<EncryptionOptions> encryptionOptions = new MediatorLiveData<>();
 
@@ -385,6 +386,14 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
             }
         }
         return null;
+    }
+
+    private boolean isReplyToEncrypted() {
+        if (composeAction != ComposeAction.REPLY && composeAction != ComposeAction.REPLY_ALL) {
+            return false;
+        }
+        final EmailWithReferences email = getEmail();
+        return email != null && email.isEncrypted();
     }
 
     private void initializeWithEmail() {
@@ -628,14 +637,13 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
         }
 
         private static Draft replyAll(EmailWithReferences email) {
-            EmailUtil.ReplyAddresses replyAddresses = EmailUtil.replyAll(email);
+            final EmailUtil.ReplyAddresses replyAddresses = EmailUtil.replyAll(email);
             return new Draft(
                     replyAddresses.getTo(),
                     replyAddresses.getCc(),
                     EmailUtil.getResponseSubject(email),
                     "",
-                    Collections.emptyList() // TODO replace with email.getAttachments
-                    );
+                    Collections.emptyList());
         }
 
         public static Draft with(
