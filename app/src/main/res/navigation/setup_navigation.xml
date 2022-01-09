@@ -22,20 +22,30 @@
     <action
         android:id="@+id/enterPassword"
         app:destination="@+id/password"
-        app:popUpTo="@+id/sessionResource"
         app:enterAnim="@anim/slide_from_right"
         app:exitAnim="@anim/slide_to_left"
         app:popEnterAnim="@anim/slide_from_left"
-        app:popExitAnim="@anim/slide_to_right" />
+        app:popExitAnim="@anim/slide_to_right"
+        app:popUpTo="@+id/sessionResource" />
 
     <action
         android:id="@+id/enterSessionResource"
-        app:popUpTo="@+id/signIn"
         app:destination="@+id/sessionResource"
         app:enterAnim="@anim/slide_from_right"
         app:exitAnim="@anim/slide_to_left"
         app:popEnterAnim="@anim/slide_from_left"
-        app:popExitAnim="@anim/slide_to_right" />
+        app:popExitAnim="@anim/slide_to_right"
+        app:popUpTo="@+id/signIn" />
+
+    <action
+        android:id="@+id/importPrivateKey"
+        app:destination="@+id/private_key"
+        app:enterAnim="@anim/slide_from_right"
+        app:exitAnim="@anim/slide_to_left"
+        app:popEnterAnim="@anim/slide_from_left"
+        app:popExitAnim="@anim/slide_to_right"
+        app:popUpTo="@+id/setup_navigation"
+        app:popUpToInclusive="true" />
 
     <fragment
         android:id="@+id/signIn"
@@ -51,5 +61,10 @@
         android:id="@+id/sessionResource"
         android:name="rs.ltt.android.ui.fragment.SessionResourceFragment"
         tools:layout="@layout/fragment_session_resource" />
+
+    <fragment
+        android:id="@+id/private_key"
+        android:name="rs.ltt.android.ui.fragment.ImportPrivateKeyFragment"
+        tools:layout="@layout/fragment_import_private_key" />
 
 </navigation>

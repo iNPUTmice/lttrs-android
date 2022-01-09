@@ -112,8 +112,9 @@ public class MainRepository {
                             accountIdMap.getOrDefault(
                                     primaryAccountId,
                                     accountIdMap.values().stream().findFirst().get());
-                    final Collection<ListenableFuture<Optional<AutocryptSetupMessage>>> setupMessages =
-                            Collections2.transform(credentials, this::discoverSetupMessage);
+                    final Collection<ListenableFuture<Optional<AutocryptSetupMessage>>>
+                            setupMessages =
+                                    Collections2.transform(credentials, this::discoverSetupMessage);
                     final ListenableFuture<List<Optional<AutocryptSetupMessage>>> future =
                             Futures.allAsList(setupMessages);
                     this.networkFuture = future;
@@ -129,7 +130,8 @@ public class MainRepository {
         final Long accountId;
         final Collection<AutocryptSetupMessage> setupMessages;
 
-        public InsertOperation(Long accountId, List<Optional<AutocryptSetupMessage>> setupMessages) {
+        public InsertOperation(
+                Long accountId, List<Optional<AutocryptSetupMessage>> setupMessages) {
             this.accountId = accountId;
             this.setupMessages =
                     Collections2.transform(
@@ -185,11 +187,16 @@ public class MainRepository {
         final Mua mua = MuaPool.getInstance(application, account);
         final ListenableFuture<List<Status>> refresh =
                 Futures.allAsList(mua.refreshIdentities(), mua.refreshMailboxes());
-        final ListenableFuture<Optional<String>> discoverFuture = Futures.transformAsync(
-                refresh,
-                statuses -> mua.getPlugin(AutocryptPlugin.class).discoverSetupMessage(),
-                MoreExecutors.directExecutor());
-        return Futures.transform(discoverFuture, optionalMessage -> optionalMessage.transform(m->AutocryptSetupMessage.of(account, m)), IO_EXECUTOR);
+        final ListenableFuture<Optional<String>> discoverFuture =
+                Futures.transformAsync(
+                        refresh,
+                        statuses -> mua.getPlugin(AutocryptPlugin.class).discoverSetupMessage(),
+                        MoreExecutors.directExecutor());
+        return Futures.transform(
+                discoverFuture,
+                optionalMessage ->
+                        optionalMessage.transform(m -> AutocryptSetupMessage.of(account, m)),
+                IO_EXECUTOR);
     }
 
     public LiveData<AccountName> getAccountName(final Long id) {

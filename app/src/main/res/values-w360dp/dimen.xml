@@ -2,4 +2,6 @@
 <resources>
   <dimen name="mailbox_width_port">296dp</dimen>
   <dimen name="mailbox_height_port">56dp</dimen>
+  <dimen name="setup_code_margin">12sp</dimen>
+  <dimen name="setup_code_entry_text_size">24sp</dimen>
 </resources>

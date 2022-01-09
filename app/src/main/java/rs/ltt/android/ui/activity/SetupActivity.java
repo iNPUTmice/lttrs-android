@@ -72,6 +72,9 @@ public class SetupActivity extends AppCompatActivity {
                 case DONE:
                     redirectToLttrs(this.setupViewModel.getPrimaryAccountId());
                     break;
+                case IMPORT_PRIVATE_KEY:
+                    navController.navigate(SetupNavigationDirections.importPrivateKey());
+                    break;
                 default:
                     throw new IllegalStateException(
                             String.format("Unable to navigate to target %s", target));

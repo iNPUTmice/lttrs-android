@@ -361,6 +361,7 @@ public class SetupViewModel extends AndroidViewModel {
     }
 
     private void processInsertOperation(final MainRepository.InsertOperation operation) {
+        LOGGER.info("processing insert operation");
         this.primaryAccountId = operation.getId();
         if (operation.getSetupMessages().isEmpty()) {
             LttrsApplication.get(getApplication()).invalidateMostRecentlySelectedAccountId();
@@ -368,6 +369,7 @@ public class SetupViewModel extends AndroidViewModel {
             redirection.postValue(new Event<>(Target.DONE));
         } else {
             this.setupMessages.addAll(operation.getSetupMessages());
+            this.loading.postValue(false);
             this.redirection.postValue(new Event<>(Target.IMPORT_PRIVATE_KEY));
         }
     }
