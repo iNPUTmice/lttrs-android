@@ -297,6 +297,10 @@ public class SetupViewModel extends AndroidViewModel {
         return true;
     }
 
+    public void enterSetupCode(final String setupCode) {
+        LOGGER.info("User entered setup code: {}", setupCode);
+    }
+
     public boolean cancel() {
         final boolean cancelledModelFuture = cancelNetworkFuture();
         final boolean cancelledRepositoryFuture = this.mainRepository.cancelNetworkFuture();

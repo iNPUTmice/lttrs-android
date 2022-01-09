@@ -24,9 +24,12 @@ import androidx.databinding.DataBindingUtil;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import rs.ltt.android.R;
 import rs.ltt.android.databinding.FragmentImportPrivateKeyBinding;
+import rs.ltt.android.ui.widget.SetupCodeEntry;
 import rs.ltt.android.util.Touch;
 
 public class ImportPrivateKeyFragment extends AbstractSetupFragment {
+
+    private SetupCodeEntry setupCodeEntry;
 
     @Override
     public View onCreateView(
@@ -39,7 +42,13 @@ public class ImportPrivateKeyFragment extends AbstractSetupFragment {
         binding.setLifecycleOwner(getViewLifecycleOwner());
         Touch.expandTouchArea(binding.requestHelp, 16);
         binding.requestHelp.setOnClickListener(this::requestHelp);
+        this.setupCodeEntry = SetupCodeEntry.of(binding.setupCode);
+        binding.next.setOnClickListener(this::onNextClicked);
         return binding.getRoot();
+    }
+
+    private void onNextClicked(final View view) {
+        setupViewModel.enterSetupCode(this.setupCodeEntry.getSetupCode());
     }
 
     private void requestHelp(final View view) {
