@@ -19,13 +19,19 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
+
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.common.base.Strings;
+
 import rs.ltt.android.R;
 import rs.ltt.android.databinding.FragmentImportPrivateKeyBinding;
+import rs.ltt.android.entity.AutocryptSetupMessage;
 import rs.ltt.android.ui.widget.SetupCodeEntry;
 import rs.ltt.android.util.Touch;
+import rs.ltt.autocrypt.client.header.PassphraseHint;
 
 public class ImportPrivateKeyFragment extends AbstractSetupFragment {
 
@@ -42,16 +48,20 @@ public class ImportPrivateKeyFragment extends AbstractSetupFragment {
         binding.setLifecycleOwner(getViewLifecycleOwner());
         Touch.expandTouchArea(binding.requestHelp, 16);
         binding.requestHelp.setOnClickListener(this::requestHelp);
-        this.setupCodeEntry = SetupCodeEntry.of(binding.setupCode);
-        this.setupCodeEntry.setSetupCode("1234");
-        this.setupCodeEntry.requestFocus();
         binding.next.setOnClickListener(this::onNextClicked);
         binding.skip.setOnClickListener(this::onSkipClicked);
+        this.setupCodeEntry = SetupCodeEntry.of(binding.setupCode);
+        final AutocryptSetupMessage autocryptSetupMessage = this.setupViewModel.peekSetupMessage();
+        if (autocryptSetupMessage != null) {
+            final PassphraseHint passphraseHint = autocryptSetupMessage.getPassphraseHint();
+            this.setupCodeEntry.setSetupCode(Strings.nullToEmpty(passphraseHint.begin));
+            this.setupCodeEntry.requestFocus();
+        }
         return binding.getRoot();
     }
 
     private void onSkipClicked(View view) {
-        setupViewModel.skipPrivateKeyImport();
+        setupViewModel.nextPrivateKeyImport();
     }
 
     private void onNextClicked(final View view) {

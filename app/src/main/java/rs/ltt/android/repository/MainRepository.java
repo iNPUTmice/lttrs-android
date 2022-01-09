@@ -17,18 +17,24 @@ package rs.ltt.android.repository;
 
 import android.app.Application;
 import android.database.sqlite.SQLiteDatabase;
+
 import androidx.lifecycle.LiveData;
 import androidx.work.Constraints;
 import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.NetworkType;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
+
 import com.google.common.base.Optional;
 import com.google.common.collect.Collections2;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.util.Collection;
 import java.util.List;
@@ -36,9 +42,8 @@ import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
 import okhttp3.HttpUrl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import rs.ltt.android.BuildConfig;
 import rs.ltt.android.LttrsApplication;
 import rs.ltt.android.MuaPool;
@@ -124,6 +129,15 @@ public class MainRepository {
                             MoreExecutors.directExecutor());
                 },
                 IO_EXECUTOR);
+    }
+
+    public ListenableFuture<Void> importAutocryptSetupMessage(
+            AutocryptSetupMessage autocryptSetupMessage, String passphrase) {
+        final AccountWithCredentials account = autocryptSetupMessage.getAccount();
+        final String message = autocryptSetupMessage.getMessage();
+        final AutocryptPlugin autocryptPlugin =
+                MuaPool.getInstance(application, account).getPlugin(AutocryptPlugin.class);
+        return autocryptPlugin.getAutocryptClient().importSecretKey(message, passphrase);
     }
 
     public static class InsertOperation {
