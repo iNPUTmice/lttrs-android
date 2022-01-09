@@ -301,6 +301,10 @@ public class SetupViewModel extends AndroidViewModel {
         LOGGER.info("User entered setup code: {}", setupCode);
     }
 
+    public void skipPrivateKeyImport() {
+        this.redirection.postValue(new Event<>(Target.DONE));
+    }
+
     public boolean cancel() {
         final boolean cancelledModelFuture = cancelNetworkFuture();
         final boolean cancelledRepositoryFuture = this.mainRepository.cancelNetworkFuture();

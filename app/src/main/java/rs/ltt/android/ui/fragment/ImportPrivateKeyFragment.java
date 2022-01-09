@@ -43,8 +43,15 @@ public class ImportPrivateKeyFragment extends AbstractSetupFragment {
         Touch.expandTouchArea(binding.requestHelp, 16);
         binding.requestHelp.setOnClickListener(this::requestHelp);
         this.setupCodeEntry = SetupCodeEntry.of(binding.setupCode);
+        this.setupCodeEntry.setSetupCode("1234");
+        this.setupCodeEntry.requestFocus();
         binding.next.setOnClickListener(this::onNextClicked);
+        binding.skip.setOnClickListener(this::onSkipClicked);
         return binding.getRoot();
+    }
+
+    private void onSkipClicked(View view) {
+        setupViewModel.skipPrivateKeyImport();
     }
 
     private void onNextClicked(final View view) {

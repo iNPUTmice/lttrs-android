@@ -88,6 +88,32 @@ public class SetupCodeEntry {
         return builder.toString();
     }
 
+    public void setSetupCode(final String setupCode) {
+        for (int i = 0; i < this.editTexts.size(); ++i) {
+            final Editable editable = this.editTexts.get(i).getText();
+            final int begin = i * MAX_LENGTH;
+            final int end = begin + MAX_LENGTH;
+            if (setupCode == null || begin > setupCode.length()) {
+                editable.clear();
+            } else if (end < setupCode.length()) {
+                editable.clear();
+                editable.append(setupCode.substring(begin, end));
+            } else {
+                editable.clear();
+                editable.append(setupCode.substring(begin));
+            }
+        }
+    }
+
+    public void requestFocus() {
+        for (final EditText editText : this.editTexts) {
+            if (editText.length() < MAX_LENGTH) {
+                editText.requestFocus();
+                return;
+            }
+        }
+    }
+
     public static SetupCodeEntry of(final GridLayout gridLayout) {
         final ImmutableList.Builder<EditText> builder = new ImmutableList.Builder<>();
         for (int i = 0; i < gridLayout.getChildCount(); ++i) {
