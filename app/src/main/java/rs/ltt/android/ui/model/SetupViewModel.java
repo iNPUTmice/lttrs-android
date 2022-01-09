@@ -35,7 +35,9 @@ import com.google.common.util.concurrent.MoreExecutors;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 import java.util.concurrent.CancellationException;
 import javax.net.ssl.SSLHandshakeException;
 import javax.net.ssl.SSLPeerUnverifiedException;
@@ -45,6 +47,7 @@ import org.slf4j.LoggerFactory;
 import rs.ltt.android.BuildConfig;
 import rs.ltt.android.LttrsApplication;
 import rs.ltt.android.R;
+import rs.ltt.android.entity.AutocryptSetupMessage;
 import rs.ltt.android.repository.MainRepository;
 import rs.ltt.android.util.Event;
 import rs.ltt.jmap.client.JmapClient;
@@ -69,10 +72,11 @@ public class SetupViewModel extends AndroidViewModel {
     private final MutableLiveData<String> sessionResourceError = new MutableLiveData<>();
     private final MutableLiveData<Boolean> loading = new MutableLiveData<>(false);
     private final MutableLiveData<Event<Target>> redirection = new MutableLiveData<>();
-    private final MutableLiveData<Event<Long>> setupComplete = new MutableLiveData<>();
+    private Long primaryAccountId = null;
     private final MutableLiveData<Event<String>> warningMessage = new MutableLiveData<>();
     private final MainRepository mainRepository;
     private ListenableFuture<?> networkFuture = null;
+    private final Queue<AutocryptSetupMessage> setupMessages = new LinkedList<>();
 
     public SetupViewModel(@NonNull Application application) {
         super(application);
@@ -149,7 +153,7 @@ public class SetupViewModel extends AndroidViewModel {
             this.emailAddress.postValue(emailAddress);
             Futures.addCallback(
                     getSession(),
-                    new FutureCallback<Session>() {
+                    new FutureCallback<>() {
                         @Override
                         public void onSuccess(@Nullable Session session) {
                             Preconditions.checkNotNull(session);
@@ -201,7 +205,7 @@ public class SetupViewModel extends AndroidViewModel {
             this.passwordError.postValue(null);
             Futures.addCallback(
                     getSession(),
-                    new FutureCallback<Session>() {
+                    new FutureCallback<>() {
                         @Override
                         public void onSuccess(@Nullable Session session) {
                             Preconditions.checkNotNull(session);
@@ -260,7 +264,7 @@ public class SetupViewModel extends AndroidViewModel {
         this.sessionResourceError.postValue(null);
         Futures.addCallback(
                 getSession(),
-                new FutureCallback<Session>() {
+                new FutureCallback<>() {
                     @Override
                     public void onSuccess(@Nullable Session session) {
                         Preconditions.checkNotNull(session);
@@ -322,8 +326,8 @@ public class SetupViewModel extends AndroidViewModel {
         final Map<String, Account> accounts = session.getAccounts(MailAccountCapability.class);
         LOGGER.info("found {} accounts with mail capability", accounts.size());
         if (accounts.size() == 1) {
-            final ListenableFuture<Long> insertFuture =
-                    mainRepository.insertAccountsRefreshMailboxes(
+            final ListenableFuture<MainRepository.InsertOperation> insertFuture =
+                    mainRepository.insertAccountDiscoverSetupMessage(
                             Strings.nullToEmpty(emailAddress.getValue()),
                             Strings.nullToEmpty(password.getValue()),
                             getHttpSessionResource(),
@@ -331,13 +335,10 @@ public class SetupViewModel extends AndroidViewModel {
                             accounts);
             Futures.addCallback(
                     insertFuture,
-                    new FutureCallback<Long>() {
+                    new FutureCallback<>() {
                         @Override
-                        public void onSuccess(@Nullable Long id) {
-                            LttrsApplication.get(getApplication())
-                                    .invalidateMostRecentlySelectedAccountId();
-                            mainRepository.setSelectedAccount(id);
-                            setupComplete.postValue(new Event<>(id));
+                        public void onSuccess(MainRepository.InsertOperation operation) {
+                            processInsertOperation(operation);
                         }
 
                         @Override
@@ -356,6 +357,18 @@ public class SetupViewModel extends AndroidViewModel {
             loading.postValue(false);
             redirection.postValue(new Event<>(Target.SELECT_ACCOUNTS));
             // store accounts in view model
+        }
+    }
+
+    private void processInsertOperation(final MainRepository.InsertOperation operation) {
+        this.primaryAccountId = operation.getId();
+        if (operation.getSetupMessages().isEmpty()) {
+            LttrsApplication.get(getApplication()).invalidateMostRecentlySelectedAccountId();
+            mainRepository.setSelectedAccount(operation.getId());
+            redirection.postValue(new Event<>(Target.DONE));
+        } else {
+            this.setupMessages.addAll(operation.getSetupMessages());
+            this.redirection.postValue(new Event<>(Target.IMPORT_PRIVATE_KEY));
         }
     }
 
@@ -416,13 +429,20 @@ public class SetupViewModel extends AndroidViewModel {
         throw new IllegalArgumentException();
     }
 
-    public LiveData<Event<Long>> getSetupComplete() {
-        return this.setupComplete;
+    public long getPrimaryAccountId() {
+        final Long accountId = this.primaryAccountId;
+        if (accountId == null) {
+            throw new IllegalStateException(
+                    "Trying to access accountId before Target.DONE event occured");
+        }
+        return accountId;
     }
 
     public enum Target {
         ENTER_PASSWORD,
         ENTER_URL,
-        SELECT_ACCOUNTS
+        SELECT_ACCOUNTS,
+        DONE,
+        IMPORT_PRIVATE_KEY;
     }
 }

@@ -28,6 +28,7 @@ import rs.ltt.android.SetupNavigationDirections;
 import rs.ltt.android.databinding.ActivitySetupBinding;
 import rs.ltt.android.ui.MaterialAlertDialogs;
 import rs.ltt.android.ui.model.SetupViewModel;
+import rs.ltt.android.util.Event;
 import rs.ltt.android.util.NavControllers;
 import rs.ltt.jmap.mua.util.MailToUri;
 
@@ -46,51 +47,36 @@ public class SetupActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         final ActivitySetupBinding binding =
                 DataBindingUtil.setContentView(this, R.layout.activity_setup);
-        final NavController navController = getNavController();
         final ViewModelProvider viewModelProvider =
                 new ViewModelProvider(this, getDefaultViewModelProviderFactory());
         this.setupViewModel = viewModelProvider.get(SetupViewModel.class);
-        this.setupViewModel
-                .getRedirection()
-                .observe(
-                        this,
-                        targetEvent -> {
-                            if (targetEvent.isConsumable()) {
-                                final SetupViewModel.Target target = targetEvent.consume();
-                                switch (target) {
-                                    case ENTER_PASSWORD:
-                                        navController.navigate(
-                                                SetupNavigationDirections.enterPassword());
-                                        break;
-                                    case ENTER_URL:
-                                        navController.navigate(
-                                                SetupNavigationDirections.enterSessionResource());
-                                        break;
-                                    default:
-                                        throw new IllegalStateException(
-                                                String.format(
-                                                        "Unable to navigate to target %s", target));
-                                }
-                            }
-                        });
-        this.setupViewModel
-                .getSetupComplete()
-                .observe(
-                        this,
-                        event -> {
-                            if (event.isConsumable()) {
-                                redirectToLttrs(event.consume());
-                            }
-                        });
-        this.setupViewModel
-                .getWarningMessage()
-                .observe(
-                        this,
-                        event -> {
-                            if (event.isConsumable()) {
-                                MaterialAlertDialogs.error(this, event.consume());
-                            }
-                        });
+        this.setupViewModel.getRedirection().observe(this, this::onRedirectionEvent);
+        this.setupViewModel.getWarningMessage().observe(this, this::onWarningMessage);
+    }
+
+    private void onWarningMessage(Event<String> event) {
+        MaterialAlertDialogs.error(this, event);
+    }
+
+    private void onRedirectionEvent(final Event<SetupViewModel.Target> targetEvent) {
+        if (targetEvent.isConsumable()) {
+            final NavController navController = getNavController();
+            final SetupViewModel.Target target = targetEvent.consume();
+            switch (target) {
+                case ENTER_PASSWORD:
+                    navController.navigate(SetupNavigationDirections.enterPassword());
+                    break;
+                case ENTER_URL:
+                    navController.navigate(SetupNavigationDirections.enterSessionResource());
+                    break;
+                case DONE:
+                    redirectToLttrs(this.setupViewModel.getPrimaryAccountId());
+                    break;
+                default:
+                    throw new IllegalStateException(
+                            String.format("Unable to navigate to target %s", target));
+            }
+        }
     }
 
     @Override

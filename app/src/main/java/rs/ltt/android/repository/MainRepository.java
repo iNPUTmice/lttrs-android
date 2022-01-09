@@ -23,6 +23,7 @@ import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.NetworkType;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
+import com.google.common.base.Optional;
 import com.google.common.collect.Collections2;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -45,6 +46,7 @@ import rs.ltt.android.database.AppDatabase;
 import rs.ltt.android.database.LttrsDatabase;
 import rs.ltt.android.entity.AccountName;
 import rs.ltt.android.entity.AccountWithCredentials;
+import rs.ltt.android.entity.AutocryptSetupMessage;
 import rs.ltt.android.entity.SearchSuggestionEntity;
 import rs.ltt.android.push.PushManager;
 import rs.ltt.android.service.EventMonitorService;
@@ -52,6 +54,7 @@ import rs.ltt.android.ui.notification.EmailNotification;
 import rs.ltt.android.worker.AbstractMuaWorker;
 import rs.ltt.android.worker.MainMailboxQueryRefreshWorker;
 import rs.ltt.android.worker.QueryRefreshWorker;
+import rs.ltt.autocrypt.jmap.AutocryptPlugin;
 import rs.ltt.jmap.common.entity.Account;
 import rs.ltt.jmap.mua.Mua;
 import rs.ltt.jmap.mua.Status;
@@ -78,7 +81,7 @@ public class MainRepository {
                 () -> appDatabase.searchSuggestionDao().insert(SearchSuggestionEntity.of(term)));
     }
 
-    public ListenableFuture<Long> insertAccountsRefreshMailboxes(
+    public ListenableFuture<InsertOperation> insertAccountDiscoverSetupMessage(
             final String username,
             final String password,
             final HttpUrl sessionResource,
@@ -109,17 +112,37 @@ public class MainRepository {
                             accountIdMap.getOrDefault(
                                     primaryAccountId,
                                     accountIdMap.values().stream().findFirst().get());
-                    final Collection<ListenableFuture<Status>> mailboxRefreshes =
-                            Collections2.transform(credentials, this::retrieveMailboxes);
-                    final ListenableFuture<Long> future =
-                            Futures.whenAllComplete(mailboxRefreshes)
-                                    .call(
-                                            () -> internalIdForPrimary,
-                                            MoreExecutors.directExecutor());
+                    final Collection<ListenableFuture<Optional<AutocryptSetupMessage>>> setupMessages =
+                            Collections2.transform(credentials, this::discoverSetupMessage);
+                    final ListenableFuture<List<Optional<AutocryptSetupMessage>>> future =
+                            Futures.allAsList(setupMessages);
                     this.networkFuture = future;
-                    return future;
+                    return Futures.transform(
+                            future,
+                            messages -> new InsertOperation(internalIdForPrimary, messages),
+                            MoreExecutors.directExecutor());
                 },
                 IO_EXECUTOR);
+    }
+
+    public static class InsertOperation {
+        final Long accountId;
+        final Collection<AutocryptSetupMessage> setupMessages;
+
+        public InsertOperation(Long accountId, List<Optional<AutocryptSetupMessage>> setupMessages) {
+            this.accountId = accountId;
+            this.setupMessages =
+                    Collections2.transform(
+                            Collections2.filter(setupMessages, Optional::isPresent), Optional::get);
+        }
+
+        public Long getId() {
+            return accountId;
+        }
+
+        public Collection<AutocryptSetupMessage> getSetupMessages() {
+            return this.setupMessages;
+        }
     }
 
     private void scheduleRecurringMainQueryWorkers(final Collection<Long> accountIds) {
@@ -157,10 +180,16 @@ public class MainRepository {
                                 .insert(username, password, sessionResource, accounts));
     }
 
-    private ListenableFuture<Status> retrieveMailboxes(final AccountWithCredentials account) {
+    private ListenableFuture<Optional<AutocryptSetupMessage>> discoverSetupMessage(
+            final AccountWithCredentials account) {
         final Mua mua = MuaPool.getInstance(application, account);
-        mua.refreshIdentities();
-        return mua.refreshMailboxes();
+        final ListenableFuture<List<Status>> refresh =
+                Futures.allAsList(mua.refreshIdentities(), mua.refreshMailboxes());
+        final ListenableFuture<Optional<String>> discoverFuture = Futures.transformAsync(
+                refresh,
+                statuses -> mua.getPlugin(AutocryptPlugin.class).discoverSetupMessage(),
+                MoreExecutors.directExecutor());
+        return Futures.transform(discoverFuture, optionalMessage -> optionalMessage.transform(m->AutocryptSetupMessage.of(account, m)), IO_EXECUTOR);
     }
 
     public LiveData<AccountName> getAccountName(final Long id) {
