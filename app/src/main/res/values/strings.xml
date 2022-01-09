@@ -172,7 +172,7 @@
     <string name="done">Done</string>
     <string name="autocrypt_export_explained_hint_done">The Setup Message has been created. You can now start the import process on your other device.</string>
     <string name="view_email">View email</string>
-    <string name="enter_setup_code">Enter Setup Code</string>
+    <string name="import_secret_key">Import secret key</string>
     <string name="skip">Skip</string>
     <string name="enter_your_setup_code">Type in the Setup Code to import your secret key or choose skip if you want Ltt.rs to generate a new secret key on this device.</string>
     <string name="wrong_setup_code">Wrong Setup Code. Try again!</string>

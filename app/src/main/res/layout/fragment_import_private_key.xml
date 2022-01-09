@@ -90,7 +90,7 @@
                     android:layout_below="@+id/app_name"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="@dimen/setup_code_entry_text_size"
-                    android:text="@string/enter_setup_code" />
+                    android:text="@string/import_secret_key" />
 
                 <TextView
                     android:id="@+id/app_name"
