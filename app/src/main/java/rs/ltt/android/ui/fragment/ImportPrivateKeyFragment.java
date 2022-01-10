@@ -70,8 +70,8 @@ public class ImportPrivateKeyFragment extends AbstractSetupFragment {
 
     private void requestHelp(final View view) {
         new MaterialAlertDialogBuilder(view.getContext())
-                .setTitle(R.string.session_resource_help_dialog_title)
-                .setMessage(R.string.session_resource_help_dialog_message)
+                .setTitle(R.string.import_private_key_help_dialog_title)
+                .setMessage(R.string.import_private_key_help_dialog_message)
                 .setPositiveButton(R.string.ok, null)
                 .show();
     }

@@ -174,8 +174,10 @@
     <string name="view_email">View email</string>
     <string name="import_secret_key">Import secret key</string>
     <string name="skip">Skip</string>
-    <string name="enter_your_setup_code">Type in the Setup Code to import your secret key or choose skip if you want Ltt.rs to generate a new secret key on this device.</string>
+    <string name="enter_your_setup_code">Type in the Setup Code to import your secret key or skip this step if you want Ltt.rs to generate a fresh secret key on this device.</string>
     <string name="wrong_setup_code">Wrong Setup Code. Try again!</string>
+    <string name="import_private_key_help_dialog_title">Autocrypt Setup Message detected</string>
+    <string name="import_private_key_help_dialog_message">Ltt.rs has detected an Autocrypt Setup Message created by one of the other apps you use. By importing the secret key from this message you can start using Autocrypt here in Ltt.rs too!\n\nPlease enter your Setup Code.\n\nIf you don’t remember your Setup Code you can skip this step and Ltt.rs will generate a fresh secret key on this device.</string>
     <plurals name="x_emails_in_trash">
         <item quantity="one">There is currently %d e-mail in the trash.</item>
         <item quantity="other">There are currently %d e-mails in the trash.</item>
