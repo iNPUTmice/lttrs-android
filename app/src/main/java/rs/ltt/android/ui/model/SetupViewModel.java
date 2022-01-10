@@ -20,7 +20,6 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
@@ -28,18 +27,12 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
-
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
-
-import org.pgpainless.exception.MissingDecryptionMethodException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
@@ -47,11 +40,12 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.CancellationException;
-
 import javax.net.ssl.SSLHandshakeException;
 import javax.net.ssl.SSLPeerUnverifiedException;
-
 import okhttp3.HttpUrl;
+import org.pgpainless.exception.MissingDecryptionMethodException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rs.ltt.android.BuildConfig;
 import rs.ltt.android.LttrsApplication;
 import rs.ltt.android.R;
@@ -319,27 +313,30 @@ public class SetupViewModel extends AndroidViewModel {
             this.loading.postValue(true);
             final ListenableFuture<Void> secretKeyImport =
                     mainRepository.importAutocryptSetupMessage(autocryptSetupMessage, passphrase);
-            Futures.addCallback(secretKeyImport, new FutureCallback<>() {
-                @Override
-                public void onSuccess(final Void unused) {
-                    loading.postValue(false);
-                    nextPrivateKeyImport();
-                }
+            Futures.addCallback(
+                    secretKeyImport,
+                    new FutureCallback<>() {
+                        @Override
+                        public void onSuccess(final Void unused) {
+                            loading.postValue(false);
+                            nextPrivateKeyImport();
+                        }
 
-                @Override
-                public void onFailure(@NonNull Throwable throwable) {
-                    loading.postValue(false);
-                    LOGGER.error("Unable to import secret key", throwable);
-                    final String message = throwable.getMessage();
-                    if (throwable instanceof MissingDecryptionMethodException) {
-                        showWarningMessage(R.string.wrong_setup_code);
-                    } else if (Strings.isNullOrEmpty(message)) {
-                        showWarningMessage(throwable.getClass().getName());
-                    } else {
-                        showWarningMessage(message);
-                    }
-                }
-            },MoreExecutors.directExecutor());
+                        @Override
+                        public void onFailure(@NonNull Throwable throwable) {
+                            loading.postValue(false);
+                            LOGGER.error("Unable to import secret key", throwable);
+                            final String message = throwable.getMessage();
+                            if (throwable instanceof MissingDecryptionMethodException) {
+                                showWarningMessage(R.string.wrong_setup_code);
+                            } else if (Strings.isNullOrEmpty(message)) {
+                                showWarningMessage(throwable.getClass().getName());
+                            } else {
+                                showWarningMessage(message);
+                            }
+                        }
+                    },
+                    MoreExecutors.directExecutor());
         } else {
             showWarningMessage(R.string.enter_your_setup_code);
         }

@@ -19,13 +19,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
-
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.common.base.Strings;
-
 import rs.ltt.android.R;
 import rs.ltt.android.databinding.FragmentImportPrivateKeyBinding;
 import rs.ltt.android.entity.AutocryptSetupMessage;
@@ -34,6 +31,8 @@ import rs.ltt.android.util.Touch;
 import rs.ltt.autocrypt.client.header.PassphraseHint;
 
 public class ImportPrivateKeyFragment extends AbstractSetupFragment {
+
+    private static final String INSTANCE_STATE_SETUP_CODE = "setup-code";
 
     private SetupCodeEntry setupCodeEntry;
 
@@ -54,10 +53,26 @@ public class ImportPrivateKeyFragment extends AbstractSetupFragment {
         final AutocryptSetupMessage autocryptSetupMessage = this.setupViewModel.peekSetupMessage();
         if (autocryptSetupMessage != null) {
             final PassphraseHint passphraseHint = autocryptSetupMessage.getPassphraseHint();
-            this.setupCodeEntry.setSetupCode(Strings.nullToEmpty(passphraseHint.begin));
+            if (savedInstanceState != null) {
+                final String setupCode =
+                        savedInstanceState.getString(
+                                INSTANCE_STATE_SETUP_CODE,
+                                Strings.nullToEmpty(passphraseHint.begin));
+                this.setupCodeEntry.setSetupCode(setupCode);
+            } else {
+                this.setupCodeEntry.setSetupCode(Strings.nullToEmpty(passphraseHint.begin));
+            }
             this.setupCodeEntry.requestFocus();
+        } else {
+            setupViewModel.nextPrivateKeyImport();
         }
         return binding.getRoot();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull final Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(INSTANCE_STATE_SETUP_CODE, setupCodeEntry.getSetupCode());
     }
 
     private void onSkipClicked(View view) {
