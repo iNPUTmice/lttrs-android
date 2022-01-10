@@ -52,6 +52,7 @@ public class ImportPrivateKeyFragment extends AbstractSetupFragment {
         this.setupCodeEntry = SetupCodeEntry.of(binding.setupCode);
         final AutocryptSetupMessage autocryptSetupMessage = this.setupViewModel.peekSetupMessage();
         if (autocryptSetupMessage != null) {
+            binding.accountName.setText(autocryptSetupMessage.getAccount().getName());
             final PassphraseHint passphraseHint = autocryptSetupMessage.getPassphraseHint();
             if (savedInstanceState != null) {
                 final String setupCode =

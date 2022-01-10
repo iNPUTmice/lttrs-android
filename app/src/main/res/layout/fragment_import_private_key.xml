@@ -75,10 +75,10 @@
                         app:tint="?android:attr/textColorPrimary" />
 
                     <TextView
+                        android:id="@+id/account_name"
                         style="@style/TextAppearance.AppCompat.Body2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@{setupViewModel.emailAddress}"
                         tools:text="username@exmample.com" />
                 </LinearLayout>
 
