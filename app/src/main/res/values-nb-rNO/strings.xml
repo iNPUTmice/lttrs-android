@@ -140,4 +140,38 @@
     <string name="the_file_exceeds_the_limit_of_x">Filen overstiger grensen for %s</string>
     <string name="download_complete">Nedlasting fullført</string>
     <string name="attachments">Vedlegg</string>
+    <string name="encryption_options">Krypteringsvalg</string>
+    <string name="transfer_secret_key">Overfør hemmelig nøkkel</string>
+    <string name="autocrypt_enable_description">Skru på støtte for ende-til-ende -kryptering. Din offentlige nøkkel vil bli lagt til som vedlegg i utgående e-poster. Dette lar kontaktene dine sende deg kryptert e-post.</string>
+    <string name="autocrypt_encryption_preference">Foretrukken kryptering</string>
+    <string name="send_as_cleartext">Send som klartekst</string>
+    <string name="encryption_provider_can_not_create_secret_key">Krypteringstilbyderen på denne enheten kunne ikke opprette din hemmelige nøkkel.</string>
+    <string name="encrypted_email">(kryptert e-post)</string>
+    <string name="no_body">(ingen brødtekst)</string>
+    <string name="no_subject">(uten emne)</string>
+    <string name="could_not_cache_attachment">Kunne ikke hurtiglagre vedlegg</string>
+    <string name="import_private_key_help_dialog_message">Ltt.rs har oppdaget en Autocrypt-oppsettsmelding laget av en av de andre programmene du bruker. Ved å importere den hemmelige nøkkelen fra denne meldingen kan du begynne å bruke Autocrypt her i Ltt.rs også.
+\n
+\nSkriv inn din oppsettskode.
+\n
+\nHvis du ikke husker den kan du hoppe over dette steget, og så vil Ltt.rs generere en fersk hemmelig nøkkel på denne enheten.</string>
+    <string name="could_not_configure_autocrypt">Kunne ikke sette opp Autocrypt</string>
+    <string name="could_not_store_setup_message">Kunne ikke lagre oppsettsmelding</string>
+    <string name="autocrypt_export_explained_hint_done">Oppsettsmeldingen har blitt opprettet. Du kan nå starte importeringsprosessen på din andre enhet.</string>
+    <string name="skip">Hopp over</string>
+    <string name="wrong_setup_code">Feil oppsettskode. Prøv igjen.</string>
+    <string name="import_private_key_help_dialog_title">Oppdaget en Autocrypt-oppsettsmelding</string>
+    <string name="cleartext">Klartekst</string>
+    <string name="encrypted">Kryptert</string>
+    <string name="done">Ferdig</string>
+    <string name="autocrypt_no_preference_description">Ved behov. Du og dine kontakter vil kunne skru på kryptering som det høver seg for enkeltstående e-poster.</string>
+    <string name="autocrypt_mutual_description">Du ønsker å motta krypterte e-poster. Ende-til-ende -kryptering vil bli brukt som forvalg for alle kotantker som også ønsker å motta krypterte e-poster.</string>
+    <string name="encryption_is_not_available_for_those_recipients">Valget om å sende kryptert e-post er ikke tilgjengelig for disse mottagerne.</string>
+    <string name="autocrypt_export_explained_hint_one">For å overføre din hemmelige nøkkel til en annen enhet vil Ltt.rs opprette en oppsettsmelding. Denne inneholder din hemmelige nøkkel, beskyttet av en oppsettskode.</string>
+    <string name="autocrypt_export_explained_hint_three">I neste steg vil Ltt.rs opprette en sikker oppsettskode. Du vil måtte skrive ned koden og oppbevare den på et trygt sted.</string>
+    <string name="import_secret_key">Importer hemmelig nøkkel</string>
+    <string name="autocrypt_export_explained_hint_two">Oppsettsmeldingen er en vanlig e-post etikettmerket «Sendt». Andre programmer vil kunne plukke den opp derfra og importere din hemmelige nøkkel.</string>
+    <string name="autocrypt_export_explained_hint_four">Du må bruke denne oppsettskoden på din andre enhet for å importere din hemmelige nøkkel. Oppbevar denne oppsettskoden på et trygt sted.</string>
+    <string name="view_email">Vis e-post</string>
+    <string name="enter_your_setup_code">Skriv inn oppsettskoden din for å importere din hemmelige nøkkel, eller hopp over dette steget hvis du vil at Ltt.rs skal generere en fersk oppsettsnøkkel på denne enheten.</string>
 </resources>
