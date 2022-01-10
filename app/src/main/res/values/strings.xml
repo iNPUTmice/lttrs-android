@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ Copyright 2019 Daniel Gultsch
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -11,8 +12,7 @@
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
-  -->
-<resources>
+  --><resources>
     <string name="app_name" translatable="false">Ltt.rs</string>
     <string name="archive">Archive</string>
     <string name="mark_unread">Mark as unread</string>
@@ -157,8 +157,8 @@
     <string name="autocrypt_no_preference_description">On demand. You and your contacts will be able to explicitly enable encryption for individual emails.</string>
     <string name="autocrypt_mutual_description">You wish to receive encrypted emails. End-to-end encryption will be used by default for all contacts who also wish to receive encrypted emails.</string>
     <string name="autocrypt_encryption_preference">Encryption preference</string>
-    <string name="could_not_configure_autocrypt">Could not configure autocrypt</string>
-    <string name="encryption_provider_can_not_create_secret_key">The encryption provider on this phone is unable to create your secret key.</string>
+    <string name="could_not_configure_autocrypt">Could not configure Autocrypt</string>
+    <string name="encryption_provider_can_not_create_secret_key">The encryption provider on this device is unable to create your secret key.</string>
     <string name="encryption_is_not_available_for_those_recipients">The option to send an encrypted e-mail is not available for those recipients.</string>
     <string name="send_as_cleartext">Send as cleartext</string>
     <string name="encrypted_email">(encrypted e-mail)</string>
