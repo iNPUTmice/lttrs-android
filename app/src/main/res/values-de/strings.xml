@@ -174,4 +174,25 @@
 \nBitte gib deinen Setup-Code ein.
 \n
 \nWenn du dich nicht mehr an deinen Setup-Code erinnerst, kannst du diesen Schritt überspringen und Ltt.rs wird einen neuen geheimen Schlüssel für dieses Gerät generieren.</string>
+    <string name="show_account_selector">Kontoauswahl anzeigen</string>
+    <string name="hide_account_selector">Kontoauswahl ausblenden</string>
+    <string name="reply_all">Allen antworten</string>
+    <string name="forward_email">E-Mail weiterleiten</string>
+    <string name="more_options">Weitere Optionen</string>
+    <string name="edit_draft">Entwurf bearbeiten</string>
+    <string name="show_helper_dialog">Hilfsdialog anzeigen</string>
+    <string name="download_attachment">Anhang herunterladen</string>
+    <string name="remove_attatchment">Anhang entfernen</string>
+    <plurals name="incorrect_secret_key">
+        <item quantity="one">Du hast nicht den richtigen geheimen Schlüssel zur Entschlüsselung der %d E-Mail.</item>
+        <item quantity="other">Du hast nicht den richtigen geheimen Schlüssel zur Entschlüsselung der %d E-Mails.</item>
+    </plurals>
+    <plurals name="could_not_decrypt_x_emails">
+        <item quantity="one">%d E-Mail konnte nicht entschlüsselt werden</item>
+        <item quantity="other">%d E-Mails konnten nicht entschlüsselt werden</item>
+    </plurals>
+    <plurals name="could_not_download_x_encrypted_emails">
+        <item quantity="one">%d verschlüsselte E-Mail konnte nicht heruntergeladen werden</item>
+        <item quantity="other">%d verschlüsselte E-Mails konnte nicht heruntergeladen werden</item>
+    </plurals>
 </resources>
