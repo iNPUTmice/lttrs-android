@@ -179,7 +179,7 @@
     <string name="import_private_key_help_dialog_title">Autocrypt Setup Message detected</string>
     <string name="import_private_key_help_dialog_message">Ltt.rs has detected an Autocrypt Setup Message created by one of the other apps you use. By importing the secret key from this message you can start using Autocrypt here in Ltt.rs too!\n\nPlease enter your Setup Code.\n\nIf you don’t remember your Setup Code you can skip this step and Ltt.rs will generate a fresh secret key on this device.</string>
     <string name="reply_all">Reply all</string>
-    <string name="forward_email">Forward e-email</string>
+    <string name="forward_email">Forward e-mail</string>
     <string name="more_options">More options</string>
     <string name="edit_draft">Edit draft</string>
     <string name="show_helper_dialog">Show helper dialog</string>
