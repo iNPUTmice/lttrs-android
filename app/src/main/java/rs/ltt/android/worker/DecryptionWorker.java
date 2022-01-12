@@ -57,7 +57,7 @@ public class DecryptionWorker extends AbstractMuaWorker {
         } catch (final ExecutionException e) {
             final Throwable cause = e.getCause();
             LOGGER.error("Could not decrypt email", cause);
-            return Result.failure();
+            return Result.failure(Failure.of(cause));
         } catch (final InterruptedException e) {
             return Result.retry();
         }

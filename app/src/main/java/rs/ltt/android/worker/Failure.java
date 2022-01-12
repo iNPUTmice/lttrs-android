@@ -1,8 +1,12 @@
 package rs.ltt.android.worker;
 
 import androidx.work.Data;
+import androidx.work.WorkInfo;
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Objects;
 import com.google.common.base.Strings;
+import com.google.common.collect.Collections2;
+import java.util.Collection;
 import org.jetbrains.annotations.NotNull;
 import rs.ltt.jmap.client.blob.BlobTransferException;
 import rs.ltt.jmap.client.blob.MaxUploadSizeExceededException;
@@ -21,6 +25,20 @@ public class Failure {
 
     private final Class<?> exception;
     private final String message;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Failure failure = (Failure) o;
+        return Objects.equal(exception, failure.exception)
+                && Objects.equal(message, failure.message);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(exception, message);
+    }
 
     private Failure(final Class<?> exception, final String message) {
         this.exception = exception;
@@ -50,6 +68,11 @@ public class Failure {
         } else {
             return new Failure(clazz, data.getString(MESSAGE));
         }
+    }
+
+    public static Collection<Failure> of(final Collection<WorkInfo> workInfoList) {
+        final Collection<Data> data = Collections2.transform(workInfoList, WorkInfo::getOutputData);
+        return Collections2.transform(data, Failure::of);
     }
 
     static Data of(final Throwable cause) {

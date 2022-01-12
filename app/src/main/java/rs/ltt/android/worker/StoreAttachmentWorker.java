@@ -32,14 +32,14 @@ public class StoreAttachmentWorker extends Worker {
         this.target = Uri.parse(Objects.requireNonNull(data.getString(TARGET_URI_KEY)));
     }
 
-    public static Data data(File file, Uri uri) {
+    public static Data data(final File file, final Uri uri) {
         return new Data.Builder()
                 .putString(FILE_KEY, file.getAbsolutePath())
                 .putString(TARGET_URI_KEY, uri.toString())
                 .build();
     }
 
-    public static Data data(Uri uri) {
+    public static Data data(final Uri uri) {
         return new Data.Builder().putString(TARGET_URI_KEY, uri.toString()).build();
     }
 

@@ -186,4 +186,16 @@
         <item quantity="one">%d e-mail will be permanently deleted.</item>
         <item quantity="other">%d e-mails will be permanently deleted.</item>
     </plurals>
+    <plurals name="incorrect_secret_key">
+        <item quantity="one">You do not have the correct secret key to decrypt %d e-email.</item>
+        <item quantity="other">You do not have the correct secret key to decrypt %d e-emails.</item>
+    </plurals>
+    <plurals name="could_not_decrypt_x_emails">
+        <item quantity="one">Could not decrypt %d e-mail</item>
+        <item quantity="other">Could not decrypt %d e-mails</item>
+    </plurals>
+    <plurals name="could_not_download_x_encrypted_emails">
+        <item quantity="one">Could not download %d encrypted e-mail</item>
+        <item quantity="other">Could not download %d encrypted e-mails</item>
+    </plurals>
 </resources>

@@ -73,7 +73,7 @@ public class MoveToTrashWorker extends AbstractMuaWorker {
                 database.overwriteDao().revertMoveToTrashOverwrites(threadIds);
             }
             return Result.success();
-        } catch (ExecutionException e) {
+        } catch (final ExecutionException e) {
             LOGGER.warn(String.format("Unable to modify emails in threads {}", threadIds), e);
             if (shouldRetry(e)) {
                 return Result.retry();
@@ -81,7 +81,7 @@ public class MoveToTrashWorker extends AbstractMuaWorker {
                 database.overwriteDao().revertMoveToTrashOverwrites(threadIds);
                 return Result.failure();
             }
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             return Result.retry();
         }
     }

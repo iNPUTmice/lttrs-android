@@ -28,12 +28,12 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.paging.PagedList;
-import androidx.work.WorkInfo;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.MoreExecutors;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import org.jetbrains.annotations.NotNull;
@@ -42,6 +42,7 @@ import org.slf4j.LoggerFactory;
 import rs.ltt.android.LttrsNavigationDirections;
 import rs.ltt.android.R;
 import rs.ltt.android.databinding.FragmentThreadBinding;
+import rs.ltt.android.entity.DecryptionFailure;
 import rs.ltt.android.entity.EmailWithBodies;
 import rs.ltt.android.entity.ExpandedPosition;
 import rs.ltt.android.entity.Seen;
@@ -59,6 +60,7 @@ import rs.ltt.android.ui.adapter.ThreadAdapter;
 import rs.ltt.android.ui.model.ThreadViewModel;
 import rs.ltt.android.util.Event;
 import rs.ltt.android.util.MediaTypes;
+import rs.ltt.android.worker.Failure;
 import rs.ltt.jmap.common.entity.Attachment;
 
 public class ThreadFragment extends AbstractLttrsFragment
@@ -149,13 +151,41 @@ public class ThreadFragment extends AbstractLttrsFragment
                 .getThreadViewRedirect()
                 .observe(getViewLifecycleOwner(), this::onThreadViewRedirect);
         threadViewModel
-                .getDecryptionWorkInfo()
+                .getDecryptionFailures()
                 .observe(getViewLifecycleOwner(), this::onDecryptionWorkInfo);
         return binding.getRoot();
     }
 
-    private void onDecryptionWorkInfo(List<WorkInfo> workInfos) {
-        LOGGER.info("work info: {}", workInfos);
+    private void onDecryptionWorkInfo(final Event<Collection<Failure>> event) {
+        if (event.isConsumable()) {
+            final DecryptionFailure decryptionFailure = new DecryptionFailure(event.consume());
+            LOGGER.info("onDecryptionFailure({})", decryptionFailure);
+            if (decryptionFailure.missingDecryption.size() > 0) {
+                final int quantity = decryptionFailure.missingDecryption.size();
+                MaterialAlertDialogs.error(
+                        requireActivity(), R.plurals.incorrect_secret_key, quantity, quantity);
+            } else if (decryptionFailure.networkFailure.size() > 0) {
+                final int quantity = decryptionFailure.networkFailure.size();
+                MaterialAlertDialogs.error(
+                        requireActivity(),
+                        R.plurals.could_not_download_x_encrypted_emails,
+                        quantity,
+                        quantity);
+            } else if (decryptionFailure.other.size() > 0) {
+                if (decryptionFailure.other.size() != 1
+                        || Strings.isNullOrEmpty(decryptionFailure.other.get(0).getMessage())) {
+                    final int quantity = decryptionFailure.other.size();
+                    MaterialAlertDialogs.error(
+                            requireActivity(),
+                            R.plurals.could_not_decrypt_x_emails,
+                            quantity,
+                            quantity);
+                } else {
+                    MaterialAlertDialogs.error(
+                            requireActivity(), decryptionFailure.other.get(0).getMessage());
+                }
+            }
+        }
     }
 
     private void onErrorMessage(final Event<String> event) {

@@ -37,6 +37,7 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -58,7 +59,9 @@ import rs.ltt.android.entity.ThreadHeader;
 import rs.ltt.android.repository.ThreadViewRepository;
 import rs.ltt.android.util.CombinedListsLiveData;
 import rs.ltt.android.util.Event;
+import rs.ltt.android.util.WorkInfoUtils;
 import rs.ltt.android.worker.BlobDownloadWorker;
+import rs.ltt.android.worker.Failure;
 import rs.ltt.android.worker.StoreAttachmentWorker;
 import rs.ltt.jmap.common.entity.Role;
 import rs.ltt.jmap.mua.util.LabelUtil;
@@ -74,6 +77,8 @@ public class ThreadViewModel extends AbstractAttachmentViewModel {
     private final long accountId;
     private final String threadId;
     private final String label;
+    private final MediatorLiveData<Event<Collection<Failure>>> decryptionFailures =
+            new MediatorLiveData<>();
     private final MediatorLiveData<Event<String>> threadViewRedirect = new MediatorLiveData<>();
     private final MediatorLiveData<SubjectWithImportance> subjectWithImportance =
             new MediatorLiveData<>();
@@ -82,7 +87,6 @@ public class ThreadViewModel extends AbstractAttachmentViewModel {
     private final LiveData<List<MailboxWithRoleAndName>> mailboxes;
     private final LiveData<List<MailboxWithRoleAndName>> labels;
     private final LiveData<MenuConfiguration> menuConfiguration;
-    private final LiveData<List<WorkInfo>> decryptionWorkInfo;
 
     private AttachmentReference attachmentReference = null;
 
@@ -99,7 +103,16 @@ public class ThreadViewModel extends AbstractAttachmentViewModel {
                 new ThreadViewRepository(application, accountId);
         final LiveData<ThreadHeader> header = threadViewRepository.getThreadHeader(threadId);
         this.emails = threadViewRepository.getEmails(threadId);
-        this.decryptionWorkInfo = threadViewRepository.getDecryptionWorkInfo(threadId);
+        final LiveData<List<WorkInfo>> decryptionWorkInfo =
+                threadViewRepository.getDecryptionWorkInfo(threadId);
+        this.decryptionFailures.addSource(
+                decryptionWorkInfo,
+                workInfo -> {
+                    if (WorkInfoUtils.finished(workInfo)) {
+                        final Collection<WorkInfo> failed = WorkInfoUtils.failed(workInfo);
+                        this.decryptionFailures.postValue(new Event<>(Failure.of(failed)));
+                    }
+                });
         this.mailboxes = threadViewRepository.getMailboxes(threadId);
         final ListenableFuture<Seen> seen = threadViewRepository.getSeen(threadId);
         this.expandedPositions =
@@ -255,10 +268,6 @@ public class ThreadViewModel extends AbstractAttachmentViewModel {
         return menuConfiguration;
     }
 
-    public LiveData<List<WorkInfo>> getDecryptionWorkInfo() {
-        return this.decryptionWorkInfo;
-    }
-
     public String getLabel() {
         return this.label;
     }
@@ -371,6 +380,10 @@ public class ThreadViewModel extends AbstractAttachmentViewModel {
     @Override
     protected long getAccountIdOrThrow() {
         return this.accountId;
+    }
+
+    public LiveData<Event<Collection<Failure>>> getDecryptionFailures() {
+        return this.decryptionFailures;
     }
 
     public static class MenuConfiguration {
