@@ -352,15 +352,21 @@ public class ThreadFragment extends AbstractLttrsFragment
     }
 
     @Override
-    public void onEditDraft(String emailId) {
+    public void onEditDraft(final String emailId) {
         this.composeLauncher.launch(
                 ComposeActivity.editDraft(getLttrsViewModel().getAccountId(), emailId));
     }
 
     @Override
-    public void onReplyAll(String emailId) {
+    public void onReplyAll(final String emailId) {
         this.composeLauncher.launch(
                 ComposeActivity.replyAll(getLttrsViewModel().getAccountId(), emailId));
+    }
+
+    @Override
+    public void onReply(final String emailId) {
+        this.composeLauncher.launch(
+                ComposeActivity.reply(getLttrsViewModel().getAccountId(), emailId));
     }
 
     @Override

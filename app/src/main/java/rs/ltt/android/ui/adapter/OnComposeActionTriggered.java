@@ -19,4 +19,6 @@ public interface OnComposeActionTriggered {
     void onEditDraft(String emailId);
 
     void onReplyAll(String emailId);
+
+    void onReply(String emailId);
 }

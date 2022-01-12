@@ -84,6 +84,10 @@ public class ComposeActivity extends AppCompatActivity {
         return launch(account, emailId, ComposeAction.REPLY_ALL);
     }
 
+    public static Bundle reply(Long account, final String emailId) {
+        return launch(account, emailId, ComposeAction.REPLY);
+    }
+
     public static Bundle launch(
             final Long account, final String emailId, final ComposeAction action) {
         Preconditions.checkNotNull(action);

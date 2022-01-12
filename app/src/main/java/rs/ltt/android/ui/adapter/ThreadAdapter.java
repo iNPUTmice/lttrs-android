@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.constraintlayout.helper.widget.Flow;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.ViewCompat;
@@ -207,6 +208,21 @@ public class ThreadAdapter
                 v -> onComposeActionTriggered.onEditDraft(email.id));
         itemViewHolder.binding.replyAll.setOnClickListener(
                 v -> onComposeActionTriggered.onReplyAll(email.id));
+        itemViewHolder.binding.moreOptions.setOnClickListener(
+                v -> {
+                    final PopupMenu popupMenu = new PopupMenu(v.getContext(), v);
+                    popupMenu.inflate(R.menu.email_item_more_options);
+                    popupMenu.setOnMenuItemClickListener(
+                            menuItem -> {
+                                if (menuItem.getItemId() == R.id.reply) {
+                                    onComposeActionTriggered.onReply(email.id);
+                                    return true;
+                                } else {
+                                    return false;
+                                }
+                            });
+                    popupMenu.show();
+                });
         updateAttachments(itemViewHolder.binding.attachments, email.getAttachments());
     }
 

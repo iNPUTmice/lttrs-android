@@ -653,6 +653,16 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
                     Collections.emptyList());
         }
 
+        private static Draft reply(EmailWithReferences email) {
+            final EmailUtil.ReplyAddresses replyAddresses = EmailUtil.reply(email);
+            return new Draft(
+                    replyAddresses.getTo(),
+                    replyAddresses.getCc(),
+                    EmailUtil.getResponseSubject(email),
+                    "",
+                    Collections.emptyList());
+        }
+
         public static Draft with(
                 final ComposeAction action,
                 final MailToUri uri,
@@ -664,6 +674,8 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
                     return edit(editableEmail);
                 case REPLY_ALL:
                     return replyAll(editableEmail);
+                case REPLY:
+                    return reply(editableEmail);
                 default:
                     throw new IllegalStateException(String.format("Unknown action %s", action));
             }
