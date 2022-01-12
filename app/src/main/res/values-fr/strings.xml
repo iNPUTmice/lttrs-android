@@ -131,8 +131,6 @@
         <item quantity="one">Il y a actuellement %d courriel dans la corbeille.</item>
         <item quantity="other">Il y a actuellement %d courriels dans la corbeille.</item>
     </plurals>
-    <string name="close_account_selector">Fermer le sélecteur de compte</string>
-    <string name="open_account_selector">Masquer le sélecteur de compte</string>
     <string name="empty">Vide</string>
     <string name="empty_trash_dialog_title">Vider la corbeille \?</string>
     <string name="empty_trash">Vider la corbeille</string>

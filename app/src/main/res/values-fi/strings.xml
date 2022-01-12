@@ -110,8 +110,6 @@
         <item quantity="one">Roskakorissa on tällä hetkellä %d sähköposti.</item>
         <item quantity="other">Roskakorissa on tällä hetkellä %d sähköpostia.</item>
     </plurals>
-    <string name="close_account_selector">Sulje tilinvalitsin</string>
-    <string name="open_account_selector">Piilota tilinvalitsin</string>
     <string name="empty">Tyhjä</string>
     <string name="empty_trash_dialog_title">Tyhjennä roskakori\?</string>
     <string name="empty_trash">Tyhjennä roskakori</string>

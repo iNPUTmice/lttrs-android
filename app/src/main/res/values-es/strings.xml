@@ -101,8 +101,6 @@
         <item quantity="other">%d nuevos correos</item>
     </plurals>
     <string name="notification_channel_name_email">Correo electrónico</string>
-    <string name="close_account_selector">Cerrar el selector de cuenta</string>
-    <string name="open_account_selector">Ocultar el selector de cuenta</string>
     <string name="empty">Vacío</string>
     <string name="empty_trash_dialog_title">¿Vaciar la papelera\?</string>
     <string name="empty_trash">Vaciar la papelera</string>

@@ -127,8 +127,6 @@
         <item quantity="other">Există în prezent %d de e-mail-uri în coșul de gunoi.</item>
     </plurals>
     <string name="attachment_download_failed_status_code_x">Nu s-a putut descărca fișierul atașat. (Cod de stare HTTP %d)</string>
-    <string name="close_account_selector">Închidere selector de cont</string>
-    <string name="open_account_selector">Ascundere selector de cont</string>
     <string name="empty_trash">Golire coș de gunoi</string>
     <string name="empty">Gol</string>
     <string name="empty_trash_dialog_title">Goliți gunoiul\?</string>

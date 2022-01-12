@@ -129,8 +129,6 @@
     </plurals>
     <string name="attachment_download_failed_status_code_x">Kunne ikke laste ned vedlegg. (HTTP-statuskode %d)</string>
     <string name="combined_size_of_attachments_exceeds_the_limit_of_x">Kombinert størrelse for alle vedlegg overstiger grensen for %s</string>
-    <string name="close_account_selector">Lukk kontovelger</string>
-    <string name="open_account_selector">Skjul kontovelger</string>
     <string name="empty">Tøm</string>
     <plurals name="x_emails_will_permanently_deleted">
         <item quantity="one">%d e-post vil bli slettet for godt.</item>

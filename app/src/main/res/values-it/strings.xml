@@ -129,8 +129,6 @@
         <item quantity="one">Attualmente c’è %d e-mail nel cestino.</item>
         <item quantity="other">Attualmente ci sono %d e-mail nel cestino.</item>
     </plurals>
-    <string name="close_account_selector">Chiudi il selettore di account</string>
-    <string name="open_account_selector">Nascondi il selettore di account</string>
     <string name="empty">Vuoto</string>
     <string name="empty_trash_dialog_title">Svuotare il cestino\?</string>
     <string name="empty_trash">Svuota il cestino</string>

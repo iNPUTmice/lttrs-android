@@ -139,8 +139,6 @@
     <string name="download_complete">Herunterladen abgeschlossen</string>
     <string name="no_application_to_open_x">Keine Anwendung konnte %s anzeigen. Versuche stattdessen, den Anhang herunterzuladen.</string>
     <string name="attachments">Anhänge</string>
-    <string name="close_account_selector">Kontoauswahl schließen</string>
-    <string name="open_account_selector">Kontoauswahl ausblenden</string>
     <string name="attachment_download_failed_status_code_x">Anhang konnte nicht heruntergeladen werden. (HTTP-Status-Code %d)</string>
     <string name="encryption_provider_can_not_create_secret_key">Der Verschlüsselungsanbieter auf diesem Telefon ist nicht in der Lage, deinen geheimen Schlüssel zu erstellen.</string>
     <string name="encryption_is_not_available_for_those_recipients">Die Option, eine verschlüsselte E-Mail zu senden, ist für diese Empfänger nicht verfügbar.</string>

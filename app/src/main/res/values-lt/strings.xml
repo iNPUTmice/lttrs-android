@@ -15,8 +15,6 @@
         <item quantity="other">Šiuo metu šiukšlinėje yra %d el. laiškų.</item>
     </plurals>
     <string name="attachment_download_failed_status_code_x">Nepavyko atsisiųsti priedo. (HTTP būsenos kodas %d)</string>
-    <string name="close_account_selector">Uždaryti paskyros parinkiklį</string>
-    <string name="open_account_selector">Slėpti paskyros parinkiklį</string>
     <string name="empty_trash_dialog_title">Išvalyti šiukšlinę\?</string>
     <string name="empty_trash">Išvalyti šiukšlinę</string>
     <string name="combined_size_of_attachments_exceeds_the_limit_of_x">Bendras visų priedų dydis viršija %s</string>
