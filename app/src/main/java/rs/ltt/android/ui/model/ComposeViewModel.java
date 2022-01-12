@@ -17,7 +17,6 @@ package rs.ltt.android.ui.model;
 
 import android.app.Application;
 import android.net.Uri;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
@@ -27,7 +26,6 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
-
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
@@ -39,11 +37,6 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
-
-import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -51,7 +44,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rs.ltt.android.MuaPool;
 import rs.ltt.android.R;
 import rs.ltt.android.cache.LocalAttachment;
@@ -492,7 +487,7 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
     public void addAttachments(final Collection<Uri> attachments) {
         Preconditions.checkState(
                 composeAction == ComposeAction.NEW,
-                "Adding attachments via intents can only happen for new emailsc");
+                "Adding attachments via intents can only happen for new emails");
         final ImmutableList.Builder<Attachment> attachmentBuilder = new ImmutableList.Builder<>();
         attachmentBuilder.addAll(nullToEmpty(this.attachments.getValue()));
         for (final Uri uri : attachments) {
