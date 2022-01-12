@@ -267,7 +267,7 @@ public class ComposeActivity extends AppCompatActivity {
         attachmentBinding.action.setImageResource(R.drawable.ic_baseline_close_24);
         attachmentBinding.action.setOnClickListener((v) -> deleteAttachment(attachment));
         attachmentBinding.action.setContentDescription(
-                attachmentBinding.action.getContext().getString(R.string.remove_attatchment));
+                attachmentBinding.action.getContext().getString(R.string.remove_attachment));
         ToolTips.apply(attachmentBinding.action);
         attachmentBinding.getRoot().setOnClickListener((v -> composeViewModel.open(attachment)));
         return attachmentBinding.getRoot();

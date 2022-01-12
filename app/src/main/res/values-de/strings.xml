@@ -182,7 +182,7 @@
     <string name="edit_draft">Entwurf bearbeiten</string>
     <string name="show_helper_dialog">Hilfsdialog anzeigen</string>
     <string name="download_attachment">Anhang herunterladen</string>
-    <string name="remove_attatchment">Anhang entfernen</string>
+    <string name="remove_attachment">Anhang entfernen</string>
     <plurals name="incorrect_secret_key">
         <item quantity="one">Du hast nicht den richtigen geheimen Schlüssel zur Entschlüsselung der %d E-Mail.</item>
         <item quantity="other">Du hast nicht den richtigen geheimen Schlüssel zur Entschlüsselung der %d E-Mails.</item>
