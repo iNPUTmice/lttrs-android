@@ -36,8 +36,13 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.net.MediaType;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -109,6 +114,16 @@ public class ComposeActivity extends AppCompatActivity {
         final Intent nextIntent = new Intent(activity, ComposeActivity.class);
         nextIntent.setAction(Intent.ACTION_VIEW);
         nextIntent.setData(uri);
+        activity.startActivity(nextIntent);
+    }
+
+    private static Intent getLaunchIntent(final AppCompatActivity activity, final Long accountId) {
+        final Intent intent = new Intent(activity, ComposeActivity.class);
+        intent.setAction(Intent.ACTION_MAIN);
+        if (accountId != null) {
+            intent.putExtra(LttrsActivity.EXTRA_ACCOUNT_ID, accountId);
+        }
+        return intent;
     }
 
     private static MailToUri getUri(@NonNull final Intent intent) {
@@ -177,6 +192,58 @@ public class ComposeActivity extends AppCompatActivity {
 
         // TODO once we handle instance state ourselves we need to call ChipDrawableSpan.reset() on
         // `to`
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        final Intent intent = getIntent();
+        if (handleIntent(intent)) {
+            setIntent(getLaunchIntent(this, composeViewModel.getAccountId()));
+        }
+    }
+
+    private boolean handleIntent(final Intent intent) {
+        final String action = Strings.nullToEmpty(intent == null ? null : intent.getAction());
+        LOGGER.info("handling intent action={}", action);
+        switch (action) {
+            case Intent.ACTION_SEND:
+                final Uri individualUri =
+                        Objects.requireNonNull(intent).getParcelableExtra(Intent.EXTRA_STREAM);
+                if (individualUri != null) {
+                    handleSendIntent(Collections.singleton(individualUri));
+                }
+                return true;
+            case Intent.ACTION_SEND_MULTIPLE:
+                final ArrayList<Uri> multipleUri =
+                        Objects.requireNonNull(intent)
+                                .getParcelableArrayListExtra(Intent.EXTRA_STREAM);
+                if (multipleUri != null) {
+                    handleSendIntent(multipleUri);
+                }
+                return true;
+            case Intent.ACTION_VIEW:
+                final Uri uri = Objects.requireNonNull(intent).getData();
+                if (uri != null) {
+                    handleViewIntent(uri);
+                }
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    private void handleSendIntent(@NonNull final Collection<Uri> attachments) {
+        LOGGER.info("Attachments received {}", attachments);
+        composeViewModel.addAttachments(attachments);
+    }
+
+    private void handleViewIntent(@NonNull final Uri uri) {
+        try {
+            final MailToUri mailToUri = MailToUri.get(uri.toString());
+        } catch (final IllegalArgumentException e) {
+            LOGGER.warn("activity was called with invalid URI {}. {}", uri, e.getMessage());
+        }
     }
 
     private void onEncryptionOptionChanged(ComposeViewModel.EncryptionOptions encryptionOptions) {
