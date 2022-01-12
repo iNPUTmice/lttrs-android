@@ -174,4 +174,26 @@
     <string name="autocrypt_export_explained_hint_four">Du må bruke denne oppsettskoden på din andre enhet for å importere din hemmelige nøkkel. Oppbevar denne oppsettskoden på et trygt sted.</string>
     <string name="view_email">Vis e-post</string>
     <string name="enter_your_setup_code">Skriv inn oppsettskoden din for å importere din hemmelige nøkkel, eller hopp over dette steget hvis du vil at Ltt.rs skal generere en fersk oppsettsnøkkel på denne enheten.</string>
+    <string name="show_account_selector">Vis kontovelger</string>
+    <string name="hide_account_selector">Skjul kontovelger</string>
+    <string name="reply_all">Svar alle</string>
+    <string name="forward_email">Videresend e-post</string>
+    <string name="more_options">Flere alternativer</string>
+    <string name="edit_draft">Rediger kladd</string>
+    <string name="show_helper_dialog">Vis hjelpdialog</string>
+    <string name="download_attachment">Last ned vedlegg</string>
+    <plurals name="incorrect_secret_key">
+        <item quantity="one">Du har ikke rett hemmelig nøkkel for å dekryptere %d e-post.</item>
+        <item quantity="other">Du har ikke rett hemmelig nøkkel for å dekryptere %d e-poster.</item>
+    </plurals>
+    <plurals name="could_not_decrypt_x_emails">
+        <item quantity="one">Kunne ikke dekryptere %d e-post</item>
+        <item quantity="other">Kunne ikke dekryptere %d e-poster</item>
+    </plurals>
+    <plurals name="could_not_download_x_encrypted_emails">
+        <item quantity="one">Kunne ikke laste ned %d kryptert e-post</item>
+        <item quantity="other">Kunne ikke laste ned %d kryptert e-poster</item>
+    </plurals>
+    <string name="reply">Svar</string>
+    <string name="remove_attachment">Fjern vedlegg</string>
 </resources>
