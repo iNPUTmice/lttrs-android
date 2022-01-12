@@ -54,6 +54,7 @@ import rs.ltt.android.ui.model.ComposeViewModel.EncryptionOptions;
 import rs.ltt.android.ui.model.ComposeViewModel.UserEncryptionChoice;
 import rs.ltt.android.util.Event;
 import rs.ltt.android.util.MediaTypes;
+import rs.ltt.android.util.ToolTips;
 import rs.ltt.autocrypt.client.Decision;
 import rs.ltt.jmap.common.entity.Attachment;
 import rs.ltt.jmap.mua.util.MailToUri;
@@ -207,8 +208,10 @@ public class ComposeActivity extends AppCompatActivity {
         attachmentBinding.setAttachment(attachment);
         attachmentBinding.action.setImageResource(R.drawable.ic_baseline_close_24);
         attachmentBinding.action.setOnClickListener((v) -> deleteAttachment(attachment));
+        attachmentBinding.action.setContentDescription(
+                attachmentBinding.action.getContext().getString(R.string.remove_attatchment));
+        ToolTips.apply(attachmentBinding.action);
         attachmentBinding.getRoot().setOnClickListener((v -> composeViewModel.open(attachment)));
-        // TODO wire up 'open/view'
         return attachmentBinding.getRoot();
     }
 

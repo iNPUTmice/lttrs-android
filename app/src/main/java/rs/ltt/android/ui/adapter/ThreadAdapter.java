@@ -45,6 +45,7 @@ import rs.ltt.android.entity.ExpandedPosition;
 import rs.ltt.android.entity.MailboxWithRoleAndName;
 import rs.ltt.android.entity.SubjectWithImportance;
 import rs.ltt.android.ui.BindingAdapters;
+import rs.ltt.android.util.ToolTips;
 import rs.ltt.android.util.Touch;
 import rs.ltt.jmap.mua.util.Label;
 
@@ -243,6 +244,9 @@ public class ThreadAdapter
                                         onAttachmentActionTriggered,
                                         "Attachment Action listener not set")
                                 .onActionTriggered(attachment.emailId, attachment));
+        binding.action.setContentDescription(
+                binding.action.getContext().getString(R.string.download_attachment));
+        ToolTips.apply(binding.action);
         binding.getRoot().setId(ViewCompat.generateViewId());
         return binding.getRoot();
     }
@@ -317,6 +321,10 @@ public class ThreadAdapter
 
         ThreadItemViewHolder(@NonNull ItemEmailBinding binding) {
             super(binding.getRoot());
+            ToolTips.apply(binding.replyAll);
+            ToolTips.apply(binding.forward);
+            ToolTips.apply(binding.moreOptions);
+            ToolTips.apply(binding.edit);
             this.binding = binding;
         }
     }

@@ -117,6 +117,7 @@
                 android:layout_centerVertical="true"
                 android:layout_toStartOf="@+id/forward"
                 android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/reply_all"
                 android:padding="12dp"
                 android:src="@drawable/ic_reply_all_black_24dp"
                 android:visibility="@{(expanded &amp;&amp; !email.draft)? View.VISIBLE : View.GONE}" />
@@ -128,6 +129,7 @@
                 android:layout_centerVertical="true"
                 android:layout_toStartOf="@+id/more_options"
                 android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/forward_email"
                 android:padding="12dp"
                 android:src="@drawable/ic_forward_black_24dp"
                 android:visibility="@{(expanded &amp;&amp; !email.draft) ? View.VISIBLE : View.GONE}" />
@@ -140,6 +142,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="8dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/more_options"
                 android:padding="2dp"
                 android:src="@drawable/ic_more_vert_black_24dp"
                 android:visibility="@{(expanded &amp;&amp; !email.draft) ? View.VISIBLE : View.GONE}" />
@@ -151,6 +154,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/edit_draft"
                 android:padding="12dp"
                 android:src="@drawable/ic_edit_24dp"
                 android:visibility="@{(expanded &amp;&amp; email.draft) ? View.VISIBLE : View.GONE}" />

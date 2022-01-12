@@ -24,6 +24,7 @@ import androidx.databinding.DataBindingUtil;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import rs.ltt.android.R;
 import rs.ltt.android.databinding.FragmentSessionResourceBinding;
+import rs.ltt.android.util.ToolTips;
 import rs.ltt.android.util.Touch;
 
 public class SessionResourceFragment extends AbstractSetupFragment {
@@ -38,6 +39,7 @@ public class SessionResourceFragment extends AbstractSetupFragment {
         binding.setSetupViewModel(setupViewModel);
         binding.setLifecycleOwner(getViewLifecycleOwner());
         Touch.expandTouchArea(binding.requestHelp, 16);
+        ToolTips.apply(binding.requestHelp);
         binding.requestHelp.setOnClickListener(this::requestHelp);
         return binding.getRoot();
     }

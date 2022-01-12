@@ -27,6 +27,7 @@ import rs.ltt.android.R;
 import rs.ltt.android.databinding.FragmentImportPrivateKeyBinding;
 import rs.ltt.android.entity.AutocryptSetupMessage;
 import rs.ltt.android.ui.widget.SetupCodeEntry;
+import rs.ltt.android.util.ToolTips;
 import rs.ltt.android.util.Touch;
 import rs.ltt.autocrypt.client.header.PassphraseHint;
 
@@ -46,6 +47,7 @@ public class ImportPrivateKeyFragment extends AbstractSetupFragment {
         binding.setSetupViewModel(setupViewModel);
         binding.setLifecycleOwner(getViewLifecycleOwner());
         Touch.expandTouchArea(binding.requestHelp, 16);
+        ToolTips.apply(binding.requestHelp);
         binding.requestHelp.setOnClickListener(this::requestHelp);
         binding.next.setOnClickListener(this::onNextClicked);
         binding.skip.setOnClickListener(this::onSkipClicked);

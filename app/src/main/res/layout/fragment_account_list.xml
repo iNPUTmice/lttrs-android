@@ -35,6 +35,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:layout_margin="16dp"
+            android:contentDescription="@string/add_another_account"
             android:src="@drawable/ic_baseline_add_account_24"
             android:visibility="visible"
             app:backgroundTint="?attr/colorPrimary"

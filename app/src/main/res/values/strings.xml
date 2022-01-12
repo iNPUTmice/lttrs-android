@@ -146,8 +146,8 @@
     <string name="empty_trash">Empty trash</string>
     <string name="empty_trash_dialog_title">Empty trash?</string>
     <string name="empty">Empty</string>
-    <string name="open_account_selector">Hide account selector</string>
-    <string name="close_account_selector">Close account selector</string>
+    <string name="show_account_selector">Show account selector</string>
+    <string name="hide_account_selector">Hide account selector</string>
     <string name="attachment_download_failed_status_code_x">Could not download attachment. (HTTP status-code %d)</string>
     <string name="encryption_options">Encryption options</string>
     <string name="cleartext">Cleartext</string>
@@ -178,6 +178,13 @@
     <string name="wrong_setup_code">Wrong Setup Code. Try again!</string>
     <string name="import_private_key_help_dialog_title">Autocrypt Setup Message detected</string>
     <string name="import_private_key_help_dialog_message">Ltt.rs has detected an Autocrypt Setup Message created by one of the other apps you use. By importing the secret key from this message you can start using Autocrypt here in Ltt.rs too!\n\nPlease enter your Setup Code.\n\nIf you don’t remember your Setup Code you can skip this step and Ltt.rs will generate a fresh secret key on this device.</string>
+    <string name="reply_all">Reply all</string>
+    <string name="forward_email">Forward e-email</string>
+    <string name="more_options">More options</string>
+    <string name="edit_draft">Edit draft</string>
+    <string name="show_helper_dialog">Show helper dialog</string>
+    <string name="download_attachment">Download attachment</string>
+    <string name="remove_attatchment">Remove attachment</string>
     <plurals name="x_emails_in_trash">
         <item quantity="one">There is currently %d e-mail in the trash.</item>
         <item quantity="other">There are currently %d e-mails in the trash.</item>

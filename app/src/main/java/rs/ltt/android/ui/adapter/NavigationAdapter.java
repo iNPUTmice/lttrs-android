@@ -44,6 +44,7 @@ import rs.ltt.android.entity.MailboxOverviewItem;
 import rs.ltt.android.ui.AdditionalNavigationItem;
 import rs.ltt.android.ui.MaterialBackgrounds;
 import rs.ltt.android.util.ConsistentColorGeneration;
+import rs.ltt.android.util.ToolTips;
 import rs.ltt.jmap.mua.util.AccountUtil;
 import rs.ltt.jmap.mua.util.KeywordLabel;
 import rs.ltt.jmap.mua.util.Label;
@@ -219,14 +220,15 @@ public class NavigationAdapter
         final @StringRes int imageDescriptionResource;
         if (accountSelectionVisible) {
             imageResource = R.drawable.ic_baseline_keyboard_arrow_up_24;
-            imageDescriptionResource = R.string.close_account_selector;
+            imageDescriptionResource = R.string.hide_account_selector;
         } else {
             imageResource = R.drawable.ic_keyboard_arrow_down_black_24dp;
-            imageDescriptionResource = R.string.open_account_selector;
+            imageDescriptionResource = R.string.show_account_selector;
         }
         viewHolder.binding.toggle.setImageResource(imageResource);
         viewHolder.binding.toggle.setContentDescription(
                 viewHolder.binding.getRoot().getContext().getString(imageDescriptionResource));
+        ToolTips.apply(viewHolder.binding.toggle);
         viewHolder.binding.toggle.setOnClickListener(
                 v -> onAccountViewToggled.onAccountViewToggled());
         viewHolder.binding.wrapper.setOnClickListener(

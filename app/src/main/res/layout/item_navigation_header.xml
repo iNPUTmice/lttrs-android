@@ -76,7 +76,6 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/open_account_selector"
                 android:padding="12dp"
                 android:src="@drawable/ic_keyboard_arrow_down_black_24dp"
                 app:tint="?attr/colorOnPrimary" />
