@@ -73,7 +73,7 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
     private static final Logger LOGGER = LoggerFactory.getLogger(ComposeViewModel.class);
 
     private final ComposeAction composeAction;
-    private final MailToUri uri;
+    private MailToUri mailToUri;
     private final ListenableFuture<EmailWithReferences> email;
 
     private final MutableLiveData<Event<String>> errorMessage = new MutableLiveData<>();
@@ -108,7 +108,6 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
     private ComposeViewModel(@NonNull final Application application, final Parameter parameter) {
         super(application);
         this.composeAction = parameter.composeAction;
-        this.uri = parameter.uri;
         // TODO accountIds needs to be a mutable LiveData property that can be changed as soon as we
         // have one attachment
         // in case ComposeAction.NEW it starts will a list of all accountIds or else it starts with
@@ -336,7 +335,7 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
         }
         final EncryptionOptions encryptionOptions = EncryptionOptions.of(this.encryptionOptions);
         final EmailWithReferences editableEmail = getEmail();
-        final Draft originalDraft = Draft.with(this.composeAction, this.uri, editableEmail);
+        final Draft originalDraft = Draft.with(this.composeAction, this.mailToUri, editableEmail);
         if (originalDraft != null && currentDraft.unedited(originalDraft)) {
             LOGGER.info("Not storing draft. Nothing has been changed");
             draftHasBeenHandled = true;
@@ -420,10 +419,14 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
     }
 
     private void initializeWithEmail(final EmailWithReferences email) {
-        final Draft draft = Draft.with(composeAction, uri, email);
+        final Draft draft = Draft.with(composeAction, null, email);
         if (draft == null) {
             return;
         }
+        initializeDraft(draft);
+    }
+
+    private void initializeDraft(final Draft draft) {
         to.postValue(EmailAddressUtil.toHeaderValue(draft.to));
         cc.postValue(EmailAddressUtil.toHeaderValue(draft.cc));
         if (draft.cc.size() > 0) {
@@ -526,6 +529,15 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
         }
     }
 
+    public void setMailToUri(final MailToUri mailToUri) {
+        Preconditions.checkState(
+                composeAction == ComposeAction.NEW,
+                "Setting a mailto uri is only allowed for new email drafts");
+        this.mailToUri = mailToUri;
+        final Draft draft = Draft.with(ComposeAction.NEW, mailToUri, null);
+        initializeDraft(draft);
+    }
+
     private void verifyAttachmentsDoNotExceedLimit(
             final long accountId, final List<Attachment> attachments) {
         final ListenableFuture<Void> verificationFuture =
@@ -589,7 +601,6 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
         public final boolean freshStart;
         public final ComposeAction composeAction;
         public final String emailId;
-        public final MailToUri uri;
 
         public Parameter(
                 Long accountId, boolean freshStart, ComposeAction composeAction, String emailId) {
@@ -597,15 +608,6 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
             this.freshStart = freshStart;
             this.composeAction = composeAction;
             this.emailId = emailId;
-            this.uri = null;
-        }
-
-        public Parameter(MailToUri uri, boolean freshStart) {
-            this.accountId = null;
-            this.freshStart = freshStart;
-            this.composeAction = ComposeAction.NEW;
-            this.emailId = null;
-            this.uri = uri;
         }
     }
 

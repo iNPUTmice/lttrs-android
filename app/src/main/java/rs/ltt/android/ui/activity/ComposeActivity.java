@@ -126,20 +126,6 @@ public class ComposeActivity extends AppCompatActivity {
         return intent;
     }
 
-    private static MailToUri getUri(@NonNull final Intent intent) {
-        final Uri data = intent.getData();
-        if (data == null) {
-            return null;
-        }
-        try {
-            return MailToUri.get(data.toString());
-        } catch (final IllegalArgumentException e) {
-            LOGGER.warn(
-                    "activity was called with invalid URI {}. {}", data.toString(), e.getMessage());
-            return null;
-        }
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -241,6 +227,7 @@ public class ComposeActivity extends AppCompatActivity {
     private void handleViewIntent(@NonNull final Uri uri) {
         try {
             final MailToUri mailToUri = MailToUri.get(uri.toString());
+            composeViewModel.setMailToUri(mailToUri);
         } catch (final IllegalArgumentException e) {
             LOGGER.warn("activity was called with invalid URI {}. {}", uri, e.getMessage());
         }
@@ -311,20 +298,17 @@ public class ComposeActivity extends AppCompatActivity {
 
     private ComposeViewModel.Parameter getViewModelParameter(final Bundle savedInstanceState) {
         final boolean freshStart = savedInstanceState == null || savedInstanceState.isEmpty();
-        final Intent i = getIntent();
-        final MailToUri uri = i != null ? getUri(i) : null;
-        if (uri != null) {
-            return new ComposeViewModel.Parameter(uri, freshStart);
-        }
+        final Intent intent = getIntent();
         final Long account;
-        if (i != null && i.hasExtra(ACCOUNT_EXTRA)) {
-            account = i.getLongExtra(ACCOUNT_EXTRA, 0L);
+        if (intent != null && intent.hasExtra(ACCOUNT_EXTRA)) {
+            account = intent.getLongExtra(ACCOUNT_EXTRA, 0L);
         } else {
             account = null;
         }
         final ComposeAction action =
-                ComposeAction.of(i == null ? null : i.getStringExtra(COMPOSE_ACTION_EXTRA));
-        final String emailId = i == null ? null : i.getStringExtra(EMAIL_ID_EXTRA);
+                ComposeAction.of(
+                        intent == null ? null : intent.getStringExtra(COMPOSE_ACTION_EXTRA));
+        final String emailId = intent == null ? null : intent.getStringExtra(EMAIL_ID_EXTRA);
         return new ComposeViewModel.Parameter(account, freshStart, action, emailId);
     }
 
