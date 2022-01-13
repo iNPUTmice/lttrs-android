@@ -432,7 +432,7 @@ public class BindingAdapters {
 
     @BindingAdapter("android:text")
     public static void setSubject(final TextView textView, final Subject subject) {
-        if (Strings.isNullOrEmpty(subject.getSubject())) {
+        if (subject == null || Strings.isNullOrEmpty(subject.getSubject())) {
             textView.setTextColor(
                     MaterialColors.getColor(
                             textView.getContext(),
@@ -451,13 +451,13 @@ public class BindingAdapters {
 
     @BindingAdapter("android:text")
     public static void setPreview(final TextView textView, final Preview preview) {
-        if (Strings.isNullOrEmpty(preview.getPreview())) {
+        if (preview == null || Strings.isNullOrEmpty(preview.getPreview())) {
             textView.setTextColor(
                     MaterialColors.getColor(
                             textView.getContext(),
                             R.attr.colorControlNormal,
                             BindingAdapters.class.getCanonicalName()));
-            if (preview.isEncrypted) {
+            if (preview != null && preview.isEncrypted) {
                 textView.setText(R.string.encrypted_email);
             } else {
                 textView.setText(R.string.no_body);
