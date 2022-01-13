@@ -196,4 +196,6 @@
     </plurals>
     <string name="reply">Svar</string>
     <string name="remove_attachment">Fjern vedlegg</string>
+    <string name="could_not_determine_metadata_of_attachment">Kunne ikke avgjøre type, størrelse, og navn på vedlegget du prøver å legge til.</string>
+    <string name="lttrs_lacks_permissions_to_add_attachment">Ltt.rs mangler nødvendige tilganger for å legge til dette vedlegget.</string>
 </resources>
