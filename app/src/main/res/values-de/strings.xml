@@ -165,7 +165,7 @@
     <string name="import_secret_key">Geheimen Schlüssel importieren</string>
     <string name="wrong_setup_code">Falscher Setup-Code. Versuche es erneut!</string>
     <string name="import_private_key_help_dialog_title">Autocrypt-Einrichtungsnachricht erkannt</string>
-    <string name="autocrypt_export_explained_hint_two">Die Einrichtungsnachricht ist eine normale E-Mail, die als \"Gesendet\" gekennzeichnet ist. Andere Anwendungen können sie von dort abrufen und deinen geheimen Schlüssel importieren.</string>
+    <string name="autocrypt_export_explained_hint_two">Die Einrichtungsnachricht ist eine normale E-Mail, die als „Gesendet“ gekennzeichnet ist. Andere Anwendungen können sie von dort abrufen und deinen geheimen Schlüssel importieren.</string>
     <string name="autocrypt_export_explained_hint_three">Im nächsten Schritt wird Ltt.rs einen sicheren Setup-Code erstellen. Du musst diesen Code aufschreiben und ihn an einem sicheren Ort aufbewahren.</string>
     <string name="skip">Überspringen</string>
     <string name="enter_your_setup_code">Gib den Setup-Code ein, um deinen geheimen Schlüssel zu importieren oder überspringe diesen Schritt, wenn du möchtest, dass Ltt.rs einen neuen geheimen Schlüssel für dieses Gerät generiert.</string>
@@ -196,4 +196,6 @@
         <item quantity="other">%d verschlüsselte E-Mails konnte nicht heruntergeladen werden</item>
     </plurals>
     <string name="reply">Antworten</string>
+    <string name="could_not_determine_metadata_of_attachment">Typ, Größe und Name des Anhangs, den du hinzufügen möchtest, konnten nicht ermittelt werden.</string>
+    <string name="lttrs_lacks_permissions_to_add_attachment">Ltt.rs hat nicht die erforderlichen Berechtigungen, um diesen Anhang hinzuzufügen.</string>
 </resources>
