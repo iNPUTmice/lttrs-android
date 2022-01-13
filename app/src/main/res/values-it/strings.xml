@@ -140,4 +140,23 @@
     <string name="no_application_to_open_x">Nessuna applicazione potrebbe visualizzare %s. Prova invece a scaricare l’allegato.</string>
     <string name="attachments">Allegati</string>
     <string name="attachment_download_failed_status_code_x">Impossibile scaricare l’allegato. (Codice di stato HTTP %d)</string>
+    <string name="could_not_cache_attachment">Impossibile memorizzare l\'allegato nella cache</string>
+    <string name="encryption_options">Opzioni di crittografia</string>
+    <string name="encrypted">Crittografato</string>
+    <string name="autocrypt_no_preference_description">Su richiesta. Tu e i tuoi contatti potrete abilitare esplicitamente la crittografia per le singole e-mail.</string>
+    <string name="autocrypt_mutual_description">Desideri ricevere e-mail crittografate. La crittografia dall\'inizio alla fine sarà utilizzata per impostazione predefinita per tutti i contatti che desiderano ricevere e-mail crittografate.</string>
+    <string name="autocrypt_encryption_preference">Preferenza di crittografia</string>
+    <string name="could_not_configure_autocrypt">Impossibile configurare Autocrypt</string>
+    <string name="encryption_is_not_available_for_those_recipients">L\'opzione di inviare un\'e-mail criptata non è disponibile per questi destinatari.</string>
+    <string name="send_as_cleartext">Invia come testo in chiaro</string>
+    <string name="encrypted_email">(e-mail crittografata)</string>
+    <string name="no_body">(niente)</string>
+    <string name="no_subject">(nessun oggetto)</string>
+    <string name="autocrypt_export_explained_hint_one">Per trasferire la tua chiave segreta a un altro dispositivo, Ltt.rs creerà un messaggio di installazione. Esso contiene la vostra chiave segreta protetta da un Codice di Setup.</string>
+    <string name="show_account_selector">Mostra il selettore di account</string>
+    <string name="hide_account_selector">Nascondi il selettore di account</string>
+    <string name="cleartext">Testo chiaro</string>
+    <string name="autocrypt_enable_description">Abilita il supporto per la crittografia dall\'inizio alla fine. La tua chiave pubblica sarà allegata alle email in uscita. Questo permette ai tuoi contatti di inviarti e-mail criptate.</string>
+    <string name="encryption_provider_can_not_create_secret_key">Il fornitore di crittografia su questo dispositivo non è in grado di creare la tua chiave segreta.</string>
+    <string name="transfer_secret_key">Inoltra la chiave segreta</string>
 </resources>
