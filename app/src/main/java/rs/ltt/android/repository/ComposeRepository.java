@@ -106,6 +106,22 @@ public class ComposeRepository extends AbstractRepository {
                 sessionFuture, session -> addAttachment(uri, session), ATTACHMENT_EXECUTOR);
     }
 
+    public static ListenableFuture<List<Attachment>> cacheAttachments(
+            final Application application, final Collection<Uri> attachments) {
+        return Futures.submit(
+                () -> {
+                    final ImmutableList.Builder<Attachment> builder = new ImmutableList.Builder<>();
+                    for (final Uri uri : attachments) {
+                        LocalAttachment.checkContentUri(uri);
+                        final LocalAttachment attachment = LocalAttachment.of(application, uri);
+                        LocalAttachment.cache(application, uri, attachment);
+                        builder.add(attachment);
+                    }
+                    return builder.build();
+                },
+                ATTACHMENT_EXECUTOR);
+    }
+
     private LocalAttachment addAttachment(final Uri uri, final Session session) {
         final LocalAttachment attachment = LocalAttachment.of(application, uri);
         checkUploadLimit(session, attachment);

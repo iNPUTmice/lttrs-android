@@ -71,15 +71,30 @@ public class LocalAttachment implements Attachment {
         return this.size;
     }
 
+    public static void checkContentUri(final Uri uri) {
+        if ("content".equalsIgnoreCase(uri.getScheme())) {
+            return;
+        }
+        throw new SecurityException(String.format("Could not process scheme %s", uri.getScheme()));
+    }
+
     public static LocalAttachment of(final Context context, final Uri uri) {
         final ContentResolver contentResolver = context.getContentResolver();
         final String type = contentResolver.getType(uri);
         final long size;
         final String name;
         try (final Cursor cursor = contentResolver.query(uri, null, null, null, null)) {
-            cursor.moveToFirst();
-            size = cursor.getLong(cursor.getColumnIndexOrThrow(OpenableColumns.SIZE));
-            name = cursor.getString(cursor.getColumnIndexOrThrow(OpenableColumns.DISPLAY_NAME));
+            if (cursor == null) {
+                throw new MissingMetadataException();
+            }
+            if (cursor.moveToFirst()) {
+                size = cursor.getLong(cursor.getColumnIndexOrThrow(OpenableColumns.SIZE));
+                name = cursor.getString(cursor.getColumnIndexOrThrow(OpenableColumns.DISPLAY_NAME));
+            } else {
+                throw new MissingMetadataException();
+            }
+        } catch (final IllegalArgumentException e) {
+            throw new MissingMetadataException(e);
         }
         return new LocalAttachment(UUID.randomUUID(), MediaType.parse(type), name, size);
     }
@@ -129,6 +144,16 @@ public class LocalAttachment implements Attachment {
     public static class CacheWriteException extends RuntimeException {
         private CacheWriteException(final IOException e) {
             super("Could not cache local attachment", e);
+        }
+    }
+
+    public static class MissingMetadataException extends RuntimeException {
+        private MissingMetadataException() {
+            super("Could not determine type, size and name");
+        }
+
+        private MissingMetadataException(final Exception e) {
+            super("Could not determine type, size and name", e);
         }
     }
 }

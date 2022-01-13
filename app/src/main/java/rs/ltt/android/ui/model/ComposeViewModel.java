@@ -472,6 +472,10 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
                     (MaxUploadSizeExceededException) throwable;
             final long max = exception.getMaxFileSize();
             postErrorMessage(R.string.the_file_exceeds_the_limit_of_x, FileSizes.toString(max));
+        } else if (throwable instanceof LocalAttachment.MissingMetadataException) {
+            postErrorMessage(R.string.could_not_determine_metadata_of_attachment);
+        } else if (throwable instanceof SecurityException) {
+            postErrorMessage(R.string.lttrs_lacks_permissions_to_add_attachment);
         } else {
             if (Strings.isNullOrEmpty(throwable.getMessage())) {
                 postErrorMessage(R.string.could_not_cache_attachment);
@@ -491,16 +495,26 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
         Preconditions.checkState(
                 composeAction == ComposeAction.NEW,
                 "Adding attachments via intents can only happen for new emails");
-        final ImmutableList.Builder<Attachment> attachmentBuilder = new ImmutableList.Builder<>();
-        attachmentBuilder.addAll(nullToEmpty(this.attachments.getValue()));
-        for (final Uri uri : attachments) {
-            final LocalAttachment attachment = LocalAttachment.of(getApplication(), uri);
-            LocalAttachment.cache(getApplication(), uri, attachment);
-            // TODO add this attachment to 'received through intent' which means it will be ignored
-            //  when calculating if an email has changed or not
-            attachmentBuilder.add(attachment);
-        }
-        refreshAttachments(attachmentBuilder.build());
+        Futures.addCallback(
+                ComposeRepository.cacheAttachments(getApplication(), attachments),
+                new FutureCallback<>() {
+                    @Override
+                    public void onSuccess(final List<Attachment> attachments) {
+                        final ImmutableList.Builder<Attachment> builder = ImmutableList.builder();
+                        builder.addAll(nullToEmpty(ComposeViewModel.this.attachments.getValue()));
+                        // TODO add this attachment to 'received through intent' which means it will
+                        // be ignored when calculating if an email has changed or not
+                        builder.addAll(attachments);
+                        refreshAttachments(builder.build());
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Throwable throwable) {
+                        LOGGER.error("Could not add attachments {}", attachments);
+                        postAttachmentFailure(throwable);
+                    }
+                },
+                MoreExecutors.directExecutor());
     }
 
     private void addAttachment(final Attachment attachment) {
