@@ -16,6 +16,7 @@
 package rs.ltt.android.ui.adapter;
 
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -42,6 +43,7 @@ import rs.ltt.android.databinding.ItemEmailHeaderBinding;
 import rs.ltt.android.databinding.ItemLabelBinding;
 import rs.ltt.android.entity.EmailBodyPartEntity;
 import rs.ltt.android.entity.EmailWithBodies;
+import rs.ltt.android.entity.EncryptionStatus;
 import rs.ltt.android.entity.ExpandedPosition;
 import rs.ltt.android.entity.MailboxWithRoleAndName;
 import rs.ltt.android.entity.SubjectWithImportance;
@@ -93,6 +95,7 @@ public class ThreadAdapter
     private OnFlaggedToggled onFlaggedToggled;
     private OnComposeActionTriggered onComposeActionTriggered;
     private OnAttachmentActionTriggered onAttachmentActionTriggered;
+    private OnEncryptionActionTriggered onEncryptionActionTriggered;
 
     public ThreadAdapter(Set<String> expandedItems) {
         this.expandedItems = expandedItems;
@@ -208,22 +211,28 @@ public class ThreadAdapter
                 v -> onComposeActionTriggered.onEditDraft(email.id));
         itemViewHolder.binding.replyAll.setOnClickListener(
                 v -> onComposeActionTriggered.onReplyAll(email.id));
-        itemViewHolder.binding.moreOptions.setOnClickListener(
-                v -> {
-                    final PopupMenu popupMenu = new PopupMenu(v.getContext(), v);
-                    popupMenu.inflate(R.menu.email_item_more_options);
-                    popupMenu.setOnMenuItemClickListener(
-                            menuItem -> {
-                                if (menuItem.getItemId() == R.id.reply) {
-                                    onComposeActionTriggered.onReply(email.id);
-                                    return true;
-                                } else {
-                                    return false;
-                                }
-                            });
-                    popupMenu.show();
-                });
+        itemViewHolder.binding.moreOptions.setOnClickListener(v -> onMoreOptions(v, email));
         updateAttachments(itemViewHolder.binding.attachments, email.getAttachments());
+    }
+
+    private void onMoreOptions(final View view, final EmailWithBodies email) {
+        final PopupMenu popupMenu = new PopupMenu(view.getContext(), view);
+        popupMenu.inflate(R.menu.email_item_more_options);
+        final MenuItem decryptEmail = popupMenu.getMenu().findItem(R.id.decrypt_email);
+        decryptEmail.setVisible(email.getEncryptionStatus() == EncryptionStatus.FAILED);
+        popupMenu.setOnMenuItemClickListener(
+                menuItem -> {
+                    if (menuItem.getItemId() == R.id.reply) {
+                        onComposeActionTriggered.onReply(email.id);
+                        return true;
+                    } else if (menuItem.getItemId() == R.id.decrypt_email) {
+                        onEncryptionActionTriggered.onDecryptTriggered(email.id);
+                        return true;
+                    } else {
+                        return false;
+                    }
+                });
+        popupMenu.show();
     }
 
     private void updateAttachments(
@@ -307,6 +316,10 @@ public class ThreadAdapter
 
     public void setOnAttachmentActionTriggered(OnAttachmentActionTriggered listener) {
         this.onAttachmentActionTriggered = listener;
+    }
+
+    public void setOnEncryptionActionTriggered(final OnEncryptionActionTriggered listener) {
+        this.onEncryptionActionTriggered = listener;
     }
 
     public void submitList(PagedList<EmailWithBodies> pagedList, Runnable runnable) {

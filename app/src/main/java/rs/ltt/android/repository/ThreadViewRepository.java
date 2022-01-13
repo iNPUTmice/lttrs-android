@@ -80,6 +80,20 @@ public class ThreadViewRepository extends AbstractRepository {
                 encryptedEmails, emails -> enqueueDecryptionWorkers(emails, enqueuedWork));
     }
 
+    public LiveData<List<WorkInfo>> decryptEmail(final String emailId) {
+        final WorkManager workManager = WorkManager.getInstance(application);
+        final OneTimeWorkRequest oneTimeWorkRequest =
+                new OneTimeWorkRequest.Builder(DecryptionWorker.class)
+                        .setInputData(DecryptionWorker.data(accountId, emailId))
+                        .build();
+        workManager.enqueueUniqueWork(
+                DecryptionWorker.uniqueName(accountId, emailId),
+                ExistingWorkPolicy.KEEP,
+                oneTimeWorkRequest);
+        return workManager.getWorkInfosLiveData(
+                WorkQuery.Builder.fromIds(ImmutableList.of(oneTimeWorkRequest.getId())).build());
+    }
+
     private LiveData<List<WorkInfo>> enqueueDecryptionWorkers(
             final List<EmailWithEncryptionStatus> emails, final HashSet<UUID> enqueuedWork) {
         LOGGER.info("Enqueue decryption jobs for {}", emails);

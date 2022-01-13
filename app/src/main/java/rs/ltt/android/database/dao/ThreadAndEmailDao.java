@@ -153,7 +153,7 @@ public abstract class ThreadAndEmailDao extends AbstractEntityDao {
     abstract void insert(EmailEntity entity);
 
     @Query("update email set encryptionStatus=:status where id=:emailId")
-    abstract void setEncryptionStatus(final String emailId, final EncryptionStatus status);
+    public abstract void setEncryptionStatus(final String emailId, final EncryptionStatus status);
 
     @Query("update email set preview=:preview where id=:emailId")
     abstract void setPreview(final String emailId, final String preview);
@@ -223,9 +223,9 @@ public abstract class ThreadAndEmailDao extends AbstractEntityDao {
 
     @Transaction
     @Query(
-            "select id,receivedAt,email.threadId,encryptionStatus from thread_item join email on"
-                    + " thread_item.emailId=email.id where thread_item.threadId=:threadId order by"
-                    + " position")
+            "select id,receivedAt,email.threadId,encryptionStatus from thread_item"
+                    + " join email on thread_item.emailId=email.id where"
+                    + " thread_item.threadId=:threadId order by position")
     public abstract DataSource.Factory<Integer, EmailWithBodies> getEmails(String threadId);
 
     @Query("select emailId from thread_item where threadId in (:threadIds)")

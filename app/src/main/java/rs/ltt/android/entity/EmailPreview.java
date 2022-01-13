@@ -26,6 +26,10 @@ public abstract class EmailPreview extends EmailWithKeywords
             projection = {"email", "name", "type"})
     public List<EmailAddress> emailAddresses;
 
+    public EncryptionStatus getEncryptionStatus() {
+        return this.encryptionStatus == null ? EncryptionStatus.CLEARTEXT : this.encryptionStatus;
+    }
+
     @Override
     public Collection<rs.ltt.jmap.common.entity.EmailAddress> getSender() {
         return getAddresses(EmailAddressType.SENDER);
@@ -69,8 +73,7 @@ public abstract class EmailPreview extends EmailWithKeywords
     }
 
     public boolean isEncrypted() {
-        final EncryptionStatus encryptionStatus = this.encryptionStatus;
-        return encryptionStatus != null && encryptionStatus.isEncrypted();
+        return getEncryptionStatus().isEncrypted();
     }
 
     @Override
@@ -81,11 +84,13 @@ public abstract class EmailPreview extends EmailWithKeywords
         EmailPreview that = (EmailPreview) o;
         return Objects.equal(threadId, that.threadId)
                 && Objects.equal(receivedAt, that.receivedAt)
+                && encryptionStatus == that.encryptionStatus
                 && Objects.equal(emailAddresses, that.emailAddresses);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(super.hashCode(), threadId, receivedAt, emailAddresses);
+        return Objects.hashCode(
+                super.hashCode(), threadId, receivedAt, encryptionStatus, emailAddresses);
     }
 }

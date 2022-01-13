@@ -11,10 +11,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
+import org.pgpainless.exception.MissingDecryptionMethodException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rs.ltt.android.cache.BlobStorage;
 import rs.ltt.android.entity.EmailWithEncryptionStatus;
+import rs.ltt.android.entity.EncryptionStatus;
 import rs.ltt.autocrypt.jmap.AutocryptPlugin;
 import rs.ltt.autocrypt.jmap.EncryptedBodyPart;
 import rs.ltt.jmap.common.entity.Attachment;
@@ -56,6 +58,11 @@ public class DecryptionWorker extends AbstractMuaWorker {
             return Result.success();
         } catch (final ExecutionException e) {
             final Throwable cause = e.getCause();
+            if (cause instanceof MissingDecryptionMethodException) {
+                getDatabase()
+                        .threadAndEmailDao()
+                        .setEncryptionStatus(this.emailId, EncryptionStatus.FAILED);
+            }
             LOGGER.error("Could not decrypt email", cause);
             return Result.failure(Failure.of(cause));
         } catch (final InterruptedException e) {

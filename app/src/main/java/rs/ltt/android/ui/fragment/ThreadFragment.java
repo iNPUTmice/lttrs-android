@@ -55,6 +55,7 @@ import rs.ltt.android.ui.activity.result.contract.ComposeContract;
 import rs.ltt.android.ui.activity.result.contract.CreateDocumentContract;
 import rs.ltt.android.ui.adapter.OnAttachmentActionTriggered;
 import rs.ltt.android.ui.adapter.OnComposeActionTriggered;
+import rs.ltt.android.ui.adapter.OnEncryptionActionTriggered;
 import rs.ltt.android.ui.adapter.OnFlaggedToggled;
 import rs.ltt.android.ui.adapter.ThreadAdapter;
 import rs.ltt.android.ui.model.ThreadViewModel;
@@ -64,7 +65,10 @@ import rs.ltt.android.worker.Failure;
 import rs.ltt.jmap.common.entity.Attachment;
 
 public class ThreadFragment extends AbstractLttrsFragment
-        implements OnFlaggedToggled, OnComposeActionTriggered, OnAttachmentActionTriggered {
+        implements OnFlaggedToggled,
+                OnComposeActionTriggered,
+                OnAttachmentActionTriggered,
+                OnEncryptionActionTriggered {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ThreadFragment.class);
 
@@ -147,6 +151,7 @@ public class ThreadFragment extends AbstractLttrsFragment
         threadAdapter.setOnFlaggedToggledListener(this);
         threadAdapter.setOnComposeActionTriggeredListener(this);
         threadAdapter.setOnAttachmentActionTriggered(this);
+        threadAdapter.setOnEncryptionActionTriggered(this);
         threadViewModel
                 .getThreadViewRedirect()
                 .observe(getViewLifecycleOwner(), this::onThreadViewRedirect);
@@ -379,5 +384,10 @@ public class ThreadFragment extends AbstractLttrsFragment
         LOGGER.info("launching for {}", MediaTypes.toString(attachment.getMediaType()));
         this.threadViewModel.setAttachmentReference(emailId, attachment.getBlobId());
         this.createDocumentLauncher.launch(attachment);
+    }
+
+    @Override
+    public void onDecryptTriggered(final String emailId) {
+        this.threadViewModel.decryptEmail(emailId);
     }
 }

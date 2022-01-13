@@ -77,6 +77,7 @@ public class ThreadViewModel extends AbstractAttachmentViewModel {
     private final long accountId;
     private final String threadId;
     private final String label;
+    private final ThreadViewRepository threadViewRepository;
     private final MediatorLiveData<Event<Collection<Failure>>> decryptionFailures =
             new MediatorLiveData<>();
     private final MediatorLiveData<Event<String>> threadViewRedirect = new MediatorLiveData<>();
@@ -99,20 +100,12 @@ public class ThreadViewModel extends AbstractAttachmentViewModel {
         this.accountId = accountId;
         this.threadId = threadId;
         this.label = label;
-        final ThreadViewRepository threadViewRepository =
-                new ThreadViewRepository(application, accountId);
+        this.threadViewRepository = new ThreadViewRepository(application, accountId);
         final LiveData<ThreadHeader> header = threadViewRepository.getThreadHeader(threadId);
         this.emails = threadViewRepository.getEmails(threadId);
         final LiveData<List<WorkInfo>> decryptionWorkInfo =
                 threadViewRepository.getDecryptionWorkInfo(threadId);
-        this.decryptionFailures.addSource(
-                decryptionWorkInfo,
-                workInfo -> {
-                    if (WorkInfoUtils.finished(workInfo)) {
-                        final Collection<WorkInfo> failed = WorkInfoUtils.failed(workInfo);
-                        this.decryptionFailures.postValue(new Event<>(Failure.of(failed)));
-                    }
-                });
+        this.decryptionFailures.addSource(decryptionWorkInfo, this::processDecryptionWorkInfo);
         this.mailboxes = threadViewRepository.getMailboxes(threadId);
         final ListenableFuture<Seen> seen = threadViewRepository.getSeen(threadId);
         this.expandedPositions =
@@ -384,6 +377,19 @@ public class ThreadViewModel extends AbstractAttachmentViewModel {
 
     public LiveData<Event<Collection<Failure>>> getDecryptionFailures() {
         return this.decryptionFailures;
+    }
+
+    public void decryptEmail(final String emailId) {
+        final LiveData<List<WorkInfo>> decryptionWorkInfo =
+                threadViewRepository.decryptEmail(emailId);
+        this.decryptionFailures.addSource(decryptionWorkInfo, this::processDecryptionWorkInfo);
+    }
+
+    private void processDecryptionWorkInfo(final List<WorkInfo> workInfo) {
+        if (WorkInfoUtils.finished(workInfo)) {
+            final Collection<WorkInfo> failed = WorkInfoUtils.failed(workInfo);
+            this.decryptionFailures.postValue(new Event<>(Failure.of(failed)));
+        }
     }
 
     public static class MenuConfiguration {
