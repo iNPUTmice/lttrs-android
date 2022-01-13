@@ -30,6 +30,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 import org.slf4j.Logger;
@@ -74,30 +75,31 @@ public class ThreadViewRepository extends AbstractRepository {
         final LiveData<List<EmailWithEncryptionStatus>> encryptedEmails =
                 database.threadAndEmailDao()
                         .getEmailsWithEncryptionStatus(threadId, EncryptionStatus.ENCRYPTED);
-        return Transformations.switchMap(encryptedEmails, this::enqueueDecryptionWorkers);
+        final HashSet<UUID> enqueuedWork = new HashSet<>();
+        return Transformations.switchMap(
+                encryptedEmails, emails -> enqueueDecryptionWorkers(emails, enqueuedWork));
     }
 
     private LiveData<List<WorkInfo>> enqueueDecryptionWorkers(
-            final List<EmailWithEncryptionStatus> emails) {
+            final List<EmailWithEncryptionStatus> emails, final HashSet<UUID> enqueuedWork) {
         LOGGER.info("Enqueue decryption jobs for {}", emails);
-        if (emails.isEmpty()) {
-            return new MutableLiveData<>();
-        }
         final WorkManager workManager = WorkManager.getInstance(application);
-        final ImmutableList.Builder<UUID> uuidBuilder = new ImmutableList.Builder<>();
         for (final EmailWithEncryptionStatus email : emails) {
             final OneTimeWorkRequest oneTimeWorkRequest =
                     new OneTimeWorkRequest.Builder(DecryptionWorker.class)
                             .setInputData(DecryptionWorker.data(accountId, email.id))
                             .build();
-            uuidBuilder.add(oneTimeWorkRequest.getId());
+            enqueuedWork.add(oneTimeWorkRequest.getId());
             workManager.enqueueUniqueWork(
                     DecryptionWorker.uniqueName(accountId, email.id),
                     ExistingWorkPolicy.KEEP,
                     oneTimeWorkRequest);
         }
+        if (enqueuedWork.isEmpty()) {
+            return new MutableLiveData<>();
+        }
         return workManager.getWorkInfosLiveData(
-                WorkQuery.Builder.fromIds(uuidBuilder.build()).build());
+                WorkQuery.Builder.fromIds(ImmutableList.copyOf(enqueuedWork)).build());
     }
 
     public ListenableFuture<Seen> getSeen(String threadId) {
