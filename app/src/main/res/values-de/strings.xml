@@ -195,4 +195,5 @@
         <item quantity="one">%d verschlüsselte E-Mail konnte nicht heruntergeladen werden</item>
         <item quantity="other">%d verschlüsselte E-Mails konnte nicht heruntergeladen werden</item>
     </plurals>
+    <string name="reply">Antworten</string>
 </resources>
