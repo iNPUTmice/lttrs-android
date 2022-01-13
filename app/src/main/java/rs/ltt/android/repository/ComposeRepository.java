@@ -106,11 +106,12 @@ public class ComposeRepository extends AbstractRepository {
                 sessionFuture, session -> addAttachment(uri, session), ATTACHMENT_EXECUTOR);
     }
 
-    public static ListenableFuture<List<Attachment>> cacheAttachments(
+    public static ListenableFuture<List<LocalAttachment>> cacheAttachments(
             final Application application, final Collection<Uri> attachments) {
         return Futures.submit(
                 () -> {
-                    final ImmutableList.Builder<Attachment> builder = new ImmutableList.Builder<>();
+                    final ImmutableList.Builder<LocalAttachment> builder =
+                            new ImmutableList.Builder<>();
                     for (final Uri uri : attachments) {
                         LocalAttachment.checkContentUri(uri);
                         final LocalAttachment attachment = LocalAttachment.of(application, uri);
@@ -142,6 +143,16 @@ public class ComposeRepository extends AbstractRepository {
     public static void deleteLocalAttachment(
             Application application, final LocalAttachment attachment) {
         ATTACHMENT_EXECUTOR.execute(() -> LocalAttachment.delete(application, attachment));
+    }
+
+    public static void deleteLocalAttachments(
+            final Application application, final List<LocalAttachment> attachments) {
+        if (attachments == null) {
+            return;
+        }
+        for (final LocalAttachment attachment : attachments) {
+            deleteLocalAttachment(application, attachment);
+        }
     }
 
     public LiveData<Decision> getAutocryptDecision(

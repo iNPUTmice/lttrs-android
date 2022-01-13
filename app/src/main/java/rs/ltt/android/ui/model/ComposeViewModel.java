@@ -56,6 +56,7 @@ import rs.ltt.android.entity.IdentifiableWithOwner;
 import rs.ltt.android.entity.IdentityWithNameAndEmail;
 import rs.ltt.android.repository.ComposeRepository;
 import rs.ltt.android.ui.ComposeAction;
+import rs.ltt.android.util.CharSequences;
 import rs.ltt.android.util.Event;
 import rs.ltt.android.util.FileSizes;
 import rs.ltt.android.util.MergedListsLiveData;
@@ -73,7 +74,6 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
     private static final Logger LOGGER = LoggerFactory.getLogger(ComposeViewModel.class);
 
     private final ComposeAction composeAction;
-    private MailToUri mailToUri;
     private final ListenableFuture<EmailWithReferences> email;
 
     private final MutableLiveData<Event<String>> errorMessage = new MutableLiveData<>();
@@ -102,6 +102,13 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
     private final LiveData<EncryptionOptions> encryptionOptions;
     private final MutableLiveData<UserEncryptionChoice> userEncryptionChoice =
             new MutableLiveData<>(UserEncryptionChoice.NONE);
+
+    // this uri has been received through a VIEW intent. Required to determine if draft has been
+    // modified and draft needs saving
+    private MailToUri mailToUri;
+    // those attachments were added through a SEND or SEND_MULTIPLE intent. Required to determine if
+    // a draft has been modified
+    private List<LocalAttachment> intentAttachments = null;
 
     private boolean draftHasBeenHandled = false;
 
@@ -335,10 +342,13 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
         }
         final EncryptionOptions encryptionOptions = EncryptionOptions.of(this.encryptionOptions);
         final EmailWithReferences editableEmail = getEmail();
-        final Draft originalDraft = Draft.with(this.composeAction, this.mailToUri, editableEmail);
+        final Draft originalDraft =
+                Draft.with(
+                        this.composeAction, this.mailToUri, this.intentAttachments, editableEmail);
         if (originalDraft != null && currentDraft.unedited(originalDraft)) {
             LOGGER.info("Not storing draft. Nothing has been changed");
             draftHasBeenHandled = true;
+            ComposeRepository.deleteLocalAttachments(getApplication(), this.intentAttachments);
             return null;
         }
         LOGGER.info("Saving draft");
@@ -419,7 +429,7 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
     }
 
     private void initializeWithEmail(final EmailWithReferences email) {
-        final Draft draft = Draft.with(composeAction, null, email);
+        final Draft draft = Draft.with(composeAction, email);
         if (draft == null) {
             return;
         }
@@ -499,12 +509,11 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
                 ComposeRepository.cacheAttachments(getApplication(), attachments),
                 new FutureCallback<>() {
                     @Override
-                    public void onSuccess(final List<Attachment> attachments) {
+                    public void onSuccess(final List<LocalAttachment> cachedAttachments) {
                         final ImmutableList.Builder<Attachment> builder = ImmutableList.builder();
                         builder.addAll(nullToEmpty(ComposeViewModel.this.attachments.getValue()));
-                        // TODO add this attachment to 'received through intent' which means it will
-                        // be ignored when calculating if an email has changed or not
-                        builder.addAll(attachments);
+                        intentAttachments = cachedAttachments;
+                        builder.addAll(cachedAttachments);
                         refreshAttachments(builder.build());
                     }
 
@@ -548,7 +557,7 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
                 composeAction == ComposeAction.NEW,
                 "Setting a mailto uri is only allowed for new email drafts");
         this.mailToUri = mailToUri;
-        final Draft draft = Draft.with(ComposeAction.NEW, mailToUri, null);
+        final Draft draft = Draft.with(ComposeAction.NEW, mailToUri, null, null);
         initializeDraft(draft);
     }
 
@@ -659,16 +668,25 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
                     nullToEmpty(attachments.getValue()));
         }
 
-        private static Draft newEmail(final MailToUri uri) {
-            if (uri == null) {
+        private static Draft newEmail(
+                final MailToUri uri, final List<? extends Attachment> intentAttachments) {
+            if (uri == null && intentAttachments == null) {
                 return null;
             }
+            if (uri != null) {
+                return new Draft(
+                        uri.getTo(),
+                        uri.getCc(),
+                        Strings.nullToEmpty(uri.getSubject()),
+                        Strings.nullToEmpty(uri.getBody()),
+                        Collections.emptyList());
+            }
             return new Draft(
-                    uri.getTo(),
-                    uri.getCc(),
-                    Strings.nullToEmpty(uri.getSubject()),
-                    Strings.nullToEmpty(uri.getBody()),
-                    Collections.emptyList());
+                    Collections.emptyList(),
+                    Collections.emptyList(),
+                    CharSequences.EMPTY_STRING,
+                    CharSequences.EMPTY_STRING,
+                    intentAttachments);
         }
 
         private static Draft edit(EmailWithReferences email) {
@@ -687,7 +705,7 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
                     replyAddresses.getTo(),
                     replyAddresses.getCc(),
                     EmailUtil.getResponseSubject(email),
-                    "",
+                    CharSequences.EMPTY_STRING,
                     Collections.emptyList());
         }
 
@@ -702,12 +720,22 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
         }
 
         public static Draft with(
+                final ComposeAction action, final EmailWithReferences editableEmail) {
+            return with(action, null, null, editableEmail);
+        }
+
+        public static Draft with(
                 final ComposeAction action,
-                final MailToUri uri,
-                EmailWithReferences editableEmail) {
+                final MailToUri mailToUri,
+                final List<? extends Attachment> intentAttachments,
+                final EmailWithReferences editableEmail) {
+            if (mailToUri != null && intentAttachments != null) {
+                throw new IllegalStateException(
+                        "mailToUri and intentAttachments may not be set at the same time");
+            }
             switch (action) {
                 case NEW:
-                    return newEmail(uri);
+                    return newEmail(mailToUri, intentAttachments);
                 case EDIT_DRAFT:
                     return edit(editableEmail);
                 case REPLY_ALL:

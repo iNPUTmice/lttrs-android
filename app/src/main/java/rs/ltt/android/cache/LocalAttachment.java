@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.OpenableColumns;
+import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import com.google.common.net.MediaType;
 import com.google.common.util.concurrent.Futures;
@@ -31,6 +32,22 @@ public class LocalAttachment implements Attachment {
     private final MediaType mediaType;
     private final String name;
     private final long size;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        LocalAttachment that = (LocalAttachment) o;
+        return size == that.size
+                && Objects.equal(uuid, that.uuid)
+                && Objects.equal(mediaType, that.mediaType)
+                && Objects.equal(name, that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(uuid, mediaType, name, size);
+    }
 
     public LocalAttachment(final UUID uuid, MediaType mediaType, String name, long size) {
         this.uuid = uuid;
