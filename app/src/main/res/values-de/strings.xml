@@ -198,4 +198,5 @@
     <string name="reply">Antworten</string>
     <string name="could_not_determine_metadata_of_attachment">Typ, Größe und Name des Anhangs, den du hinzufügen möchtest, konnten nicht ermittelt werden.</string>
     <string name="lttrs_lacks_permissions_to_add_attachment">Ltt.rs hat nicht die erforderlichen Berechtigungen, um diesen Anhang hinzuzufügen.</string>
+    <string name="decrypt_email">E-Mail entschlüsseln</string>
 </resources>
