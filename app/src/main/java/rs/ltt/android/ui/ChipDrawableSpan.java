@@ -22,6 +22,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.text.Editable;
+import android.text.NoCopySpan;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ImageSpan;
@@ -38,7 +39,7 @@ import rs.ltt.jmap.mua.util.EmailAddressToken;
 import rs.ltt.jmap.mua.util.EmailAddressTokenizer;
 import rs.ltt.jmap.mua.util.EmailAddressUtil;
 
-public class ChipDrawableSpan extends ImageSpan {
+public class ChipDrawableSpan extends ImageSpan implements NoCopySpan {
 
     private final EmailAddressToken emailAddressToken;
 
