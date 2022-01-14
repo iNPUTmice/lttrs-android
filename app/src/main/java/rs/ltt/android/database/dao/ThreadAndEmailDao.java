@@ -326,14 +326,20 @@ public abstract class ThreadAndEmailDao extends AbstractEntityDao {
 
     private void insertEmails(final Email[] emails) {
         for (final Email email : emails) {
-            insert(EmailEntity.of(email));
+            final List<EmailBodyPartEntity> bodyPartEntities = EmailBodyPartEntity.of(email);
+            final List<EmailBodyValueEntity> bodyValueEntities = EmailBodyValueEntity.of(email);
+            final Email emailWithPreview =
+                    email.toBuilder()
+                            .preview(TextBodies.getPreview(bodyPartEntities, bodyValueEntities))
+                            .build();
+            insert(EmailEntity.of(emailWithPreview));
             insertInReplyTo(EmailInReplyToEntity.of(email));
             insertMessageId(EmailMessageIdEntity.of(email));
             insertEmailAddresses(EmailEmailAddressEntity.of(email));
             insertMailboxes(EmailMailboxEntity.of(email));
             insertKeywords(EmailKeywordEntity.of(email));
-            insertEmailBodyParts(EmailBodyPartEntity.of(email));
-            insertEmailBodyValues(EmailBodyValueEntity.of(email));
+            insertEmailBodyParts(bodyPartEntities);
+            insertEmailBodyValues(bodyValueEntities);
         }
     }
 
