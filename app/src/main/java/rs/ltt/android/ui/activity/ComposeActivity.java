@@ -191,7 +191,6 @@ public class ComposeActivity extends AppCompatActivity {
 
     private boolean handleIntent(final Intent intent) {
         final String action = Strings.nullToEmpty(intent == null ? null : intent.getAction());
-        LOGGER.info("handling intent action={}", action);
         switch (action) {
             case Intent.ACTION_SEND:
                 final Uri individualUri =
