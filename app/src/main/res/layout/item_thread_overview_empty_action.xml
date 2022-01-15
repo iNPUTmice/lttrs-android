@@ -36,7 +36,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_toEndOf="@id/icon"
-                android:textAppearance="?textAppearanceBodyLarge"
+                android:textAppearance="?textAppearanceBodyMedium"
                 app:firstBaselineToTopHeight="28dp" />
 
             <com.google.android.material.button.MaterialButton
