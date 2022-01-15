@@ -166,7 +166,6 @@ public abstract class AbstractQueryFragment extends AbstractLttrsFragment
 
     private void observeThreadOverviewItems(
             final LiveData<PagedList<ThreadOverviewItem>> liveData) {
-        final AtomicBoolean actionModeRefreshed = new AtomicBoolean(false);
         liveData.observe(
                 getViewLifecycleOwner(),
                 threadOverviewItems -> {
@@ -178,8 +177,7 @@ public abstract class AbstractQueryFragment extends AbstractLttrsFragment
                                 if (atTop && binding != null) {
                                     binding.threadList.scrollToPosition(0);
                                 }
-                                if (actionMode != null
-                                        && actionModeRefreshed.compareAndSet(false, true)) {
+                                if (actionMode != null) {
                                     actionMode.invalidate();
                                 }
                             });
