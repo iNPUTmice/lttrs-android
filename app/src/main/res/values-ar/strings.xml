@@ -1,2 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="search">ابحث</string>
+    <string name="to_x">إلى %s</string>
+    <string name="undo">تراجع</string>
+    <string name="delete">احذف</string>
+    <string name="move_to_inbox">انقل إلى صندوق الواردات</string>
+    <string name="sign_in">لِج</string>
+    <string name="email_address">عنوان البريد الإلكتروني</string>
+    <string name="next">التالي</string>
+    <string name="enter_an_email_address">أدخل عنوان البريد الإلكتروني</string>
+    <string name="deleted">حُذف</string>
+</resources>
