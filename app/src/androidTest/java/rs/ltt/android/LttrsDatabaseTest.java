@@ -5,17 +5,14 @@ import androidx.room.Room;
 import androidx.room.paging.LimitOffsetDataSource;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
-
+import java.io.IOException;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import okhttp3.mockwebserver.MockWebServer;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-
-import okhttp3.mockwebserver.MockWebServer;
 import rs.ltt.android.cache.DatabaseCache;
 import rs.ltt.android.database.LttrsDatabase;
 import rs.ltt.android.entity.EmailWithBodies;
