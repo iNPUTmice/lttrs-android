@@ -42,7 +42,7 @@
             android:layout_toEndOf="@+id/icon"
             android:maxLines="1"
             tools:text="@string/manage_accounts"
-            android:textAppearance="?textAppearanceSubtitle1" />
+            android:textAppearance="?textAppearanceBodyLarge" />
     </RelativeLayout>
 
 

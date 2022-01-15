@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/background_label"
-        android:textAppearance="?textAppearanceBody2"
+        android:textAppearance="?textAppearanceBodyMedium"
         tools:text="@string/role_name_inbox"
         app:name="@{label}"/>
 

@@ -57,10 +57,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_toEndOf="@id/avatar"
-                android:fontFamily="sans-serif-medium"
                 android:maxLines="1"
                 android:text="@{email.firstFrom}"
-                android:textAppearance="?textAppearanceSubtitle1"
+                android:textAppearance="?textAppearanceTitleMedium"
                 app:firstBaselineToTopHeight="28dp"
                 tools:text="Juliet Capulet" />
 
@@ -75,7 +74,7 @@
                 android:ellipsize="end"
                 android:maxLines="2"
                 android:text="@{email.getPreview()}"
-                android:textAppearance="?textAppearanceBody2"
+                android:textAppearance="?textAppearanceBodyMedium"
                 android:visibility="@{expanded ? View.GONE : View.VISIBLE}"
                 app:firstBaselineToTopHeight="20sp"
                 tools:text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores" />
@@ -89,7 +88,7 @@
                 android:layout_toEndOf="@id/avatar"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:textAppearance="?textAppearanceBody2"
+                android:textAppearance="?textAppearanceBodyMedium"
                 android:visibility="@{expanded ? View.VISIBLE : View.GONE}"
                 app:firstBaselineToTopHeight="20sp"
                 app:to="@{email.toAndCc}"
@@ -106,7 +105,7 @@
                 android:layout_marginEnd="16dp"
                 android:layout_toEndOf="@id/from"
                 android:maxLines="1"
-                android:textAppearance="?textAppearanceCaption"
+                android:textAppearance="?textAppearanceBodySmall"
                 app:date="@{email.receivedAt}"
                 tools:text="Mar 24" />
 
@@ -176,7 +175,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:autoLink="web"
-                android:textAppearance="?textAppearanceBody2"
+                android:textAppearance="?textAppearanceBodyMedium"
                 app:body="@{email.textBodies}"
                 tools:text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores" />
 

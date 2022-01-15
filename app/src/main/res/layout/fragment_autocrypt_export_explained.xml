@@ -37,21 +37,21 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/autocrypt_export_explained_hint_one"
-                    android:textAppearance="?textAppearanceSubtitle1" />
+                    android:textAppearance="?textAppearanceBodyLarge" />
 
                 <TextView
                     android:layout_marginTop="16sp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/autocrypt_export_explained_hint_two"
-                    android:textAppearance="?textAppearanceSubtitle1" />
+                    android:textAppearance="?textAppearanceBodyLarge" />
 
                 <TextView
                     android:layout_marginTop="16sp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/autocrypt_export_explained_hint_three"
-                    android:textAppearance="?textAppearanceSubtitle1" />
+                    android:textAppearance="?textAppearanceBodyLarge" />
 
             </LinearLayout>
 

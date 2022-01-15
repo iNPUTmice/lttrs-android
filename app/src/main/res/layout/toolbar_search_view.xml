@@ -28,7 +28,7 @@
         android:layout_marginBottom="2dp"
         android:drawablePadding="0dp"
         android:gravity="center_vertical"
-        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textAppearance="?textAppearanceBodyMedium"
         android:textColor="?android:attr/textColorPrimary"
         android:visibility="gone" />
 

@@ -42,7 +42,7 @@
                 android:ellipsize="middle"
                 android:maxLines="1"
                 android:text="@{attachment.name}"
-                android:textAppearance="?textAppearanceBody1"
+                android:textAppearance="?textAppearanceBodyMedium"
                 tools:text="this_is_my_archive_test.zip" />
 
             <ImageButton

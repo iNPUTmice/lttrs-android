@@ -43,7 +43,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@{mailbox.getName()}"
-                android:textAppearance="?textAppearanceSubtitle1"
+                android:textAppearance="?textAppearanceTitleMedium"
                 tools:text="Archive" />
         </LinearLayout>
 
@@ -73,7 +73,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@{mailbox.getName()}"
-                android:textAppearance="?textAppearanceSubtitle1"
+                android:textAppearance="?textAppearanceTitleMedium"
                 tools:text="Archive" />
         </LinearLayout>
     </LinearLayout>

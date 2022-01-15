@@ -36,7 +36,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/autocrypt_export_explained_hint_done"
-                    android:textAppearance="?textAppearanceSubtitle1" />
+                    android:textAppearance="?textAppearanceBodyLarge" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/view_email"

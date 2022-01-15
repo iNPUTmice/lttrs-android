@@ -43,7 +43,7 @@
                 android:layout_centerHorizontal="true"
                 android:maxLines="1"
                 android:text="@{account.name}"
-                android:textAppearance="?textAppearanceHeadline6"
+                android:textAppearance="?textAppearanceTitleLarge"
                 tools:text="sam.miller@example.com" />
 
             <LinearLayout
@@ -78,7 +78,7 @@
                         android:layout_toEndOf="@+id/identities_icon"
                         android:maxLines="1"
                         android:text="@string/identities"
-                        android:textAppearance="?textAppearanceSubtitle1" />
+                        android:textAppearance="?textAppearanceBodyLarge" />
 
                 </RelativeLayout>
 
@@ -107,7 +107,7 @@
                         android:layout_toEndOf="@+id/labels_icon"
                         android:maxLines="1"
                         android:text="@string/manage_labels"
-                        android:textAppearance="?textAppearanceSubtitle1" />
+                        android:textAppearance="?textAppearanceBodyLarge" />
 
                 </RelativeLayout>
 
@@ -136,7 +136,7 @@
                         android:layout_toEndOf="@+id/vacation_response_icon"
                         android:maxLines="1"
                         android:text="@string/vacation_response"
-                        android:textAppearance="?textAppearanceSubtitle1" />
+                        android:textAppearance="?textAppearanceBodyLarge" />
 
                 </RelativeLayout>
 
@@ -165,7 +165,7 @@
                         android:layout_toEndOf="@+id/e2ee_icon"
                         android:maxLines="1"
                         android:text="@string/end_to_end_encryption"
-                        android:textAppearance="?textAppearanceSubtitle1" />
+                        android:textAppearance="?textAppearanceBodyLarge" />
 
                 </RelativeLayout>
 

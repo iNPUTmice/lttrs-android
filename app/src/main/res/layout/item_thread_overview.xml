@@ -93,8 +93,8 @@
                     android:layout_marginEnd="4sp"
                     android:layout_toEndOf="@id/avatar"
                     android:src="@drawable/ic_baseline_important_18"
-                    app:tint="?attr/colorIndicator"
-                    android:visibility="@{isImportant ? View.VISIBLE : View.GONE, default=gone}" />
+                    android:visibility="@{isImportant ? View.VISIBLE : View.GONE, default=gone}"
+                    app:tint="?attr/colorIndicator" />
 
                 <TextView
                     android:id="@+id/froms"
@@ -102,7 +102,7 @@
                     android:layout_height="wrap_content"
                     android:layout_toEndOf="@id/important"
                     android:maxLines="1"
-                    android:textAppearance="?textAppearanceSubtitle1"
+                    android:textAppearance="?textAppearanceBodyLarge"
                     app:firstBaselineToTopHeight="28dp"
                     app:from="@{thread.getFromValues()}"
                     tools:text="Juliet, Mercutio, Benvolio" />
@@ -117,7 +117,7 @@
                     android:ellipsize="end"
                     android:maxLines="1"
                     android:text="@{thread.subject}"
-                    android:textAppearance="?textAppearanceBody2"
+                    android:textAppearance="?textAppearanceBodyMedium"
                     android:typeface='@{thread.everyHasSeenKeyword() ? "normal" : "bold"}'
                     app:firstBaselineToTopHeight="20sp"
                     tools:text="The awesome subject line" />
@@ -131,7 +131,7 @@
                     android:layout_toStartOf="@id/date"
                     android:layout_toEndOf="@id/froms"
                     android:maxLines="1"
-                    android:textAppearance="?textAppearanceBody2"
+                    android:textAppearance="?textAppearanceBodyMedium"
                     app:count="@{thread.getCount}"
                     tools:text="2" />
 
@@ -143,7 +143,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_marginStart="8sp"
                     android:maxLines="1"
-                    android:textAppearance="?textAppearanceCaption"
+                    android:textAppearance="?textAppearanceBodySmall"
                     app:date="@{thread.getReceivedAt}"
                     tools:text="Mar 24" />
 
@@ -157,7 +157,7 @@
                     android:ellipsize="end"
                     android:maxLines="1"
                     android:text="@{thread.preview}"
-                    android:textAppearance="?textAppearanceBody2"
+                    android:textAppearance="?textAppearanceBodyMedium"
                     tools:text="A short excerpt of the full email which fill the entire line like in this example" />
 
                 <ImageView

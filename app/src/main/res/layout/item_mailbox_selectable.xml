@@ -50,7 +50,7 @@
             android:layout_toEndOf="@+id/icon"
             android:maxLines="1"
             app:name="@{label}"
-            android:textAppearance="?textAppearanceSubtitle1"
+            android:textAppearance="?textAppearanceBodyLarge"
             tools:text="Archive" />
 
         <com.google.android.material.checkbox.MaterialCheckBox

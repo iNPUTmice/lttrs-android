@@ -33,7 +33,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@{model.isReassignment() ? @string/reassign_role_question(model.getMailbox().getName(), model.getMailbox().getRole(), model.getHumanReadableRole()) : @string/assign_role_question(model.getMailbox().getName(), model.getHumanReadableRole())}"
-                android:textAppearance="?textAppearanceSubtitle1"
+                android:textAppearance="?textAppearanceBodyLarge"
                 tools:text="@string/reassign_role_question" />
 
             <include
@@ -54,7 +54,7 @@
                 android:layout_above="@+id/confirm"
                 android:layout_marginBottom="16dp"
                 android:text="@{@string/assign_role_detailed_explanation(model.getHumanReadableRole(), model.getMailbox().getName())}"
-                android:textAppearance="?textAppearanceCaption"
+                android:textAppearance="?textAppearanceBodySmall"
                 tools:text="@string/assign_role_detailed_explanation" />
 
             <com.google.android.material.button.MaterialButton

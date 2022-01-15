@@ -48,7 +48,7 @@
             android:layout_toEndOf="@+id/icon"
             android:maxLines="1"
             android:text="@{account.getName()}"
-            android:textAppearance="?textAppearanceSubtitle1"
+            android:textAppearance="?textAppearanceBodyLarge"
             tools:text="sam.user@example.com" />
     </RelativeLayout>
 

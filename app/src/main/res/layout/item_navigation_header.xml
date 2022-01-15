@@ -54,8 +54,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:clickable="false"
-                    android:fontFamily="sans-serif-medium"
-                    android:textAppearance="?textAppearanceBody1"
+                    android:textAppearance="?textAppearanceTitleMedium"
                     android:textColor="?attr/colorOnPrimary"
                     tools:text="Sam Miller" />
 
@@ -64,7 +63,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:clickable="false"
-                    android:textAppearance="?textAppearanceBody2"
+                    android:textAppearance="?textAppearanceBodyMedium"
                     android:textColor="?attr/colorOnPrimary"
                     tools:text="sam.miller@example.com" />
             </LinearLayout>

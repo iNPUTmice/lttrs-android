@@ -49,7 +49,7 @@
             android:layout_toStartOf="@+id/count"
             android:maxLines="1"
             app:name="@{label}"
-            android:textAppearance="?textAppearanceSubtitle1"
+            android:textAppearance="?textAppearanceBodyLarge"
             tools:text="Archive" />
 
         <TextView
@@ -60,7 +60,7 @@
             android:layout_centerVertical="true"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
-            android:textAppearance="?textAppearanceSubtitle1"
+            android:textAppearance="?textAppearanceBodyLarge"
             app:count="@{label.getCount()}"
             tools:text="23" />
 

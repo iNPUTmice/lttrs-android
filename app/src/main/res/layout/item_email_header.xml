@@ -52,7 +52,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_toStartOf="@+id/star_toggle"
                 android:text="@{subject}"
-                android:textAppearance="?textAppearanceHeadline5"
+                android:textAppearance="?textAppearanceTitleLarge"
                 android:textSize="22sp"
                 tools:text="[Jmap] I-D Action: draft-ietf-jmap-mdn-01.txt" />
 

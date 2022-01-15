@@ -37,9 +37,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clickable="false"
-                android:fontFamily="sans-serif-medium"
                 android:text="@{account.printableName}"
-                android:textAppearance="?textAppearanceSubtitle1"
+                android:textAppearance="?textAppearanceTitleMedium"
                 tools:text="Sam Miller" />
 
             <TextView
@@ -47,7 +46,7 @@
                 android:layout_height="wrap_content"
                 android:clickable="false"
                 android:text="@{account.name}"
-                android:textAppearance="?textAppearanceBody1"
+                android:textAppearance="?textAppearanceBodyMedium"
                 tools:text="sam.miller@example.com" />
         </LinearLayout>
     </RelativeLayout>
