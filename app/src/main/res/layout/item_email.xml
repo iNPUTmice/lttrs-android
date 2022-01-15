@@ -106,7 +106,7 @@
                 android:layout_toEndOf="@id/from"
                 android:maxLines="1"
                 android:textAppearance="?textAppearanceBodySmall"
-                app:date="@{email.receivedAt}"
+                app:date="@{email.effectiveDate}"
                 tools:text="Mar 24" />
 
             <ImageButton

@@ -145,7 +145,7 @@
                     android:maxLines="1"
                     android:textAppearance="?textAppearanceBodySmall"
                     android:typeface='@{thread.everyHasSeenKeyword() ? "normal" : "bold"}'
-                    app:date="@{thread.getReceivedAt}"
+                    app:date="@{thread.effectiveDate}"
                     tools:text="Mar 24" />
 
                 <TextView

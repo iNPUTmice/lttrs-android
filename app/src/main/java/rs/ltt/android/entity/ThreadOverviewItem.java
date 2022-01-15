@@ -71,10 +71,10 @@ public class ThreadOverviewItem {
         return email == null ? null : new Subject(email.subject);
     }
 
-    public Instant getReceivedAt() {
+    public Instant getEffectiveDate() {
         final EmailPreviewWithMailboxes email =
                 Iterables.tryFind(emails, e -> e != null && emailId.equals(e.id)).orNull();
-        return email == null ? null : email.receivedAt;
+        return email == null ? null : email.getEffectiveDate();
     }
 
     public boolean everyHasSeenKeyword() {
@@ -209,7 +209,7 @@ public class ThreadOverviewItem {
         return Objects.equal(getSubject(), item.getSubject())
                 && Objects.equal(getPreview(), item.getPreview())
                 && Objects.equal(showAsFlagged(), item.showAsFlagged())
-                && Objects.equal(getReceivedAt(), item.getReceivedAt())
+                && Objects.equal(getEffectiveDate(), item.getEffectiveDate())
                 && Objects.equal(mailboxOverwriteEntities, item.mailboxOverwriteEntities)
                 && Objects.equal(getMailboxIds(), item.getMailboxIds())
                 && Objects.equal(everyHasSeenKeyword(), item.everyHasSeenKeyword())

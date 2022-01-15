@@ -4,19 +4,23 @@ import androidx.room.Relation;
 import com.google.common.base.Objects;
 import com.google.common.collect.Collections2;
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.Collection;
 import java.util.List;
 import rs.ltt.jmap.common.entity.IdentifiableEmailWithAddresses;
+import rs.ltt.jmap.common.entity.IdentifiableEmailWithTime;
+import rs.ltt.jmap.mua.util.EmailUtil;
 
 /**
  * This e-mail model has keywords and addresses. It acts as a common base class for EmailWithBodies
  * (used in the Thread view) and EmailPreviewWithMailboxes (Used by the ThreadOverviewItem)
  */
 public abstract class EmailPreview extends EmailWithKeywords
-        implements IdentifiableEmailWithAddresses {
+        implements IdentifiableEmailWithAddresses, IdentifiableEmailWithTime {
 
     public String threadId;
     public Instant receivedAt;
+    public OffsetDateTime sentAt;
     public EncryptionStatus encryptionStatus;
 
     @Relation(
@@ -77,6 +81,20 @@ public abstract class EmailPreview extends EmailWithKeywords
     }
 
     @Override
+    public OffsetDateTime getSentAt() {
+        return this.sentAt;
+    }
+
+    @Override
+    public Instant getReceivedAt() {
+        return this.receivedAt;
+    }
+
+    public Instant getEffectiveDate() {
+        return EmailUtil.getEffectiveDate(this);
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -84,6 +102,7 @@ public abstract class EmailPreview extends EmailWithKeywords
         EmailPreview that = (EmailPreview) o;
         return Objects.equal(threadId, that.threadId)
                 && Objects.equal(receivedAt, that.receivedAt)
+                && Objects.equal(sentAt, that.sentAt)
                 && encryptionStatus == that.encryptionStatus
                 && Objects.equal(emailAddresses, that.emailAddresses);
     }
@@ -91,6 +110,6 @@ public abstract class EmailPreview extends EmailWithKeywords
     @Override
     public int hashCode() {
         return Objects.hashCode(
-                super.hashCode(), threadId, receivedAt, encryptionStatus, emailAddresses);
+                super.hashCode(), threadId, receivedAt, sentAt, encryptionStatus, emailAddresses);
     }
 }

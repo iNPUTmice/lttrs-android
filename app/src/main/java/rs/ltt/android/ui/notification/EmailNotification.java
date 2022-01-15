@@ -241,7 +241,7 @@ public class EmailNotification extends AbstractNotification {
                 .setContentText(email.subject)
                 .setSubText(account.getName())
                 .setLargeIcon(avatar.toBitmap())
-                .setWhen(email.receivedAt.toEpochMilli())
+                .setWhen(email.getEffectiveDate().toEpochMilli())
                 .setStyle(bigTextStyle)
                 .setColor(getColor(context, R.attr.colorPrimary))
                 .setGroup(getGroupKey(account))

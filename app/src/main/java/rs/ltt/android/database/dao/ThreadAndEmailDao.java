@@ -223,7 +223,7 @@ public abstract class ThreadAndEmailDao extends AbstractEntityDao {
 
     @Transaction
     @Query(
-            "select id,receivedAt,email.threadId,encryptionStatus from thread_item"
+            "select id,receivedAt,sentAt,email.threadId,encryptionStatus from thread_item"
                     + " join email on thread_item.emailId=email.id where"
                     + " thread_item.threadId=:threadId order by position")
     public abstract DataSource.Factory<Integer, EmailWithBodies> getEmails(String threadId);
@@ -233,7 +233,7 @@ public abstract class ThreadAndEmailDao extends AbstractEntityDao {
 
     @Transaction
     @Query(
-            "select id,receivedAt,threadId,subject,encryptionStatus from email where id in"
+            "select id,receivedAt,sentAt,threadId,subject,encryptionStatus from email where id in"
                     + " (:emailIds)")
     public abstract List<EmailWithBodiesAndSubject> getEmails(Collection<String> emailIds);
 
@@ -241,8 +241,8 @@ public abstract class ThreadAndEmailDao extends AbstractEntityDao {
     // needed in the future for quoting the original email
     @Transaction
     @Query(
-            "select :accountId as accountId,id,threadId,subject,receivedAt,encryptionStatus from"
-                    + " email where id=:id")
+            "select :accountId as accountId,id,threadId,subject,receivedAt,sentAt,encryptionStatus"
+                    + " from email where id=:id")
     public abstract ListenableFuture<EmailWithReferences> getEmailWithReferences(
             Long accountId, String id);
 

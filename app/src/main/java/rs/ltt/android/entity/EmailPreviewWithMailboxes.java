@@ -30,6 +30,7 @@ public class EmailPreviewWithMailboxes extends EmailPreview
                 && Objects.equal(threadId, email.threadId)
                 && Objects.equal(subject, email.subject)
                 && Objects.equal(receivedAt, email.receivedAt)
+                && Objects.equal(sentAt, email.sentAt)
                 && Objects.equal(keywords, email.keywords)
                 && Objects.equal(emailAddresses, email.emailAddresses);
     }
@@ -37,7 +38,7 @@ public class EmailPreviewWithMailboxes extends EmailPreview
     @Override
     public int hashCode() {
         return Objects.hashCode(
-                id, preview, threadId, subject, receivedAt, keywords, emailAddresses);
+                id, preview, threadId, subject, receivedAt, sentAt, keywords, emailAddresses);
     }
 
     @Override
