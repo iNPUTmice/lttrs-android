@@ -198,4 +198,5 @@
         <item quantity="one">Vous n’avez pas la bonne clé secrète pour déchiffrer %d courriel.</item>
         <item quantity="other">Vous n’avez pas la bonne clé secrète pour déchiffrer %d courriels.</item>
     </plurals>
+    <string name="decrypt_email">Déchiffrer le courriel</string>
 </resources>
