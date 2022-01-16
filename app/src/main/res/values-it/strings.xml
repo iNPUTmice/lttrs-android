@@ -159,4 +159,44 @@
     <string name="autocrypt_enable_description">Abilita il supporto per la crittografia dall\'inizio alla fine. La tua chiave pubblica sarà allegata alle email in uscita. Questo permette ai tuoi contatti di inviarti e-mail criptate.</string>
     <string name="encryption_provider_can_not_create_secret_key">Il fornitore di crittografia su questo dispositivo non è in grado di creare la tua chiave segreta.</string>
     <string name="transfer_secret_key">Inoltra la chiave segreta</string>
+    <string name="decrypt_email">Decifra l\'e-mail</string>
+    <string name="could_not_store_setup_message">Impossibile memorizzare il messaggio di impostazione</string>
+    <plurals name="incorrect_secret_key">
+        <item quantity="one">Non hai la chiave segreta corretta per decifrare %d e-mail.</item>
+        <item quantity="other">Non hai la chiave segreta corretta per decifrare %d e-mail.</item>
+    </plurals>
+    <string name="import_secret_key">Importazione della chiave segreta</string>
+    <string name="done">Finito</string>
+    <string name="autocrypt_export_explained_hint_done">Il messaggio di installazione è stato creato. Ora puoi iniziare il processo di importazione sull\'altro dispositivo.</string>
+    <string name="view_email">Visualizza l\'e-mail</string>
+    <plurals name="could_not_download_x_encrypted_emails">
+        <item quantity="one">Impossibile scaricare %d e-mail criptata</item>
+        <item quantity="other">Impossibile scaricare %d e-mail criptate</item>
+    </plurals>
+    <string name="import_private_key_help_dialog_message">Ltt.rs ha rilevato un messaggio di installazione di Autocrypt creato da una delle altre applicazioni che usi. Importando la chiave segreta da questo messaggio puoi iniziare ad usare Autocrypt anche qui in Ltt.rs!
+\n
+\nInserisci il tuo codice di configurazione.
+\n
+\nSe non ricordi il tuo codice di configurazione e puoi saltare questo passaggio e Ltt.rs genererà una nuova chiave segreta su questo dispositivo.</string>
+    <string name="autocrypt_export_explained_hint_two">Il messaggio di configurazione è una normale e-mail etichettata come Inviata. Altre applicazioni saranno in grado di prenderlo da lì e importare la tua chiave segreta.</string>
+    <string name="autocrypt_export_explained_hint_three">Nel prossimo passo Ltt.rs creerà un codice di installazione sicuro. Dovrete scrivere questo codice e tenerlo in un posto sicuro.</string>
+    <string name="autocrypt_export_explained_hint_four">Avrai bisogno di usare questo codice di configurazione sull\'altro dispositivo per importare la tua chiave segreta. Conserva questo codice di configurazione in un posto sicuro.</string>
+    <string name="skip">Salta</string>
+    <string name="enter_your_setup_code">Digita il codice du configurazione per importare la tua chiave segreta o salta questo passo se vuoi che Ltt.rs generi una nuova chiave segreta su questo dispositivo.</string>
+    <string name="wrong_setup_code">Codice di installazione errato. Riprova!</string>
+    <string name="import_private_key_help_dialog_title">Rilevato un messaggio di impostazione autocrypt</string>
+    <string name="show_helper_dialog">Mostra la finestra di dialogo dell\'aiutante</string>
+    <string name="reply_all">Rispondi a tutti</string>
+    <string name="forward_email">Inoltra l\'e-mail</string>
+    <string name="more_options">Altre opzioni</string>
+    <string name="edit_draft">Modifica la bozza</string>
+    <string name="download_attachment">Scarica l\'allegato</string>
+    <string name="reply">Rispondi</string>
+    <string name="remove_attachment">Rimuovi l\'allegato</string>
+    <string name="could_not_determine_metadata_of_attachment">Impossibile determinare il tipo, la dimensione e il nome dell\'allegato che stai cercando di aggiungere.</string>
+    <string name="lttrs_lacks_permissions_to_add_attachment">Ltt.rs non ha i permessi necessari per aggiungere questo allegato.</string>
+    <plurals name="could_not_decrypt_x_emails">
+        <item quantity="one">Impossibile decifrare %d e-mail</item>
+        <item quantity="other">Impossibile decifrare %d e-mail</item>
+    </plurals>
 </resources>
