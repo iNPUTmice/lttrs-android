@@ -140,4 +140,7 @@
     <string name="no_application_to_open_x">Aucune application n’a pu afficher %s. Essayez plutôt de télécharger la pièce jointe.</string>
     <string name="attachments">Pièces jointes</string>
     <string name="attachment_download_failed_status_code_x">Impossible de télécharger la pièce jointe. (code d’état HTTP %d)</string>
+    <string name="could_not_cache_attachment">Impossible de mettre en cache la pièce jointe</string>
+    <string name="show_account_selector">Afficher le sélecteur de compte</string>
+    <string name="hide_account_selector">Masquer le sélecteur de compte</string>
 </resources>
