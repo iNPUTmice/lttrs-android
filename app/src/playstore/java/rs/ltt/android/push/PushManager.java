@@ -2,7 +2,6 @@ package rs.ltt.android.push;
 
 import android.content.Context;
 import android.os.Looper;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Lifecycle;
