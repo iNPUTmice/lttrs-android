@@ -1,0 +1,6 @@
+Code name: Ignition
+
+* Add support for Autocrypt (encrypted e-mails)
+* Add support for sharing files with Ltt.rs (opens draft screen)
+
+This project has received funding from the European Union’s Horizon 2020 research and innovation programme within the framework of the NGI-POINTER Project funded under grant agreement No 871528.
