@@ -2,6 +2,8 @@ package rs.ltt.android.push;
 
 import android.content.Context;
 import android.os.Looper;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.ProcessLifecycleOwner;
@@ -97,7 +99,7 @@ public class PushManager {
                     }
 
                     @Override
-                    public void onFailure(@NotNull final Throwable throwable) {
+                    public void onFailure(@NonNull final Throwable throwable) {
                         LOGGER.warn("Unable to set verification code", throwable);
                     }
                 },
@@ -176,7 +178,7 @@ public class PushManager {
                 installationId -> {
                     Futures.addCallback(
                             register(credentials, token, installationId),
-                            new FutureCallback<Boolean>() {
+                            new FutureCallback<>() {
                                 @Override
                                 public void onSuccess(@Nullable Boolean success) {
                                     LOGGER.info(
@@ -185,7 +187,7 @@ public class PushManager {
                                 }
 
                                 @Override
-                                public void onFailure(@NotNull final Throwable throwable) {
+                                public void onFailure(@NonNull final Throwable throwable) {
                                     LOGGER.info("Unable to create push subscription", throwable);
                                 }
                             },
