@@ -198,4 +198,7 @@
     <string name="remove_attachment">Fjern vedlegg</string>
     <string name="could_not_determine_metadata_of_attachment">Kunne ikke avgjøre type, størrelse, og navn på vedlegget du prøver å legge til.</string>
     <string name="lttrs_lacks_permissions_to_add_attachment">Ltt.rs mangler nødvendige tilganger for å legge til dette vedlegget.</string>
+    <string name="attachment_download_failed">Kunne ikke laste ned vedlegg</string>
+    <string name="email_not_cached">E-posten som inneholder vedlegget er ikke hurtiglagret.</string>
+    <string name="decrypt_email">Dekrypter e-post</string>
 </resources>
