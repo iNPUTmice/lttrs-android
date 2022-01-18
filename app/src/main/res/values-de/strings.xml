@@ -199,4 +199,6 @@
     <string name="could_not_determine_metadata_of_attachment">Typ, Größe und Name des Anhangs, den du hinzufügen möchtest, konnten nicht ermittelt werden.</string>
     <string name="lttrs_lacks_permissions_to_add_attachment">Ltt.rs hat nicht die erforderlichen Berechtigungen, um diesen Anhang hinzuzufügen.</string>
     <string name="decrypt_email">E-Mail entschlüsseln</string>
+    <string name="email_not_cached">Die E-Mail mit diesem Anhang wird nicht zwischengespeichert.</string>
+    <string name="attachment_download_failed">Anhang konnte nicht heruntergeladen werden</string>
 </resources>
