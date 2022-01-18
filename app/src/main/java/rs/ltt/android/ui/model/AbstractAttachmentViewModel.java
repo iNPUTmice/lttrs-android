@@ -18,7 +18,6 @@ import com.google.common.net.MediaType;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rs.ltt.android.R;
@@ -38,7 +37,7 @@ public abstract class AbstractAttachmentViewModel extends AndroidViewModel {
     private final MediatorLiveData<Event<ViewIntent>> viewIntentEvent = new MediatorLiveData<>();
     private final MutableLiveData<Event<String>> downloadFailure = new MutableLiveData<>();
 
-    protected AbstractAttachmentViewModel(@NonNull @NotNull Application application) {
+    protected AbstractAttachmentViewModel(@NonNull Application application) {
         super(application);
     }
 
@@ -55,7 +54,7 @@ public abstract class AbstractAttachmentViewModel extends AndroidViewModel {
                     }
 
                     @Override
-                    public void onFailure(@NotNull Throwable throwable) {
+                    public void onFailure(@NonNull Throwable throwable) {
                         if (throwable instanceof BlobStorage.InvalidCacheException) {
                             queueDownload(emailId, attachment);
                         } else {

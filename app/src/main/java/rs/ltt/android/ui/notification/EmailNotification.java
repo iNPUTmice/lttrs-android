@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.service.notification.StatusBarNotification;
+import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
@@ -18,7 +19,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rs.ltt.android.R;
@@ -389,7 +389,7 @@ public class EmailNotification extends AbstractNotification {
             return new Tag(accountId, emailId);
         }
 
-        @NotNull
+        @NonNull
         @Override
         public String toString() {
             return String.format(Locale.US, "%d-%s", accountId, emailId);

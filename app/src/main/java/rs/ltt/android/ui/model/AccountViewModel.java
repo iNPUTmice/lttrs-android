@@ -2,6 +2,7 @@ package rs.ltt.android.ui.model;
 
 import android.app.Application;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -12,8 +13,6 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 import java.util.Objects;
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.jetbrains.annotations.NotNull;
 import rs.ltt.android.entity.AccountName;
 import rs.ltt.android.repository.MainRepository;
 import rs.ltt.android.util.Event;
@@ -52,7 +51,7 @@ public class AccountViewModel extends AndroidViewModel {
                     }
 
                     @Override
-                    public void onFailure(@NotNull Throwable throwable) {
+                    public void onFailure(@NonNull Throwable throwable) {
                         // display warning
                         enabled.postValue(false);
                     }

@@ -19,7 +19,6 @@ import java.io.InputStream;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rs.ltt.android.cache.BlobStorage;
@@ -46,8 +45,7 @@ public class BlobUploadWorker extends AbstractMuaWorker implements Progress {
     private int currentlyShownProgress = Integer.MIN_VALUE;
     private ListenableFuture<Upload> uploadFuture;
 
-    public BlobUploadWorker(
-            @NonNull @NotNull Context context, @NonNull @NotNull WorkerParameters workerParams) {
+    public BlobUploadWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
         final Data data = workerParams.getInputData();
         final UUID uuid =
@@ -87,7 +85,6 @@ public class BlobUploadWorker extends AbstractMuaWorker implements Progress {
     }
 
     @NonNull
-    @NotNull
     @Override
     public Result doWork() {
         // begin to display notification even if we don’t run as ForegroundService on Android 12

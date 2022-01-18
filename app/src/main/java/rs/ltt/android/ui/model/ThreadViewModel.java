@@ -45,7 +45,6 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rs.ltt.android.cache.BlobStorage;
@@ -122,7 +121,7 @@ public class ThreadViewModel extends AbstractAttachmentViewModel {
                     }
 
                     @Override
-                    public void onFailure(@NotNull Throwable t) {}
+                    public void onFailure(@NonNull Throwable t) {}
                 },
                 MoreExecutors.directExecutor());
 
@@ -327,7 +326,7 @@ public class ThreadViewModel extends AbstractAttachmentViewModel {
                     }
 
                     @Override
-                    public void onFailure(@NotNull Throwable throwable) {
+                    public void onFailure(@NonNull Throwable throwable) {
                         if (throwable instanceof CachedAttachment.InvalidCacheException) {
                             downloadAndStoreAttachment(attachment, uri);
                         } else {

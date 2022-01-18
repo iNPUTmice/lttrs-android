@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import okhttp3.Call;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rs.ltt.android.cache.BlobStorage;
@@ -57,8 +56,7 @@ public class BlobDownloadWorker extends AbstractMuaWorker {
     private ListenableFuture<?> cancelableFuture;
     private int currentlyShownProgress = Integer.MIN_VALUE;
 
-    public BlobDownloadWorker(
-            @NonNull @NotNull Context context, @NonNull @NotNull WorkerParameters workerParams) {
+    public BlobDownloadWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
         final Data data = workerParams.getInputData();
         this.emailId = data.getString(EMAIL_ID_KEY);
@@ -90,7 +88,6 @@ public class BlobDownloadWorker extends AbstractMuaWorker {
     }
 
     @NonNull
-    @NotNull
     @Override
     public Result doWork() {
         final Downloadable downloadable;

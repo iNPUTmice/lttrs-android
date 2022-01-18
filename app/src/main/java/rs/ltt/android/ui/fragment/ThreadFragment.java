@@ -36,7 +36,6 @@ import com.google.common.util.concurrent.MoreExecutors;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rs.ltt.android.LttrsNavigationDirections;
@@ -239,7 +238,7 @@ public class ThreadFragment extends AbstractLttrsFragment
         if (threadViewModel.jumpedToFirstUnread.compareAndSet(false, true)) {
             Futures.addCallback(
                     threadViewModel.expandedPositions,
-                    new FutureCallback<List<ExpandedPosition>>() {
+                    new FutureCallback<>() {
                         @Override
                         public void onSuccess(final List<ExpandedPosition> expandedPositions) {
                             threadAdapter.expand(expandedPositions);
@@ -252,7 +251,7 @@ public class ThreadFragment extends AbstractLttrsFragment
                         }
 
                         @Override
-                        public void onFailure(@NotNull Throwable t) {
+                        public void onFailure(@NonNull Throwable t) {
                             LOGGER.error("Unable to calculate expanded positions", t);
                             submitList(fullEmails);
                         }

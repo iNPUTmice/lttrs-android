@@ -5,7 +5,6 @@ import androidx.annotation.NonNull;
 import androidx.work.Data;
 import androidx.work.WorkerParameters;
 import java.util.concurrent.ExecutionException;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rs.ltt.android.entity.MailboxWithRoleAndName;
@@ -17,8 +16,7 @@ public class EmptyTrashWorker extends AbstractMuaWorker {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EmptyTrashWorker.class);
 
-    EmptyTrashWorker(
-            @NonNull @NotNull Context context, @NonNull @NotNull WorkerParameters workerParams) {
+    EmptyTrashWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
     }
 
@@ -27,7 +25,6 @@ public class EmptyTrashWorker extends AbstractMuaWorker {
     }
 
     @NonNull
-    @NotNull
     @Override
     public Result doWork() {
         final Mua mua = getMua();

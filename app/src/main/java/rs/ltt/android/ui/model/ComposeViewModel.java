@@ -44,7 +44,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rs.ltt.android.MuaPool;
@@ -577,7 +576,7 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
                     }
 
                     @Override
-                    public void onFailure(@NotNull final Throwable throwable) {
+                    public void onFailure(@NonNull final Throwable throwable) {
                         if (throwable instanceof CombinedAttachmentSizeExceedsLimitException) {
                             CombinedAttachmentSizeExceedsLimitException exception =
                                     (CombinedAttachmentSizeExceedsLimitException) throwable;

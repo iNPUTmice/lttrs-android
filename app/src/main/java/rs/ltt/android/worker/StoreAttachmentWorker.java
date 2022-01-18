@@ -12,7 +12,6 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Objects;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,8 +23,7 @@ public class StoreAttachmentWorker extends Worker {
     private final File file;
     private final Uri target;
 
-    public StoreAttachmentWorker(
-            @NonNull @NotNull Context context, @NonNull @NotNull WorkerParameters workerParams) {
+    public StoreAttachmentWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
         final Data data = workerParams.getInputData();
         this.file = new File(Objects.requireNonNull(data.getString(FILE_KEY)));
@@ -44,7 +42,6 @@ public class StoreAttachmentWorker extends Worker {
     }
 
     @NonNull
-    @NotNull
     @Override
     public Result doWork() {
         LOGGER.info("copy {} to {}", file.getAbsolutePath(), target);
