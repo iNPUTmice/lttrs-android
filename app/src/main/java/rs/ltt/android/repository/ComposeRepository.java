@@ -22,6 +22,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.work.ExistingWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
+import androidx.work.OutOfQuotaPolicy;
 import androidx.work.WorkContinuation;
 import androidx.work.WorkManager;
 import com.google.common.collect.ImmutableList;
@@ -200,6 +201,7 @@ public class ComposeRepository extends AbstractRepository {
             uploadWorker.add(
                     new OneTimeWorkRequest.Builder(BlobUploadWorker.class)
                             .setConstraints(CONNECTED_CONSTRAINT)
+                            .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
                             .setInputData(BlobUploadWorker.data(accountId, attachment))
                             .build());
         }

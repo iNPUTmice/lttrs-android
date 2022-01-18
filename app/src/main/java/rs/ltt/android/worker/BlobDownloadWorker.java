@@ -1,5 +1,6 @@
 package rs.ltt.android.worker;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.net.Uri;
@@ -9,7 +10,9 @@ import androidx.work.ForegroundInfo;
 import androidx.work.WorkInfo;
 import androidx.work.WorkerParameters;
 import com.google.common.base.Preconditions;
+import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.MoreExecutors;
 import com.google.common.util.concurrent.RateLimiter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -49,10 +52,10 @@ public class BlobDownloadWorker extends AbstractMuaWorker {
     private final String blobId;
     private final NotificationManager notificationManager;
     private final RateLimiter notificationRateLimiter = RateLimiter.create(1);
-    private DownloadableBlob downloadable;
+    private final ListenableFuture<DownloadableBlob> downloadable;
     private Call call;
     private ListenableFuture<?> cancelableFuture;
-    private int currentlyShownProgress = 0;
+    private int currentlyShownProgress = Integer.MIN_VALUE;
 
     public BlobDownloadWorker(
             @NonNull @NotNull Context context, @NonNull @NotNull WorkerParameters workerParams) {
@@ -61,6 +64,7 @@ public class BlobDownloadWorker extends AbstractMuaWorker {
         this.emailId = data.getString(EMAIL_ID_KEY);
         this.blobId = data.getString(BLOB_ID_KEY);
         this.notificationManager = context.getSystemService(NotificationManager.class);
+        this.downloadable = getDatabase().threadAndEmailDao().getDownloadable(emailId, blobId);
     }
 
     public static Uri getUri(final WorkInfo workInfo) {
@@ -89,33 +93,40 @@ public class BlobDownloadWorker extends AbstractMuaWorker {
     @NotNull
     @Override
     public Result doWork() {
+        final Downloadable downloadable;
+        try {
+            downloadable = this.downloadable.get();
+        } catch (final ExecutionException | InterruptedException e) {
+            return Result.failure();
+        }
         final EmailWithEncryptionStatus encryptionStatus =
                 getDatabase().threadAndEmailDao().getEmailWithEncryptionStatus(emailId);
         if (encryptionStatus == null) {
             LOGGER.error("Unable to download blob {}. E-mail {} does not exist", blobId, emailId);
             return Result.failure();
         }
-        this.downloadable = getDatabase().threadAndEmailDao().getDownloadable(emailId, blobId);
+        // begin to display notification even if we don’t run as ForegroundService on Android 12
+        updateProgress(downloadable, 0, true);
         if (encryptionStatus.getEncryptionStatus() == EncryptionStatus.PLAINTEXT) {
-            return downloadEncryptedBlob(encryptionStatus.encryptedBlobId);
+            return downloadEncryptedBlob(downloadable, encryptionStatus.encryptedBlobId);
         } else {
-            return downloadCleartextBlob();
+            return downloadCleartextBlob(downloadable);
         }
     }
 
-    private Result downloadCleartextBlob() {
+    private Result downloadCleartextBlob(final Downloadable downloadable) {
         final BlobStorage storage = BlobStorage.get(getApplicationContext(), account, blobId);
         final File temporaryFile = storage.temporaryFile;
         final Mua mua = getMua();
         final long rangeStart = temporaryFile.exists() ? temporaryFile.length() : 0;
-        final Long expectedSize = this.downloadable.getSize();
-        setForegroundAsync(getForegroundInfo());
+        final Long expectedSize = downloadable.getSize();
         final ListenableFuture<Download> downloadFuture = mua.download(downloadable, rangeStart);
         this.cancelableFuture = mua.download(downloadable, rangeStart);
         final Download download;
         try {
             download = downloadFuture.get();
         } catch (final ExecutionException e) {
+            // TODO get cause. When cause FailureToResume delete tmp file
             final Throwable cause = e.getCause();
             LOGGER.warn("Unable to execute download request", cause);
             return Result.failure(Failure.of(cause));
@@ -142,38 +153,44 @@ public class BlobDownloadWorker extends AbstractMuaWorker {
                 transmitted += count;
                 outputStream.write(buffer, 0, count);
                 if (download.indeterminate() && expectedSize != null) {
-                    updateProgress(Progress.progress(transmitted, expectedSize), false);
+                    updateProgress(
+                            downloadable, Progress.progress(transmitted, expectedSize), false);
                 } else {
-                    updateProgress(download.progress(transmitted), download.indeterminate());
+                    updateProgress(
+                            downloadable, download.progress(transmitted), download.indeterminate());
                 }
             }
             outputStream.flush();
-        } catch (final Exception e) {
-            // TODO get cause. When cause FailureToResume delete tmp file
+            // There seems to be a minimum display time of sorts. Even for very short running jobs
+            // WorkManager will display the foreground notification for at least some time x.
+            // However if the download finishes earlier the notification would still show
+            // 'downloading'
+            // stuck at 100% (Even though we already have the file and performed a view action)
+            // Therefore we change the notification to 'Download complete' for the remainder of time
+            // x.
+            // For long running download jobs this will effectively not be shown
+            notifyDownloadComplete(downloadable);
+            LOGGER.info("Finished downloading {}", storage.temporaryFile.getAbsolutePath());
+        } catch (final IOException e) {
+            // TODO check if we want to retry
             LOGGER.warn("Unable to download file", e);
-            return Result.failure();
+            return Result.failure(Failure.of(e));
+        } finally {
+            notificationManager.cancel(AttachmentNotification.DOWNLOAD_ID);
         }
 
-        // There seems to be a minimum display time of sorts. Even for very short running jobs
-        // WorkManager will display the foreground notification for at least some time x.
-        // However if the download finishes earlier the notification would still show 'downloading'
-        // stuck at 100% (Even though we already have the file and performed a view action)
-        // Therefore we change the notification to 'Download complete' for the remainder of time x.
-        // For long running download jobs this will effectively not be shown
-        notifyDownloadComplete();
-        LOGGER.info("Finished downloading {}", storage.temporaryFile.getAbsolutePath());
         if (storage.moveTemporaryToFile()) {
-            return getResult(storage);
+            return getResult(downloadable, storage);
         } else {
             return Result.failure();
         }
     }
 
-    private Result downloadEncryptedBlob(final String encryptedBlobId) {
+    private Result downloadEncryptedBlob(
+            final Downloadable downloadable, final String encryptedBlobId) {
         final Downloadable encryptedBlob = EncryptedBodyPart.getDownloadable(encryptedBlobId);
         final AutocryptPlugin autocryptPlugin = getMua().getPlugin(AutocryptPlugin.class);
         final Map<String, BlobStorage> blobIdStorageMap = new HashMap<>();
-        setForegroundAsync(getForegroundInfo());
         final ListenableFuture<Email> plaintextEmailFuture =
                 autocryptPlugin.downloadAndDecrypt(
                         encryptedBlob,
@@ -217,18 +234,20 @@ public class BlobDownloadWorker extends AbstractMuaWorker {
                         blobIdStorageMap.keySet());
                 return Result.failure();
             }
-            notifyDownloadComplete();
-            return getResult(storage);
+            notifyDownloadComplete(downloadable);
+            return getResult(downloadable, storage);
         } catch (final ExecutionException e) {
             final Throwable cause = e.getCause();
             LOGGER.error("Could not decrypt email", cause);
             return Result.failure();
         } catch (final InterruptedException e) {
             return Result.retry();
+        } finally {
+            notificationManager.cancel(AttachmentNotification.DOWNLOAD_ID);
         }
     }
 
-    private Result getResult(final BlobStorage storage) {
+    private Result getResult(final Downloadable downloadable, final BlobStorage storage) {
         final Uri uri =
                 BlobStorage.getFileProviderUri(
                         getApplicationContext(), storage.file, downloadable.getName());
@@ -256,36 +275,38 @@ public class BlobDownloadWorker extends AbstractMuaWorker {
         }
     }
 
-    private ForegroundInfo getForegroundInfo() {
-        final DownloadableBlob downloadable =
-                Preconditions.checkNotNull(
-                        this.downloadable,
-                        "getForegroundInfo can only be called after setting downloadable");
-        return new ForegroundInfo(
-                AttachmentNotification.DOWNLOAD_ID,
-                AttachmentNotification.downloading(
-                        getApplicationContext(), getId(), downloadable, 0, true));
+    @NonNull
+    @Override
+    public ListenableFuture<ForegroundInfo> getForegroundInfoAsync() {
+        return Futures.transform(
+                downloadable,
+                downloadable -> {
+                    final Notification notification;
+                    if (downloadable == null) {
+                        notification =
+                                AttachmentNotification.emailNotCached(getApplicationContext());
+                    } else {
+                        notification =
+                                AttachmentNotification.downloading(
+                                        getApplicationContext(), getId(), downloadable, 0, true);
+                    }
+                    return new ForegroundInfo(AttachmentNotification.DOWNLOAD_ID, notification);
+                },
+                MoreExecutors.directExecutor());
     }
 
-    private void notifyDownloadComplete() {
-        final DownloadableBlob downloadable =
-                Preconditions.checkNotNull(
-                        this.downloadable,
-                        "getForegroundInfo can only be called after setting downloadable");
+    private void notifyDownloadComplete(final Downloadable downloadable) {
         notificationManager.notify(
                 AttachmentNotification.DOWNLOAD_ID,
                 AttachmentNotification.downloaded(getApplicationContext(), downloadable));
     }
 
-    private void updateProgress(final int progress, final boolean indeterminate) {
+    private void updateProgress(
+            final Downloadable downloadable, final int progress, final boolean indeterminate) {
         if (currentlyShownProgress == progress) {
             return;
         }
         if (notificationRateLimiter.tryAcquire()) {
-            final DownloadableBlob downloadable =
-                    Preconditions.checkNotNull(
-                            this.downloadable,
-                            "getForegroundInfo can only be called after setting downloadable");
             notificationManager.notify(
                     AttachmentNotification.DOWNLOAD_ID,
                     AttachmentNotification.downloading(

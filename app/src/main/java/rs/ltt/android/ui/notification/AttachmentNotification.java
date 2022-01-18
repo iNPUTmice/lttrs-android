@@ -80,6 +80,8 @@ public class AttachmentNotification {
             notificationBuilder.setProgress(100, progress, false);
             notificationBuilder.setSubText(String.format(Locale.US, "%d%%", progress));
         }
+        notificationBuilder.setPriority(NotificationCompat.PRIORITY_HIGH);
+        notificationBuilder.setOngoing(true);
         notificationBuilder.setShowWhen(false);
         notificationBuilder.addAction(cancelAction);
         return notificationBuilder;
@@ -91,6 +93,16 @@ public class AttachmentNotification {
         notificationBuilder.setContentTitle(context.getString(R.string.download_complete));
         notificationBuilder.setContentText(downloadable.getName());
         notificationBuilder.setSmallIcon(R.drawable.ic_baseline_download_done_24);
+        notificationBuilder.setShowWhen(false);
+        return notificationBuilder.build();
+    }
+
+    public static Notification emailNotCached(final Context context) {
+        final NotificationCompat.Builder notificationBuilder =
+                new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID);
+        notificationBuilder.setContentTitle(context.getString(R.string.attachment_download_failed));
+        notificationBuilder.setContentText(context.getString(R.string.email_not_cached));
+        notificationBuilder.setSmallIcon(R.drawable.ic_baseline_error_24);
         notificationBuilder.setShowWhen(false);
         return notificationBuilder.build();
     }

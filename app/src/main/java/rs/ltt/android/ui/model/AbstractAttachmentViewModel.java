@@ -10,6 +10,7 @@ import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.work.ExistingWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
+import androidx.work.OutOfQuotaPolicy;
 import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 import com.google.common.base.Preconditions;
@@ -74,6 +75,7 @@ public abstract class AbstractAttachmentViewModel extends AndroidViewModel {
                         .setInputData(
                                 BlobDownloadWorker.data(
                                         getAccountIdOrThrow(), emailId, attachment.getBlobId()))
+                        .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
                         .build();
         workManager.enqueueUniqueWork(
                 BlobDownloadWorker.uniqueName(), ExistingWorkPolicy.APPEND_OR_REPLACE, workRequest);

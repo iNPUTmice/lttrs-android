@@ -219,7 +219,8 @@ public abstract class ThreadAndEmailDao extends AbstractEntityDao {
     @Query(
             "select blobId,type,name,size from email_body_part where emailId=:emailId and"
                     + " blobId=:blobId")
-    public abstract DownloadableBlob getDownloadable(String emailId, String blobId);
+    public abstract ListenableFuture<DownloadableBlob> getDownloadable(
+            String emailId, String blobId);
 
     @Transaction
     @Query(

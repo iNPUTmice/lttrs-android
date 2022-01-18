@@ -9,6 +9,7 @@ import androidx.work.WorkerParameters;
 import com.google.common.base.Strings;
 import com.google.common.io.ByteStreams;
 import com.google.common.net.MediaType;
+import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.RateLimiter;
 import java.io.File;
@@ -26,7 +27,6 @@ import rs.ltt.android.cache.LocalAttachment;
 import rs.ltt.android.ui.notification.AttachmentNotification;
 import rs.ltt.jmap.client.blob.LegacyFileUpload;
 import rs.ltt.jmap.client.blob.Progress;
-import rs.ltt.jmap.client.blob.Uploadable;
 import rs.ltt.jmap.common.entity.Attachment;
 import rs.ltt.jmap.common.entity.EmailBodyPart;
 import rs.ltt.jmap.common.entity.Upload;
@@ -43,7 +43,7 @@ public class BlobUploadWorker extends AbstractMuaWorker implements Progress {
     private final NotificationManager notificationManager;
     private final RateLimiter notificationRateLimiter = RateLimiter.create(1);
     private final LocalAttachment localAttachment;
-    private int currentlyShownProgress = 0;
+    private int currentlyShownProgress = Integer.MIN_VALUE;
     private ListenableFuture<Upload> uploadFuture;
 
     public BlobUploadWorker(
@@ -90,8 +90,9 @@ public class BlobUploadWorker extends AbstractMuaWorker implements Progress {
     @NotNull
     @Override
     public Result doWork() {
+        // begin to display notification even if we don’t run as ForegroundService on Android 12
+        this.onProgress(0);
         final File file = LocalAttachment.asFile(getApplicationContext(), localAttachment);
-        setForegroundAsync(getForegroundInfo());
         final Mua mua = getMua();
         try (final LegacyFileUpload fileUpload =
                 LegacyFileUpload.of(file, localAttachment.getMediaType())) {
@@ -115,6 +116,8 @@ public class BlobUploadWorker extends AbstractMuaWorker implements Progress {
         } catch (final Exception e) {
             LOGGER.info("Failure uploading blob", e);
             return Result.failure(Failure.of(e));
+        } finally {
+            notificationManager.cancel(AttachmentNotification.UPLOAD_ID);
         }
     }
 
@@ -146,15 +149,18 @@ public class BlobUploadWorker extends AbstractMuaWorker implements Progress {
         }
     }
 
-    private ForegroundInfo getForegroundInfo() {
-        return new ForegroundInfo(
-                AttachmentNotification.UPLOAD_ID,
-                AttachmentNotification.uploading(
-                        getApplicationContext(),
-                        getId(),
-                        Strings.nullToEmpty(localAttachment.getName()),
-                        0,
-                        true));
+    @NonNull
+    @Override
+    public ListenableFuture<ForegroundInfo> getForegroundInfoAsync() {
+        return Futures.immediateFuture(
+                new ForegroundInfo(
+                        AttachmentNotification.UPLOAD_ID,
+                        AttachmentNotification.uploading(
+                                getApplicationContext(),
+                                getId(),
+                                Strings.nullToEmpty(localAttachment.getName()),
+                                0,
+                                true)));
     }
 
     private void notifyUploadComplete() {
@@ -189,34 +195,6 @@ public class BlobUploadWorker extends AbstractMuaWorker implements Progress {
             if (this.uploadFuture.cancel(true)) {
                 LOGGER.info("Cancelled upload future");
             }
-        }
-    }
-
-    private static class LocalAttachmentUpload implements Uploadable {
-
-        private final InputStream inputStream;
-        private final MediaType mediaType;
-        private final long contentLength;
-
-        private LocalAttachmentUpload(InputStream inputStream, LocalAttachment localAttachment) {
-            this.inputStream = inputStream;
-            this.mediaType = localAttachment.getMediaType();
-            this.contentLength = localAttachment.getSize();
-        }
-
-        @Override
-        public InputStream getInputStream() {
-            return inputStream;
-        }
-
-        @Override
-        public MediaType getMediaType() {
-            return mediaType;
-        }
-
-        @Override
-        public long getContentLength() {
-            return contentLength;
         }
     }
 }

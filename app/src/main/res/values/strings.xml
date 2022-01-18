@@ -148,6 +148,8 @@
     <string name="empty">Empty</string>
     <string name="show_account_selector">Show account selector</string>
     <string name="hide_account_selector">Hide account selector</string>
+    <string name="attachment_download_failed">Could not download attachment</string>
+    <string name="email_not_cached">The e-mail containing this attachment is not cached.</string>
     <string name="attachment_download_failed_status_code_x">Could not download attachment. (HTTP status-code %d)</string>
     <string name="encryption_options">Encryption options</string>
     <string name="cleartext">Cleartext</string>

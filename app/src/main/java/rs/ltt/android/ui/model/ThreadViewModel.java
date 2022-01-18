@@ -30,6 +30,7 @@ import androidx.paging.PagedList;
 import androidx.work.Data;
 import androidx.work.ExistingWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
+import androidx.work.OutOfQuotaPolicy;
 import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 import com.google.common.collect.ImmutableList;
@@ -356,6 +357,7 @@ public class ThreadViewModel extends AbstractAttachmentViewModel {
                                         accountId,
                                         attachmentReference.emailId,
                                         attachmentReference.blobId))
+                        .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
                         .build();
         final OneTimeWorkRequest storeWorkRequest =
                 new OneTimeWorkRequest.Builder(StoreAttachmentWorker.class)
