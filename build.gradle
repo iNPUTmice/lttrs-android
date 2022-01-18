@@ -1,7 +1,7 @@
 buildscript {
 
     ext {
-        appcompatVersion = "1.4.0"
+        appcompatVersion = "1.4.1"
         lifecycleVersion = "2.2.0"
         navVersion = "2.3.5"
         pagingVersion = "2.1.2"

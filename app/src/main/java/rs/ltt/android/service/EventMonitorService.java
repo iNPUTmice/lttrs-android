@@ -25,7 +25,6 @@ import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rs.ltt.android.BuildConfig;
@@ -59,7 +58,11 @@ public class EventMonitorService extends LifecycleService {
         final Intent intent = new Intent(context, EventMonitorService.class);
         intent.setAction(ACTION_WATCH_QUERY);
         intent.putExtra(EXTRA_QUERY_INFO, queryInfo);
-        context.startService(intent);
+        try {
+            context.startService(intent);
+        } catch (final IllegalStateException e) {
+            LOGGER.warn("watchQuery() was called from a background thread");
+        }
     }
 
     public static void startMonitoring(final Context context, final Collection<Long> accountIds) {
@@ -68,7 +71,7 @@ public class EventMonitorService extends LifecycleService {
         }
     }
 
-    public static void startMonitoring(final Context context, final long accountId) {
+    private static void startMonitoring(final Context context, final long accountId) {
         final Intent intent = new Intent(context, EventMonitorService.class);
         intent.setAction(ACTION_START_MONITORING);
         intent.putExtra(EXTRA_ACCOUNT_ID, accountId);
@@ -84,7 +87,7 @@ public class EventMonitorService extends LifecycleService {
 
     @Nullable
     @Override
-    public IBinder onBind(@NotNull final Intent intent) {
+    public IBinder onBind(@NonNull final Intent intent) {
         super.onBind(intent);
         return null;
     }
@@ -96,7 +99,7 @@ public class EventMonitorService extends LifecycleService {
                 AppDatabase.getInstance(this).accountDao().getAccounts();
         Futures.addCallback(
                 accounts,
-                new FutureCallback<List<AccountWithCredentials>>() {
+                new FutureCallback<>() {
                     @Override
                     public void onSuccess(final List<AccountWithCredentials> accounts) {
                         onAccountsLoaded(accounts);
@@ -150,7 +153,7 @@ public class EventMonitorService extends LifecycleService {
                 AppDatabase.getInstance(this).accountDao().getAccountFuture(accountId);
         Futures.addCallback(
                 accountFuture,
-                new FutureCallback<AccountWithCredentials>() {
+                new FutureCallback<>() {
                     @Override
                     public void onSuccess(final AccountWithCredentials account) {
                         if (account == null) {
@@ -160,7 +163,7 @@ public class EventMonitorService extends LifecycleService {
                     }
 
                     @Override
-                    public void onFailure(@NotNull final Throwable throwable) {
+                    public void onFailure(@NonNull final Throwable throwable) {
                         LOGGER.warn("Unable to load account from database", throwable);
                     }
                 },
@@ -198,7 +201,7 @@ public class EventMonitorService extends LifecycleService {
         }
         Futures.addCallback(
                 pushServiceFuture,
-                new FutureCallback<PushService>() {
+                new FutureCallback<>() {
 
                     @Override
                     public void onSuccess(@Nullable PushService pushService) {

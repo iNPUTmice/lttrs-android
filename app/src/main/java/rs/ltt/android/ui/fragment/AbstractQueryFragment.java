@@ -25,10 +25,9 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.appcompat.view.ActionMode;
 import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.DefaultLifecycleObserver;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.OnLifecycleEvent;
 import androidx.paging.PagedList;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
@@ -67,7 +66,6 @@ public abstract class AbstractQueryFragment extends AbstractLttrsFragment
                 ThreadOverviewAdapter.OnThreadClicked,
                 QueryItemTouchHelper.OnQueryItemSwipe,
                 ActionMode.Callback,
-                LifecycleObserver,
                 OnSelectionToggled,
                 ThreadOverviewAdapter.OnEmptyMailboxActionClicked {
 
@@ -108,7 +106,15 @@ public abstract class AbstractQueryFragment extends AbstractLttrsFragment
 
         binding.threadList.addOnScrollListener(ExtendedFabSizeChanger.of(binding.compose));
 
-        getViewLifecycleOwner().getLifecycle().addObserver(this);
+        getViewLifecycleOwner()
+                .getLifecycle()
+                .addObserver(
+                        new DefaultLifecycleObserver() {
+                            @Override
+                            public void onStart(@NonNull LifecycleOwner owner) {
+                                startPushService();
+                            }
+                        });
 
         binding.swipeToRefresh.setColorSchemeColors(
                 MaterialColors.getColor(binding.swipeToRefresh, R.attr.colorAccent));
@@ -242,8 +248,7 @@ public abstract class AbstractQueryFragment extends AbstractLttrsFragment
         }
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    public void startPushService() {
+    private void startPushService() {
         EventMonitorService.watchQuery(requireContext(), getQueryViewModel().getQueryInfo());
         LOGGER.warn("startPushService({})", getClass().getSimpleName());
     }
