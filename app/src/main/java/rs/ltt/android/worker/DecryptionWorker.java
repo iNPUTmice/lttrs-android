@@ -15,7 +15,7 @@ import org.pgpainless.exception.MissingDecryptionMethodException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rs.ltt.android.cache.BlobStorage;
-import rs.ltt.android.entity.EmailWithEncryptionStatus;
+import rs.ltt.android.entity.EncryptedEmail;
 import rs.ltt.android.entity.EncryptionStatus;
 import rs.ltt.autocrypt.jmap.AutocryptPlugin;
 import rs.ltt.autocrypt.jmap.EncryptedBodyPart;
@@ -40,8 +40,8 @@ public class DecryptionWorker extends AbstractMuaWorker {
     @NonNull
     @Override
     public Result doWork() {
-        final EmailWithEncryptionStatus originalEmail =
-                getDatabase().threadAndEmailDao().getEmailWithEncryptionStatus(this.emailId);
+        final EncryptedEmail originalEmail =
+                getDatabase().threadAndEmailDao().getEncryptedEmail(this.emailId);
         if (originalEmail == null || originalEmail.isCleartext()) {
             LOGGER.error("E-mail {} is not an encrypted email", this.emailId);
             return Result.failure();
@@ -50,7 +50,8 @@ public class DecryptionWorker extends AbstractMuaWorker {
                 EncryptedBodyPart.getDownloadable(originalEmail.encryptedBlobId);
         final AutocryptPlugin autocryptPlugin = getMua().getPlugin(AutocryptPlugin.class);
         final ListenableFuture<Email> plaintextEmailFuture =
-                autocryptPlugin.downloadAndDecrypt(encryptedBlob, this::storeAttachment);
+                autocryptPlugin.downloadAndDecrypt(
+                        encryptedBlob, this::storeAttachment, originalEmail);
         try {
             final Email plaintextEmail =
                     plaintextEmailFuture.get().toBuilder().id(originalEmail.getId()).build();

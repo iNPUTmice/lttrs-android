@@ -1,8 +1,8 @@
 package rs.ltt.android.entity;
 
+import androidx.annotation.NonNull;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
-import com.google.common.base.Strings;
 import rs.ltt.jmap.common.entity.Identifiable;
 
 public class EmailWithEncryptionStatus implements Identifiable {
@@ -22,11 +22,6 @@ public class EmailWithEncryptionStatus implements Identifiable {
         return this.id;
     }
 
-    public boolean isCleartext() {
-        return Strings.isNullOrEmpty(encryptedBlobId)
-                || getEncryptionStatus() == EncryptionStatus.CLEARTEXT;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -42,6 +37,7 @@ public class EmailWithEncryptionStatus implements Identifiable {
         return Objects.hashCode(id, encryptionStatus, encryptedBlobId);
     }
 
+    @NonNull
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)

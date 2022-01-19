@@ -7,8 +7,7 @@ import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.Collection;
 import java.util.List;
-import rs.ltt.jmap.common.entity.IdentifiableEmailWithAddresses;
-import rs.ltt.jmap.common.entity.IdentifiableEmailWithTime;
+import rs.ltt.jmap.common.entity.IdentifiableEmailWithAddressesAndTime;
 import rs.ltt.jmap.mua.util.EmailUtil;
 
 /**
@@ -16,7 +15,7 @@ import rs.ltt.jmap.mua.util.EmailUtil;
  * (used in the Thread view) and EmailPreviewWithMailboxes (Used by the ThreadOverviewItem)
  */
 public abstract class EmailPreview extends EmailWithKeywords
-        implements IdentifiableEmailWithAddresses, IdentifiableEmailWithTime {
+        implements IdentifiableEmailWithAddressesAndTime {
 
     public String threadId;
     public Instant receivedAt;
