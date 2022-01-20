@@ -37,9 +37,9 @@ public abstract class AutocryptDao {
                 && effectiveDate.isBefore(currentState.autocryptTimestamp)) {
             return false;
         }
-        if (currentState == null || currentState.lastSeen == null) {
+        if (currentState == null) {
             insert(PeerStateEntity.fresh(address, effectiveDate));
-        } else if (effectiveDate.isAfter(currentState.lastSeen)) {
+        } else if (currentState.lastSeen == null || effectiveDate.isAfter(currentState.lastSeen)) {
             if (updatePeerStateLastSeen(address, effectiveDate) != 1) {
                 throw new IllegalStateException(
                         "Unable to autocrypt_peer.lastSeen. Peer does not exist.");
@@ -52,7 +52,7 @@ public abstract class AutocryptDao {
     protected abstract int updatePeerStateLastSeen(
             final String address, final Instant effectiveDate);
 
-    @Query("select lastSeen,autocryptTimestamp from autocrypt_peer where address=:address")
+    @Query("select address,lastSeen,autocryptTimestamp from autocrypt_peer where address=:address")
     protected abstract LastSeenAutocryptTimestamp getLastSeenAutocryptTimestamp(
             final String address);
 
@@ -79,8 +79,43 @@ public abstract class AutocryptDao {
         }
     }
 
+    @Query("select address,gossipTimestamp from autocrypt_peer where address=:address")
+    protected abstract GossipTimestamp getGossipTimestamp(final String address);
+
+    @Query(
+            "update autocrypt_peer set gossipTimestamp=:effectiveDate, gossipKey=:publicKey where"
+                    + " address=:address")
+    protected abstract int updateGossipKey(
+            final String address, final Instant effectiveDate, final byte[] publicKey);
+
+    @Transaction
+    public boolean updateGossip(
+            final String address, final Instant effectiveDate, final byte[] publicKey) {
+        final GossipTimestamp gossipTimestamp = getGossipTimestamp(address);
+        if (gossipTimestamp != null
+                && gossipTimestamp.gossipTimestamp != null
+                && effectiveDate.isBefore(gossipTimestamp.gossipTimestamp)) {
+            return false;
+        }
+        if (gossipTimestamp == null) {
+            insert(PeerStateEntity.freshGossip(address, effectiveDate, publicKey));
+        } else {
+            if (updateGossipKey(address, effectiveDate, publicKey) != 1) {
+                throw new IllegalStateException(
+                        "Unable to update autocrypt_peer. Peer does not exist");
+            }
+        }
+        return true;
+    }
+
     public static class LastSeenAutocryptTimestamp {
+        public String address;
         public Instant lastSeen;
         public Instant autocryptTimestamp;
+    }
+
+    public static class GossipTimestamp {
+        public String address;
+        public Instant gossipTimestamp;
     }
 }

@@ -27,6 +27,17 @@ public class PeerStateEntity implements PeerState {
         return peerStateEntity;
     }
 
+    public static PeerStateEntity freshGossip(
+            final String address, Instant effectiveDate, final byte[] gossipKey) {
+        final PeerStateEntity peerStateEntity = new PeerStateEntity();
+        peerStateEntity.address = address;
+        peerStateEntity.lastSeen = Instant.EPOCH;
+        peerStateEntity.autocryptTimestamp = Instant.EPOCH;
+        peerStateEntity.gossipTimestamp = effectiveDate;
+        peerStateEntity.gossipKey = gossipKey;
+        return peerStateEntity;
+    }
+
     @Override
     public Instant getLastSeen() {
         return this.lastSeen;

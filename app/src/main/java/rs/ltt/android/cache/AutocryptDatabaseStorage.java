@@ -56,8 +56,8 @@ public class AutocryptDatabaseStorage implements Storage {
 
     @Override
     public boolean updateGossip(
-            final String address, final Instant effectiveData, final byte[] publicKey) {
-        return false;
+            final String address, final Instant effectiveDate, final byte[] publicKey) {
+        return this.database.autocryptDao().updateGossip(address, effectiveDate, publicKey);
     }
 
     @Override

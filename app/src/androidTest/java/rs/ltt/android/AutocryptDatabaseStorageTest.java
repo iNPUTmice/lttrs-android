@@ -2,10 +2,15 @@ package rs.ltt.android;
 
 import androidx.room.Room;
 import androidx.test.core.app.ApplicationProvider;
+import androidx.test.espresso.core.internal.deps.guava.collect.ImmutableList;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
+import org.bouncycastle.openpgp.PGPPublicKeyRing;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -15,7 +20,9 @@ import rs.ltt.android.cache.AutocryptDatabaseStorage;
 import rs.ltt.android.database.LttrsDatabase;
 import rs.ltt.autocrypt.client.Decision;
 import rs.ltt.autocrypt.client.header.EncryptionPreference;
+import rs.ltt.autocrypt.client.state.GossipUpdate;
 import rs.ltt.autocrypt.client.state.PeerStateManager;
+import rs.ltt.autocrypt.client.state.PreRecommendation;
 import rs.ltt.autocrypt.client.storage.PeerState;
 import rs.ltt.autocrypt.client.storage.Storage;
 
@@ -40,6 +47,10 @@ public class AutocryptDatabaseStorageTest {
                 + "XyAEGRYKAAYFAmGsoPQACgkQEEFKC1yIxmuFRAD+OHKaq12Jj+OJokJiF8CDIe1NrpwdpOTYyN47+V3U\n"
                 + "+5QBAMl07HdfYIXR5r5SaEQOgqLqtu5JnXL5xGv26DcGOXkNAAoJENm2M22zC8F9IiEA/RlT+sIaGbwq\n"
                 + "KsAFDSqpRX5VR1/QzyfafS9qWfL93qyMAQCDwKyemcwRo2m7/dJ8b+oHQAFnhmp/nZyXeBB1xdCACA==";
+
+    private static final String GOSSIP_UPDATE =
+            "addr=test@example.com;"
+                + " keydata=mDMEYekUDxYJKwYBBAHaRw8BAQdAy90O4ktCtK4L1ItmCA41HMBpGLxH4tJ6v5a/UTzp+pO0DTxiZXRhQGx0dC5ycz6IjwQTFgoAQQUCYekUDwmQORFGsYjt9LQWoQTgBxnxVt7Z+TtCIYI5EUaxiO30tAKeAQKbAwWWAgMBAASLCQgHBZUKCQgLApkBAACz4QEA8RbL034q6M8DnCPf1qNiGWr/s1qCVTPM7Z8A6Cra5WcBAJzMJFL+8XhEDFDn4V0DAHrfvw0JYKRuxydAF4t81Y0DuDgEYekUDxIKKwYBBAGXVQEFAQEHQOW5L58UXQDloq736qVTi9kyPUW4Xxy9eOc5hCr0DzBkAwEIB4h1BBgWCgAdBQJh6RQPAp4BApsMBZYCAwEABIsJCAcFlQoJCAsACgkQORFGsYjt9LTlZQEAtc8ynGu9nr9N9X58Ry9+AMBdUYtUxb+QRISiJS4Q8t4BAO4fJQ7u6vNYgOVDctyuATCatXyDRwzhf132yzHGtTkB";
 
     private LttrsDatabase lttrsDatabase;
     private Storage storage;
@@ -139,6 +150,84 @@ public class AutocryptDatabaseStorageTest {
         Assert.assertEquals(
                 Decision.DISABLE,
                 peerStateManager.getPreliminaryRecommendation("nobody@example.com").getDecision());
+    }
+
+    @Test
+    public void processGossipAndAutocrypt() {
+        final PeerStateManager peerStateManager = new PeerStateManager(this.storage);
+        final List<GossipUpdate> updates =
+                GossipUpdate.builder(EFFECTIVE_DATE_INITIAL).add(EXAMPLE_HEADER).build();
+        peerStateManager.processGossipHeader(ImmutableList.of("test@example.com"), updates);
+        Assert.assertEquals(
+                Decision.DISCOURAGE,
+                peerStateManager.getPreliminaryRecommendation("test@example.com").getDecision());
+
+        peerStateManager.processAutocryptHeaders(
+                "test@example.com", EFFECTIVE_DATE_INITIAL, Collections.singleton(EXAMPLE_HEADER));
+
+        Assert.assertEquals(
+                Decision.AVAILABLE,
+                peerStateManager.getPreliminaryRecommendation("test@example.com").getDecision());
+    }
+
+    @Test
+    public void processAutocryptAndGossip() {
+        final PeerStateManager peerStateManager = new PeerStateManager(this.storage);
+        final List<GossipUpdate> updates =
+                GossipUpdate.builder(EFFECTIVE_DATE_INITIAL).add(EXAMPLE_HEADER).build();
+
+        peerStateManager.processAutocryptHeaders(
+                "test@example.com", EFFECTIVE_DATE_INITIAL, Collections.singleton(EXAMPLE_HEADER));
+
+        Assert.assertEquals(
+                Decision.AVAILABLE,
+                peerStateManager.getPreliminaryRecommendation("test@example.com").getDecision());
+
+        peerStateManager.processGossipHeader(ImmutableList.of("test@example.com"), updates);
+
+        Assert.assertEquals(
+                Decision.AVAILABLE,
+                peerStateManager.getPreliminaryRecommendation("test@example.com").getDecision());
+    }
+
+    @Test
+    public void updateGossip() throws IOException {
+        final PeerStateManager peerStateManager = new PeerStateManager(this.storage);
+        final List<GossipUpdate> updates =
+                GossipUpdate.builder(EFFECTIVE_DATE_INITIAL).add(EXAMPLE_HEADER).build();
+
+        peerStateManager.processGossipHeader(ImmutableList.of("test@example.com"), updates);
+
+        final PreRecommendation preRecommendation =
+                peerStateManager.getPreliminaryRecommendation("test@example.com");
+
+        final PGPPublicKeyRing firstGossipKey = preRecommendation.getPublicKey();
+
+        Assert.assertEquals(Decision.DISCOURAGE, preRecommendation.getDecision());
+
+        // gossip key gets updated to the key referenced by the GOSSIP_UPDATE
+        final List<GossipUpdate> moreUpdates =
+                GossipUpdate.builder(EFFECTIVE_DATE_UPDATE).add(GOSSIP_UPDATE).build();
+        peerStateManager.processGossipHeader(ImmutableList.of("test@example.com"), moreUpdates);
+
+        final PreRecommendation secondPreRecommendation =
+                peerStateManager.getPreliminaryRecommendation("test@example.com");
+
+        final PGPPublicKeyRing secondGossipKey = secondPreRecommendation.getPublicKey();
+
+        // check that first key and second key don't match. this means the gossip got updated
+        Assert.assertFalse(
+                Arrays.equals(firstGossipKey.getEncoded(), secondGossipKey.getEncoded()));
+
+        // try to revert back to the old key. but this should fail due to the earlier timestamp
+        peerStateManager.processGossipHeader(
+                ImmutableList.of("test@example.com"),
+                GossipUpdate.builder(EFFECTIVE_DATE_EARLIER_UPDATE).add(EXAMPLE_HEADER).build());
+
+        final PGPPublicKeyRing thirdGossipKey =
+                peerStateManager.getPreliminaryRecommendation("test@example.com").getPublicKey();
+
+        Assert.assertArrayEquals(secondGossipKey.getEncoded(), thirdGossipKey.getEncoded());
     }
 
     @After
