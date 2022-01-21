@@ -1,0 +1,6 @@
+Nome in codice: Ignition
+
+* Aggiunto il supporto per Autocrypt (email crittografate)
+* Aggiunto il supporto per la condivisione di file con Ltt.rs (apre la schermata bozza)
+
+Questo progetto ha ricevuto finanziamenti dal programma di ricerca e innovazione Horizon 2020 dell'Unione europea nell'ambito del progetto NGI-POINTER finanziato nell'ambito della convenzione di sovvenzione n. 871528.
