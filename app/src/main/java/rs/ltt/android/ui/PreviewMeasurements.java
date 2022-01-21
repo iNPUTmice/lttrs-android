@@ -69,10 +69,11 @@ public class PreviewMeasurements {
                 return new PreviewMeasurements(
                         sampleSize, widthDifference / 2, 0, outWidth, height);
             } else {
-                final int heightDifference = inHeight - optimalHeight;
+                final int height = Math.max(optimalHeight, outHeight);
+                final int heightDifference = inHeight - height;
                 final int width = Math.min(optimalWidth, inWidth);
                 return new PreviewMeasurements(
-                        sampleSize, 0, heightDifference / 2, width, optimalHeight);
+                        sampleSize, 0, heightDifference / 2, width, height);
             }
         } else {
             final int height = Math.max(optimalHeight, outHeight);

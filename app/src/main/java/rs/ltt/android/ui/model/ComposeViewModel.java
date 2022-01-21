@@ -402,6 +402,11 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
         return null;
     }
 
+    public Long getCachedAttachmentsAccountId() {
+        final IdentifiableWithOwner identifiableWithOwner = getEmail();
+        return identifiableWithOwner == null ? null : identifiableWithOwner.getAccountId();
+    }
+
     private boolean isReplyToEncrypted() {
         if (composeAction != ComposeAction.REPLY && composeAction != ComposeAction.REPLY_ALL) {
             return false;

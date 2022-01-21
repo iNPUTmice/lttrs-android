@@ -125,6 +125,7 @@ public class PreviewMeasurementsTest {
                 PreviewMeasurements.of(4032, 3024, 726, 264);
         Assert.assertEquals(4, previewMeasurements.sampleSize);
         Assert.assertEquals(0, previewMeasurements.x);
+        Assert.assertEquals(194, previewMeasurements.y);
         Assert.assertEquals(1008, previewMeasurements.width);
     }
 
@@ -136,5 +137,14 @@ public class PreviewMeasurementsTest {
         Assert.assertEquals(20, previewMeasurements.height);
         Assert.assertEquals(726, previewMeasurements.width);
         System.out.println(previewMeasurements);
+    }
+
+    @Test
+    public void realWorldScenarioThree() {
+        final PreviewMeasurements previewMeasurements = PreviewMeasurements.of(640, 422, 726, 264);
+        Assert.assertEquals(1, previewMeasurements.sampleSize);
+        Assert.assertEquals(264, previewMeasurements.height);
+        Assert.assertEquals(640, previewMeasurements.width);
+        Assert.assertEquals(79, previewMeasurements.y);
     }
 }

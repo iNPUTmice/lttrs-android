@@ -6,6 +6,8 @@ import android.graphics.BitmapFactory;
 import android.view.View;
 import android.widget.ImageView;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.google.common.base.MoreObjects;
 import com.google.common.net.MediaType;
 import com.google.common.util.concurrent.FutureCallback;
@@ -121,7 +123,7 @@ public class AttachmentPreview {
 
     public static AttachmentPreview of(
             @NonNull final ImageView imageView,
-            final long accountId,
+            @Nullable final Long accountId,
             @NonNull final Attachment attachment) {
         final MediaType mediaType = attachment.getMediaType();
         final ListenableFuture<CachedAttachment> cachedAttachmentFuture;

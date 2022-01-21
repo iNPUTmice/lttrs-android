@@ -48,8 +48,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rs.ltt.android.LttrsApplication;
 import rs.ltt.android.R;
+import rs.ltt.android.cache.AttachmentPreview;
 import rs.ltt.android.databinding.ActivityComposeBinding;
 import rs.ltt.android.databinding.ItemAttachmentBinding;
+import rs.ltt.android.entity.EmailWithReferences;
 import rs.ltt.android.ui.ChipDrawableSpan;
 import rs.ltt.android.ui.ComposeAction;
 import rs.ltt.android.ui.MaterialAlertDialogs;
@@ -248,18 +250,19 @@ public class ComposeActivity extends AppCompatActivity {
     }
 
     private void onAttachmentsUpdated(final List<? extends Attachment> attachments) {
+        final Long accountId = composeViewModel.getCachedAttachmentsAccountId();
         if (attachments.isEmpty()) {
             binding.attachments.setVisibility(View.GONE);
         } else {
             binding.attachments.setVisibility(View.VISIBLE);
             binding.attachments.removeAllViews();
             for (final Attachment attachment : attachments) {
-                binding.attachments.addView(renderAttachment(attachment));
+                binding.attachments.addView(renderAttachment(attachment, accountId));
             }
         }
     }
 
-    private View renderAttachment(final Attachment attachment) {
+    private View renderAttachment(final Attachment attachment, final Long accountId) {
         final ItemAttachmentBinding attachmentBinding =
                 ItemAttachmentBinding.inflate(getLayoutInflater(), binding.attachments, false);
         attachmentBinding.setAttachment(attachment);
@@ -269,6 +272,8 @@ public class ComposeActivity extends AppCompatActivity {
                 attachmentBinding.action.getContext().getString(R.string.remove_attachment));
         ToolTips.apply(attachmentBinding.action);
         attachmentBinding.getRoot().setOnClickListener((v -> composeViewModel.open(attachment)));
+
+        AttachmentPreview.of(attachmentBinding.preview,accountId, attachment).load();
         return attachmentBinding.getRoot();
     }
 
