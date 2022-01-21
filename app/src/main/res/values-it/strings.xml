@@ -199,4 +199,6 @@
         <item quantity="one">Impossibile decifrare %d e-mail</item>
         <item quantity="other">Impossibile decifrare %d e-mail</item>
     </plurals>
+    <string name="attachment_download_failed">Impossibile scaricare l\'allegato</string>
+    <string name="email_not_cached">L\'email contenente questo allegato non è memorizzata nella cache.</string>
 </resources>
