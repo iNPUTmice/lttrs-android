@@ -23,6 +23,7 @@
     <dimen name="mailbox_width_land">192dp</dimen>
     <dimen name="mailbox_height_land">48dp</dimen>
     <dimen name="attachment_width">264dp</dimen>
+    <dimen name="attachment_preview_height">96dp</dimen>
     <dimen name="attachment_corner_radius">2dp</dimen>
     <dimen name="setup_code_margin">8sp</dimen>
     <dimen name="setup_code_entry_text_size">22sp</dimen>

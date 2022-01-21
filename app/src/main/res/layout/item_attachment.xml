@@ -13,49 +13,60 @@
     <FrameLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
         android:background="@drawable/background_attachment"
         android:elevation="2dp"
-        android:foreground="@drawable/foreground_attachment"
-        android:layout_marginBottom="16dp">
+        android:foreground="@drawable/foreground_attachment">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="@dimen/attachment_width"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <ImageView
-                android:id="@+id/icon_media_type"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:layout_margin="12dp"
-                android:src="@{attachment.mediaType}"
-                app:tint="?attr/colorPrimary"
-                tools:src="@drawable/ic_archive_black_24dp" />
+                android:visibility="gone"
+                android:id="@+id/preview"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/attachment_preview_height" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_toStartOf="@+id/action"
-                android:layout_toEndOf="@+id/icon_media_type"
-                android:ellipsize="middle"
-                android:maxLines="1"
-                android:text="@{attachment.name}"
-                android:textAppearance="?textAppearanceBodyMedium"
-                tools:text="this_is_my_archive_test.zip" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-            <ImageButton
-                android:id="@+id/action"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:padding="12dp"
-                app:tint="?attr/colorControlNormal"
-                android:src="@drawable/ic_baseline_save_alt_24" />
+                <ImageView
+                    android:id="@+id/icon_media_type"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_margin="12dp"
+                    android:src="@{attachment.mediaType}"
+                    app:tint="?attr/colorPrimary"
+                    tools:src="@drawable/ic_archive_black_24dp" />
 
-        </RelativeLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toStartOf="@+id/action"
+                    android:layout_toEndOf="@+id/icon_media_type"
+                    android:ellipsize="middle"
+                    android:maxLines="1"
+                    android:text="@{attachment.name}"
+                    android:textAppearance="?textAppearanceBodyMedium"
+                    tools:text="this_is_my_archive_test.zip" />
+
+                <ImageButton
+                    android:id="@+id/action"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:padding="12dp"
+                    android:src="@drawable/ic_baseline_save_alt_24"
+                    app:tint="?attr/colorControlNormal" />
+            </RelativeLayout>
+        </LinearLayout>
     </FrameLayout>
 </layout>
