@@ -158,6 +158,15 @@ public class LocalAttachment implements Attachment {
                         context, asFile(context, attachment), attachment.getName()));
     }
 
+    public CachedAttachment asCachedAttachment(final Context context) {
+        return new CachedAttachment() {
+            @Override
+            public File getFile() {
+                return asFile(context, LocalAttachment.this);
+            }
+        };
+    }
+
     public static class CacheWriteException extends RuntimeException {
         private CacheWriteException(final IOException e) {
             super("Could not cache local attachment", e);

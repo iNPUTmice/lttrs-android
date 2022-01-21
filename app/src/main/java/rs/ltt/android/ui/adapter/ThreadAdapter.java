@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import rs.ltt.android.R;
+import rs.ltt.android.cache.AttachmentPreview;
 import rs.ltt.android.databinding.ItemAttachmentBinding;
 import rs.ltt.android.databinding.ItemEmailBinding;
 import rs.ltt.android.databinding.ItemEmailHeaderBinding;
@@ -77,6 +78,7 @@ public class ThreadAdapter
 
     private static final int ITEM_VIEW_TYPE = 1;
     private static final int HEADER_VIEW_TYPE = 2;
+    private final long accountId;
     private final Set<String> expandedItems;
     // we need this rather inconvenient setup instead of simply using PagedListAdapter to allow for
     // a header view. If we were to use the PagedListAdapter the item update callbacks wouldn't
@@ -97,7 +99,8 @@ public class ThreadAdapter
     private OnAttachmentActionTriggered onAttachmentActionTriggered;
     private OnEncryptionActionTriggered onEncryptionActionTriggered;
 
-    public ThreadAdapter(Set<String> expandedItems) {
+    public ThreadAdapter(final long accountId, final Set<String> expandedItems) {
+        this.accountId = accountId;
         this.expandedItems = expandedItems;
     }
 
@@ -269,6 +272,7 @@ public class ThreadAdapter
                                         onAttachmentActionTriggered,
                                         "Attachment Action listener not set")
                                 .onActionTriggered(attachment.emailId, attachment));
+        AttachmentPreview.of(binding.preview, accountId, attachment).load();
         binding.action.setContentDescription(
                 binding.action.getContext().getString(R.string.download_attachment));
         ToolTips.apply(binding.action);

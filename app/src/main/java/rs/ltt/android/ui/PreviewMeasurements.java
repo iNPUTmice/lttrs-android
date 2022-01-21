@@ -1,5 +1,6 @@
 package rs.ltt.android.ui;
 
+import androidx.annotation.NonNull;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 
@@ -11,6 +12,7 @@ public class PreviewMeasurements {
     public final int width;
     public final int height;
 
+    @NonNull
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
@@ -58,6 +60,7 @@ public class PreviewMeasurements {
         final float targetAspectRatio = (float) outWidth / outHeight;
         final boolean isInLandscape = inWidth >= inHeight;
         final int optimalHeight = Math.round(inWidth / targetAspectRatio);
+        final int optimalWidth = Math.round(inHeight * targetAspectRatio);
         if (isInLandscape) {
             final float inAspectRatio = (float) inWidth / inHeight;
             if (inAspectRatio > targetAspectRatio) {
@@ -66,9 +69,10 @@ public class PreviewMeasurements {
                 return new PreviewMeasurements(
                         sampleSize, widthDifference / 2, 0, outWidth, height);
             } else {
-                final int heightDifference = optimalHeight - outHeight;
+                final int heightDifference = inHeight - optimalHeight;
+                final int width = Math.min(optimalWidth, inWidth);
                 return new PreviewMeasurements(
-                        sampleSize, 0, heightDifference / 2, inWidth, optimalHeight);
+                        sampleSize, 0, heightDifference / 2, width, optimalHeight);
             }
         } else {
             final int height = Math.max(optimalHeight, outHeight);

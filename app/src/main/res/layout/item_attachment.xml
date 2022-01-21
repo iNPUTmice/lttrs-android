@@ -27,6 +27,7 @@
                 android:visibility="gone"
                 android:id="@+id/preview"
                 android:layout_width="match_parent"
+                android:scaleType="centerInside"
                 android:layout_height="@dimen/attachment_preview_height" />
 
             <RelativeLayout

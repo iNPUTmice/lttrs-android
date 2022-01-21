@@ -62,6 +62,11 @@ public class BlobStorage extends CachedAttachment {
     }
 
     public static ListenableFuture<CachedAttachment> getIfCached(
+            final Context context, final long accountId, final Attachment attachment) {
+        return getIfCached(context, accountId, attachment.getBlobId());
+    }
+
+    public static ListenableFuture<CachedAttachment> getIfCached(
             final Context context, final long accountId, final String blobId) {
         final ListenableFuture<BlobStorage> blobFuture =
                 Futures.submit(() -> get(context, accountId, blobId), IO_EXECUTOR);

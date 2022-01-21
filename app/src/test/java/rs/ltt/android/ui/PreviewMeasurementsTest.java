@@ -21,7 +21,7 @@ public class PreviewMeasurementsTest {
         final PreviewMeasurements previewMeasurements = PreviewMeasurements.of(2048, 1536, 160, 90);
         Assert.assertEquals(8, previewMeasurements.sampleSize);
         Assert.assertEquals(0, previewMeasurements.x);
-        Assert.assertEquals(27, previewMeasurements.y);
+        Assert.assertEquals(24, previewMeasurements.y);
         Assert.assertEquals(256, previewMeasurements.width);
         Assert.assertEquals(144, previewMeasurements.height);
     }
@@ -32,7 +32,7 @@ public class PreviewMeasurementsTest {
                 PreviewMeasurements.of(2048, 1536, 1600, 900);
         Assert.assertEquals(1, previewMeasurements.sampleSize);
         Assert.assertEquals(0, previewMeasurements.x);
-        Assert.assertEquals(126, previewMeasurements.y);
+        Assert.assertEquals(192, previewMeasurements.y);
         Assert.assertEquals(2048, previewMeasurements.width);
         Assert.assertEquals(1152, previewMeasurements.height);
     }
@@ -40,6 +40,7 @@ public class PreviewMeasurementsTest {
     @Test
     public void landscape2048x1PreviewOf169Large() {
         final PreviewMeasurements previewMeasurements = PreviewMeasurements.of(2048, 1, 1600, 900);
+
         Assert.assertEquals(1, previewMeasurements.sampleSize);
 
         Assert.assertEquals(224, previewMeasurements.x);
@@ -51,10 +52,9 @@ public class PreviewMeasurementsTest {
     @Test
     public void square2048x2048PreviewOf169() {
         final PreviewMeasurements previewMeasurements = PreviewMeasurements.of(2048, 2048, 160, 90);
-
         Assert.assertEquals(8, previewMeasurements.sampleSize);
         Assert.assertEquals(0, previewMeasurements.x);
-        Assert.assertEquals(27, previewMeasurements.y);
+        Assert.assertEquals(56, previewMeasurements.y);
         Assert.assertEquals(256, previewMeasurements.width);
         Assert.assertEquals(144, previewMeasurements.height);
     }
@@ -72,7 +72,6 @@ public class PreviewMeasurementsTest {
     @Test
     public void portrait480x90PreviewOf169() {
         final PreviewMeasurements previewMeasurements = PreviewMeasurements.of(480, 90, 160, 90);
-        System.out.println(previewMeasurements);
         Assert.assertEquals(1, previewMeasurements.sampleSize);
         Assert.assertEquals(160, previewMeasurements.x);
         Assert.assertEquals(0, previewMeasurements.y);
@@ -81,8 +80,9 @@ public class PreviewMeasurementsTest {
     }
 
     @Test
-    public void portrait480x80PreviewOf169() {
+    public void landscape480x80PreviewOf169() {
         final PreviewMeasurements previewMeasurements = PreviewMeasurements.of(480, 80, 160, 90);
+        System.out.println(previewMeasurements);
         Assert.assertEquals(1, previewMeasurements.sampleSize);
         Assert.assertEquals(160, previewMeasurements.x);
         Assert.assertEquals(0, previewMeasurements.y);
@@ -117,6 +117,24 @@ public class PreviewMeasurementsTest {
         Assert.assertEquals(0, previewMeasurements.y);
         Assert.assertEquals(1, previewMeasurements.width);
         Assert.assertEquals(2, previewMeasurements.height);
+    }
+
+    @Test
+    public void realWorldScenarioOne() {
+        final PreviewMeasurements previewMeasurements =
+                PreviewMeasurements.of(4032, 3024, 726, 264);
+        Assert.assertEquals(4, previewMeasurements.sampleSize);
+        Assert.assertEquals(0, previewMeasurements.x);
+        Assert.assertEquals(1008, previewMeasurements.width);
+    }
+
+    @Test
+    public void realWordScenarioTwo() {
+        final PreviewMeasurements previewMeasurements = PreviewMeasurements.of(2000, 20, 726, 264);
+        Assert.assertEquals(1, previewMeasurements.sampleSize);
+        Assert.assertEquals(0, previewMeasurements.y);
+        Assert.assertEquals(20, previewMeasurements.height);
+        Assert.assertEquals(726, previewMeasurements.width);
         System.out.println(previewMeasurements);
     }
 }

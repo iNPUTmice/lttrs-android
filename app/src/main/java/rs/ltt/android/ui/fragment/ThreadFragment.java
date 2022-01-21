@@ -121,7 +121,9 @@ public class ThreadFragment extends AbstractLttrsFragment
         // do we want a custom layout manager that does *NOT* remember scroll position when more
         // than one item is expanded. with variable sized items this might be annoying
 
-        threadAdapter = new ThreadAdapter(threadViewModel.expandedItems);
+        threadAdapter =
+                new ThreadAdapter(
+                        getLttrsViewModel().getAccountId(), threadViewModel.expandedItems);
         threadAdapter.setSubjectWithImportance(
                 SubjectWithImportance.of(
                         threadId,
