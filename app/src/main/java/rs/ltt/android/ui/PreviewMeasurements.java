@@ -64,16 +64,15 @@ public class PreviewMeasurements {
         if (isInLandscape) {
             final float inAspectRatio = (float) inWidth / inHeight;
             if (inAspectRatio > targetAspectRatio) {
-                final int widthDifference = inWidth - outWidth;
+                final int width = Math.max(optimalWidth, outWidth);
+                final int widthDifference = inWidth - width;
                 final int height = Math.min(optimalHeight, inHeight);
-                return new PreviewMeasurements(
-                        sampleSize, widthDifference / 2, 0, outWidth, height);
+                return new PreviewMeasurements(sampleSize, widthDifference / 2, 0, width, height);
             } else {
                 final int height = Math.max(optimalHeight, outHeight);
                 final int heightDifference = inHeight - height;
                 final int width = Math.min(optimalWidth, inWidth);
-                return new PreviewMeasurements(
-                        sampleSize, 0, heightDifference / 2, width, height);
+                return new PreviewMeasurements(sampleSize, 0, heightDifference / 2, width, height);
             }
         } else {
             final int height = Math.max(optimalHeight, outHeight);

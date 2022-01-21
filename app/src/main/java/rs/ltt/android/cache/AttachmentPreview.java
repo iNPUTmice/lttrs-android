@@ -7,14 +7,16 @@ import android.view.View;
 import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import com.google.common.base.MoreObjects;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.google.common.net.MediaType;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.io.File;
 import java.lang.ref.WeakReference;
+import java.util.Locale;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import org.slf4j.Logger;
@@ -31,22 +33,31 @@ public class AttachmentPreview {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AttachmentPreview.class);
 
+    private static final Cache<String, Bitmap> BITMAP_CACHE =
+            CacheBuilder.newBuilder().maximumSize(32).build();
+
     private final WeakReference<ImageView> imageViewWeakReference;
-    final MediaType mediaType;
-    final ListenableFuture<CachedAttachment> cachedAttachmentFuture;
+    private final Long accountId;
+    private final Attachment attachment;
 
     private AttachmentPreview(
-            final ImageView imageView,
-            final MediaType mediaType,
-            final ListenableFuture<CachedAttachment> attachment) {
+            @NonNull final ImageView imageView,
+            @Nullable final Long accountId,
+            @NonNull final Attachment attachment) {
         this.imageViewWeakReference = new WeakReference<>(imageView);
-        this.mediaType = mediaType;
-        this.cachedAttachmentFuture = attachment;
+        this.accountId = accountId;
+        this.attachment = attachment;
     }
 
     public void load() {
-        final ListenableFuture<Bitmap> previewFuture =
-                Futures.transform(cachedAttachmentFuture, this::getPreview, PREVIEW_EXECUTOR);
+        final ListenableFuture<Bitmap> previewFuture;
+        final Bitmap preview = BITMAP_CACHE.getIfPresent(key(accountId, attachment));
+        if (preview != null) {
+            previewFuture = Futures.immediateFuture(preview);
+        } else {
+            previewFuture =
+                    Futures.transform(getCachedAttachment(), this::getPreview, PREVIEW_EXECUTOR);
+        }
         Futures.addCallback(
                 previewFuture,
                 new FutureCallback<>() {
@@ -73,11 +84,27 @@ public class AttachmentPreview {
                 MainThreadExecutor.getInstance());
     }
 
-    private Bitmap getPreview(final CachedAttachment cachedAttachment) {
-        if (mediaType.is(MediaType.ANY_IMAGE_TYPE)) {
-            return getImagePreview(cachedAttachment.getFile());
+    private static String key(final Long accountId, final Attachment attachment) {
+        if (attachment instanceof LocalAttachment) {
+            return ((LocalAttachment) attachment).getUuid().toString();
+        } else if (accountId == null) {
+            return attachment.getBlobId();
+        } else {
+            return String.format(Locale.US, "%d-%s", accountId, attachment.getBlobId());
         }
-        throw new IllegalStateException();
+    }
+
+    private Bitmap getPreview(final CachedAttachment cachedAttachment) {
+        final MediaType mediaType = getMediaType();
+        final Bitmap preview;
+        if (mediaType.is(MediaType.ANY_IMAGE_TYPE)) {
+            preview = getImagePreview(cachedAttachment.getFile());
+        } else {
+            throw new IllegalStateException();
+        }
+        final String cacheKey = key(accountId, attachment);
+        BITMAP_CACHE.put(cacheKey, preview);
+        return preview;
     }
 
     private Bitmap getImagePreview(final File file) {
@@ -125,37 +152,48 @@ public class AttachmentPreview {
             @NonNull final ImageView imageView,
             @Nullable final Long accountId,
             @NonNull final Attachment attachment) {
-        final MediaType mediaType = attachment.getMediaType();
-        final ListenableFuture<CachedAttachment> cachedAttachmentFuture;
-        if (mediaType == null) {
-            cachedAttachmentFuture =
-                    Futures.immediateFailedFuture(
-                            new IllegalArgumentException(
-                                    "Could not generate preview for unknown content type"));
-        } else if (mediaType.is(MediaType.ANY_IMAGE_TYPE)) {
-            if (attachment instanceof EmailBodyPartEntity) {
-                cachedAttachmentFuture =
-                        BlobStorage.getIfCached(imageView.getContext(), accountId, attachment);
-            } else if (attachment instanceof LocalAttachment) {
-                final LocalAttachment localAttachment = (LocalAttachment) attachment;
-                cachedAttachmentFuture =
-                        Futures.immediateFuture(
-                                localAttachment.asCachedAttachment(imageView.getContext()));
-            } else {
-                throw new IllegalStateException(
-                        String.format(
-                                "Could not generate preview from %s",
-                                attachment.getClass().getName()));
-            }
-        } else {
-            cachedAttachmentFuture =
-                    Futures.immediateFailedFuture(
-                            new IllegalArgumentException(
-                                    String.format(
-                                            "Could not generate preview for %s",
-                                            mediaType.toString())));
+        return new AttachmentPreview(imageView, accountId, attachment);
+    }
+
+    private ListenableFuture<CachedAttachment> getCachedAttachment() {
+        final ImageView imageView = this.imageViewWeakReference.get();
+        if (imageView == null) {
+            return Futures.immediateFailedFuture(
+                    new IllegalStateException("ImageView has been garbage collected"));
         }
-        return new AttachmentPreview(imageView, mediaType, cachedAttachmentFuture);
+        final Context context = imageView.getContext();
+        final MediaType mediaType = getMediaType();
+        if (mediaType.is(MediaType.ANY_IMAGE_TYPE)) {
+            return getCachedAttachment(context);
+        } else {
+            return Futures.immediateFailedFuture(
+                    new IllegalArgumentException(
+                            String.format(
+                                    "Could not generate preview for %s", mediaType.toString())));
+        }
+    }
+
+    private ListenableFuture<CachedAttachment> getCachedAttachment(final Context context) {
+        if (attachment instanceof EmailBodyPartEntity) {
+            if (accountId == null) {
+                return Futures.immediateFailedFuture(
+                        new IllegalArgumentException("Could not generate preview with accountId"));
+            } else {
+                return BlobStorage.getIfCached(context, accountId, attachment);
+            }
+        } else if (attachment instanceof LocalAttachment) {
+            final LocalAttachment localAttachment = (LocalAttachment) attachment;
+            return Futures.immediateFuture(localAttachment.asCachedAttachment(context));
+        } else {
+            throw new IllegalStateException(
+                    String.format(
+                            "Could not generate preview from %s", attachment.getClass().getName()));
+        }
+    }
+
+    private @NonNull MediaType getMediaType() {
+        final MediaType mediaType = attachment.getMediaType();
+        return mediaType == null ? MediaType.OCTET_STREAM : mediaType;
     }
 
     private static class Size {
@@ -167,6 +205,7 @@ public class AttachmentPreview {
             this.height = height;
         }
 
+        @NonNull
         @Override
         public String toString() {
             return MoreObjects.toStringHelper(this)

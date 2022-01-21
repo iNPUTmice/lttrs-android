@@ -51,7 +51,6 @@ import rs.ltt.android.R;
 import rs.ltt.android.cache.AttachmentPreview;
 import rs.ltt.android.databinding.ActivityComposeBinding;
 import rs.ltt.android.databinding.ItemAttachmentBinding;
-import rs.ltt.android.entity.EmailWithReferences;
 import rs.ltt.android.ui.ChipDrawableSpan;
 import rs.ltt.android.ui.ComposeAction;
 import rs.ltt.android.ui.MaterialAlertDialogs;
@@ -273,7 +272,7 @@ public class ComposeActivity extends AppCompatActivity {
         ToolTips.apply(attachmentBinding.action);
         attachmentBinding.getRoot().setOnClickListener((v -> composeViewModel.open(attachment)));
 
-        AttachmentPreview.of(attachmentBinding.preview,accountId, attachment).load();
+        AttachmentPreview.of(attachmentBinding.preview, accountId, attachment).load();
         return attachmentBinding.getRoot();
     }
 

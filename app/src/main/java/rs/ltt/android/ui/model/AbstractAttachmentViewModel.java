@@ -85,6 +85,7 @@ public abstract class AbstractAttachmentViewModel extends AndroidViewModel {
 
     private void waitForDownload(
             final LiveData<WorkInfo> workInfoLiveData, final MediaType mediaType) {
+        // TODO notify emailId of downloaded attachment
         viewIntentEvent.addSource(
                 workInfoLiveData,
                 workInfo -> {
