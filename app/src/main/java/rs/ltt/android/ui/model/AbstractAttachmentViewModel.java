@@ -96,7 +96,7 @@ public abstract class AbstractAttachmentViewModel extends AndroidViewModel {
                 });
     }
 
-    private void processFinishedDownload(final WorkInfo workInfo, final MediaType mediaType) {
+    protected void processFinishedDownload(final WorkInfo workInfo, final MediaType mediaType) {
         final WorkInfo.State state = workInfo.getState();
         if (state == WorkInfo.State.SUCCEEDED) {
             final Uri uri = BlobDownloadWorker.getUri(workInfo);

@@ -162,7 +162,7 @@ public class AttachmentPreview {
         }
     }
 
-    private static boolean shouldAttemptPreviewGeneration(final MediaType mediaType) {
+    public static boolean shouldAttemptPreviewGeneration(final MediaType mediaType) {
         return mediaType.is(MediaType.ANY_IMAGE_TYPE)
                 || mediaType.is(MediaType.ANY_VIDEO_TYPE)
                 || mediaType.is(MediaType.PDF);

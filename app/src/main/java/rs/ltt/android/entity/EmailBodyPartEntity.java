@@ -50,6 +50,7 @@ public class EmailBodyPartEntity implements Attachment, Comparable<EmailBodyPart
     public String charset;
     public String disposition;
     public String cid;
+    public int downloadCount;
 
     public static List<EmailBodyPartEntity> of(Email email) {
         final ImmutableList.Builder<EmailBodyPartEntity> builder = new ImmutableList.Builder<>();
@@ -82,6 +83,7 @@ public class EmailBodyPartEntity implements Attachment, Comparable<EmailBodyPart
         entity.charset = emailBodyPart.getCharset();
         entity.disposition = emailBodyPart.getDisposition();
         entity.cid = emailBodyPart.getCid();
+        entity.downloadCount = 0;
         return entity;
     }
 
@@ -138,7 +140,8 @@ public class EmailBodyPartEntity implements Attachment, Comparable<EmailBodyPart
                 && Objects.equal(type, that.type)
                 && Objects.equal(charset, that.charset)
                 && Objects.equal(disposition, that.disposition)
-                && Objects.equal(cid, that.cid);
+                && Objects.equal(cid, that.cid)
+                && Objects.equal(downloadCount, that.downloadCount);
     }
 
     @Override
@@ -154,6 +157,7 @@ public class EmailBodyPartEntity implements Attachment, Comparable<EmailBodyPart
                 type,
                 charset,
                 disposition,
-                cid);
+                cid,
+                downloadCount);
     }
 }

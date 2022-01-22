@@ -293,6 +293,9 @@ public class BlobDownloadWorker extends AbstractMuaWorker {
     }
 
     private void notifyDownloadComplete(final Downloadable downloadable) {
+        getDatabase()
+                .threadAndEmailDao()
+                .incrementEmailBodyPartDownloadCount(this.emailId, downloadable.getBlobId());
         notificationManager.notify(
                 AttachmentNotification.DOWNLOAD_ID,
                 AttachmentNotification.downloaded(getApplicationContext(), downloadable));

@@ -26,6 +26,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.work.WorkInfo;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
@@ -33,6 +34,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
+import com.google.common.net.MediaType;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -55,6 +57,7 @@ import rs.ltt.android.entity.IdentifiableWithOwner;
 import rs.ltt.android.entity.IdentityWithNameAndEmail;
 import rs.ltt.android.repository.ComposeRepository;
 import rs.ltt.android.ui.ComposeAction;
+import rs.ltt.android.ui.preview.AttachmentPreview;
 import rs.ltt.android.util.CharSequences;
 import rs.ltt.android.util.Event;
 import rs.ltt.android.util.FileSizes;
@@ -553,6 +556,14 @@ public class ComposeViewModel extends AbstractAttachmentViewModel {
         final IdentityWithNameAndEmail identity = getIdentity();
         if (identity != null) {
             verifyAttachmentsDoNotExceedLimit(identity.getAccountId(), attachments);
+        }
+    }
+
+    @Override
+    protected void processFinishedDownload(final WorkInfo workInfo, final MediaType mediaType) {
+        super.processFinishedDownload(workInfo, mediaType);
+        if (AttachmentPreview.shouldAttemptPreviewGeneration(mediaType)) {
+            this.attachments.postValue(nullToEmpty(this.attachments.getValue()));
         }
     }
 

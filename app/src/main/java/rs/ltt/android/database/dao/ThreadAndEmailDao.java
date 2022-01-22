@@ -183,6 +183,12 @@ public abstract class ThreadAndEmailDao extends AbstractEntityDao {
     @Insert
     abstract void insertEmailBodyParts(List<EmailBodyPartEntity> entities);
 
+    @Query(
+            "update email_body_part set downloadCount = downloadCount + 1 where emailId=:emailId"
+                    + " and blobId=:blobId")
+    public abstract void incrementEmailBodyPartDownloadCount(
+            final String emailId, final String blobId);
+
     @Query("delete from email_body_part where emailId=:emailId")
     abstract void deleteEmailBodyParts(final String emailId);
 

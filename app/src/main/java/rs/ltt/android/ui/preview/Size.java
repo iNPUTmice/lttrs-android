@@ -1,10 +1,8 @@
 package rs.ltt.android.ui.preview;
 
 import androidx.annotation.NonNull;
-
 import com.google.common.base.MoreObjects;
 import com.google.common.math.IntMath;
-
 import java.math.RoundingMode;
 
 public class Size {
