@@ -1,13 +1,11 @@
-package rs.ltt.android.cache;
+package rs.ltt.android.ui.preview;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.view.View;
 import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import com.google.common.base.MoreObjects;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.Weigher;
@@ -23,8 +21,10 @@ import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rs.ltt.android.R;
+import rs.ltt.android.cache.BlobStorage;
+import rs.ltt.android.cache.CachedAttachment;
+import rs.ltt.android.cache.LocalAttachment;
 import rs.ltt.android.entity.EmailBodyPartEntity;
-import rs.ltt.android.ui.PreviewMeasurements;
 import rs.ltt.android.util.MainThreadExecutor;
 import rs.ltt.jmap.common.entity.Attachment;
 
@@ -110,46 +110,19 @@ public class AttachmentPreview {
         if (cachedAttachment == null) {
             return null;
         }
+        final File file = cachedAttachment.getFile();
         final MediaType mediaType = getMediaType();
+        final Size size = getSize();
         final Bitmap preview;
         if (mediaType.is(MediaType.ANY_IMAGE_TYPE)) {
-            preview = getImagePreview(cachedAttachment.getFile());
+            preview = ImagePreview.getImagePreview(file, mediaType, size);
+        } else if (mediaType.is(MediaType.ANY_VIDEO_TYPE)) {
+            preview = VideoPreview.getVideoPreview(file, mediaType, size);
         } else {
             throw new IllegalStateException();
         }
         final String cacheKey = key(accountId, attachment);
         BITMAP_CACHE.put(cacheKey, preview);
-        return preview;
-    }
-
-    private Bitmap getImagePreview(final File file) {
-        final Size previewSize = getSize();
-        final BitmapFactory.Options calculationOptions = new BitmapFactory.Options();
-        calculationOptions.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(file.getAbsolutePath(), calculationOptions);
-        final int imageWidth = calculationOptions.outWidth;
-        final int imageHeight = calculationOptions.outHeight;
-        final PreviewMeasurements previewMeasurements =
-                PreviewMeasurements.of(
-                        imageWidth, imageHeight, previewSize.width, previewSize.height);
-        LOGGER.debug("original image size " + imageWidth + "x" + imageHeight);
-        LOGGER.debug("preview size: " + previewSize);
-        LOGGER.debug("Using preview measurements {}", previewMeasurements);
-        final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inSampleSize = previewMeasurements.sampleSize;
-        final Bitmap original = BitmapFactory.decodeFile(file.getAbsolutePath(), options);
-        final Bitmap preview =
-                Bitmap.createBitmap(
-                        original,
-                        previewMeasurements.x,
-                        previewMeasurements.y,
-                        previewMeasurements.width,
-                        previewMeasurements.height);
-        LOGGER.info("Preview size {} bytes", preview.getByteCount());
-        if (original != preview) {
-            original.recycle();
-        }
-        // TODO scale down
         return preview;
     }
 
@@ -179,12 +152,16 @@ public class AttachmentPreview {
         }
         final Context context = imageView.getContext();
         final MediaType mediaType = getMediaType();
-        if (mediaType.is(MediaType.ANY_IMAGE_TYPE)) {
+        if (shouldAttemptPreviewGeneration(mediaType)) {
             return getCachedAttachment(context);
         } else {
             LOGGER.debug("Could not generate preview for {}}", mediaType.toString());
             return Futures.immediateFuture(null);
         }
+    }
+
+    private static boolean shouldAttemptPreviewGeneration(final MediaType mediaType) {
+        return mediaType.is(MediaType.ANY_IMAGE_TYPE) || mediaType.is(MediaType.ANY_VIDEO_TYPE);
     }
 
     private ListenableFuture<CachedAttachment> getCachedAttachment(final Context context) {
@@ -208,24 +185,5 @@ public class AttachmentPreview {
     private @NonNull MediaType getMediaType() {
         final MediaType mediaType = attachment.getMediaType();
         return mediaType == null ? MediaType.OCTET_STREAM : mediaType;
-    }
-
-    private static class Size {
-        private final int width;
-        private final int height;
-
-        private Size(int width, int height) {
-            this.width = width;
-            this.height = height;
-        }
-
-        @NonNull
-        @Override
-        public String toString() {
-            return MoreObjects.toStringHelper(this)
-                    .add("width", width)
-                    .add("height", height)
-                    .toString();
-        }
     }
 }

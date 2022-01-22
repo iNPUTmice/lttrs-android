@@ -3,6 +3,7 @@ package rs.ltt.android.ui;
 import androidx.annotation.NonNull;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
+import rs.ltt.android.ui.preview.Size;
 
 public class PreviewMeasurements {
 
@@ -31,6 +32,11 @@ public class PreviewMeasurements {
         this.y = y;
         this.width = width;
         this.height = height;
+    }
+
+    public static PreviewMeasurements of(
+            final int inWidth, final int inHeight, final Size outSize) {
+        return of(inWidth, inHeight, outSize.width, outSize.height);
     }
 
     public static PreviewMeasurements of(

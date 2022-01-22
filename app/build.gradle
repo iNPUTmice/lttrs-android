@@ -100,6 +100,8 @@ dependencies {
 
     implementation "androidx.work:work-runtime:$rootProject.ext.workVersion"
 
+    implementation "androidx.exifinterface:exifinterface:$rootProject.ext.exifInterfaceVersion"
+
 
     //Google
     implementation "com.google.android.material:material:$rootProject.ext.material"
