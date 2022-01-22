@@ -1,0 +1,6 @@
+Codename: Zündung
+
+* Unterstützung für Autocrypt hinzugefügt (verschlüsselte E-Mails)
+* Unterstützung für das Teilen von Dateien mit Ltt.rs hinzugefügt (öffnet den Entwurfsbildschirm)
+
+Dieses Projekt wurde durch das Forschungs- und Innovationsprogramm Horizont 2020 der Europäischen Union im Rahmen des NGI-POINTER-Projekts unter der Finanzhilfevereinbarung Nr. 871528 gefördert.
