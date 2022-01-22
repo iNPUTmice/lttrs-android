@@ -117,7 +117,9 @@ public class AttachmentPreview {
         if (mediaType.is(MediaType.ANY_IMAGE_TYPE)) {
             preview = ImagePreview.getImagePreview(file, mediaType, size);
         } else if (mediaType.is(MediaType.ANY_VIDEO_TYPE)) {
-            preview = VideoPreview.getVideoPreview(file, mediaType, size);
+            preview = VideoPreview.getVideoPreview(file, size);
+        } else if (mediaType.is(MediaType.PDF)) {
+            preview = PdfDocumentPreview.getPdfDocumentPreview(file, size);
         } else {
             throw new IllegalStateException();
         }
@@ -161,7 +163,9 @@ public class AttachmentPreview {
     }
 
     private static boolean shouldAttemptPreviewGeneration(final MediaType mediaType) {
-        return mediaType.is(MediaType.ANY_IMAGE_TYPE) || mediaType.is(MediaType.ANY_VIDEO_TYPE);
+        return mediaType.is(MediaType.ANY_IMAGE_TYPE)
+                || mediaType.is(MediaType.ANY_VIDEO_TYPE)
+                || mediaType.is(MediaType.PDF);
     }
 
     private ListenableFuture<CachedAttachment> getCachedAttachment(final Context context) {
