@@ -76,7 +76,7 @@
     <string name="change_labels">Changer les labels</string>
     <string name="cancel">Annuler</string>
     <string name="confirm">Confirmer</string>
-    <string name="assign_role_detailed_explanation">Ltt.rs a besoin d\'un label (boîte aux lettres) avec le rôle de %1$s pour fonctionner correctement. Si vous ne souhaitez pas utiliser le label appelé %2$s à cette fin, vous pouvez appuyer sur Annuler et utiliser votre ordinateur ou votre client Web pour créer un libellé différent avec le rôle %1$s.</string>
+    <string name="assign_role_detailed_explanation">Ltt.rs a besoin d’un label (boîte aux lettres) avec le rôle de %1$s pour fonctionner correctement. Si vous ne souhaitez pas utiliser le label appelé %2$s à cette fin, vous pouvez appuyer sur Annuler et utiliser votre ordinateur ou votre client Web pour créer un libellé différent avec le rôle %1$s.</string>
     <string name="assign_role_question">Vous avez déjà un label appelé %1$s. Souhaitez-vous lui attribuer le rôle de %2$s\?</string>
     <string name="reassign_role_question">Vous avez déjà un label appelé %1$s avec le rôle de %2$s. Souhaitez-vous lui réaffecter le rôle de %3$s\?</string>
     <string name="assign_role">Assigner le rôle</string>
@@ -93,7 +93,7 @@
 \nContactez votre fournisseur et renseignez-vous sur JMAP et l’URL de connexion JMAP.
 \n
 \nSur un serveur correctement configuré, Ltt.rs découvrira automatiquement l’URL de connexion.</string>
-    <string name="session_resource_help_dialog_title">Qu\'est-ce qu\'une URL de connexion\?</string>
+    <string name="session_resource_help_dialog_title">Qu’est-ce qu’une URL de connexion\?</string>
     <string name="role_name_subscribed">Abonnements</string>
     <string name="role_name_junk">Pourriel</string>
     <string name="role_name_trash">Corbeille</string>
@@ -105,7 +105,7 @@
     <string name="role_name_sent">Envoyés</string>
     <string name="role_name_inbox">Boîte de réception</string>
     <string name="foreground_service">Service de premier plan</string>
-    <string name="foreground_service_notification_text">Ltt.rs continue de fonctionner pour notifier l\'arrivée d\'un courriel</string>
+    <string name="foreground_service_notification_text">Ltt.rs continue de fonctionner pour notifier l’arrivée d’un courriel</string>
     <plurals name="x_new_emails">
         <item quantity="one">%d nouveau courriel</item>
         <item quantity="other">%d nouveaux courriels</item>
@@ -143,4 +143,62 @@
     <string name="could_not_cache_attachment">Impossible de mettre en cache la pièce jointe</string>
     <string name="show_account_selector">Afficher le sélecteur de compte</string>
     <string name="hide_account_selector">Masquer le sélecteur de compte</string>
+    <plurals name="could_not_decrypt_x_emails">
+        <item quantity="one">Impossible de déchiffrer %d courriel</item>
+        <item quantity="other">Impossible de déchiffrer %d courriels</item>
+    </plurals>
+    <string name="encryption_options">Options de chiffrement</string>
+    <string name="encrypted_email">(courriel chiffré)</string>
+    <string name="no_body">(pas de corps)</string>
+    <string name="no_subject">(sans objet)</string>
+    <string name="attachment_download_failed">Impossible de télécharger la pièce jointe</string>
+    <string name="cleartext">Texte en clair</string>
+    <string name="email_not_cached">Le courriel contenant cette pièce jointe n’est pas mis en cache.</string>
+    <string name="encrypted">Chiffré</string>
+    <string name="transfer_secret_key">Transférer la clé secrète</string>
+    <string name="autocrypt_mutual_description">Vous souhaitez recevoir des courriels chiffrés. Le chiffrement de bout en bout sera utilisé par défaut pour tous les contacts qui souhaitent également recevoir des courriels chiffrés.</string>
+    <string name="autocrypt_encryption_preference">Préférence de chiffrement</string>
+    <string name="could_not_configure_autocrypt">Impossible de configurer Autocrypt</string>
+    <string name="encryption_provider_can_not_create_secret_key">Le fournisseur de chiffrement de cet appareil est incapable de créer votre clé secrète.</string>
+    <string name="encryption_is_not_available_for_those_recipients">L’option d’envoi d’un courriel chiffré n’est pas disponible pour ces destinataires.</string>
+    <string name="send_as_cleartext">Envoyer en clair</string>
+    <string name="autocrypt_export_explained_hint_one">Pour transférer votre clé secrète à un autre appareil, Ltt.rs crée un message de configuration. Il contient votre clé secrète protégée par un code de configuration.</string>
+    <string name="autocrypt_export_explained_hint_two">Le message de configuration est un courriel ordinaire étiqueté comme Envoyé. D’autres applications pourront le récupérer à partir de là et importer votre clé secrète.</string>
+    <string name="autocrypt_export_explained_hint_three">Dans l’étape suivante, Ltt.rs créera un code de configuration sécurisé. Vous devrez écrire ce code et le conserver dans un endroit sûr.</string>
+    <string name="autocrypt_export_explained_hint_four">Vous devrez utiliser ce code de configuration sur votre autre appareil pour importer votre clé secrète. Conservez ce code de configuration dans un endroit sûr.</string>
+    <string name="autocrypt_export_explained_hint_done">Le message de configuration a été créé. Vous pouvez maintenant lancer le processus d’importation sur votre autre appareil.</string>
+    <string name="view_email">Voir le courriel</string>
+    <string name="import_secret_key">Importer la clé secrète</string>
+    <string name="skip">Ignorer</string>
+    <string name="enter_your_setup_code">Saisissez le code de configuration pour importer votre clé secrète ou passez cette étape si vous souhaitez que Ltt.rs génère une nouvelle clé secrète sur cet appareil.</string>
+    <string name="wrong_setup_code">Code de configuration erroné. Réessayez!</string>
+    <string name="import_private_key_help_dialog_title">Message de configuration d’Autocrypt détecté</string>
+    <string name="decrypt_email">Déchiffrer le courriel</string>
+    <plurals name="incorrect_secret_key">
+        <item quantity="one">Vous n’avez pas la bonne clé secrète pour déchiffrer %d courriel.</item>
+        <item quantity="other">Vous n’avez pas la bonne clé secrète pour déchiffrer %d courriels.</item>
+    </plurals>
+    <plurals name="could_not_download_x_encrypted_emails">
+        <item quantity="one">Impossible de télécharger %d courriel chiffré</item>
+        <item quantity="other">Impossible de télécharger %d courriels chiffrés</item>
+    </plurals>
+    <string name="done">Terminé</string>
+    <string name="more_options">Plus d’options</string>
+    <string name="edit_draft">Modifier le brouillon</string>
+    <string name="show_helper_dialog">Afficher le dialogue d’aide</string>
+    <string name="download_attachment">Télécharger la pièce jointe</string>
+    <string name="reply_all">Répondre à tous</string>
+    <string name="forward_email">Transférer le courriel</string>
+    <string name="reply">Répondre</string>
+    <string name="remove_attachment">Retirer la pièce jointe</string>
+    <string name="autocrypt_enable_description">Activez la prise en charge du chiffrement de bout en bout. Votre clé publique sera jointe aux courriels sortants. Ceci permet à vos contacts de vous envoyer des courriels chiffrés.</string>
+    <string name="autocrypt_no_preference_description">À la demande. Vous et vos contacts pourrez activer explicitement le chiffrement pour les courriels individuels.</string>
+    <string name="could_not_store_setup_message">Impossible de stocker le message de configuration</string>
+    <string name="import_private_key_help_dialog_message">Ltt.rs a détecté un message de configuration d’Autocrypt créé par l’une des autres applications que vous utilisez. En important la clé secrète de ce message, vous pouvez commencer à utiliser Autocrypt ici dans Ltt.rs aussi!
+\n
+\nVeuillez entrer votre code d’installation.
+\n
+\nSi vous ne vous souvenez pas de votre code d’installation, vous pouvez sauter cette étape et Ltt.rs va générer une nouvelle clé secrète sur cet appareil.</string>
+    <string name="could_not_determine_metadata_of_attachment">Impossible de déterminer le type, la taille et le nom de la pièce jointe que vous essayez d’ajouter.</string>
+    <string name="lttrs_lacks_permissions_to_add_attachment">Ltt.rs n’a pas les autorisations nécessaires pour ajouter cette pièce jointe.</string>
 </resources>
