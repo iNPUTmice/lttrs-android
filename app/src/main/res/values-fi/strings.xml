@@ -124,4 +124,12 @@
     <string name="remove_account_dialog_message">Tämän tilin poistaminen poistaa kaikki sen viestit ja muut siihen liittyvät tiedot laitteesta.</string>
     <string name="remove_account_dialog_title">Poista tili\?</string>
     <string name="end_to_end_encryption">Päästä päähän -salaus</string>
+    <string name="more_options">Lisää vaihtoehtoja</string>
+    <string name="edit_draft">Muokkaa luonnosta</string>
+    <string name="download_attachment">Lataa liitetiedosto</string>
+    <string name="reply_all">Vastaa kaikille</string>
+    <string name="reply">Vastaa</string>
+    <string name="remove_attachment">Poista liitetiedosto</string>
+    <string name="forward_email">Lähetä sähköpostia eteenpäin</string>
+    <string name="could_not_determine_metadata_of_attachment">Lisäämäsi liitteen tyyppiä, kokoa ja nimeä ei voitu määrittää.</string>
 </resources>
