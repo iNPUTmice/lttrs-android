@@ -156,14 +156,14 @@
     <string name="could_not_configure_autocrypt">Autocrypt konnte nicht konfiguriert werden</string>
     <string name="no_body">(Kein Hauptteil)</string>
     <string name="no_subject">(Kein Betreff)</string>
-    <string name="autocrypt_export_explained_hint_one">Um deinen geheimen Schlüssel auf ein anderes Gerät zu übertragen, erstellt Ltt.rs eine Einrichtungsnachricht. Sie enthält deinen geheimen Schlüssel, der durch einen Setup-Code geschützt ist.</string>
+    <string name="autocrypt_export_explained_hint_one">Um deinen geheimen Schlüssel auf ein anderes Gerät zu übertragen, erstellt Ltt.rs eine Einrichtungsnachricht. Sie enthält deinen geheimen Schlüssel, der durch einen Konfigurationscode geschützt ist.</string>
     <string name="autocrypt_export_explained_hint_four">Du brauchst diesen Setup-Code, um deinen geheimen Schlüssel auf deinem anderen Gerät zu importieren. Bewahre diesen Setup-Code an einem sicheren Ort auf.</string>
     <string name="could_not_store_setup_message">Einrichtungsnachricht konnte nicht gespeichert werden</string>
     <string name="done">Erledigt</string>
     <string name="autocrypt_export_explained_hint_done">Die Einrichtungsnachricht wurde erstellt. Du kannst können nun den Importvorgang auf deinem anderen Gerät starten.</string>
     <string name="view_email">E-Mail anzeigen</string>
     <string name="import_secret_key">Geheimen Schlüssel importieren</string>
-    <string name="wrong_setup_code">Falscher Setup-Code. Versuche es erneut!</string>
+    <string name="wrong_setup_code">Falscher Konfigurationscode. Versuche es erneut!</string>
     <string name="import_private_key_help_dialog_title">Autocrypt-Einrichtungsnachricht erkannt</string>
     <string name="autocrypt_export_explained_hint_two">Die Einrichtungsnachricht ist eine normale E-Mail, die als „Gesendet“ gekennzeichnet ist. Andere Anwendungen können sie von dort abrufen und deinen geheimen Schlüssel importieren.</string>
     <string name="autocrypt_export_explained_hint_three">Im nächsten Schritt wird Ltt.rs einen sicheren Setup-Code erstellen. Du musst diesen Code aufschreiben und ihn an einem sicheren Ort aufbewahren.</string>
