@@ -152,7 +152,7 @@
     <string name="encrypted_email">(courriel chiffré)</string>
     <string name="no_body">(pas de corps)</string>
     <string name="no_subject">(sans objet)</string>
-    <string name="autocrypt_export_explained_hint_one">Pour transférer votre clé secrète à un autre appareil, Ltt.rs crée un message de configuration. Il contient votre clé secrète protégée par un Setup Code.</string>
+    <string name="autocrypt_export_explained_hint_one">Pour transférer votre clé secrète à un autre appareil, Ltt.rs crée un message de configuration. Il contient votre clé secrète protégée par un code de configuration.</string>
     <string name="autocrypt_export_explained_hint_four">Vous devrez utiliser ce code de configuration sur votre autre appareil pour importer votre clé secrète. Conservez ce code de configuration dans un endroit sûr.</string>
     <string name="could_not_store_setup_message">Impossible de stocker le message de configuration</string>
     <string name="done">Terminé</string>
@@ -167,7 +167,7 @@
     <string name="reply_all">Répondre à tous</string>
     <string name="forward_email">Transférer le courriel</string>
     <string name="edit_draft">Modifier le brouillon</string>
-    <string name="download_attachment">Télécharger le fichier joint</string>
+    <string name="download_attachment">Télécharger la pièce jointe</string>
     <string name="more_options">Plus d’options</string>
     <string name="show_helper_dialog">Afficher le dialogue d’aide</string>
     <string name="reply">Répondre</string>
@@ -182,7 +182,7 @@
     </plurals>
     <string name="could_not_determine_metadata_of_attachment">Impossible de déterminer le type, la taille et le nom de la pièce jointe que vous essayez d’ajouter.</string>
     <string name="autocrypt_export_explained_hint_three">Dans l’étape suivante, Ltt.rs créera un code de configuration sécurisé. Vous devrez écrire ce code et le conserver dans un endroit sûr.</string>
-    <string name="cleartext">Texte clair</string>
+    <string name="cleartext">Texte en clair</string>
     <string name="autocrypt_enable_description">Activez la prise en charge du chiffrement de bout en bout. Votre clé publique sera jointe aux courriels sortants. Ceci permet à vos contacts de vous envoyer des courriels chiffrés.</string>
     <string name="autocrypt_encryption_preference">Préférence de chiffrement</string>
     <string name="enter_your_setup_code">Saisissez le code de configuration pour importer votre clé secrète ou passez cette étape si vous souhaitez que Ltt.rs génère une nouvelle clé secrète sur cet appareil.</string>
@@ -199,4 +199,6 @@
         <item quantity="other">Vous n’avez pas la bonne clé secrète pour déchiffrer %d courriels.</item>
     </plurals>
     <string name="decrypt_email">Déchiffrer le courriel</string>
+    <string name="attachment_download_failed">Impossible de télécharger la pièce jointe</string>
+    <string name="email_not_cached">Le courriel contenant cette pièce jointe n’est pas mis en cache.</string>
 </resources>
