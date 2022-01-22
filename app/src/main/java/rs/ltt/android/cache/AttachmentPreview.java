@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import com.google.common.base.MoreObjects;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.Weigher;
 import com.google.common.net.MediaType;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
@@ -34,7 +35,10 @@ public class AttachmentPreview {
     private static final Logger LOGGER = LoggerFactory.getLogger(AttachmentPreview.class);
 
     private static final Cache<String, Bitmap> BITMAP_CACHE =
-            CacheBuilder.newBuilder().maximumSize(32).build();
+            CacheBuilder.newBuilder()
+                    .weigher((Weigher<String, Bitmap>) (s, bitmap) -> bitmap.getByteCount())
+                    .maximumWeight(10_000_000)
+                    .build();
 
     private final WeakReference<ImageView> imageViewWeakReference;
     private final Long accountId;
@@ -67,8 +71,7 @@ public class AttachmentPreview {
                         if (imageView == null) {
                             return;
                         }
-                        imageView.setVisibility(View.VISIBLE);
-                        imageView.setImageBitmap(bitmap);
+                        setImageBitmap(imageView, bitmap);
                     }
 
                     @Override
@@ -78,10 +81,19 @@ public class AttachmentPreview {
                         if (imageView == null) {
                             return;
                         }
-                        imageView.setVisibility(View.GONE);
+                        setImageBitmap(imageView, null);
                     }
                 },
                 MainThreadExecutor.getInstance());
+    }
+
+    private static void setImageBitmap(final ImageView imageView, @Nullable final Bitmap preview) {
+        if (preview == null) {
+            imageView.setVisibility(View.GONE);
+        } else {
+            imageView.setImageBitmap(preview);
+            imageView.setVisibility(View.VISIBLE);
+        }
     }
 
     private static String key(final Long accountId, final Attachment attachment) {
@@ -94,7 +106,10 @@ public class AttachmentPreview {
         }
     }
 
-    private Bitmap getPreview(final CachedAttachment cachedAttachment) {
+    private @Nullable Bitmap getPreview(@Nullable final CachedAttachment cachedAttachment) {
+        if (cachedAttachment == null) {
+            return null;
+        }
         final MediaType mediaType = getMediaType();
         final Bitmap preview;
         if (mediaType.is(MediaType.ANY_IMAGE_TYPE)) {
@@ -117,8 +132,8 @@ public class AttachmentPreview {
         final PreviewMeasurements previewMeasurements =
                 PreviewMeasurements.of(
                         imageWidth, imageHeight, previewSize.width, previewSize.height);
-        LOGGER.info("original image size " + imageWidth + "x" + imageHeight);
-        LOGGER.info("preview size: " + previewSize);
+        LOGGER.debug("original image size " + imageWidth + "x" + imageHeight);
+        LOGGER.debug("preview size: " + previewSize);
         LOGGER.debug("Using preview measurements {}", previewMeasurements);
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inSampleSize = previewMeasurements.sampleSize;
@@ -130,6 +145,7 @@ public class AttachmentPreview {
                         previewMeasurements.y,
                         previewMeasurements.width,
                         previewMeasurements.height);
+        LOGGER.info("Preview size {} bytes", preview.getByteCount());
         if (original != preview) {
             original.recycle();
         }
@@ -166,10 +182,8 @@ public class AttachmentPreview {
         if (mediaType.is(MediaType.ANY_IMAGE_TYPE)) {
             return getCachedAttachment(context);
         } else {
-            return Futures.immediateFailedFuture(
-                    new IllegalArgumentException(
-                            String.format(
-                                    "Could not generate preview for %s", mediaType.toString())));
+            LOGGER.debug("Could not generate preview for {}}", mediaType.toString());
+            return Futures.immediateFuture(null);
         }
     }
 
