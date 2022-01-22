@@ -152,7 +152,7 @@
     <string name="encrypted_email">(e-mail crittografata)</string>
     <string name="no_body">(niente)</string>
     <string name="no_subject">(nessun oggetto)</string>
-    <string name="autocrypt_export_explained_hint_one">Per trasferire la tua chiave segreta a un altro dispositivo, Ltt.rs creerà un messaggio di installazione. Esso contiene la vostra chiave segreta protetta da un Codice di Setup.</string>
+    <string name="autocrypt_export_explained_hint_one">Per trasferire la tua chiave segreta a un altro dispositivo, Ltt.rs creerà un messaggio di installazione. Esso contiene la vostra chiave segreta protetta da un codice di installazione.</string>
     <string name="show_account_selector">Mostra il selettore di account</string>
     <string name="hide_account_selector">Nascondi il selettore di account</string>
     <string name="cleartext">Testo chiaro</string>
@@ -200,5 +200,5 @@
         <item quantity="other">Impossibile decifrare %d e-mail</item>
     </plurals>
     <string name="attachment_download_failed">Impossibile scaricare l\'allegato</string>
-    <string name="email_not_cached">L\'email contenente questo allegato non è memorizzata nella cache.</string>
+    <string name="email_not_cached">L\'e-mail contenente questo allegato non è memorizzata nella cache.</string>
 </resources>
