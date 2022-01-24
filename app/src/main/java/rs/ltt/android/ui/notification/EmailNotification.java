@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import java.util.Collections;
 import java.util.List;
@@ -27,6 +28,7 @@ import rs.ltt.android.entity.AccountName;
 import rs.ltt.android.entity.AccountWithCredentials;
 import rs.ltt.android.entity.EmailWithBodiesAndSubject;
 import rs.ltt.android.entity.From;
+import rs.ltt.android.entity.Preview;
 import rs.ltt.android.ui.AvatarDrawable;
 import rs.ltt.android.ui.activity.LttrsActivity;
 import rs.ltt.jmap.mua.util.KeywordUtil;
@@ -232,13 +234,20 @@ public class EmailNotification extends AbstractNotification {
     private Notification get(final EmailWithBodiesAndSubject email) {
         final From from = email.getFirstFrom();
         final AvatarDrawable avatar = new AvatarDrawable(context, from);
+        final String subject = getSubject(email);
+        final Preview preview = email.getPreview();
+        final String bigText;
+        if (Strings.isNullOrEmpty(preview.getPreview())) {
+            bigText = subject;
+        } else {
+            bigText = String.format("%s\n%s", subject, preview.getPreview());
+        }
         final NotificationCompat.BigTextStyle bigTextStyle =
-                new NotificationCompat.BigTextStyle()
-                        .bigText(String.format("%s\n%s", email.subject, email.getPreview()));
+                new NotificationCompat.BigTextStyle().bigText(bigText);
         return new NotificationCompat.Builder(context, notificationChannelId(account.getId()))
                 .setSmallIcon(R.drawable.ic_email_outline_24dp)
                 .setContentTitle(getFromAsString(context, from))
-                .setContentText(email.subject)
+                .setContentText(subject)
                 .setSubText(account.getName())
                 .setLargeIcon(avatar.toBitmap())
                 .setWhen(email.getEffectiveDate().toEpochMilli())
@@ -262,7 +271,7 @@ public class EmailNotification extends AbstractNotification {
             inboxStyle.addLine(
                     String.format(
                             "<b>%s</b> %s",
-                            getFromAsString(context, email.getFirstFrom()), email.subject));
+                            getFromAsString(context, email.getFirstFrom()), getSubject(email)));
         }
         return new NotificationCompat.Builder(context, notificationChannelId(account.getId()))
                 .setSmallIcon(R.drawable.ic_email_outline_24dp)
@@ -277,6 +286,12 @@ public class EmailNotification extends AbstractNotification {
                 .setGroupSummary(true)
                 .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_CHILDREN)
                 .build();
+    }
+
+    private String getSubject(final EmailWithBodiesAndSubject email) {
+        return Strings.isNullOrEmpty(email.subject)
+                ? context.getString(R.string.no_subject)
+                : email.subject;
     }
 
     private void dismiss(final String id) {
