@@ -59,6 +59,7 @@ public final class MuaPool {
                             .cache(new DatabaseCache(database))
                             .sessionCache(new FileSessionCache(application.getCacheDir()))
                             .plugin(AutocryptPlugin.class, autocryptPlugin)
+                            .useWebSocket(false)
                             .queryPageSize(20L)
                             .build();
             INSTANCES.put(account, mua);
