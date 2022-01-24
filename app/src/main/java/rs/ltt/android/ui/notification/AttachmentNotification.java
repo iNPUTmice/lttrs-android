@@ -30,9 +30,11 @@ public class AttachmentNotification {
                 new NotificationChannel(
                         NOTIFICATION_CHANNEL_ID,
                         context.getString(R.string.attachments),
-                        NotificationManager.IMPORTANCE_MIN);
+                        NotificationManager.IMPORTANCE_DEFAULT);
         notificationChannel.setSound(null, null);
         notificationChannel.setShowBadge(false);
+        notificationChannel.enableVibration(false);
+        notificationChannel.enableLights(false);
         notificationManager.createNotificationChannel(notificationChannel);
     }
 
