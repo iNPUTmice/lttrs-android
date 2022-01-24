@@ -1,7 +1,6 @@
 package rs.ltt.android.ui.preview;
 
 import android.graphics.Bitmap;
-import android.media.MediaMetadataRetriever;
 import java.io.File;
 import rs.ltt.android.ui.PreviewMeasurements;
 
@@ -15,6 +14,15 @@ public class VideoPreview extends ImagePreview {
             final PreviewMeasurements previewMeasurements =
                     PreviewMeasurements.of(width, height, size);
             return cropToMeasurements(original, previewMeasurements);
+        }
+    }
+
+    private static class MediaMetadataRetriever extends android.media.MediaMetadataRetriever
+            implements AutoCloseable {
+
+        @Override
+        public void close() {
+            this.release();
         }
     }
 }
