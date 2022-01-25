@@ -1,0 +1,2 @@
+* Preview attachments
+* Add support for Autocrypt-Gossip
