@@ -7,12 +7,12 @@
     <plurals name="x_emails_will_permanently_deleted">
         <item quantity="one">%d laiškas bus visam laikui ištrintas.</item>
         <item quantity="few">%d laiškai bus visam laikui ištrinti.</item>
-        <item quantity="other">%d laiškų bus visam laikui ištrinti.</item>
+        <item quantity="many">%d laiškų bus visam laikui ištrinti.</item>
     </plurals>
     <plurals name="x_emails_in_trash">
         <item quantity="one">Šiuo metu šiukšlinėje yra %d el. laiškas.</item>
         <item quantity="few">Šiuo metu šiukšlinėje yra %d el. laiškai.</item>
-        <item quantity="other">Šiuo metu šiukšlinėje yra %d el. laiškų.</item>
+        <item quantity="many">Šiuo metu šiukšlinėje yra %d el. laiškų.</item>
     </plurals>
     <string name="attachment_download_failed_status_code_x">Nepavyko atsisiųsti priedo. (HTTP būsenos kodas %d)</string>
     <string name="empty_trash_dialog_title">Išvalyti šiukšlinę\?</string>
@@ -37,7 +37,7 @@
     <plurals name="x_new_emails">
         <item quantity="one">%d naujas el. laiškas</item>
         <item quantity="few">%d nauji el. laiškai</item>
-        <item quantity="other">%d naujų el. laiškų</item>
+        <item quantity="many">%d naujų el. laiškų</item>
     </plurals>
     <string name="session_resource_help_dialog_message">Ltt.rs naudoja palyginti naują JMAP protokolą el. paštui sinchronizuoti, tačiau jūsų el. pašto paslaugų teikėjas gali jo dar nepalaikyti.
 \n
@@ -115,18 +115,18 @@
     <plurals name="n_deleted">
         <item quantity="one">%d ištrintas</item>
         <item quantity="few">%d ištrinti</item>
-        <item quantity="other">%d ištrinti</item>
+        <item quantity="many">%d ištrinti</item>
     </plurals>
     <string name="undo">Atstatyti</string>
     <plurals name="n_archived">
         <item quantity="one">%d suarchyvuotas</item>
         <item quantity="few">%d suarchyvuoti</item>
-        <item quantity="other">%d suarchyvuoti</item>
+        <item quantity="many">%d suarchyvuoti</item>
     </plurals>
     <plurals name="n_removed_from_x">
         <item quantity="one">%d pašalintas iš %s</item>
         <item quantity="few">%d pašalinti iš %s</item>
-        <item quantity="other">%d pašalinti iš %s</item>
+        <item quantity="many">%d pašalinti iš %s</item>
     </plurals>
     <string name="mark_not_important">Pažymėti kaip nesvarbų</string>
     <string name="search_hint">Ieškoti el. laiške</string>
@@ -135,7 +135,7 @@
     <plurals name="n_moved_to_inbox">
         <item quantity="one">%d perkeltas į gautuosius</item>
         <item quantity="few">%d perkelti į gautuosius</item>
-        <item quantity="other">%d perkelti į gautuosius</item>
+        <item quantity="many">%d perkelti į gautuosius</item>
     </plurals>
     <string name="move_to_inbox">Perkelti į gautuosius</string>
     <string name="archive">Archyvuoti</string>
