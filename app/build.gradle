@@ -57,14 +57,16 @@ android {
     buildFeatures {
         dataBinding true
     }
-
-    lintOptions {
+    packagingOptions {
+        resources {
+            excludes += ['META-INF/DEPENDENCIES']
+        }
+    }
+    lint {
         disable 'MissingTranslation'
     }
 
-    packagingOptions {
-        exclude 'META-INF/DEPENDENCIES'
-    }
+
 }
 
 spotless {
