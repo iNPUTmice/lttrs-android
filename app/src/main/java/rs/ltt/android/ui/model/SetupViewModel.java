@@ -398,6 +398,7 @@ public class SetupViewModel extends AndroidViewModel {
 
                         @Override
                         public void onFailure(@NonNull Throwable cause) {
+                            LOGGER.error("Could not store account", cause);
                             loading.postValue(false);
                             showWarningMessage(R.string.could_not_store_account_credentials);
                         }
