@@ -2,19 +2,19 @@
 <resources>
     <plurals name="n_deleted">
         <item quantity="one">%d supprimé</item>
-        <item quantity="other">%d supprimés</item>
+        <item quantity="many">%d supprimés</item>
     </plurals>
     <plurals name="n_archived">
         <item quantity="one">%d archivé</item>
-        <item quantity="other">%d archivés</item>
+        <item quantity="many">%d archivés</item>
     </plurals>
     <plurals name="n_removed_from_x">
         <item quantity="one">%d enlevé de %s</item>
-        <item quantity="other">%d enlevés de %s</item>
+        <item quantity="many">%d enlevés de %s</item>
     </plurals>
     <plurals name="n_moved_to_inbox">
         <item quantity="one">%d déplacé vers boîte de réception</item>
-        <item quantity="other">%d déplacés vers boîte de réception</item>
+        <item quantity="many">%d déplacés vers boîte de réception</item>
     </plurals>
     <string name="enter_a_valid_email_address">Entrez une adresse courriel valide</string>
     <string name="enter_an_email_address">Entrez une adresse courriel</string>
@@ -108,7 +108,7 @@
     <string name="foreground_service_notification_text">Ltt.rs continue de fonctionner pour notifier l’arrivée d’un courriel</string>
     <plurals name="x_new_emails">
         <item quantity="one">%d nouveau courriel</item>
-        <item quantity="other">%d nouveaux courriels</item>
+        <item quantity="many">%d nouveaux courriels</item>
     </plurals>
     <string name="notification_channel_name_email">Courriel</string>
     <string name="view_emails">Afficher les courriels</string>
@@ -123,11 +123,11 @@
     <string name="accounts">Comptes</string>
     <plurals name="x_emails_will_permanently_deleted">
         <item quantity="one">%d courriel sera définitivement supprimé.</item>
-        <item quantity="other">%d courriels seront définitivement supprimés.</item>
+        <item quantity="many">%d courriels seront définitivement supprimés.</item>
     </plurals>
     <plurals name="x_emails_in_trash">
         <item quantity="one">Il y a actuellement %d courriel dans la corbeille.</item>
-        <item quantity="other">Il y a actuellement %d courriels dans la corbeille.</item>
+        <item quantity="many">Il y a actuellement %d courriels dans la corbeille.</item>
     </plurals>
     <string name="empty">Vide</string>
     <string name="empty_trash_dialog_title">Vider la corbeille \?</string>
@@ -145,7 +145,7 @@
     <string name="hide_account_selector">Masquer le sélecteur de compte</string>
     <plurals name="could_not_decrypt_x_emails">
         <item quantity="one">Impossible de déchiffrer %d courriel</item>
-        <item quantity="other">Impossible de déchiffrer %d courriels</item>
+        <item quantity="many">Impossible de déchiffrer %d courriels</item>
     </plurals>
     <string name="encryption_options">Options de chiffrement</string>
     <string name="encrypted_email">(courriel chiffré)</string>
@@ -176,11 +176,11 @@
     <string name="decrypt_email">Déchiffrer le courriel</string>
     <plurals name="incorrect_secret_key">
         <item quantity="one">Vous n’avez pas la bonne clé secrète pour déchiffrer %d courriel.</item>
-        <item quantity="other">Vous n’avez pas la bonne clé secrète pour déchiffrer %d courriels.</item>
+        <item quantity="many">Vous n’avez pas la bonne clé secrète pour déchiffrer %d courriels.</item>
     </plurals>
     <plurals name="could_not_download_x_encrypted_emails">
         <item quantity="one">Impossible de télécharger %d courriel chiffré</item>
-        <item quantity="other">Impossible de télécharger %d courriels chiffrés</item>
+        <item quantity="many">Impossible de télécharger %d courriels chiffrés</item>
     </plurals>
     <string name="done">Terminé</string>
     <string name="more_options">Plus d’options</string>

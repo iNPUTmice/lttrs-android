@@ -43,23 +43,23 @@
     <string name="deleted">Supprimé</string>
     <plurals name="n_deleted">
         <item quantity="one">%d supprimé</item>
-        <item quantity="other">%d supprimés</item>
+        <item quantity="many">%d supprimés</item>
     </plurals>
     <string name="undo">Annuler</string>
     <plurals name="n_archived">
         <item quantity="one">%d archivé</item>
-        <item quantity="other">%d archivés</item>
+        <item quantity="many">%d archivés</item>
     </plurals>
     <plurals name="n_removed_from_x">
         <item quantity="one">%d enlevé de %s</item>
-        <item quantity="other">%d enlevés de %s</item>
+        <item quantity="many">%d enlevés de %s</item>
     </plurals>
     <string name="mark_not_important">Marquer comme non important</string>
     <string name="remove_label">Enlever l’étiquette</string>
     <string name="remove_label_x">Enlever l’étiquette %s</string>
     <plurals name="n_moved_to_inbox">
         <item quantity="one">%d déplacé vers la boîte de réception</item>
-        <item quantity="other">%d déplacés vers la boîte de réception</item>
+        <item quantity="many">%d déplacés vers la boîte de réception</item>
     </plurals>
     <string name="move_to_inbox">Déplacer vers la boîte de réception</string>
     <string name="to_x">à %s</string>
@@ -108,7 +108,7 @@
     <string name="foreground_service_notification_text">Ltt.rs continue de fonctionner pour notifier l’arrivée d’un courriel</string>
     <plurals name="x_new_emails">
         <item quantity="one">%d nouveau courriel</item>
-        <item quantity="other">%d nouveaux courriels</item>
+        <item quantity="many">%d nouveaux courriels</item>
     </plurals>
     <string name="notification_channel_name_email">Courriel</string>
     <string name="accounts">Comptes</string>
@@ -125,11 +125,11 @@
     <string name="attachments">Pièces jointes</string>
     <plurals name="x_emails_will_permanently_deleted">
         <item quantity="one">%d courriel sera définitivement supprimé.</item>
-        <item quantity="other">%d courriels seront définitivement supprimés.</item>
+        <item quantity="many">%d courriels seront définitivement supprimés.</item>
     </plurals>
     <plurals name="x_emails_in_trash">
         <item quantity="one">Il y a actuellement %d courriel dans la corbeille.</item>
-        <item quantity="other">Il y a actuellement %d courriels dans la corbeille.</item>
+        <item quantity="many">Il y a actuellement %d courriels dans la corbeille.</item>
     </plurals>
     <string name="empty">Vide</string>
     <string name="empty_trash_dialog_title">Vider la corbeille \?</string>
@@ -174,11 +174,11 @@
     <string name="remove_attachment">Retirer la pièce jointe</string>
     <plurals name="could_not_decrypt_x_emails">
         <item quantity="one">Impossible de déchiffrer %d courriel</item>
-        <item quantity="other">Impossible de déchiffrer %d courriels</item>
+        <item quantity="many">Impossible de déchiffrer %d courriels</item>
     </plurals>
     <plurals name="could_not_download_x_encrypted_emails">
         <item quantity="one">Impossible de télécharger %d courriel chiffré</item>
-        <item quantity="other">Impossible de télécharger %d courriels chiffrés</item>
+        <item quantity="many">Impossible de télécharger %d courriels chiffrés</item>
     </plurals>
     <string name="could_not_determine_metadata_of_attachment">Impossible de déterminer le type, la taille et le nom de la pièce jointe que vous essayez d’ajouter.</string>
     <string name="autocrypt_export_explained_hint_three">Dans l’étape suivante, Ltt.rs créera un code de configuration sécurisé. Vous devrez écrire ce code et le conserver dans un endroit sûr.</string>
@@ -196,7 +196,7 @@
     <string name="lttrs_lacks_permissions_to_add_attachment">Ltt.rs n’a pas les autorisations nécessaires pour ajouter cette pièce jointe.</string>
     <plurals name="incorrect_secret_key">
         <item quantity="one">Vous n’avez pas la bonne clé secrète pour déchiffrer %d courriel.</item>
-        <item quantity="other">Vous n’avez pas la bonne clé secrète pour déchiffrer %d courriels.</item>
+        <item quantity="many">Vous n’avez pas la bonne clé secrète pour déchiffrer %d courriels.</item>
     </plurals>
     <string name="decrypt_email">Déchiffrer le courriel</string>
     <string name="attachment_download_failed">Impossible de télécharger la pièce jointe</string>
