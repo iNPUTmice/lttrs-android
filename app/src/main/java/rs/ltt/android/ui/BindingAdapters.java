@@ -25,12 +25,14 @@ import android.text.format.DateUtils;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.ImageSpan;
 import android.text.style.StyleSpan;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.DrawableRes;
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.core.widget.ImageViewCompat;
 import androidx.databinding.BindingAdapter;
@@ -39,6 +41,7 @@ import com.google.android.material.color.MaterialColors;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.common.base.Strings;
+import com.google.common.base.Supplier;
 import com.google.common.collect.Lists;
 import com.google.common.net.MediaType;
 import java.time.Duration;
@@ -370,8 +373,14 @@ public class BindingAdapters {
 
     @BindingAdapter("editorAction")
     public static void setEditorAction(
-            final TextInputEditText editText, final TextView.OnEditorActionListener listener) {
-        editText.setOnEditorActionListener(listener);
+            final TextInputEditText editText, final @NonNull Supplier<Boolean> callback) {
+        editText.setOnEditorActionListener(
+                (v, actionId, event) -> {
+                    if (event.getAction() == KeyEvent.ACTION_UP) {
+                        return Boolean.TRUE.equals(callback.get());
+                    }
+                    return true;
+                });
     }
 
     @BindingAdapter("identities")

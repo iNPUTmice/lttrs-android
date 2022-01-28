@@ -131,7 +131,7 @@
                         android:inputType="textUri"
                         android:maxLines="1"
                         android:text="@={setupViewModel.sessionResource}"
-                        app:editorAction="@{(a,b,c)->setupViewModel.enterSessionResource()}" />
+                        app:editorAction="@{()->setupViewModel.enterSessionResource()}" />
                 </com.google.android.material.textfield.TextInputLayout>
 
             </RelativeLayout>

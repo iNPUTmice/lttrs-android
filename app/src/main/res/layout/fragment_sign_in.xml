@@ -109,7 +109,7 @@
                         android:inputType="textEmailAddress|textNoSuggestions"
                         android:maxLines="1"
                         android:text="@={setupViewModel.emailAddress}"
-                        app:editorAction="@{(a,b,c)->setupViewModel.enterEmailAddress()}" />
+                        app:editorAction="@{()->setupViewModel.enterEmailAddress()}" />
                 </com.google.android.material.textfield.TextInputLayout>
 
             </RelativeLayout>
