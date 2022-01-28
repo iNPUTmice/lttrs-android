@@ -114,7 +114,8 @@ public class MainRepository {
                                     accountIdMap.values().stream().findFirst().get());
                     final Collection<ListenableFuture<Optional<AutocryptSetupMessage>>>
                             setupMessages =
-                                    Collections2.transform(credentials, this::discoverSetupMessage);
+                                    Collections2.transform(
+                                            credentials, this::discoverSetupMessageCaught);
                     final ListenableFuture<List<Optional<AutocryptSetupMessage>>> future =
                             Futures.allAsList(setupMessages);
                     this.networkFuture = future;
@@ -189,6 +190,18 @@ public class MainRepository {
                         appDatabase
                                 .accountDao()
                                 .insert(username, password, sessionResource, accounts));
+    }
+
+    private ListenableFuture<Optional<AutocryptSetupMessage>> discoverSetupMessageCaught(
+            final AccountWithCredentials account) {
+        return Futures.catching(
+                discoverSetupMessage(account),
+                Throwable.class,
+                throwable -> {
+                    LOGGER.error("Could not discover Autocrypt-Setup message", throwable);
+                    return Optional.absent();
+                },
+                MoreExecutors.directExecutor());
     }
 
     private ListenableFuture<Optional<AutocryptSetupMessage>> discoverSetupMessage(
