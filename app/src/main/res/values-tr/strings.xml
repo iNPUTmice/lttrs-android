@@ -1,2 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="mark_read">Okundu olarak işaretle</string>
+    <string name="remove_label_x">%s etiketini kaldır</string>
+    <string name="delete">Sil</string>
+    <string name="mark_important">Önemli olarak işaretle</string>
+    <string name="add_flag">Etiket ekle</string>
+    <string name="search">Ara</string>
+    <string name="to_x">%s\'e</string>
+    <string name="move_to_inbox">Gelen kutusuna taşı</string>
+    <string name="search_hint">E-postada ara</string>
+    <string name="mark_not_important">Önemsiz olarak işaretle</string>
+    <plurals name="n_removed_from_x">
+        <item quantity="one">%d, %s öğesinden kaldırıldı</item>
+        <item quantity="other">%d, %s öğesinden kaldırıldı</item>
+    </plurals>
+    <plurals name="n_archived">
+        <item quantity="one">%d arşivlendi</item>
+        <item quantity="other">%d arşivlendi</item>
+    </plurals>
+    <string name="undo">Geri al</string>
+    <string name="archive">Arşiv</string>
+    <string name="mark_unread">Okunmadı olarak işaretle</string>
+    <plurals name="n_moved_to_inbox">
+        <item quantity="one">%d gelen kutusuna taşındı</item>
+        <item quantity="other">%d gelen kutusuna taşındı</item>
+    </plurals>
+    <string name="remove_label">Etiketi kaldır</string>
+    <string name="remove_flag">Bayrağı kaldır</string>
+    <plurals name="n_deleted">
+        <item quantity="one">%d silindi</item>
+        <item quantity="other">%d silindi</item>
+    </plurals>
+</resources>
