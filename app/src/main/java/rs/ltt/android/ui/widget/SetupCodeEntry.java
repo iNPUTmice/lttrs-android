@@ -6,6 +6,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.GridLayout;
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import java.util.List;
 
@@ -14,6 +15,8 @@ public class SetupCodeEntry {
     private static final int MAX_LENGTH = 4;
 
     private final List<EditText> editTexts;
+
+    private Function<String, Boolean> onSetupCodeSubmitted;
 
     private SetupCodeEntry(final List<EditText> editTexts) {
         this.editTexts = editTexts;
@@ -56,14 +59,25 @@ public class SetupCodeEntry {
                     }
                     return false;
                 });
+        editText.setOnEditorActionListener(
+                (v, actionId, event) -> {
+                    if (event.getAction() != KeyEvent.ACTION_UP) {
+                        return true;
+                    }
+                    if (focusNextAfter((EditText) v)) {
+                        return true;
+                    }
+                    return Boolean.TRUE.equals(onSetupCodeSubmitted.apply(getSetupCode()));
+                });
     }
 
-    private void focusNextAfter(final EditText editText) {
+    private boolean focusNextAfter(final EditText editText) {
         final int pos = this.editTexts.indexOf(editText);
         if (pos == -1 || pos + 1 >= this.editTexts.size()) {
-            return;
+            return false;
         }
         requestFocus(this.editTexts.get(pos + 1));
+        return true;
     }
 
     private boolean focusPreviousBefore(final EditText editText) {
@@ -86,6 +100,10 @@ public class SetupCodeEntry {
             builder.append(editText.getText().toString());
         }
         return builder.toString();
+    }
+
+    public void setOnSetupCodeSubmitted(final Function<String, Boolean> listener) {
+        this.onSetupCodeSubmitted = listener;
     }
 
     public void setSetupCode(final String setupCode) {

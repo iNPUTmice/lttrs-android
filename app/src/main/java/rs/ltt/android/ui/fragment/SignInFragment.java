@@ -34,6 +34,7 @@ public class SignInFragment extends AbstractSetupFragment {
                 DataBindingUtil.inflate(inflater, R.layout.fragment_sign_in, container, false);
         binding.setSetupViewModel(setupViewModel);
         binding.setLifecycleOwner(getViewLifecycleOwner());
+        binding.emailAddress.requestFocus();
         return binding.getRoot();
     }
 }

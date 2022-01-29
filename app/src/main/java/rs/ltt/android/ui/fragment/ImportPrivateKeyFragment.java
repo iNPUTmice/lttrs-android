@@ -52,6 +52,7 @@ public class ImportPrivateKeyFragment extends AbstractSetupFragment {
         binding.next.setOnClickListener(this::onNextClicked);
         binding.skip.setOnClickListener(this::onSkipClicked);
         this.setupCodeEntry = SetupCodeEntry.of(binding.setupCode);
+        this.setupCodeEntry.setOnSetupCodeSubmitted(code -> setupViewModel.enterSetupCode(code));
         final AutocryptSetupMessage autocryptSetupMessage = this.setupViewModel.peekSetupMessage();
         if (autocryptSetupMessage != null) {
             binding.accountName.setText(autocryptSetupMessage.getAccount().getName());

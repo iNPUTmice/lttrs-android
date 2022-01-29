@@ -36,6 +36,7 @@ public class PasswordFragment extends AbstractSetupFragment {
                 DataBindingUtil.inflate(inflater, R.layout.fragment_password, container, false);
         binding.setSetupViewModel(setupViewModel);
         binding.setLifecycleOwner(getViewLifecycleOwner());
+        binding.password.requestFocus();
         return binding.getRoot();
     }
 }

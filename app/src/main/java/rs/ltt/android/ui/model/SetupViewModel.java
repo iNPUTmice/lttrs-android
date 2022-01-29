@@ -304,7 +304,7 @@ public class SetupViewModel extends AndroidViewModel {
         return true;
     }
 
-    public void enterSetupCode(final String passphrase) {
+    public boolean enterSetupCode(final String passphrase) {
         if (SetupCode.isValid(passphrase)) {
             final AutocryptSetupMessage autocryptSetupMessage = this.peekSetupMessage();
             if (autocryptSetupMessage == null) {
@@ -340,6 +340,7 @@ public class SetupViewModel extends AndroidViewModel {
         } else {
             showWarningMessage(R.string.enter_your_setup_code);
         }
+        return true;
     }
 
     public void nextPrivateKeyImport() {
