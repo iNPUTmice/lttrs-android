@@ -31,4 +31,173 @@
         <item quantity="one">%d silindi</item>
         <item quantity="other">%d silindi</item>
     </plurals>
+    <string name="deleted">Silindi</string>
+    <string name="sign_in">Oturum aç</string>
+    <string name="email_address">E-posta adresi</string>
+    <string name="sign_in_instruction">e-posta hesabınızla.</string>
+    <string name="next">Sonraki</string>
+    <string name="enter_an_email_address">Bir e-posta adresi yazın</string>
+    <string name="enter_a_valid_email_address">Geçerli bir e-posta adresi yazın</string>
+    <string name="welcome">Hoş geldin</string>
+    <string name="enter_your_password">Parolanızı yazın</string>
+    <string name="enter_a_password">Bir parola yazın</string>
+    <string name="wrong_password">Yanlış parola. Tekrar deneyin.</string>
+    <string name="information_required">Bilgi gerekli</string>
+    <string name="enter_your_connection_url">Bağlantı URL\'nizi yazın</string>
+    <string name="enter_a_valid_url">Geçerli bir bağlantı URL\'si yazın</string>
+    <string name="endpoint_not_found">Bu adreste e-posta hizmeti yok</string>
+    <string name="invalid_session_resource">Bu adreste geçerli bir e-posta hizmeti yok</string>
+    <string name="timeout_reached">E-posta hizmetine bağlanmaya çalışılıyor zaman aşımına uğradı</string>
+    <string name="unable_to_establish_secure_connection">Güvenli bir bağlantı kurulamadı</string>
+    <string name="unable_to_verify_service_identity">Kimlik doğrulanamadı</string>
+    <string name="unknown_host">%s çözülemedi</string>
+    <string name="no_network_connection">İnternete bağlan</string>
+    <string name="unable_to_fetch_session">Oturum getirilemedi: %s</string>
+    <string name="compose">Oluştur</string>
+    <string name="attach_file">Dosya ekle</string>
+    <string name="send">Gönder</string>
+    <string name="discard">Çıkar</string>
+    <string name="compose_cc">Bilgi</string>
+    <string name="could_not_store_account_credentials">Hesap kimlik bilgileri depolanamadı</string>
+    <string name="reassign_role">Rolü yeniden ata</string>
+    <string name="assign_role">Rol ata</string>
+    <string name="reassign_role_question">%2$s rolüne sahip %1$s adlı bir etiketiniz zaten var. %3$s rolünü yeniden atamak ister misiniz\?</string>
+    <string name="assign_role_question">%1$s adında bir etiketiniz zaten var. Ona %2$s rolünü atamak ister misiniz\?</string>
+    <string name="assign_role_detailed_explanation">Ltt.rs\'nin düzgün çalışması için %1$s rolüne sahip bir etikete (posta kutusu) ihtiyacı vardır. Bu amaçla %2$s adlı etiketi kullanmak istemiyorsanız, iptal düğmesine tıklayabilir ve masaüstünüzü veya web istemcinizi kullanarak %1$s rolüyle farklı bir etiket oluşturabilirsiniz.</string>
+    <string name="confirm">Onayla</string>
+    <string name="cancel">İptal et</string>
+    <string name="change_labels">Etiketleri değiştir</string>
+    <string name="label_as">olarak etiketle</string>
+    <string name="apply_changes">Değişiklikleri uygula</string>
+    <string name="enter_a_label_name">Yeni bir etiket adı yazın</string>
+    <string name="no_name_specified">İsim belirtilmedi. Tekrar deneyin.</string>
+    <string name="reserved_mailbox_name">Ayrılmamış bir isim seçin.</string>
+    <string name="new_label">Yeni etiket</string>
+    <string name="foreground_service">Ön plan hizmeti</string>
+    <string name="role_name_inbox">Gelen Kutusu</string>
+    <string name="role_name_sent">Gönderilmiş</string>
+    <string name="role_name_archive">Arşiv</string>
+    <string name="role_name_drafts">Taslaklar</string>
+    <string name="role_name_trash">Çöp Kutusu</string>
+    <string name="role_name_junk">Spam</string>
+    <string name="role_name_subscribed">Abone olundu</string>
+    <string name="session_resource_help_dialog_title">Bağlantı URL\'si nedir\?</string>
+    <plurals name="x_new_emails">
+        <item quantity="one">%d yeni e-posta</item>
+        <item quantity="other">%d yeni e-posta</item>
+    </plurals>
+    <string name="notification_channel_name_email">E-posta</string>
+    <string name="accounts">Hesaplar</string>
+    <string name="account">Hesap</string>
+    <string name="remove_account">Hesabı kaldır</string>
+    <string name="identities">Kimlikler</string>
+    <string name="vacation_response">Tatil yanıtı</string>
+    <string name="end_to_end_encryption">Uçtan uca şifreleme</string>
+    <string name="remove_account_dialog_title">Hesabı kaldır\?</string>
+    <string name="remove_account_dialog_message">Bu hesabın kaldırılması tüm mesajları ve diğer ilişkili verileri cihazdan siler.</string>
+    <string name="view_emails">E-postaları görüntüle</string>
+    <string name="attachments">Ekler</string>
+    <string name="no_application_to_open_x">Hiçbir uygulama %s gösteremedi. Bunun yerine eki indirmeyi deneyin.</string>
+    <string name="download_complete">İndirme tamamlandı</string>
+    <string name="the_file_exceeds_the_limit_of_x">Dosya, %s sınırını aşıyor</string>
+    <string name="could_not_cache_attachment">Ek önbelleğe alınamadı</string>
+    <string name="upload_complete">Yükleme tamamlandı</string>
+    <string name="combined_size_of_attachments_exceeds_the_limit_of_x">Tüm eklerin birleşik boyutu şu sınırı aşıyor: %s</string>
+    <string name="empty_trash_dialog_title">Çöp kutusunu boşalt\?</string>
+    <string name="empty">Boş</string>
+    <string name="empty_trash">Çöp kutusunu boşalt</string>
+    <string name="show_account_selector">Hesap seçiciyi göster</string>
+    <string name="email_not_cached">Bu eki içeren e-posta önbelleğe alınmaz.</string>
+    <string name="attachment_download_failed_status_code_x">Ek indirilemedi. (HTTP durum kodu %d)</string>
+    <string name="cleartext">Şifresiz metin</string>
+    <string name="encrypted">Şifreli</string>
+    <string name="transfer_secret_key">Gizli anahtarı aktar</string>
+    <string name="autocrypt_no_preference_description">Talep üzerine. Siz ve kişileriniz, bireysel e-postalar için bariz bir biçimde şifrelemeyi etkinleştirebileceksiniz.</string>
+    <string name="autocrypt_encryption_preference">Şifreleme tercihi</string>
+    <string name="could_not_configure_autocrypt">Autocrypt yapılandırılamadı</string>
+    <string name="encryption_provider_can_not_create_secret_key">Bu cihazdaki şifreleme sağlayıcısı, gizli anahtarınızı oluşturamıyor.</string>
+    <string name="encryption_is_not_available_for_those_recipients">Bu alıcılar için şifreli bir e-posta gönderme seçeneği mevcut değil.</string>
+    <string name="send_as_cleartext">Şifresiz metin olarak gönder</string>
+    <string name="encrypted_email">(şifreli e-posta)</string>
+    <string name="no_body">(kimse)</string>
+    <string name="no_subject">(konu yok)</string>
+    <string name="autocrypt_export_explained_hint_one">Gizli anahtarınızı başka bir cihaza aktarmak için Ltt.rs bir Kurulum Mesajı oluşturacaktır. Bir Kurulum Kodu ile korunan gizli anahtarınızı içerir.</string>
+    <string name="could_not_store_setup_message">Kurulum Mesajı depolanamadı</string>
+    <string name="done">Tamamlandı</string>
+    <string name="autocrypt_export_explained_hint_done">Kurulum Mesajı oluşturuldu. Artık diğer cihazınızda içe aktarma işlemini başlatabilirsiniz.</string>
+    <string name="view_email">E-postayı görüntüle</string>
+    <string name="wrong_setup_code">Yanlış Kurulum Kodu. Tekrar deneyin!</string>
+    <string name="reply_all">Tümünü yanıtla</string>
+    <string name="forward_email">E-postayı yönlendir</string>
+    <string name="more_options">Diğer seçenekler</string>
+    <string name="edit_draft">Taslağı düzenle</string>
+    <string name="show_helper_dialog">Yardımcı iletişim kutusunu göster</string>
+    <string name="download_attachment">Eki indir</string>
+    <string name="remove_attachment">Eki kaldır</string>
+    <string name="reply">Yanıtla</string>
+    <string name="could_not_determine_metadata_of_attachment">Eklemeye çalıştığınız ekin türü, boyutu ve adı belirlenemedi.</string>
+    <string name="decrypt_email">E-postanın şifresini çöz</string>
+    <plurals name="x_emails_will_permanently_deleted">
+        <item quantity="one">%d e-posta kalıcı olarak silinecek.</item>
+        <item quantity="other">%d e-posta kalıcı olarak silinecek.</item>
+    </plurals>
+    <plurals name="could_not_decrypt_x_emails">
+        <item quantity="one">%d e-postanın şifresi çözülemedi</item>
+        <item quantity="other">%d e-postanın şifresi çözülemedi</item>
+    </plurals>
+    <plurals name="incorrect_secret_key">
+        <item quantity="one">%d e-postanın şifresini çözmek için doğru gizli anahtara sahip değilsiniz.</item>
+        <item quantity="other">%d e-postanın şifresini çözmek için doğru gizli anahtara sahip değilsiniz.</item>
+    </plurals>
+    <string name="ok">TAMAM</string>
+    <string name="unable_to_connect">E-posta hizmetine bağlanılamadı</string>
+    <string name="compose_from">Kimden</string>
+    <string name="enter_a_secure_url">Güvenli bir URL yazın</string>
+    <string name="schedule_send">Göndermeyi zamanla</string>
+    <string name="compose_compose_email">E-posta oluştur</string>
+    <string name="compose_subject">Konu</string>
+    <string name="compose_to">Kime</string>
+    <string name="select_sender">Göndericiyi seçin.</string>
+    <string name="draft">Taslak</string>
+    <string name="manage_accounts">Hesapları yönet</string>
+    <string name="add_another_account">Başka bir hesap ekle</string>
+    <string name="add_at_least_one_recipient">Bir alıcı ekleyin.</string>
+    <string name="the_address_x_is_invalid">&lt;%s&gt; adresinde bir sorun var</string>
+    <string name="create">Oluştur</string>
+    <string name="foreground_service_notification_text">Ltt.rs gelen e-postaları bildirmek için çalışmaya devam ediyor</string>
+    <string name="role_name_all">Tüm E-postalar</string>
+    <string name="encryption_options">Şifreleme seçenekleri</string>
+    <string name="role_name_flagged">Yıldızlı</string>
+    <string name="role_name_important">Önemli</string>
+    <string name="session_resource_help_dialog_message">Ltt.rs, e-postayı senkronize etmek için nispeten yeni bir JMAP protokolü kullanır, ancak e-posta sağlayıcınız henüz bunu desteklemiyor olabilir.
+\n
+\nSağlayıcınızla iletişime geçin ve JMAP ve JMAP bağlantı URL\'sini sorun.
+\n
+\nDüzgün ayarlanmış bir sunucuda Ltt.rs, bağlantı URL\'sini otomatik olarak keşfedecektir.</string>
+    <string name="import_private_key_help_dialog_title">Autocrypt Kurulum Mesajı algılandı</string>
+    <string name="manage_labels">Etiketleri yönet</string>
+    <string name="attachment_download_failed">Ek indirilemedi</string>
+    <string name="autocrypt_enable_description">Uçtan uca şifreleme desteğini etkinleştirin. Genel anahtarınız giden e-postalara eklenecektir. Bu kişilerinizin size şifreli e-postalar göndermesini sağlar.</string>
+    <string name="hide_account_selector">Hesap seçiciyi gizle</string>
+    <string name="autocrypt_mutual_description">Şifreli e-postalar almak istiyorsunuz. Şifreli e-postalar almak isteyen tüm kişiler için varsayılan olarak uçtan uca şifreleme kullanılacaktır.</string>
+    <string name="import_private_key_help_dialog_message">Ltt.rs, kullandığınız diğer uygulamalardan biri tarafından oluşturulan bir Autocrypt Kurulum Mesajı algıladı. Bu mesajdan gizli anahtarı içe aktararak Autocrypt\'i burada Ltt.rs\'de de kullanmaya başlayabilirsiniz!
+\n
+\nLütfen Kurulum Kodunuzu girin.
+\n
+\nKurulum Kodunuzu hatırlamıyorsanız bu adımı atlayabilirsiniz ve Ltt.rs bu cihazda yeni bir gizli anahtar oluşturacaktır.</string>
+    <string name="autocrypt_export_explained_hint_two">Kurulum Mesajı, Gönderilmiş olarak etiketlenmiş normal bir e-postadır. Diğer uygulamalar onu oradan alıp gizli anahtarınızı alabilir.</string>
+    <string name="autocrypt_export_explained_hint_three">Sonraki adımda Ltt.rs güvenli bir Kurulum Kodu oluşturacaktır. Bu kodu bir yere yazmanız ve güvenli bir yerde saklamanız gerekecek.</string>
+    <string name="autocrypt_export_explained_hint_four">Gizli anahtarınızı içe aktarmak için bu Kurulum Kodunu diğer cihazınızda kullanmanız gerekecektir. Bu Kurulum Kodunu güvenli bir yerde saklayın.</string>
+    <string name="skip">Atla</string>
+    <string name="import_secret_key">Gizli anahtarı içe aktar</string>
+    <string name="lttrs_lacks_permissions_to_add_attachment">Ltt.rs, bu eki katmak için gerekli izinlere sahip değil.</string>
+    <string name="enter_your_setup_code">Gizli anahtarınızı almak için Kurulum Kodunu yazın veya Ltt.rs\'nin bu cihazda yeni bir gizli anahtar oluşturmasını istiyorsanız bu adımı atlayın.</string>
+    <plurals name="x_emails_in_trash">
+        <item quantity="one">Çöp kutusunda şu anda %d e-posta var.</item>
+        <item quantity="other">Çöp kutusunda şu anda %d e-posta var.</item>
+    </plurals>
+    <plurals name="could_not_download_x_encrypted_emails">
+        <item quantity="one">%d şifreli e-posta indirilemedi</item>
+        <item quantity="other">%d şifreli e-posta indirilemedi</item>
+    </plurals>
 </resources>
