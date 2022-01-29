@@ -1,0 +1,2 @@
+* Vorschau für Anhänge
+* Unterstützung für Autocrypt-Gossip hinzugefügt
