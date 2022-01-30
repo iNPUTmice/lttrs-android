@@ -61,7 +61,7 @@ public class SetupCodeEntry {
                 });
         editText.setOnEditorActionListener(
                 (v, actionId, event) -> {
-                    if (event.getAction() != KeyEvent.ACTION_UP) {
+                    if (event != null && event.getAction() != KeyEvent.ACTION_UP) {
                         return true;
                     }
                     if (focusNextAfter((EditText) v)) {

@@ -376,7 +376,8 @@ public class BindingAdapters {
             final TextInputEditText editText, final @NonNull Supplier<Boolean> callback) {
         editText.setOnEditorActionListener(
                 (v, actionId, event) -> {
-                    if (event.getAction() == KeyEvent.ACTION_UP) {
+                    //event is null when using software keyboard
+                    if (event == null || event.getAction() == KeyEvent.ACTION_UP) {
                         return Boolean.TRUE.equals(callback.get());
                     }
                     return true;
