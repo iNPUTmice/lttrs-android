@@ -146,4 +146,68 @@
     <string name="remove_account">Eliminare cont</string>
     <string name="account">Cont</string>
     <string name="accounts">Conturi</string>
+    <string name="could_not_cache_attachment">Atașamentul nu a putut fi stocat în cache</string>
+    <string name="autocrypt_no_preference_description">La cerere. Dumneavoastră și contactele dumneavoastră veți putea activa în mod explicit criptarea pentru e-mailuri individuale.</string>
+    <string name="autocrypt_encryption_preference">Preferință de criptare</string>
+    <string name="email_not_cached">Mesajul de e-mail care conține acest atașament nu se află în memoria cache.</string>
+    <string name="encryption_options">Opțiuni de criptare</string>
+    <string name="cleartext">Text clar</string>
+    <string name="encrypted">Criptat</string>
+    <string name="autocrypt_enable_description">Activați suportul pentru criptarea de la un capăt la altul. Cheia voastră publică va fi atașată la mesajele trimise. Acest lucru le permite contactelor să vă trimită e-mailuri criptate.</string>
+    <string name="transfer_secret_key">Transferare cheie secretă</string>
+    <string name="encryption_provider_can_not_create_secret_key">Furnizorul de criptare de pe acest dispozitiv nu poate crea cheia secretă.</string>
+    <string name="encryption_is_not_available_for_those_recipients">Opțiunea de a trimite un e-mail criptat nu este disponibilă pentru acei destinatari.</string>
+    <string name="no_body">(fără corp)</string>
+    <string name="no_subject">(fără subiect)</string>
+    <string name="autocrypt_export_explained_hint_one">Pentru a vă transfera cheia secretă către un alt dispozitiv, Ltt.rs va crea un mesaj de configurare. Acesta conține cheia voastră secretă protejată de un Cod de configurare.</string>
+    <string name="autocrypt_export_explained_hint_three">La pasul următor, Ltt.rs va crea un Cod de configurare securizat. Va trebui să scrieți acest cod și să îl păstrați într-un loc sigur.</string>
+    <string name="autocrypt_export_explained_hint_four">Va trebui să utilizați acest Cod de configurare pe celălalt dispozitiv pentru a importa cheia secretă. Păstrați acest Cod de configurare într-un loc sigur.</string>
+    <string name="done">Gata</string>
+    <string name="import_secret_key">Importare cheie secretă</string>
+    <string name="skip">Omite</string>
+    <string name="enter_your_setup_code">Introduceți Codul de configurare pentru a importa cheia secretă sau omiteți peste acest pas dacă doriți ca Ltt.rs să genereze o nouă cheie secretă pe acest dispozitiv.</string>
+    <string name="decrypt_email">Decriptare e-mail</string>
+    <plurals name="could_not_download_x_encrypted_emails">
+        <item quantity="one">Nu s-a putut descărca %d e-mail criptat</item>
+        <item quantity="few">Nu s-au putut descărca %d e-mail-uri criptate</item>
+        <item quantity="other">Nu s-au putut descărca %d de e-mail-uri criptate</item>
+    </plurals>
+    <string name="could_not_store_setup_message">Nu s-a putut stoca Mesajul de configurare</string>
+    <string name="wrong_setup_code">Cod de configurare greșit. Încercați din nou!</string>
+    <string name="import_private_key_help_dialog_title">Mesaj de configurare Autocrypt detectat</string>
+    <string name="import_private_key_help_dialog_message">Ltt.rs a detectat un Mesaj de configurare Autocrypt creat de una dintre celelalte aplicații pe care le utilizați. Prin importarea cheii secrete din acest mesaj puteți începe să folosiți Autocrypt și aici, în Ltt.rs!
+\n
+\nVă rugăm să introduceți Codul de configurare.
+\n
+\nDacă nu vă amintiți Codul de configurare, puteți omite peste acest pas și Ltt.rs va genera o cheie secretă nouă pe acest dispozitiv.</string>
+    <string name="could_not_configure_autocrypt">Nu s-a putut configura Autocrypt</string>
+    <string name="send_as_cleartext">Trimitere ca text clar</string>
+    <string name="attachment_download_failed">Nu s-a putut descărca atașamentul</string>
+    <string name="autocrypt_export_explained_hint_two">Mesajul de configurare este un e-mail obișnuit etichetat ca fiind Trimis. Alte aplicații vor putea să-l preia de acolo și să importe cheia voastră secretă.</string>
+    <string name="encrypted_email">(e-mail criptat)</string>
+    <string name="view_email">Vizualizare e-mail</string>
+    <string name="autocrypt_mutual_description">Doriți să primiți e-mailuri criptate. Criptarea de la un capăt la altul va fi utilizată în mod implicit pentru toate contactele care doresc, de asemenea, să primească e-mailuri criptate.</string>
+    <string name="autocrypt_export_explained_hint_done">Mesajul de configurare a fost creat. Acum puteți începe procesul de import pe celălalt dispozitiv.</string>
+    <string name="show_helper_dialog">Afișează dialogul de ajutor</string>
+    <plurals name="incorrect_secret_key">
+        <item quantity="one">Nu aveți cheia secretă corectă pentru a decripta %d e-mail.</item>
+        <item quantity="few">Nu aveți cheia secretă corectă pentru a decripta %d e-mail-uri.</item>
+        <item quantity="other">Nu aveți cheia secretă corectă pentru a decripta %d de e-mail-uri.</item>
+    </plurals>
+    <plurals name="could_not_decrypt_x_emails">
+        <item quantity="one">Nu s-a putut decripta %d e-mail</item>
+        <item quantity="few">Nu s-au putut decripta %d e-mail-uri</item>
+        <item quantity="other">Nu s-au putut decripta %d de e-mail-uri</item>
+    </plurals>
+    <string name="show_account_selector">Afișare selector de cont</string>
+    <string name="forward_email">Redirecționare e-mail</string>
+    <string name="edit_draft">Editare ciornă</string>
+    <string name="download_attachment">Descărcare atașament</string>
+    <string name="hide_account_selector">Ascundere selector de cont</string>
+    <string name="reply_all">Răspunde tuturor</string>
+    <string name="more_options">Mai multe opțiuni</string>
+    <string name="reply">Răspunde</string>
+    <string name="remove_attachment">Eliminare atașament</string>
+    <string name="could_not_determine_metadata_of_attachment">Nu s-a putut determina tipul, dimensiunea și numele atașamentului pe care încercați să îl adăugați.</string>
+    <string name="lttrs_lacks_permissions_to_add_attachment">Ltt.rs nu are permisiunile necesare pentru a adăuga acest atașament.</string>
 </resources>
