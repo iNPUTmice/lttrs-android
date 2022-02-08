@@ -1,0 +1,1 @@
+* Corretto crash usando una tastiera software per andare allo schermo successivo nella finestra setup
