@@ -1,0 +1,2 @@
+* Anteprima allegati
+* Aggiunto supporto per Autocrypt-Gossip
