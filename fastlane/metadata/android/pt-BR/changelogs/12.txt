@@ -1,0 +1,2 @@
+* Visualiza anexos
+* Adiciona suporte para Autocrypt-Gossip
