@@ -1,0 +1,1 @@
+* Probleme im Zusammenhang mit der Erkennung von Autocrypt-Setup-Nachrichten behoben

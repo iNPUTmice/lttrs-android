@@ -1,0 +1,1 @@
+* Absturz behoben, wenn die Softwaretastatur verwendet wird, um im Setup-Dialog zum nächsten Schritt zu wechseln
