@@ -77,4 +77,145 @@
     <string name="mark_read">Oznacz jako przeczytane</string>
     <string name="mark_unread">Oznacz jako nieprzeczytane</string>
     <string name="archive">Archiwizuj</string>
+    <string name="reassign_role">Przypisz role</string>
+    <string name="assign_role">Przypisz rolę</string>
+    <string name="reassign_role_question">Już masz etykietę %1$s z rolą %2$s. Czy chcesz przypisać jej rolę %3$s\?</string>
+    <string name="assign_role_question">Już masz etykietę %1$s. Czy chcesz przypisać jej rolę %2$s\?</string>
+    <string name="confirm">Potwierdź</string>
+    <string name="cancel">Anuluj</string>
+    <string name="decrypt_email">Odszyfruj e-mail</string>
+    <string name="could_not_cache_attachment">Nie można zachować załącznika</string>
+    <string name="encrypted_email">(zaszyfrowany e-mail)</string>
+    <string name="enter_a_label_name">Wpisz nową nazwę etykiety</string>
+    <string name="reserved_mailbox_name">Wybierz nazwę która nie jest zarezerwowana.</string>
+    <string name="change_labels">Zmień etykiety</string>
+    <plurals name="x_new_emails">
+        <item quantity="one">%d nowy e-mail</item>
+        <item quantity="few">%d nowe e-maile</item>
+        <item quantity="many">%d nowych e-maili</item>
+        <item quantity="other">%d nowych e-maili</item>
+    </plurals>
+    <string name="attachment_download_failed">Nie można pobrać załącznika</string>
+    <string name="email_not_cached">E-mail zawierający ten załącznik nie mógł być pobrany.</string>
+    <string name="attachment_download_failed_status_code_x">Nie można pobrać załącznika. (Kod HTTP %d)</string>
+    <string name="encryption_options">Opcje szyfrowania</string>
+    <string name="autocrypt_enable_description">Włącz wsparcie dla szyfrowania end-to-end. Twój klucz publiczny będzie załączony do wychodzących e-maili. To umożliwi twoim kontaktom wysyłanie tobie szyfrowanych e-maili.</string>
+    <string name="autocrypt_mutual_description">Chcę otrzymywać szyfrowane e-maile. Szyfrowanie end-to-end będzie używane domyślnie z kontaktami które również chcą otrzymywać szyfrowane e-maile.</string>
+    <string name="encryption_is_not_available_for_those_recipients">Opcja wysyłania zaszyfrowanych e-maili dla tych kontaktów nie jest dostępna.</string>
+    <string name="send_as_cleartext">Wyślij jako jawny tekst</string>
+    <string name="no_body">(brak treści)</string>
+    <string name="no_subject">(brak tematu)</string>
+    <string name="autocrypt_export_explained_hint_two">Wiadomość Ustawiania to zwykły e-mail oznaczony jako Wysłany. Inne aplikacje będą mogły go stamtąd pobrać i zaimportować twój klucz prywatny.</string>
+    <string name="autocrypt_export_explained_hint_three">W następnym kroku Ltt.rs stworzy bezpieczny Kod Ustawiania. Zapisz go i trzymaj go w bezpiecznym miejscu.</string>
+    <string name="autocrypt_export_explained_hint_four">Kod Ustawiania będzie potrzebny do importu twojego klucza prywatnego. Trzymaj go w bezpiecznym miejscu.</string>
+    <string name="could_not_store_setup_message">Nie można wysłać Wiadomości Ustawiania</string>
+    <string name="done">Zrobione</string>
+    <string name="wrong_setup_code">Zły Kod Ustawiania. Spróbuj ponownie!</string>
+    <string name="import_private_key_help_dialog_title">Wiadomość Ustawiania Autocrypt wykryta</string>
+    <string name="download_attachment">Pobierz załącznik</string>
+    <plurals name="x_emails_in_trash">
+        <item quantity="one">Obecnie jest %d e-mail w koszu.</item>
+        <item quantity="few">Obecnie są %d e-maile w koszu.</item>
+        <item quantity="many">Obecnie jest %d e-maili w koszu.</item>
+        <item quantity="other">Obecnie jest %d e-maili w koszu.</item>
+    </plurals>
+    <plurals name="could_not_download_x_encrypted_emails">
+        <item quantity="one">Nie można pobrać %d zaszyfrowanego e-maila</item>
+        <item quantity="few">Nie można pobrać %d zaszyfrowanych e-maili</item>
+        <item quantity="many">Nie można pobrać %d zaszyfrowanych e-maili</item>
+        <item quantity="other">Nie można pobrać %d zaszyfrowanych e-maili</item>
+    </plurals>
+    <string name="foreground_service">Usługa pierwszoplanowa</string>
+    <string name="role_name_all">Wszystkie</string>
+    <string name="role_name_archive">Archiwum</string>
+    <string name="role_name_drafts">Szkice</string>
+    <string name="role_name_flagged">Oznaczone gwiazdką</string>
+    <string name="role_name_trash">Kosz</string>
+    <string name="role_name_junk">Spam</string>
+    <string name="role_name_subscribed">Subskrybowane</string>
+    <string name="session_resource_help_dialog_message">Ltt.rs używa relatywnie nowego protokołu JMAP do synchronizacji poczty e-mail lecz twój dostawca poczty jeszcze go nie wspiera.
+\n
+\nSkontaktuj się ze swoim dostawcą i zapytaj o JMAP oraz o URL połączenia JMAP.
+\n
+\nNa prawidłowo skonfigurowanym serwerze Ltt.rs sam wykryje URL połączenia.</string>
+    <string name="download_complete">Pobieranie zakończone</string>
+    <string name="the_file_exceeds_the_limit_of_x">Plik przekracza dopuszczalny rozmiar %s</string>
+    <string name="upload_complete">Wysyłanie zakończone</string>
+    <string name="combined_size_of_attachments_exceeds_the_limit_of_x">Przekroczono ograniczenie rozmiaru %s wszystkich załączników</string>
+    <string name="empty_trash">Opróżnij kosz</string>
+    <string name="empty">Pusty</string>
+    <string name="accounts">Konta</string>
+    <string name="account">Konto</string>
+    <string name="end_to_end_encryption">Szyfrowanie end-to-end</string>
+    <string name="remove_account_dialog_title">Usunąć konto\?</string>
+    <string name="view_emails">Pokaż e-maile</string>
+    <string name="remove_account_dialog_message">Usunięcie tego konta usunie wszystkie wiadomości i inne dane z tego urządzenia.</string>
+    <string name="notification_channel_name_email">E-mail</string>
+    <string name="import_secret_key">Importuj klucz prywatny</string>
+    <string name="skip">Pomiń</string>
+    <string name="autocrypt_encryption_preference">Preferencje szyfrowania</string>
+    <string name="autocrypt_no_preference_description">Na żądanie. Twoje kontakty i ty będziecie musieli włączyć szyfrowanie ręcznie dla każdego e-maila.</string>
+    <string name="could_not_configure_autocrypt">Nie można skonfigurować Autocrypta</string>
+    <string name="encryption_provider_can_not_create_secret_key">Dostarczyciel szyfrowania nie może skonfigurować twojego klucza prywatnego.</string>
+    <string name="autocrypt_export_explained_hint_one">Aby wysłać swój klucz prywatny do innego urządzenia Ltt.rs utworzy Wiadomość Ustawiania. Ona zawiera twój klucz prywatny chroniony Kodem Ustawiania.</string>
+    <string name="enter_your_setup_code">Wpisz Kod Ustawiania aby zaimportować klucz prywatny lub pomiń ten krok jeśli chcesz żeby Ltt.rs stworzył nowy klucz prywatny na tym urządzeniu.</string>
+    <string name="autocrypt_export_explained_hint_done">Wiadomość Ustawiania została stworzona. Możesz zacząć proces importu na innym urządzeniu.</string>
+    <string name="import_private_key_help_dialog_message">Ltt.rs wykrył Wiadomość Ustawiania Autocrypt stworzoną przez inną aplikację. Kiedy zaimportowujesz klucz prywatny z tej wiadomości Autocrypt będzie dostępny również w Ltt.rs
+\n
+\nProszę o wpisanie Kodu Ustawiania.
+\n
+\nJeśli nie pamiętasz Kodu Ustawiania możesz pominąć ten krok a Ltt.rs stworzy nowy klucz prywatny na tym urządzeniu.</string>
+    <string name="view_email">Pokaż e-mail</string>
+    <string name="apply_changes">Zatwierdź zmiany</string>
+    <string name="role_name_sent">Wysłane</string>
+    <string name="remove_account">Usuń konto</string>
+    <string name="role_name_important">Ważne</string>
+    <string name="session_resource_help_dialog_title">Jaki jest URL połączenia\?</string>
+    <string name="identities">Tożsamości</string>
+    <string name="empty_trash_dialog_title">Opróżnić kosz\?</string>
+    <string name="create">Utwórz</string>
+    <string name="manage_accounts">Zarządzaj kontami</string>
+    <string name="add_another_account">Dodaj kolejne konto</string>
+    <string name="role_name_inbox">Odebrane</string>
+    <string name="assign_role_detailed_explanation">Ltt.rs potrzebuje etykiety (skrzynki pocztowej) z rolą %1$s aby prawidłowo pracować. Jeśli nie chcesz używać etykiety %2$s do tego celu kliknij anuluj lub użyj swojego klienta desktopowego aby stworzyć inną etykietę z rolą %1$s.</string>
+    <string name="label_as">Oznacz jako</string>
+    <string name="no_name_specified">Nie określono nazwy. Spróbuj ponownie.</string>
+    <string name="new_label">Nowa etykieta</string>
+    <string name="foreground_service_notification_text">Ltt.rs ciągle działa i powiadamia o nowej poczcie</string>
+    <string name="attachments">Załączniki</string>
+    <string name="no_application_to_open_x">Żadna aplikacja nie obsługuje %s. Spróbuj pobrać załącznik.</string>
+    <string name="manage_labels">Zarządzaj etykietami</string>
+    <string name="vacation_response">Odpowiedź wakacyjna</string>
+    <string name="cleartext">Czysty tekst</string>
+    <string name="encrypted">Zaszyfrowane</string>
+    <string name="transfer_secret_key">Wymień klucz prywatny</string>
+    <string name="show_account_selector">Pokaż wybór kont</string>
+    <string name="hide_account_selector">Ukryj wybór kont</string>
+    <string name="reply_all">Odpowiedz wszystkim</string>
+    <string name="forward_email">Przekaż dalej</string>
+    <string name="more_options">Więcej opcji</string>
+    <string name="edit_draft">Edytuj szkic</string>
+    <string name="show_helper_dialog">Pokaż okno pomocnika</string>
+    <string name="reply">Odpowiedz</string>
+    <string name="remove_attachment">Usuń załącznik</string>
+    <string name="could_not_determine_metadata_of_attachment">Nie można określić typu, rozmiaru i nazwy załącznika który dodajesz.</string>
+    <plurals name="incorrect_secret_key">
+        <item quantity="one">Nie masz klucza prywatnego aby odszyfrować %d e-mail.</item>
+        <item quantity="few">Nie masz klucza prywatnego aby odszyfrować %d e-maile.</item>
+        <item quantity="many">Nie masz klucza prywatnego aby odszyfrować %d e-maili.</item>
+        <item quantity="other">Nie masz klucza prywatnego aby odszyfrować %d e-maili.</item>
+    </plurals>
+    <string name="lttrs_lacks_permissions_to_add_attachment">Ltt.rs nie ma wymaganych uprawnień aby dodać ten załącznik.</string>
+    <plurals name="could_not_decrypt_x_emails">
+        <item quantity="one">Nie można odszyfrować %d e-maila</item>
+        <item quantity="few">Nie można odszyfrować %d e-maili</item>
+        <item quantity="many">Nie można odszyfrować %d e-maili</item>
+        <item quantity="other">Nie można odszyfrować %d e-maili</item>
+    </plurals>
+    <plurals name="x_emails_will_permanently_deleted">
+        <item quantity="one">%d e-mail zostanie trwale usunięty.</item>
+        <item quantity="few">%d e-maile zostaną trwale usunięte.</item>
+        <item quantity="many">%d e-maili zostanie trwale usuniętych.</item>
+        <item quantity="other">%d e-maili zostanie trwale usuniętych.</item>
+    </plurals>
 </resources>
