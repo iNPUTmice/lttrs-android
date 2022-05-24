@@ -3,11 +3,11 @@ apply plugin: "androidx.navigation.safeargs"
 apply plugin: "com.diffplug.spotless"
 
 android {
-    compileSdkVersion 31
+    compileSdkVersion 32
     defaultConfig {
         applicationId "rs.ltt.android"
         minSdkVersion 23
-        targetSdkVersion 31
+        targetSdkVersion 32
         versionCode 14
         versionName "0.3.3"
 
@@ -65,6 +65,7 @@ android {
     lint {
         disable 'MissingTranslation'
     }
+    namespace 'rs.ltt.android'
 
 
 }
@@ -109,7 +110,7 @@ dependencies {
     implementation "com.google.android.material:material:$rootProject.ext.material"
 
     //Google - Firebase Messaging
-    playstoreImplementation('com.google.firebase:firebase-messaging:23.0.0') {
+    playstoreImplementation('com.google.firebase:firebase-messaging:23.0.5') {
         exclude group: 'com.google.firebase', module: 'firebase-core'
         exclude group: 'com.google.firebase', module: 'firebase-analytics'
         exclude group: 'com.google.firebase', module: 'firebase-measurement-connector'
