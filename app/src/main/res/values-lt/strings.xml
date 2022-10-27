@@ -146,4 +146,68 @@
     <string name="delete">Ištrinti</string>
     <string name="mark_read">Žymėti kaip skaitytą</string>
     <string name="mark_unread">Žymėti kaip neskaitytą</string>
+    <string name="could_not_cache_attachment">Nepavyko išsaugoti priedo talpykloje</string>
+    <string name="encryption_options">Šifravimo parinktys</string>
+    <string name="attachment_download_failed">Nepavyko atsisiųsti priedo</string>
+    <string name="email_not_cached">El. laiškas, kuriame yra šis priedas, nėra saugomas talpykloje.</string>
+    <string name="encrypted">Šifruotas tekstas</string>
+    <string name="transfer_secret_key">Perduoti slaptąjį raktą</string>
+    <string name="autocrypt_encryption_preference">Šifravimo nustatymas</string>
+    <string name="encryption_provider_can_not_create_secret_key">Šifravimo teikėjas šiame įrenginyje negali sukurti slaptojo rakto.</string>
+    <string name="encryption_is_not_available_for_those_recipients">Galimybė siųsti užšifruotą el. laišką šiems gavėjams nepasiekiama.</string>
+    <string name="send_as_cleartext">Siųsti kaip nešifruotą tekstą</string>
+    <string name="no_body">(nėra kūno)</string>
+    <string name="autocrypt_export_explained_hint_two">Sąrankos pranešimas yra įprastas el. laiškas, pažymėtas kaip išsiųstas. Kitos programos galės jį paimti iš ten ir importuoti slaptąjį raktą.</string>
+    <string name="autocrypt_export_explained_hint_three">Kitame žingsnyje Ltt.rs sukurs saugų sąrankos kodą. Šį kodą turėsite užsirašyti ir laikyti saugioje vietoje.</string>
+    <string name="could_not_store_setup_message">Nepavyko išsaugoti sąrankos pranešimo</string>
+    <string name="done">Atlikta</string>
+    <string name="autocrypt_export_explained_hint_done">Sąrankos pranešimas buvo sukurtas. Dabar galite pradėti importavimo procesą kitame įrenginyje.</string>
+    <string name="wrong_setup_code">Neteisingas sąrankos kodas. Bandykite dar kartą!</string>
+    <string name="decrypt_email">Iššifruoti el. laišką</string>
+    <plurals name="incorrect_secret_key">
+        <item quantity="one">Neturite tinkamo slaptojo rakto %d el. laiškui iššifruoti.</item>
+        <item quantity="few">Neturite tinkamo slaptojo rakto %d el. laiškams iššifruoti.</item>
+        <item quantity="other">Neturite tinkamo slaptojo rakto %d el. laiškų iššifruoti.</item>
+    </plurals>
+    <plurals name="could_not_decrypt_x_emails">
+        <item quantity="one">Nepavyko iššifruoti %d el. laiško</item>
+        <item quantity="few">Nepavyko iššifruoti %d el. laiškų</item>
+        <item quantity="other">Nepavyko iššifruoti %d el. laiškų</item>
+    </plurals>
+    <plurals name="could_not_download_x_encrypted_emails">
+        <item quantity="one">Nepavyko atsisiųsti %d užšifruoto el. laiško</item>
+        <item quantity="few">Nepavyko atsisiųsti %d užšifruotų el. laiškų</item>
+        <item quantity="other">Nepavyko atsisiųsti %d užšifruotų el. laiškų</item>
+    </plurals>
+    <string name="could_not_configure_autocrypt">Nepavyko sukonfigūruoti Autocrypt</string>
+    <string name="reply_all">Atsakyti visiems</string>
+    <string name="forward_email">Persiųsti el. laišką</string>
+    <string name="reply">Atsakyti</string>
+    <string name="remove_attachment">Pašalinti priedą</string>
+    <string name="view_email">Peržiūrėti el. paštą</string>
+    <string name="import_private_key_help_dialog_message">Ltt.rs aptiko automatinio šifravimo sąrankos pranešimą, kurį sukūrė viena iš kitų jūsų naudojamų programėlių. Importuodami slaptąjį raktą iš šio pranešimo, galite pradėti naudoti automatinį šifravimą ir čia, Ltt.rs!
+\n
+\nĮveskite savo sąrankos kodą.
+\n
+\nJei neprisimenate sąrankos kodo, galite praleisti šį veiksmą ir Ltt.rs sugeneruos naują slaptą raktą šiame įrenginyje.</string>
+    <string name="show_account_selector">Rodyti paskyros parinkiklį</string>
+    <string name="hide_account_selector">Slėpti paskyros parinkiklį</string>
+    <string name="cleartext">Nešifruotas tekstas</string>
+    <string name="autocrypt_no_preference_description">Pagal poreikį. Jūs ir jūsų kontaktai galėsite aiškiai įjungti atskirų el. laiškų šifravimą.</string>
+    <string name="autocrypt_enable_description">Įjunkite „nuo-iki” šifravimo palaikymą. Jūsų viešasis raktas bus pridedamas prie siunčiamų el. laiškų. Tai leis jūsų kontaktams jums siųsti šifruotus el. laiškus.</string>
+    <string name="autocrypt_export_explained_hint_four">Šį sąrankos kodą turėsite naudoti kitame prietaise, kad importuotumėte slaptąjį raktą. Saugokite šį sąrankos kodą saugioje vietoje.</string>
+    <string name="encrypted_email">(šifruotas el. laiškas)</string>
+    <string name="no_subject">(nėra temos)</string>
+    <string name="autocrypt_export_explained_hint_one">Norėdami perkelti savo slaptąjį raktą į kitą įrenginį, Ltt.rs sukurs sąrankos pranešimą. Jame yra jūsų slaptas raktas, apsaugotas sąrankos kodu.</string>
+    <string name="download_attachment">Atsisiųsti priedą</string>
+    <string name="could_not_determine_metadata_of_attachment">Nepavyko nustatyti priedo, kurį bandote pridėti, tipo, dydžio ir pavadinimo.</string>
+    <string name="autocrypt_mutual_description">Norite gauti šifruotus el. laiškus. Visiems kontaktams, kurie taip pat nori gauti šifruotus el. laiškus, pagal numatytuosius nustatymus bus naudojamas „nuo-iki” šifravimas.</string>
+    <string name="import_secret_key">Importuoti slaptąjį raktą</string>
+    <string name="skip">Praleisti</string>
+    <string name="enter_your_setup_code">Įveskite sąrankos kodą, kad importuotumėte savo slaptąjį raktą, arba praleiskite šį veiksmą, jei norite, kad Ltt.rs sugeneruotų naują slaptąjį raktą šiame įrenginyje.</string>
+    <string name="import_private_key_help_dialog_title">Aptiktas automatinio šifravimo sąrankos pranešimas</string>
+    <string name="show_helper_dialog">Rodyti pagalbinį dialogo langą</string>
+    <string name="more_options">Daugiau pasirinkimų</string>
+    <string name="edit_draft">Redaguoti juodraštį</string>
+    <string name="lttrs_lacks_permissions_to_add_attachment">Ltt.rs neturi reikiamų leidimų pridėti šį priedą.</string>
 </resources>
