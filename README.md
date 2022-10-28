@@ -39,11 +39,13 @@ https://ltt.rs/fdroid/repo?fingerprint=9C2E57C85C279E5E1A427F6E87927FC1E2278F62D
 
 All three versions are signed with the same key, so it is possible to switch between them.
 
-JMAP servers are currently rare. As of November 2020 you need 
-[Cyrus](https://github.com/cyrusimap/cyrus-imapd) 3.2.x.
-[Fastmail](https://www.fastmail.com/) is the only known provider.
+As of October 2022, the main options are:
+* [Cyrus](https://github.com/cyrusimap/cyrus-imapd) which you can get as SaaS via [Fastmail](https://www.fastmail.com/).
+* [Apache James](https://james.apache.org/). Follow [JAMES-2884](https://issues.apache.org/jira/browse/JAMES-2884) for more information.
+* [Stalwart JMAP](https://github.com/stalwartlabs/jmap-server/)
 
-There is ongoing work on the [Apache Jame](https://james.apache.org/) Server. Follow [JAMES-2884](https://issues.apache.org/jira/browse/JAMES-2884) for more information.
+See also: [https://jmap.io/software.html](https://jmap.io/software.html)
+
 
 ### Fastmail users
 During setup, Ltt.rs will ask you for a connection URL.
