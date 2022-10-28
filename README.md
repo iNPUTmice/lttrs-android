@@ -26,8 +26,6 @@ If the above screenshots don’t do enough to convince you, you can watch this
 
 ### Try it
 
-**Attention: You need a JMAP capable mail server to use Ltt.rs**
-
 You can download Ltt.rs either from [F-Droid](https://f-droid.org/en/packages/rs.ltt.android), or
 for a small fee from [Google Play](https://play.google.com/store/apps/details?id=rs.ltt.android).
 
@@ -39,18 +37,14 @@ https://ltt.rs/fdroid/repo?fingerprint=9C2E57C85C279E5E1A427F6E87927FC1E2278F62D
 
 All three versions are signed with the same key, so it is possible to switch between them.
 
+**Attention: You need a JMAP capable e-mail server to use Ltt.rs**
+
 As of October 2022, the main options are:
-* [Cyrus](https://github.com/cyrusimap/cyrus-imapd) which you can get as SaaS via [Fastmail](https://www.fastmail.com/).
+* [Cyrus](https://github.com/cyrusimap/cyrus-imapd)
 * [Apache James](https://james.apache.org/). Follow [JAMES-2884](https://issues.apache.org/jira/browse/JAMES-2884) for more information.
 * [Stalwart JMAP](https://github.com/stalwartlabs/jmap-server/)
 
-See also: [https://jmap.io/software.html](https://jmap.io/software.html)
-
-
-### Fastmail users
-During setup, Ltt.rs will ask you for a connection URL.
-You need to type in `https://jmap.fastmail.com/.well-known/jmap`.
-Automatic discovery currently doesn’t work for Fastmail.
+*See also: [jmap.io/software.html](https://jmap.io/software.html)*
 
 ### Translations
 Translations are managed on [Weblate](https://hosted.weblate.org/projects/ltt-rs/).
