@@ -1,0 +1,6 @@
+Kodinis pavadinimas: Uždegimas
+
+* Pridėkite automatinio šifravimo (šifruotų el. laiškų) palaikymą
+* Pridėkite failų bendrinimo su Ltt.rs palaikymą (atidaro juodraščio ekraną)
+
+Šis projektas gavo finansavimą iš Europos Sąjungos mokslinių tyrimų ir inovacijų programos „Horizontas 2020“ pagal projektą NGI-POINTER, finansuojamą pagal dotacijos sutartį Nr. 871528.
