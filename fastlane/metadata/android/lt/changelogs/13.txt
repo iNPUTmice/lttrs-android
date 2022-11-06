@@ -1,0 +1,1 @@
+* Ištaisytos problemos, susijusios su automatinio šifravimo nustatymo pranešimų aptikimu

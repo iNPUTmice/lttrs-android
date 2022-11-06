@@ -5,8 +5,6 @@ Funkcijos ir dizaino aspektai:
 * Daug kas talpinama lokaliai, bet darbas be interneto dar ne pilnai palaikomas. „Ltt.rs“ naudojasi puikiomis JMAP sparčiosios talpyklos galimybėmis. Tačiau pažymėjus giją kaip perskaitytą, atliekama kelionė į serverį, kad būtų atnaujinti tokie dalykai kaip perskaitytų duomenų skaičius. Pats veiksmas nebus prarastas, net jei bus atliekamas neprisijungus prie interneto.
 * Paskyrą nustatote ir baigta. Nustatymai skatina funkcijų didėjimą ir yra draugas vėliasnės sudėtingos priežiūros. Čia yra vienas konkretus darbo metodas. Kitiems labiau tiks „K-9 Mail“ arba „FairEmail“.
 * Minimalūs trečiųjų šalių komponentai. Tik plačiai žinomos, gerai išbandytos gerbiamų kūrėjų bibliotekos. Trečiųjų šalių bibliotekos dažnai būna prastos kokybės ir galiausiai lieka neprižiūrimos.
-* Pirmos klasės „Autocrypt“¹. „Ltt.rs“ puikiai atitinka griežtas jos vartotojo sąsajos gaires.
+* Pirmos klasės „Autocrypt“. „Ltt.rs“ puikiai atitinka griežtas jos vartotojo sąsajos gaires.
 * Remtasi „jmap-mua“, paprastas el. pašto klientas, arba biblioteka, kuri tvarko viską, ką ir el. pašto klientas, išskyrus duomenų saugojimą ir vartotojo sąsają. Taip pat yra „lttrs-cli“, kuri naudoja tą pačią biblioteką.
 * Neaiškiais atvejais įkvėpimo semiasi iš „Gmail“.
-
-¹: Planuojama funkcija
