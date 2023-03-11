@@ -1,0 +1,2 @@
+* Refatoração para permitir um tema mais fácil
+* Uso de elementos de design do Material 3
