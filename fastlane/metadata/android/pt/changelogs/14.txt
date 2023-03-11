@@ -1,0 +1,1 @@
+* Corrige a falha ao usar o teclado do software para ir ao próximo ecrã na caixa de diálogo de configuração

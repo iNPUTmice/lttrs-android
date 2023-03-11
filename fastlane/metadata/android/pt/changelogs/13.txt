@@ -1,0 +1,1 @@
+* Problemas corrigidos relacionados com a descoberta de mensagens Autocrypt-Setup
