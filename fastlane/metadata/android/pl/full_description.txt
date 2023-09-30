@@ -8,5 +8,3 @@ Funkcje i uwagi dotyczące projektu:
 * Autocrypt pierwszej klasy¹. Ltt.rs jest zgodny z surowymi wytycznymi UX.
 * Na podstawie jmap-mua, bezgłowego klienta poczty e-mail lub biblioteki, która obsługuje wszystko, co klient poczty e-mail, oprócz przechowywania danych i interfejsu użytkownika. Istnieje również lttrs-cli, który korzysta z tej samej biblioteki.
 * Szuka inspiracji w Gmailu w przypadku niepewności.
-
-¹: Planowana funkcja
