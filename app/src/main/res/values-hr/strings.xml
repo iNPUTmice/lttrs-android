@@ -13,7 +13,7 @@
     <string name="invalid_session_resource">Na ovoj adresi nema ispravne e-mail usluge</string>
     <string name="unable_to_establish_secure_connection">Neuspjelo postavljanje sigurne veze</string>
     <string name="to_x">za %s</string>
-    <string name="add_flag">Dodaj oznku</string>
+    <string name="add_flag">Dodaj oznaku</string>
     <string name="the_address_x_is_invalid">Nešto je krivo s adresom &lt;%s&gt;</string>
     <string name="ok">U redu</string>
     <string name="select_sender">Odaberi pošiljatelja.</string>
